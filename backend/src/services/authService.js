@@ -299,7 +299,81 @@ const confermaCambioEmail = async (token) => {
   return utente;
 };
 
+const eliminaAccount = async (userId) => {
+  const utente = await Utente.findByPk(userId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
 
+  // Sequelize gestirà l'eliminazione del record. 
+  // Se ci sono tabelle correlate, assicurati che abbiano il vincolo ON DELETE CASCADE nel DB.
+  await utente.destroy();
+  
+  logger.info(`Account eliminato definitivamente. ID Utente: ${userId}`);
+};
+
+// ─────────────────────────────────────────────
+// VISTA GESTIONALE UTENTI (Per Insegnanti)
+// ─────────────────────────────────────────────
+const getUtentiPerInsegnante = async (filtri) => {
+  const { ruolo, classe, nome } = filtri;
+  const where = {};
+
+  // Filtro esatto per ruolo
+  if (ruolo) {
+    where.ruolo = ruolo;
+  }
+
+  // Filtro esatto per classe
+  if (classe) {
+    where.classe = classe;
+  }
+
+  // Filtro parziale per nome o cognome (Case Insensitive su gran parte dei DB)
+  if (nome) {
+    where[Op.or] = [
+      { nome: { [Op.like]: `%${nome}%` } },
+      { cognome: { [Op.like]: `%${nome}%` } }
+    ];
+  }
+
+  // Recupera gli utenti escludendo i campi sensibili
+  const utenti = await Utente.findAll({
+    where,
+    attributes: { 
+      exclude: [
+        'password', 
+        'refresh_token', 
+        'reset_password_token', 
+        'reset_password_expire', 
+        'email_verification_token', 
+        'email_verification_expire'
+      ] 
+    },
+    order: [['cognome', 'ASC'], ['nome', 'ASC']]
+  });
+
+  return utenti;
+};
+
+// ─────────────────────────────────────────────
+// CAMBIO RUOLO UTENTE (Per Insegnanti)
+// ─────────────────────────────────────────────
+const aggiornaRuoloUtente = async (userId, nuovoRuolo) => {
+  if (!Utente.RUOLI_VALIDI.includes(nuovoRuolo)) {
+    throw new AppError('Ruolo non valido.', 422, 'INVALID_ROLE');
+  }
+
+  const utente = await Utente.findByPk(userId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
+
+  await utente.update({ ruolo: nuovoRuolo });
+  logger.info(`Ruolo aggiornato per utente ID: ${userId} -> Nuovo Ruolo: ${nuovoRuolo}`);
+  
+  return utente.toPublicJSON();
+};
 module.exports = {
   registraUtente,
   loginUtente,
@@ -309,5 +383,8 @@ module.exports = {
   resetPassword,
   verificaEmail,
   richiediCambioEmail,
-  confermaCambioEmail
+  confermaCambioEmail,
+  eliminaAccount,      
+  getUtentiPerInsegnante, 
+  aggiornaRuoloUtente
 };

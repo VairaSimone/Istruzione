@@ -164,3 +164,65 @@ exports.confirmEmailChange = catchAsync(async (req, res) => {
     message: 'Email modificata e confermata con successo.',
   });
 });
+
+// ─────────────────────────────────────────────
+// DELETE /api/auth/me
+// ─────────────────────────────────────────────
+exports.deleteMe = catchAsync(async (req, res) => {
+  // req.user.id viene iniettato dal middleware authenticateJWT
+  await authService.eliminaAccount(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Il tuo account e tutti i dati associati sono stati eliminati definitivamente.',
+  });
+});
+
+// ─────────────────────────────────────────────
+// GET /api/auth/gestione/utenti (Solo Insegnanti)
+// ─────────────────────────────────────────────
+exports.getAllUsers = catchAsync(async (req, res) => {
+  const { ruolo, classe, nome } = req.query;
+
+  const utenti = await authService.getUtentiPerInsegnante({ ruolo, classe, nome });
+
+  res.status(200).json({
+    status: 'success',
+    results: utenti.length,
+    data: {
+      utenti,
+    },
+  });
+});
+
+// ─────────────────────────────────────────────
+// PATCH /api/auth/gestione/utenti/:id/ruolo (Solo Insegnanti)
+// ─────────────────────────────────────────────
+exports.updateUserRole = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { ruolo } = req.body;
+
+  const utenteAggiornato = await authService.aggiornaRuoloUtente(id, ruolo);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Ruolo dell\'utente aggiornato con successo.',
+    data: {
+      utente: utenteAggiornato,
+    },
+  });
+});
+
+// ─────────────────────────────────────────────
+// DELETE /api/auth/gestione/utenti/:id (Solo Insegnanti)
+// ─────────────────────────────────────────────
+exports.deleteUserByTeacher = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  await authService.eliminaAccount(id);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'L\'account dell\'utente è stato eliminato definitivamente dall\'insegnante.',
+  });
+});

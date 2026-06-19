@@ -7,7 +7,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 // Middleware
-const { authenticateJWT } = require('../middleware/auth');
+const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
 const { loginLimiter, forgotPasswordLimiter } = require('../middleware/rateLimiter');
 const validate = require('../middleware/validate');
 
@@ -91,6 +91,11 @@ router.post('/verify-email', validateVerifyEmail, validate, authController.verif
 // Route protette (richiedono access token valido)
 router.post('/logout', authenticateJWT, authController.logout);
 router.get('/me', authenticateJWT, authController.me);
+router.delete('/me', authenticateJWT, authController.deleteMe); 
 router.post('/request-email-change', authenticateJWT, validateChangeEmail, validate, authController.requestEmailChange);
 router.get('/confirm-email-change', authController.confirmEmailChange);
+
+router.get('/gestione/utenti', authenticateJWT, authorizeRoles('insegnante'), authController.getAllUsers);
+router.patch('/gestione/utenti/:id/ruolo', authenticateJWT, authorizeRoles('insegnante'), authController.updateUserRole);
+router.delete('/gestione/utenti/:id', authenticateJWT, authorizeRoles('insegnante'), authController.deleteUserByTeacher);
 module.exports = router;
