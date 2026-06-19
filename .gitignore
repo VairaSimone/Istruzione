@@ -1,0 +1,24 @@
+# Dipendenze
+node_modules/
+
+# Variabili d'ambiente (MAI committare!)
+.env
+.env.local
+.env.production
+
+# Log
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Build
+dist/
+build/
