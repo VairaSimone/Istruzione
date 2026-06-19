@@ -88,11 +88,10 @@ router.post('/refresh-token', validateRefreshToken, validate, authController.ref
 router.post('/forgot-password', forgotPasswordLimiter, validateForgotPassword, validate, authController.forgotPassword);
 router.post('/reset-password', validateResetPassword, validate, authController.resetPassword);
 router.post('/verify-email', validateVerifyEmail, validate, authController.verifyEmail);
-router.post('/request-email-change', validate, authController.requestEmailChange);
-router.get('/confirm-email-change', authController.confirmEmailChange)
 // Route protette (richiedono access token valido)
 router.post('/logout', authenticateJWT, authController.logout);
 router.get('/me', authenticateJWT, authController.me);
 router.patch('/change-email', authenticateJWT, validateChangeEmail, validate, authController.changeEmail);
-
+router.post('/request-email-change', authenticateJWT, validate, authController.requestEmailChange);
+router.get('/confirm-email-change', authController.confirmEmailChange);
 module.exports = router;
