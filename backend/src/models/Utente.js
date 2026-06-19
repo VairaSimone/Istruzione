@@ -40,8 +40,8 @@ class Utente extends Model {
 Utente.init(
   {
     id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4, // Genera automaticamente un UUIDv4 univoco
       primaryKey: true,
     },
 
@@ -167,10 +167,19 @@ Utente.init(
       field: 'nuova_email_pendente'
     },
     token_version: {
-    type: DataTypes.INTEGER,
-    defaultValue: 0,
-    allowNull: false
-  },
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false
+    },
+    tentativi_falliti: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: false
+    },
+    bloccato_fino_al: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     lingua: {
       type: DataTypes.ENUM(...LINGUE_VALIDE),
       allowNull: false,
@@ -202,17 +211,23 @@ Utente.init(
 
     // Hook: hash della password prima di ogni INSERT/UPDATE
     hooks: {
-      beforeSave: async (utente) => {
-        // L'hash viene fatto solo se la password è stata modificata
-        if (utente.changed('password')) {
-          const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_ROUNDS) || 12);
-          utente.password = await bcrypt.hash(utente.password, salt);
+      beforeCreate: async (utente) => {
+        if (utente.password) {
+          utente.password = await bcrypt.hash(utente.password, 12);
         }
       },
-    },
+      beforeUpdate: async (utente) => {
+        if (utente.changed('password')) {
+          utente.password = await bcrypt.hash(utente.password, 12);
+        }
+      }
+    }
+
   }
 );
-
+Utente.prototype.confrontaPassword = async function(passwordInserita) {
+  return await bcrypt.compare(passwordInserita, this.password);
+};
 // Esportiamo anche le costanti per riutilizzarle nei validator
 Utente.CLASSI_VALIDE = CLASSI_VALIDE;
 Utente.RUOLI_VALIDI = RUOLI_VALIDI;

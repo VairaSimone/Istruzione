@@ -11,7 +11,8 @@ const emailService = require('./emailService');
 // ─────────────────────────────────────────────
 // REGISTRAZIONE
 // ─────────────────────────────────────────────
-
+const MAX_TENTATIVI_FALLITI = 5;
+const TEMPO_BLOCCO_MINUTI = 15;
 // Aggiunta la proprietà 'lingua' ai parametri ricevuti (con fallback a 'it')
 const registraUtente = async ({ nome, cognome, eta, email, password, classe, lingua = 'it' }) => {
   const esistente = await Utente.findOne({ where: { email: email.toLowerCase() } });
@@ -54,34 +55,59 @@ const registraUtente = async ({ nome, cognome, eta, email, password, classe, lin
 // ─────────────────────────────────────────────
 
 const loginUtente = async (email, password) => {
-  const utente = await Utente.findOne({
-    where: { email: email.toLowerCase().trim() },
-    attributes: { include: ['password'] },
-  });
+  // 1. Cerca l'utente
+  const utente = await Utente.findOne({ where: { email } });
 
-  const passwordValida = utente
-    ? await utente.verificaPassword(password)
-    : await fakeHashCompare();
-
-  if (!utente || !passwordValida) {
-    throw new AppError('Credenziali non valide.', 401, 'INVALID_CREDENTIALS');
+  if (!utente) {
+    throw new AppError('Credenziali non valide', 401);
   }
 
-  if (!utente.email_verificata) {
-    throw new AppError('Devi verificare il tuo indirizzo email prima di effettuare il login.', 403, 'EMAIL_NOT_VERIFIED');
+  // 2. Controlla se l'account è bloccato prima ancora di verificare la password
+  if (utente.bloccato_fino_al && utente.bloccato_fino_al > new Date()) {
+    const millisecondiRimanenti = utente.bloccato_fino_al.getTime() - new Date().getTime();
+    const minutiRimanenti = Math.ceil(millisecondiRimanenti / 60000);
+    throw new AppError(`Account bloccato per troppi tentativi. Riprova tra ${minutiRimanenti} minuti.`, 403);
   }
 
+  // 3. Verifica la password
+  // Usa il metodo del modello, o bcrypt.compare(password, utente.password) se lo fai inline
+  const isPasswordValid = await utente.confrontaPassword(password);
+
+  // 4. Gestione password errata (incremento fallimenti)
+  if (!isPasswordValid) {
+    utente.tentativi_falliti += 1;
+
+    if (utente.tentativi_falliti >= MAX_TENTATIVI_FALLITI) {
+      // Blocca l'account per 15 minuti da ora
+      const dataSblocco = new Date();
+      dataSblocco.setMinutes(dataSblocco.getMinutes() + TEMPO_BLOCCO_MINUTI);
+      utente.bloccato_fino_al = dataSblocco;
+      
+      await utente.save();
+      throw new AppError(`Troppi tentativi falliti. Account bloccato per ${TEMPO_BLOCCO_MINUTI} minuti.`, 403);
+    } else {
+      await utente.save();
+      throw new AppError('Credenziali non valide', 401);
+    }
+  }
+
+  // 5. Controllo se l'email è verificata (se usi questo sistema nel tuo progetto)
+  if (!utente.is_verificato) {
+    throw new AppError('Devi prima verificare il tuo indirizzo email.', 403);
+  }
+
+  // 6. Login effettuato con successo: RESETTIAMO i contatori
+  if (utente.tentativi_falliti > 0 || utente.bloccato_fino_al !== null) {
+    utente.tentativi_falliti = 0;
+    utente.bloccato_fino_al = null;
+    await utente.save();
+  }
+
+  // 7. Genera i token (assumendo che le funzioni richiedano l'oggetto utente)
   const accessToken = generateAccessToken(utente);
   const refreshToken = generateRefreshToken(utente);
 
-  await utente.update({ refresh_token: refreshToken });
-  logger.info(`Login effettuato: ${utente.email} (ID: ${utente.id})`);
-
-  return {
-    accessToken,
-    refreshToken,
-    utente: utente.toPublicJSON(),
-  };
+  return { utente, accessToken, refreshToken };
 };
 
 const fakeHashCompare = async () => {
