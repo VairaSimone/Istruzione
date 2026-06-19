@@ -19,7 +19,7 @@ const VerifyEmail = () => {
 
       try {
         // Modifica l'URL in base alla configurazione della tua istanza di Axios
-        const response = await axios.post('http://localhost:5000/api/auth/verify-email', { token });
+        const response = await axios.post('http://localhost:3000/api/auth/verify-email', { token });
         setStatus({ success: true, message: response.data.message || 'Email verificata con successo!' });
       } catch (error) {
         const errMsg = error.response?.data?.message || 'Token non valido o scaduto.';

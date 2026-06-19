@@ -136,24 +136,28 @@ Utente.init(
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
+      field: 'reset_password_token'
     },
 
     reset_password_expire: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
+      field: 'reset_password_expire'
     },
 
     email_verification_token: {
       type: DataTypes.STRING(255),
       allowNull: true,
       defaultValue: null,
+      field: 'email_verification_token'
     },
 
     email_verification_expire: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
+      field: 'email_verification_expire'
     },
   },
   {

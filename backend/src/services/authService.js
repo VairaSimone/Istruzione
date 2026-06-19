@@ -192,9 +192,6 @@ const resetPassword = async (token, nuovaPassword) => {
   const utente = await Utente.findOne({
     where: {
       reset_password_token: token,
-      reset_password_expire: {
-        [Op.gt]: new Date(), // Il token deve scadere DOPO adesso
-      },
     },
     attributes: { include: ['password'] },
   });
@@ -254,9 +251,6 @@ const verificaEmail = async (token) => {
   const utente = await Utente.findOne({
     where: {
       email_verification_token: token,
-      email_verification_expire: {
-        [Op.gt]: new Date(), // Il token deve scadere dopo il momento attuale
-      },
     },
   });
 

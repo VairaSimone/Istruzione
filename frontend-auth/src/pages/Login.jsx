@@ -15,7 +15,7 @@ export default function Login() {
     setError('');
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
 if (err.response?.data?.code === 'EMAIL_NOT_VERIFIED') {
       setError('Il tuo indirizzo email non è ancora stato verificato. Controlla la tua casella di posta per attivare l\'account prima di accedere.');
