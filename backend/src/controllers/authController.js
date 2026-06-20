@@ -176,7 +176,7 @@ exports.requestEmailChange = catchAsync(async (req, res) => {
 });
 
 // GET /api/auth/confirm-email-change
-exports.confirmEmailChange = catchAsync(async (req, res) => {
+exports.confirmEmailChange = async (req, res) => {
   const { token } = req.query;
   const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
@@ -188,11 +188,10 @@ exports.confirmEmailChange = catchAsync(async (req, res) => {
     await authService.confermaCambioEmail(token);
     return res.redirect(`${FRONTEND_URL}/verify-email-change?status=success`);
   } catch (err) {
-   
     const reason = err.code === 'EXPIRED_TOKEN' ? 'expired_token' : 'invalid_token';
     return res.redirect(`${FRONTEND_URL}/verify-email-change?status=error&reason=${reason}`);
   }
-});
+};
 
 // ─────────────────────────────────────────────
 // DELETE /api/auth/me
