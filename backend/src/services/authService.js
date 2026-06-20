@@ -54,6 +54,7 @@ const loginUtente = async (email, password) => {
   const utente = await Utente.findOne({ where: { email } });
 
   if (!utente) {
+    await fakeHashCompare();
     throw new AppError('Credenziali non valide', 401);
   }
 

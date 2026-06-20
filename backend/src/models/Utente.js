@@ -225,9 +225,7 @@ Utente.init(
 
   }
 );
-Utente.prototype.confrontaPassword = async function(passwordInserita) {
-  return await bcrypt.compare(passwordInserita, this.password);
-};
+
 // Esportiamo anche le costanti per riutilizzarle nei validator
 Utente.CLASSI_VALIDE = CLASSI_VALIDE;
 Utente.RUOLI_VALIDI = RUOLI_VALIDI;
