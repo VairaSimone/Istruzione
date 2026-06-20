@@ -13,13 +13,14 @@ const generateAccessToken = (user) => {
     {
       id: user.id,
       ruolo: user.ruolo,
-      token_version: user.token_version
+      token_version: user.token_version,
     },
     jwtConfig.access.secret,
     {
       expiresIn: jwtConfig.access.expiresIn,
-      issuer: 'auth-backend',
-      audience: 'auth-backend-client',
+      issuer: jwtConfig.issuer,
+      audience: jwtConfig.audience,
+      algorithm: jwtConfig.algorithm,
     }
   );
 };
@@ -27,7 +28,7 @@ const generateAccessToken = (user) => {
 /**
  * Genera un refresh token JWT.
  * Ha una scadenza più lunga dell'access token.
- * Viene anche salvato nel DB per permettere l'invalidazione (logout).
+ * L'hash viene salvato nel DB per permettere l'invalidazione (logout).
  */
 const generateRefreshToken = (user) => {
   return jwt.sign(
@@ -37,21 +38,22 @@ const generateRefreshToken = (user) => {
     jwtConfig.refresh.secret,
     {
       expiresIn: jwtConfig.refresh.expiresIn,
-      issuer: 'auth-backend',
-      audience: 'auth-backend-client',
+      issuer: jwtConfig.issuer,
+      audience: jwtConfig.audience,
+      algorithm: jwtConfig.algorithm,
     }
   );
 };
 
 /**
- * Verifica e decodifica un access token.
- * @throws {JsonWebTokenError} se il token non è valido
- * @throws {TokenExpiredError} se il token è scaduto
+ * Verifica e decodifica un access token, applicando issuer/audience e
+ * vincolando esplicitamente l'algoritmo a HS256.
  */
 const verifyAccessToken = (token) => {
   return jwt.verify(token, jwtConfig.access.secret, {
-    issuer: 'auth-backend',
-    audience: 'auth-backend-client',
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithms: [jwtConfig.algorithm],
   });
 };
 
@@ -60,8 +62,9 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   return jwt.verify(token, jwtConfig.refresh.secret, {
-    issuer: 'auth-backend',
-    audience: 'auth-backend-client',
+    issuer: jwtConfig.issuer,
+    audience: jwtConfig.audience,
+    algorithms: [jwtConfig.algorithm],
   });
 };
 

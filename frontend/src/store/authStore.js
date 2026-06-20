@@ -6,27 +6,27 @@ import { devtools } from 'zustand/middleware';
  *
  * NOTA IMPORTANTE SULLA PERSISTENZA:
  * Questo store NON persiste su localStorage/sessionStorage. Il backend usa
- * cookie httpOnly per access_token e refresh_token (vedi doc, sezione 3),
- * quindi il JS del frontend non può né deve leggerli o scriverli — è una
- * scelta di sicurezza del backend che il frontend rispetta.
+ * cookie httpOnly per access_token e refresh_token, quindi il JS del
+ * frontend non può né deve leggerli o scriverli.
  *
- * La "persistenza della sessione" tra refresh di pagina è quindi delegata
- * al cookie stesso: ad ogni avvio dell'app, `App.jsx` chiama `GET /me`
- * (vedi useCurrentUser) per ricostruire lo stato `user` da zero. Questo
- * store tiene solo una cache in-memory del risultato per evitare prop drilling.
+ * La "persistenza della sessione" tra refresh di pagina è delegata al
+ * cookie stesso: ad ogni avvio dell'app, `App.jsx` chiama `GET /me`
+ * (vedi useCurrentUser) per ricostruire lo stato `user` da zero.
+ *
+ * Il middleware `devtools` è abilitato SOLO in sviluppo per non esporre
+ * lo stato (incluso `user`) ai Redux DevTools in produzione.
  */
+const storeCreator = (set) => ({
+  user: null,
+  isAuthChecked: false, // true dopo il primo tentativo di GET /me al boot dell'app
+
+  setUser: (user) => set({ user, isAuthChecked: true }, false, 'auth/setUser'),
+
+  clearUser: () => set({ user: null, isAuthChecked: true }, false, 'auth/clearUser'),
+});
+
 export const useAuthStore = create(
-  devtools(
-    (set) => ({
-      user: null,
-      isAuthChecked: false, // true dopo il primo tentativo di GET /me al boot dell'app
-
-      setUser: (user) => set({ user, isAuthChecked: true }, false, 'auth/setUser'),
-
-      clearUser: () => set({ user: null, isAuthChecked: true }, false, 'auth/clearUser'),
-    }),
-    { name: 'auth-store' }
-  )
+  import.meta.env.DEV ? devtools(storeCreator, { name: 'auth-store' }) : storeCreator
 );
 
 /** Selettori comodi per evitare ricalcoli/derivazioni ripetute nei componenti */

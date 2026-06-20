@@ -14,9 +14,23 @@ const app = express();
 
 // ─────────────────────────────────────────────
 // SICUREZZA: Helmet
-// Imposta header HTTP di sicurezza (XSS, clickjacking, MIME sniffing, ecc.)
+// Header HTTP di sicurezza + CSP esplicita (API) + Referrer-Policy
 // ─────────────────────────────────────────────
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        defaultSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+      },
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    crossOriginResourcePolicy: { policy: 'same-site' },
+  })
+);
 
 // ─────────────────────────────────────────────
 // CORS
@@ -38,7 +52,7 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
   credentials: true,
   optionsSuccessStatus: 200,
 };

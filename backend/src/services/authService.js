@@ -5,16 +5,19 @@ const { Op } = require('sequelize');
 const Utente = require('../models/Utente');
 const AppError = require('../utils/AppError');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwtHelpers');
+const { hashToken } = require('../utils/tokenHash');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
+
+const MAX_TENTATIVI_FALLITI = 5;
+const TEMPO_BLOCCO_MINUTI = 15;
+
+const bcrypt = require('bcryptjs');
 
 // ─────────────────────────────────────────────
 // REGISTRAZIONE
 // ─────────────────────────────────────────────
-const MAX_TENTATIVI_FALLITI = 5;
-const TEMPO_BLOCCO_MINUTI = 15;
 const registraUtente = async ({ nome, cognome, eta, email, password, classe, lingua = 'it' }) => {
-
   const tokenVerifica = crypto.randomBytes(32).toString('hex');
   const scadenzaVerifica = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 ore di validità
 
@@ -28,7 +31,7 @@ const registraUtente = async ({ nome, cognome, eta, email, password, classe, lin
     classe,
     lingua,
     email_verificata: false,
-    email_verification_token: tokenVerifica,
+    email_verification_token: hashToken(tokenVerifica),
     email_verification_expire: scadenzaVerifica,
   });
 
@@ -42,23 +45,28 @@ const registraUtente = async ({ nome, cognome, eta, email, password, classe, lin
   return nuovoUtente;
 };
 
-
 // ─────────────────────────────────────────────
 // LOGIN
 // ─────────────────────────────────────────────
-
 const loginUtente = async (email, password) => {
-  const utente = await Utente.findOne({ where: { email } });
+  const utente = await Utente.findOne({ where: { email: email.toLowerCase().trim() } });
 
   if (!utente) {
     await fakeHashCompare();
     throw new AppError('Credenziali non valide', 401);
   }
 
-  if (utente.bloccato_fino_al && utente.bloccato_fino_al > new Date()) {
-    const millisecondiRimanenti = utente.bloccato_fino_al.getTime() - new Date().getTime();
+  if (utente.bloccato_fino_al && new Date(utente.bloccato_fino_al) > new Date()) {
+    const millisecondiRimanenti = new Date(utente.bloccato_fino_al).getTime() - Date.now();
     const minutiRimanenti = Math.ceil(millisecondiRimanenti / 60000);
     throw new AppError(`Account bloccato per troppi tentativi. Riprova tra ${minutiRimanenti} minuti.`, 403);
+  }
+
+  // Il blocco è scaduto: azzera il contatore PRIMA di valutare la password,
+  // così un singolo errore successivo non causa un re-blocco immediato.
+  if (utente.bloccato_fino_al) {
+    utente.tentativi_falliti = 0;
+    utente.bloccato_fino_al = null;
   }
 
   const isPasswordValid = await utente.verificaPassword(password);
@@ -80,25 +88,25 @@ const loginUtente = async (email, password) => {
   }
 
   if (!utente.email_verificata) {
-throw new AppError('Email non verificata. Controlla la tua casella di posta.', 401);  }
-
-  if (utente.tentativi_falliti > 0 || utente.bloccato_fino_al !== null) {
-    utente.tentativi_falliti = 0;
-    utente.bloccato_fino_al = null;
-    await utente.save();
+    // Persiste un eventuale reset contatore effettuato sopra
+    if (utente.changed()) {
+      await utente.save();
+    }
+    throw new AppError('Email non verificata. Controlla la tua casella di posta.', 401);
   }
 
   const accessToken = generateAccessToken(utente);
   const refreshToken = generateRefreshToken(utente);
 
-  utente.refresh_token = refreshToken;
+  utente.tentativi_falliti = 0;
+  utente.bloccato_fino_al = null;
+  utente.refresh_token = hashToken(refreshToken);
   await utente.save();
 
   return { utente, accessToken, refreshToken };
 };
 
 const fakeHashCompare = async () => {
-  const bcrypt = require('bcryptjs');
   await bcrypt.compare('fake_password', '$2a$12$fakehashfakehashfakehashfakehashfakehashfakeha');
   return false;
 };
@@ -106,13 +114,12 @@ const fakeHashCompare = async () => {
 // ─────────────────────────────────────────────
 // LOGOUT
 // ─────────────────────────────────────────────
-
 const logoutUtente = async (userId) => {
   const utente = await Utente.findByPk(userId);
 
   if (utente) {
     utente.token_version += 1;
-    utente.refresh_token = null; 
+    utente.refresh_token = null;
     await utente.save();
   }
 };
@@ -120,7 +127,6 @@ const logoutUtente = async (userId) => {
 // ─────────────────────────────────────────────
 // REFRESH TOKEN
 // ─────────────────────────────────────────────
-
 const refreshAccessToken = async (refreshToken) => {
   if (!refreshToken) {
     throw new AppError('Refresh token mancante.', 401, 'NO_REFRESH_TOKEN');
@@ -139,7 +145,7 @@ const refreshAccessToken = async (refreshToken) => {
   const utente = await Utente.findOne({
     where: {
       id: decoded.id,
-      refresh_token: refreshToken,
+      refresh_token: hashToken(refreshToken),
     },
   });
 
@@ -147,10 +153,15 @@ const refreshAccessToken = async (refreshToken) => {
     throw new AppError('Refresh token non valido o sessione terminata.', 401, 'INVALID_REFRESH_TOKEN');
   }
 
-  const nuovoAccessToken = generateAccessToken(utente);
+  if (utente.token_version !== undefined && decoded.token_version !== undefined &&
+      utente.token_version !== decoded.token_version) {
+    throw new AppError('Refresh token non valido o sessione terminata.', 401, 'INVALID_REFRESH_TOKEN');
+  }
 
+  const nuovoAccessToken = generateAccessToken(utente);
   const nuovoRefreshToken = generateRefreshToken(utente);
-  utente.refresh_token = nuovoRefreshToken;
+
+  utente.refresh_token = hashToken(nuovoRefreshToken);
   await utente.save();
 
   return { accessToken: nuovoAccessToken, refreshToken: nuovoRefreshToken };
@@ -159,13 +170,15 @@ const refreshAccessToken = async (refreshToken) => {
 // ─────────────────────────────────────────────
 // FORGOT PASSWORD
 // ─────────────────────────────────────────────
-
 const forgotPassword = async (email) => {
-  const utente = await Utente.findOne({ where: { email: email.toLowerCase() } });
+  const utente = await Utente.findOne({ where: { email: email.toLowerCase().trim() } });
 
   if (!utente) {
+    // Equalizza approssimativamente il costo computazionale per ridurre
+    // la possibilità di user-enumeration via timing.
+    crypto.randomBytes(32).toString('hex');
     logger.info(`Reset password richiesto per email inesistente: ${email}`);
-    return { emailInviata: false };
+    return { emailInviata: false, tokenDebug: undefined };
   }
 
   const token = crypto.randomBytes(32).toString('hex');
@@ -173,15 +186,17 @@ const forgotPassword = async (email) => {
   const scadenza = new Date(Date.now() + oreScadenza * 60 * 60 * 1000);
 
   await utente.update({
-    reset_password_token: token,
+    reset_password_token: hashToken(token),
     reset_password_expire: scadenza,
   });
 
   try {
     await emailService.sendPasswordResetEmail(utente.email, token, utente.lingua);
   } catch (err) {
+    // Non rilanciare: uno status diverso (500) rispetto al caso "email
+    // inesistente" (200) permetterebbe user-enumeration. La risposta al
+    // client resta sempre generica e con status 200.
     logger.error(`Errore nell'invio dell'email di reset a ${utente.email}: ${err.message}`);
-    throw new AppError('Impossibile inviare l\'email di ripristino. Riprova più tardi.', 500, 'EMAIL_SEND_FAILED');
   }
 
   return {
@@ -193,11 +208,10 @@ const forgotPassword = async (email) => {
 // ─────────────────────────────────────────────
 // RESET PASSWORD
 // ─────────────────────────────────────────────
-
 const resetPassword = async (token, nuovaPassword) => {
   const utente = await Utente.findOne({
     where: {
-      reset_password_token: token,
+      reset_password_token: hashToken(token),
     },
     attributes: { include: ['password'] },
   });
@@ -205,16 +219,20 @@ const resetPassword = async (token, nuovaPassword) => {
   if (!utente) {
     throw new AppError('Token non valido o scaduto.', 400, 'INVALID_RESET_TOKEN');
   }
+
   const adesso = new Date();
-  if (utente.reset_password_expire && utente.reset_password_expire < adesso) {
+  if (utente.reset_password_expire && new Date(utente.reset_password_expire) < adesso) {
     throw new AppError('Token di verifica scaduto.', 400, 'EXPIRED_VERIFICATION_TOKEN');
   }
 
+  // Incrementa token_version per invalidare anche gli access token già
+  // emessi: dopo un reset password nessuna sessione precedente resta valida.
   await utente.update({
     password: nuovaPassword,
     reset_password_token: null,
     reset_password_expire: null,
     refresh_token: null,
+    token_version: utente.token_version + 1,
   });
 
   logger.info(`Password reimpostata per utente: ${utente.email}`);
@@ -223,21 +241,23 @@ const resetPassword = async (token, nuovaPassword) => {
 // ─────────────────────────────────────────────
 // VERIFICA EMAIL
 // ─────────────────────────────────────────────
-
 const verificaEmail = async (token) => {
   const utente = await Utente.findOne({
     where: {
-      email_verification_token: token,
+      email_verification_token: hashToken(token),
+      nuova_email_pendente: null,
     },
   });
 
   if (!utente) {
     throw new AppError('Token di verifica non valido o scaduto.', 400, 'INVALID_VERIFICATION_TOKEN');
   }
+
   const adesso = new Date();
-  if (utente.email_verification_expire && utente.email_verification_expire < adesso) {
+  if (utente.email_verification_expire && new Date(utente.email_verification_expire) < adesso) {
     throw new AppError('Token di verifica scaduto.', 400, 'EXPIRED_VERIFICATION_TOKEN');
   }
+
   await utente.update({
     email_verificata: true,
     email_verification_token: null,
@@ -250,11 +270,9 @@ const verificaEmail = async (token) => {
 // ─────────────────────────────────────────────
 // RICHIESTA CAMBIO EMAIL
 // ─────────────────────────────────────────────
-
 const richiediCambioEmail = async (userId, nuovaEmail) => {
   const emailFormattata = nuovaEmail.toLowerCase().trim();
 
-  // Recuperiamo tutto il record utente per avere accesso anche alla lingua impostata nel DB
   const utente = await Utente.findByPk(userId);
   if (!utente) {
     throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
@@ -269,9 +287,9 @@ const richiediCambioEmail = async (userId, nuovaEmail) => {
   const scadenzaVerifica = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 ore
 
   await utente.update({
-    email_verification_token: tokenVerifica,
+    email_verification_token: hashToken(tokenVerifica),
     email_verification_expire: scadenzaVerifica,
-    nuova_email_pendente: emailFormattata
+    nuova_email_pendente: emailFormattata,
   });
 
   try {
@@ -286,28 +304,36 @@ const richiediCambioEmail = async (userId, nuovaEmail) => {
 // ─────────────────────────────────────────────
 // CONFERMA CAMBIO EMAIL
 // ─────────────────────────────────────────────
-
 const confermaCambioEmail = async (token) => {
   const utente = await Utente.findOne({
     where: {
-      email_verification_token: token,
-      nuova_email_pendente: { [Op.ne]: null }
-    }
+      email_verification_token: hashToken(token),
+      nuova_email_pendente: { [Op.ne]: null },
+    },
   });
 
   if (!utente) {
     throw new AppError('Token di verifica non valido o non associato a un cambio email.', 400, 'INVALID_TOKEN');
   }
 
-  if (utente.email_verification_expire && utente.email_verification_expire < new Date()) {
+  if (utente.email_verification_expire && new Date(utente.email_verification_expire) < new Date()) {
     throw new AppError('Il token di verifica è scaduto. Richiedi un nuovo cambio email.', 400, 'EXPIRED_TOKEN');
   }
 
+  const nuovaEmail = utente.nuova_email_pendente;
+
+  // Verifica che l'email non sia stata occupata da un altro account nel
+  // frattempo (consistenza dei dati / unique constraint).
+  const giaPreso = await Utente.findOne({ where: { email: nuovaEmail } });
+  if (giaPreso && giaPreso.id !== utente.id) {
+    throw new AppError('Questa email è già associata a un altro account.', 409, 'EMAIL_TAKEN');
+  }
+
   await utente.update({
-    email: utente.nuova_email_pendente,
+    email: nuovaEmail,
     nuova_email_pendente: null,
     email_verification_token: null,
-    email_verification_expire: null
+    email_verification_expire: null,
   });
 
   logger.info(`Email aggiornata con successo per utente ID: ${utente.id}`);
@@ -315,9 +341,8 @@ const confermaCambioEmail = async (token) => {
 };
 
 // ─────────────────────────────────────────────
-// ELIMINA ACCOUNT
+// ELIMINA ACCOUNT (self)
 // ─────────────────────────────────────────────
-
 const eliminaAccount = async (userId) => {
   const utente = await Utente.findByPk(userId);
   if (!utente) {
@@ -329,9 +354,36 @@ const eliminaAccount = async (userId) => {
 };
 
 // ─────────────────────────────────────────────
+// ELIMINA ACCOUNT (azione amministrativa insegnante)
+// ─────────────────────────────────────────────
+const eliminaUtenteComeInsegnante = async (actingUserId, targetUserId) => {
+  if (String(actingUserId) === String(targetUserId)) {
+    throw new AppError(
+      'Non puoi eliminare il tuo account da questa sezione. Usa le impostazioni del profilo.',
+      403,
+      'SELF_DELETE_FORBIDDEN'
+    );
+  }
+
+  const utente = await Utente.findByPk(targetUserId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
+
+  if (utente.ruolo === 'insegnante') {
+    const totaleInsegnanti = await Utente.count({ where: { ruolo: 'insegnante' } });
+    if (totaleInsegnanti <= 1) {
+      throw new AppError('Impossibile eliminare l\'ultimo insegnante.', 409, 'LAST_TEACHER');
+    }
+  }
+
+  await utente.destroy();
+  logger.info(`[AUDIT] Account ${targetUserId} eliminato dall'insegnante ${actingUserId}`);
+};
+
+// ─────────────────────────────────────────────
 // VISTA GESTIONALE UTENTI (Per Insegnanti)
 // ─────────────────────────────────────────────
-
 const getUtentiPerInsegnante = async (filtri) => {
   const { ruolo, classe, nome, page, limit } = filtri;
   const where = {};
@@ -347,10 +399,9 @@ const getUtentiPerInsegnante = async (filtri) => {
   if (nome) {
     where[Op.or] = [
       { nome: { [Op.like]: `%${nome}%` } },
-      { cognome: { [Op.like]: `%${nome}%` } }
+      { cognome: { [Op.like]: `%${nome}%` } },
     ];
   }
-
 
   const pageNum = parseInt(page, 10);
   const limitNum = parseInt(limit, 10);
@@ -365,10 +416,10 @@ const getUtentiPerInsegnante = async (filtri) => {
         'reset_password_token',
         'reset_password_expire',
         'email_verification_token',
-        'email_verification_expire'
-      ]
+        'email_verification_expire',
+      ],
     },
-    order: [['cognome', 'ASC'], ['nome', 'ASC']]
+    order: [['cognome', 'ASC'], ['nome', 'ASC']],
   };
 
   if (usaPaginazione) {
@@ -394,10 +445,13 @@ const getUtentiPerInsegnante = async (filtri) => {
 // ─────────────────────────────────────────────
 // CAMBIO RUOLO UTENTE (Per Insegnanti)
 // ─────────────────────────────────────────────
-
-const aggiornaRuoloUtente = async (userId, nuovoRuolo) => {
+const aggiornaRuoloUtente = async (actingUserId, userId, nuovoRuolo) => {
   if (!Utente.RUOLI_VALIDI.includes(nuovoRuolo)) {
     throw new AppError('Ruolo non valido.', 422, 'INVALID_ROLE');
+  }
+
+  if (String(actingUserId) === String(userId)) {
+    throw new AppError('Non puoi modificare il tuo stesso ruolo.', 403, 'SELF_ROLE_CHANGE_FORBIDDEN');
   }
 
   const utente = await Utente.findByPk(userId);
@@ -405,8 +459,16 @@ const aggiornaRuoloUtente = async (userId, nuovoRuolo) => {
     throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
   }
 
+  // Salvaguardia: non declassare l'ultimo insegnante rimasto.
+  if (utente.ruolo === 'insegnante' && nuovoRuolo !== 'insegnante') {
+    const totaleInsegnanti = await Utente.count({ where: { ruolo: 'insegnante' } });
+    if (totaleInsegnanti <= 1) {
+      throw new AppError('Impossibile declassare l\'ultimo insegnante.', 409, 'LAST_TEACHER');
+    }
+  }
+
   await utente.update({ ruolo: nuovoRuolo });
-  logger.info(`Ruolo aggiornato per utente ID: ${userId} -> Nuovo Ruolo: ${nuovoRuolo}`);
+  logger.info(`[AUDIT] Ruolo modificato dall'insegnante ${actingUserId}: utente ${userId} -> ${nuovoRuolo}`);
 
   return utente.toPublicJSON();
 };
@@ -422,6 +484,7 @@ module.exports = {
   richiediCambioEmail,
   confermaCambioEmail,
   eliminaAccount,
+  eliminaUtenteComeInsegnante,
   getUtentiPerInsegnante,
-  aggiornaRuoloUtente
+  aggiornaRuoloUtente,
 };

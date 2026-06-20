@@ -3,8 +3,7 @@ import apiClient from '../api/axiosClient';
 /**
  * Service layer per il modulo Auth.
  * Ogni funzione mappa 1:1 un endpoint reale presente in
- * `backend/src/routes/authRoutes.js`. Nessuna funzione qui sotto chiama
- * un endpoint non implementato nel backend.
+ * `backend/src/routes/authRoutes.js`.
  */
 
 // ── Endpoint pubblici ──────────────────────────────────────────────
@@ -30,10 +29,7 @@ export const forgotPassword = async ({ email }) => {
 };
 
 /**
- * NOTA: il backend si aspetta il campo `nuovaPassword`, non `password`,
- * nonostante la documentazione dichiari `password` — vedi
- * `validators/authValidators.js::validateResetPassword` e
- * `authController.resetPassword`, che leggono entrambi `nuovaPassword`.
+ * NOTA: il backend si aspetta il campo `nuovaPassword`, non `password`.
  */
 export const resetPassword = async ({ token, nuovaPassword }) => {
   const { data } = await apiClient.post('/auth/reset-password', {
@@ -45,6 +41,17 @@ export const resetPassword = async ({ token, nuovaPassword }) => {
 
 export const verifyEmail = async ({ token }) => {
   const { data } = await apiClient.post('/auth/verify-email', { token });
+  return data;
+};
+
+/**
+ * Conferma il cambio email. Il link nell'email punta alla pagina
+ * applicativa (/verify-email-change?token=...), che effettua questa
+ * richiesta POST esplicita. Non è una GET che modifica lo stato, quindi
+ * non è soggetta a prefetch/scansione dei link.
+ */
+export const confirmEmailChange = async ({ token }) => {
+  const { data } = await apiClient.post('/auth/confirm-email-change', { token });
   return data;
 };
 
@@ -76,16 +83,3 @@ export const requestEmailChange = async ({ nuovaEmail }) => {
   });
   return data;
 };
-
-/**
- * NOTA: GET /auth/confirm-email-change è pensato per essere aperto
- * direttamente dal link nell'email (il backend risponde con un redirect
- * 302 verso FRONTEND_URL/verify-email-change?status=success in caso di
- * successo). Il frontend NON deve chiamare questa funzione via fetch/XHR
- * in background: la pagina VerifyEmailChangePage si limita a leggere i
- * query param dopo che il browser ha già seguito il redirect del backend.
- * Questa funzione è esposta solo per completezza/test manuali, non è
- * collegata a nessun componente UI.
- */
-export const confirmEmailChangeUrl = (token) =>
-  `${import.meta.env.VITE_API_BASE_URL}/auth/confirm-email-change?token=${encodeURIComponent(token)}`;

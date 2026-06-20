@@ -26,6 +26,13 @@ const emailRules = (fieldName = 'email') =>
     .normalizeEmail()
     .isLength({ max: 255 }).withMessage("L'email non può superare i 255 caratteri");
 
+const tokenRules = (fieldName = 'token', message = 'Token non valido') =>
+  body(fieldName)
+    .trim()
+    .notEmpty().withMessage(message)
+    .isHexadecimal().withMessage(message)
+    .isLength({ min: 64, max: 64 }).withMessage(message);
+
 // ─────────────────────────────────────────────
 // POST /api/auth/register
 // ─────────────────────────────────────────────
@@ -80,12 +87,7 @@ const validateForgotPassword = [
 // POST /api/auth/reset-password
 // ─────────────────────────────────────────────
 const validateResetPassword = [
-  body('token')
-    .trim()
-    .notEmpty().withMessage('Il token è obbligatorio')
-    .isHexadecimal().withMessage('Token non valido')
-    .isLength({ min: 64, max: 64 }).withMessage('Token non valido'),
-
+  tokenRules('token', 'Token non valido'),
   passwordRules('nuovaPassword'),
 ];
 
@@ -100,21 +102,23 @@ const validateChangeEmail = [
 // POST /api/auth/refresh-token
 // ─────────────────────────────────────────────
 const validateRefreshToken = [
-    cookie('refresh_token')
-        .notEmpty()
-        .withMessage('auth.refresh_token_required'),
-     
+  cookie('refresh_token')
+    .notEmpty()
+    .withMessage('auth.refresh_token_required'),
 ];
 
 // ─────────────────────────────────────────────
 // POST /api/auth/verify-email
 // ─────────────────────────────────────────────
 const validateVerifyEmail = [
-  body('token')
-    .trim()
-    .notEmpty().withMessage('Il token di verifica è obbligatorio')
-    .isHexadecimal().withMessage('Formato token non valido')
-    .isLength({ min: 64, max: 64 }).withMessage('Token non valido'),
+  tokenRules('token', 'Token non valido'),
+];
+
+// ─────────────────────────────────────────────
+// POST /api/auth/confirm-email-change
+// ─────────────────────────────────────────────
+const validateConfirmEmailChange = [
+  tokenRules('token', 'Token non valido'),
 ];
 
 module.exports = {
@@ -125,4 +129,5 @@ module.exports = {
   validateChangeEmail,
   validateRefreshToken,
   validateVerifyEmail,
+  validateConfirmEmailChange,
 };

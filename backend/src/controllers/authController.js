@@ -3,14 +3,25 @@
 const catchAsync = require('../utils/catchAsync');
 const authService = require('../services/authService');
 const Utente = require('../models/Utente');
-const crypto = require('crypto');
-const emailService = require('../services/emailService');
 const AppError = require('../utils/AppError');
+const {
+  baseCookieOptions,
+  ACCESS_TOKEN_MAX_AGE,
+  REFRESH_TOKEN_MAX_AGE,
+} = require('../config/cookies');
+const { setCsrfCookie } = require('../middleware/csrf');
+
 /**
  * Controller Auth — livello sottile tra route e service.
  * NON contiene logica di business: solo estrazione parametri dalla request
  * e formattazione della response.
  */
+
+const clearAuthCookies = (res) => {
+  res.clearCookie('access_token');
+  res.clearCookie('refresh_token');
+  res.clearCookie('csrf_token', { httpOnly: false });
+};
 
 // ─────────────────────────────────────────────
 // POST /api/auth/register
@@ -34,29 +45,24 @@ exports.register = catchAsync(async (req, res) => {
 // ─────────────────────────────────────────────
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-  
+
   const { accessToken, refreshToken } = await authService.loginUtente(email, password);
 
-
-  const cookieOptions = {
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'lax', 
-  };
-
   res.cookie('access_token', accessToken, {
-    ...cookieOptions,
-    maxAge: 15 * 60 * 1000 // 15 minuti in millisecondi
+    ...baseCookieOptions,
+    maxAge: ACCESS_TOKEN_MAX_AGE,
   });
 
   res.cookie('refresh_token', refreshToken, {
-    ...cookieOptions,
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 giorni
+    ...baseCookieOptions,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
   });
+
+  setCsrfCookie(res);
 
   res.status(200).json({
     status: 'success',
-    message: 'Login effettuato con successo'
+    message: 'Login effettuato con successo',
   });
 });
 
@@ -66,12 +72,11 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.logout = catchAsync(async (req, res, next) => {
   await authService.logoutUtente(req.user.id);
 
-  res.clearCookie('access_token');
-  res.clearCookie('refresh_token');
+  clearAuthCookies(res);
 
   res.status(200).json({
     status: 'success',
-    message: 'Logout completato con successo'
+    message: 'Logout completato con successo',
   });
 });
 
@@ -81,39 +86,48 @@ exports.logout = catchAsync(async (req, res, next) => {
 exports.me = catchAsync(async (req, res) => {
   const { id, nome, cognome, eta, email, ruolo, classe, lingua, email_verificata } = req.user;
 
+  // Rinnova il cookie CSRF, così è disponibile dopo un refresh di pagina
+  // anche per sessioni preesistenti.
+  setCsrfCookie(res);
+
   res.status(200).json({
     status: 'success',
     data: {
       utente: { id, nome, cognome, eta, email, ruolo, classe, lingua, email_verificata },
     },
   });
-}); 
+});
 
 // ─────────────────────────────────────────────
 // POST /api/auth/refresh-token
 // ─────────────────────────────────────────────
 exports.refreshToken = catchAsync(async (req, res, next) => {
-    const refreshToken = req.cookies.refresh_token;
+  const refreshToken = req.cookies.refresh_token;
 
-    if (!refreshToken) {
-        return next(new AppError(req.t('auth.refresh_token_required'), 401));
-    }
+  if (!refreshToken) {
+    return next(new AppError('Refresh token mancante.', 401, 'NO_REFRESH_TOKEN'));
+  }
 
-    const tokens = await authService.refreshAccessToken(refreshToken);
+  const tokens = await authService.refreshAccessToken(refreshToken);
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 giorni
-    });
+  res.cookie('access_token', tokens.accessToken, {
+    ...baseCookieOptions,
+    maxAge: ACCESS_TOKEN_MAX_AGE,
+  });
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            accessToken: tokens.accessToken
-        }
-    });
+  res.cookie('refresh_token', tokens.refreshToken, {
+    ...baseCookieOptions,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+  });
+
+  setCsrfCookie(res);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      accessToken: tokens.accessToken,
+    },
+  });
 });
 
 // ─────────────────────────────────────────────
@@ -144,7 +158,6 @@ exports.resetPassword = catchAsync(async (req, res) => {
   });
 });
 
-
 // ─────────────────────────────────────────────
 // POST /api/auth/verify-email
 // ─────────────────────────────────────────────
@@ -164,34 +177,30 @@ exports.verifyEmail = catchAsync(async (req, res) => {
 // ─────────────────────────────────────────────
 exports.requestEmailChange = catchAsync(async (req, res) => {
   const { nuovaEmail } = req.body;
-  const userId = req.user.id; 
+  const userId = req.user.id;
 
   const tokenVerifica = await authService.richiediCambioEmail(userId, nuovaEmail);
 
   res.status(200).json({
     status: 'success',
     message: 'Richiesta di cambio email presa in carico. Controlla la tua NUOVA casella postale.',
-    _debug_token: tokenVerifica
+    ...(process.env.NODE_ENV !== 'production' && { _debug_token: tokenVerifica }),
   });
 });
 
-// GET /api/auth/confirm-email-change
-exports.confirmEmailChange = async (req, res) => {
-  const { token } = req.query;
-  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+// ─────────────────────────────────────────────
+// POST /api/auth/confirm-email-change
+// ─────────────────────────────────────────────
+exports.confirmEmailChange = catchAsync(async (req, res) => {
+  const { token } = req.body;
 
-  if (!token) {
-    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=error&reason=missing_token`);
-  }
+  await authService.confermaCambioEmail(token);
 
-  try {
-    await authService.confermaCambioEmail(token);
-    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=success`);
-  } catch (err) {
-    const reason = err.code === 'EXPIRED_TOKEN' ? 'expired_token' : 'invalid_token';
-    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=error&reason=${reason}`);
-  }
-};
+  res.status(200).json({
+    status: 'success',
+    message: 'Indirizzo email aggiornato con successo.',
+  });
+});
 
 // ─────────────────────────────────────────────
 // DELETE /api/auth/me
@@ -199,10 +208,9 @@ exports.confirmEmailChange = async (req, res) => {
 exports.deleteMe = catchAsync(async (req, res) => {
   await authService.eliminaAccount(req.user.id);
 
-  res.status(204).json({
-    status: 'success',
-    message: 'Il tuo account e tutti i dati associati sono stati eliminati definitivamente.',
-  });
+  clearAuthCookies(res);
+
+  res.status(204).send();
 });
 
 // ─────────────────────────────────────────────
@@ -230,7 +238,7 @@ exports.updateUserRole = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { ruolo } = req.body;
 
-  const utenteAggiornato = await authService.aggiornaRuoloUtente(id, ruolo);
+  const utenteAggiornato = await authService.aggiornaRuoloUtente(req.user.id, id, ruolo);
 
   res.status(200).json({
     status: 'success',
@@ -247,14 +255,13 @@ exports.updateUserRole = catchAsync(async (req, res) => {
 exports.deleteUserByTeacher = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-  await authService.eliminaAccount(id);
+  await authService.eliminaUtenteComeInsegnante(req.user.id, id);
 
   res.status(200).json({
     status: 'success',
     message: 'L\'account dell\'utente è stato eliminato definitivamente dall\'insegnante.',
   });
 });
-
 
 // ─────────────────────────────────────────────
 // PATCH /api/auth/me/lingua
@@ -272,7 +279,7 @@ exports.updateLanguage = catchAsync(async (req, res) => {
 
   res.status(200).json({
     status: 'success',
-    message: req.t('messages.langChanged'), 
-    data: { utente: utente.toPublicJSON() }
+    message: req.t('messages.langChanged'),
+    data: { utente: utente.toPublicJSON() },
   });
 });
