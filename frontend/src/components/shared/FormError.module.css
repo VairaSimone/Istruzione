@@ -1,0 +1,13 @@
+.banner {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  background-color: var(--color-danger-bg);
+  border: 1px solid rgba(179, 38, 30, 0.25);
+  border-left: 3px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  color: var(--color-danger);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}

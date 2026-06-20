@@ -1,0 +1,33 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(26, 26, 26, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: 100;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 26rem;
+  box-shadow: var(--shadow-elevated);
+}
+
+.title {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-3);
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+}

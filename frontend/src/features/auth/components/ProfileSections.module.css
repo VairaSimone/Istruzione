@@ -1,0 +1,50 @@
+.sectionDescription {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-5);
+  line-height: 1.6;
+}
+
+.inlineForm {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.inlineFormField {
+  flex: 1;
+}
+
+.inlineFormButton {
+  margin-top: 1.625rem;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-1);
+}
+
+.dangerZone {
+  border-color: rgba(179, 38, 30, 0.3);
+}
+
+.dangerActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.successMessage {
+  color: var(--color-matcha-dark);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}
+
+.confirmText {
+  font-size: 0.875rem;
+  color: var(--color-danger);
+  margin-bottom: var(--space-4);
+  line-height: 1.6;
+}

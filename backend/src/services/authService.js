@@ -92,6 +92,9 @@ const loginUtente = async (email, password) => {
   const accessToken = generateAccessToken(utente);
   const refreshToken = generateRefreshToken(utente);
 
+  utente.refresh_token = refreshToken;
+  await utente.save();
+
   return { utente, accessToken, refreshToken };
 };
 
@@ -110,6 +113,7 @@ const logoutUtente = async (userId) => {
 
   if (utente) {
     utente.token_version += 1;
+    utente.refresh_token = null; 
     await utente.save();
   }
 };
@@ -146,7 +150,11 @@ const refreshAccessToken = async (refreshToken) => {
 
   const nuovoAccessToken = generateAccessToken(utente);
 
-  return { accessToken: nuovoAccessToken };
+  const nuovoRefreshToken = generateRefreshToken(utente);
+  utente.refresh_token = nuovoRefreshToken;
+  await utente.save();
+
+  return { accessToken: nuovoAccessToken, refreshToken: nuovoRefreshToken };
 };
 
 // ─────────────────────────────────────────────
@@ -326,7 +334,7 @@ const eliminaAccount = async (userId) => {
 // ─────────────────────────────────────────────
 
 const getUtentiPerInsegnante = async (filtri) => {
-  const { ruolo, classe, nome } = filtri;
+  const { ruolo, classe, nome, page, limit } = filtri;
   const where = {};
 
   if (ruolo) {
@@ -344,7 +352,12 @@ const getUtentiPerInsegnante = async (filtri) => {
     ];
   }
 
-  const utenti = await Utente.findAll({
+
+  const pageNum = parseInt(page, 10);
+  const limitNum = parseInt(limit, 10);
+  const usaPaginazione = Number.isInteger(pageNum) && Number.isInteger(limitNum) && pageNum > 0 && limitNum > 0;
+
+  const queryOptions = {
     where,
     attributes: {
       exclude: [
@@ -357,9 +370,26 @@ const getUtentiPerInsegnante = async (filtri) => {
       ]
     },
     order: [['cognome', 'ASC'], ['nome', 'ASC']]
-  });
+  };
 
-  return utenti;
+  if (usaPaginazione) {
+    queryOptions.limit = limitNum;
+    queryOptions.offset = (pageNum - 1) * limitNum;
+
+    const { count, rows } = await Utente.findAndCountAll(queryOptions);
+    return {
+      utenti: rows,
+      paginazione: {
+        paginaCorrente: pageNum,
+        elementiPerPagina: limitNum,
+        totaleElementi: count,
+        totalePagine: Math.ceil(count / limitNum),
+      },
+    };
+  }
+
+  const utenti = await Utente.findAll(queryOptions);
+  return { utenti, paginazione: null };
 };
 
 // ─────────────────────────────────────────────

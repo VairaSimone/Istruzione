@@ -178,15 +178,20 @@ exports.requestEmailChange = catchAsync(async (req, res) => {
 // GET /api/auth/confirm-email-change
 exports.confirmEmailChange = catchAsync(async (req, res) => {
   const { token } = req.query;
+  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
   if (!token) {
-    return res.status(400).json({ status: 'fail', message: 'Token mancante.' });
+    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=error&reason=missing_token`);
   }
 
-  await authService.confermaCambioEmail(token);
-  
-  const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-  res.redirect(`${FRONTEND_URL}/verify-email-change?token=${token}&status=success`);
+  try {
+    await authService.confermaCambioEmail(token);
+    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=success`);
+  } catch (err) {
+   
+    const reason = err.code === 'EXPIRED_TOKEN' ? 'expired_token' : 'invalid_token';
+    return res.redirect(`${FRONTEND_URL}/verify-email-change?status=error&reason=${reason}`);
+  }
 });
 
 // ─────────────────────────────────────────────
@@ -205,9 +210,9 @@ exports.deleteMe = catchAsync(async (req, res) => {
 // GET /api/auth/gestione/utenti (Solo Insegnanti)
 // ─────────────────────────────────────────────
 exports.getAllUsers = catchAsync(async (req, res) => {
-  const { ruolo, classe, nome } = req.query;
+  const { ruolo, classe, nome, page, limit } = req.query;
 
-  const utenti = await authService.getUtentiPerInsegnante({ ruolo, classe, nome });
+  const { utenti, paginazione } = await authService.getUtentiPerInsegnante({ ruolo, classe, nome, page, limit });
 
   res.status(200).json({
     status: 'success',
@@ -215,6 +220,7 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     data: {
       utenti,
     },
+    ...(paginazione && { paginazione }),
   });
 });
 

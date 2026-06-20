@@ -1,0 +1,48 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 42rem;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.title {
+  font-size: 1.875rem;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-4);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.infoGrid dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.infoGrid dd {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
