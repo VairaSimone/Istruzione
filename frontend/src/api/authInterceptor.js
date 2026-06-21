@@ -16,10 +16,6 @@ import { ROUTES } from '../constants/routes';
  *  4. Se anche il refresh fallisce, l'utente viene disconnesso e
  *     reindirizzato al login.
  *
- * NOTA: il body della risposta di refresh contiene solo `accessToken`
- * (il nuovo cookie access_token/refresh_token viene impostato dal backend
- * stesso via Set-Cookie — il frontend non deve leggerlo o salvarlo manualmente).
- *
  * Le richieste multiple in parallelo che falliscono simultaneamente per
  * token scaduto condividono la STESSA promise di refresh, per evitare
  * race condition con N chiamate concorrenti a /refresh-token.
@@ -53,8 +49,6 @@ export const setupAuthInterceptor = () => {
       const isTokenExpired =
         response.status === 401 && errorCode === API_ERROR_CODES.TOKEN_EXPIRED;
 
-      // Non tentare il refresh per richieste di login/refresh/register stesse,
-      // né per richieste già ritentate (previene loop infiniti).
       if (!isTokenExpired || isAuthEndpoint(config.url) || config._retry) {
         if (
           response.status === 401 &&
@@ -77,9 +71,6 @@ export const setupAuthInterceptor = () => {
         }
 
         await refreshPromise;
-
-        // Il nuovo access_token è già stato impostato come cookie dal backend;
-        // basta ritentare la richiesta originale, il browser lo allegherà da solo.
         return apiClient(config);
       } catch (refreshError) {
         redirectToLogin();
