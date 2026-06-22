@@ -1,4 +1,5 @@
 import { forwardRef, useId } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './TextField.module.css';
 
 /**
@@ -7,6 +8,7 @@ import styles from './TextField.module.css';
  */
 const Select = forwardRef(
   ({ label, error, required, children, placeholder, ...rest }, ref) => {
+    const { t } = useTranslation();
     const id = useId();
     const errorId = `${id}-error`;
 
@@ -31,7 +33,7 @@ const Select = forwardRef(
           {...rest}
         >
           <option value="" disabled>
-            {placeholder || 'Seleziona…'}
+            {placeholder || t('common.selectPlaceholder')}
           </option>
           {children}
         </select>

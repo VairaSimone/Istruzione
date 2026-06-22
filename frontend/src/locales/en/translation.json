@@ -1,0 +1,268 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "delete": "Delete",
+    "loading": "Loading",
+    "selectPlaceholder": "Select…"
+  },
+  "language": {
+    "label": "Language",
+    "aria": "Change language",
+    "options": {
+      "it": "Italiano",
+      "en": "English"
+    },
+    "updated": "Language updated successfully."
+  },
+  "roles": {
+    "studente": "Student",
+    "insegnante": "Teacher"
+  },
+  "classi": {
+    "Prima": "First year",
+    "Seconda": "Second year",
+    "Terza": "Third year",
+    "Quarta": "Fourth year",
+    "Quinta": "Fifth year"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "usersManagement": "User management",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "mainNavAria": "Main navigation"
+  },
+  "header": {
+    "logoutSuccess": "Logged out successfully."
+  },
+  "home": {
+    "subtitle": "The platform for students and teachers to follow their Japanese learning journey, class by class.",
+    "start": "Get started",
+    "haveAccount": "I already have an account"
+  },
+  "auth": {
+    "fields": {
+      "nome": "First name",
+      "cognome": "Last name",
+      "eta": "Age",
+      "classe": "Class",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "newEmail": "New email address",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password"
+    },
+    "passwordHint": "Min. 8 characters, one uppercase, one lowercase, one number, one special character",
+    "login": {
+      "title": "Log in",
+      "subtitle": "Welcome back. Enter your credentials.",
+      "forgot": "Forgot your password?",
+      "submit": "Log in",
+      "noAccount": "Don't have an account?",
+      "success": "Logged in successfully."
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Sign up to start your learning journey.",
+      "submit": "Sign up",
+      "haveAccount": "Already have an account?",
+      "successTitle": "Registration complete",
+      "successText": "We sent you a verification email. Open the link in the message to activate your account, then you can log in.",
+      "successCta": "Go to login"
+    },
+    "forgot": {
+      "title": "Forgot password",
+      "subtitle": "Enter your email: we'll send you a link to reset it.",
+      "submit": "Send instructions",
+      "backToLogin": "Back to login",
+      "successTitle": "Check your email",
+      "successText": "If the email address you entered is registered, you will shortly receive instructions to reset your password."
+    },
+    "reset": {
+      "title": "Reset password",
+      "subtitle": "Choose a new secure password.",
+      "submit": "Update password",
+      "missingToken": "Invalid link: the reset token is missing. Request a new link from the 'Forgot password' page.",
+      "requestNew": "Request a new link",
+      "successTitle": "Password updated",
+      "successText": "Your password has been reset successfully. Please log in again with your new credentials.",
+      "successCta": "Go to login"
+    },
+    "verifyEmail": {
+      "pending": "Verifying your email…",
+      "pendingAria": "Verifying email",
+      "successTitle": "Email verified!",
+      "successText": "Your account is now active. You can log in.",
+      "successCta": "Go to login",
+      "failTitle": "Verification failed",
+      "failNoToken": "The link does not contain a valid token.",
+      "failGeneric": "The verification link is invalid or has expired. Try registering again or contact support.",
+      "backToLogin": "Back to login"
+    },
+    "verifyEmailChange": {
+      "pending": "Confirming your new email address…",
+      "pendingAria": "Confirming email change",
+      "successTitle": "Email updated!",
+      "successText": "Your new email address has been confirmed successfully. You can use it to log in from now on.",
+      "successCta": "Go to profile",
+      "invalidTitle": "Invalid link",
+      "invalidText": "The link does not contain any security token. Go back to your profile and request a new email change.",
+      "failTitle": "Change failed",
+      "failExpired": "The confirmation link has expired. Go back to your profile and request a new email change.",
+      "failEmailTaken": "This email address is now associated with another account.",
+      "failGeneric": "The token is invalid or has already been used. Request a new email change from your profile.",
+      "backToProfile": "Back to profile"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hi, {{name}}",
+    "subtitle": "Here is an overview of your account on the platform.",
+    "profileCardTitle": "Your profile",
+    "labelRole": "Role",
+    "labelClasse": "Class",
+    "labelEmail": "Email",
+    "manageProfile": "Manage profile",
+    "teacherCardTitle": "Class management",
+    "teacherCardText": "View the list of students, change roles and manage the accounts registered on the platform.",
+    "teacherCardCta": "Go to user management"
+  },
+  "profile": {
+    "title": "Your profile",
+    "subtitle": "Manage your account information and preferences.",
+    "infoTitle": "Personal information",
+    "fullName": "Full name",
+    "email": "Email",
+    "age": "Age",
+    "ageValue": "{{age}} years old",
+    "classe": "Class",
+    "role": "Role",
+    "emailVerified": "Email verified",
+    "verified": "Verified",
+    "notVerified": "Not verified",
+    "languageTitle": "Preferred language",
+    "languageDescription": "Determines the interface language and the one used in the automated emails sent by the platform.",
+    "languageSave": "Save",
+    "changeEmailTitle": "Change email address",
+    "changeEmailDescription": "You will receive a confirmation email at the new address. The change will only take effect after you click the confirmation link.",
+    "changeEmailSuccess": "Confirmation email sent to <0>{{email}}</0>. Check your new inbox.",
+    "changeEmailSubmit": "Send confirmation",
+    "deleteTitle": "Delete account",
+    "deleteDescription": "This action is permanent. All your data will be permanently deleted and cannot be recovered.",
+    "deleteConfirmText": "Are you sure? This operation cannot be undone.",
+    "deleteConfirm": "Yes, delete permanently",
+    "deleteCta": "Delete my account",
+    "deleteSuccess": "Your account has been deleted."
+  },
+  "users": {
+    "managementTitle": "User management",
+    "managementSubtitle": "View, filter and manage the accounts registered on the platform.",
+    "filters": {
+      "searchLabel": "Search by first or last name",
+      "searchPlaceholder": "E.g. Tanaka",
+      "roleLabel": "Role",
+      "roleAll": "All",
+      "classeLabel": "Class",
+      "classeAll": "All",
+      "submit": "Filter",
+      "reset": "Reset"
+    },
+    "table": {
+      "headerUser": "User",
+      "headerClasse": "Class",
+      "headerEmailStatus": "Email status",
+      "headerRole": "Role",
+      "headerActionsAria": "Actions",
+      "emptyFilteredTitle": "No users match the filters",
+      "emptyFilteredDescription": "Try changing or resetting the search filters.",
+      "emptyAllTitle": "No users registered",
+      "emptyAllDescription": "When students register, they will appear here."
+    },
+    "row": {
+      "delete": "Delete",
+      "roleAria": "Role of {{name}}",
+      "confirmTitle": "Delete this account?",
+      "confirmDescription": "The account of {{name}} ({{email}}) will be permanently deleted. This operation cannot be undone.",
+      "confirmCta": "Delete permanently",
+      "roleUpdated": "Role of {{name}} updated to \"{{role}}\".",
+      "deleted": "Account of {{name}} deleted."
+    }
+  },
+  "status": {
+    "notFoundTitle": "Page not found",
+    "notFoundText": "The page you are looking for does not exist or has been moved.",
+    "notFoundCta": "Back to home",
+    "forbiddenTitle": "Access denied",
+    "forbiddenText": "You do not have the necessary permissions to view this page.",
+    "forbiddenCta": "Back to dashboard"
+  },
+  "session": {
+    "checking": "Checking your session"
+  },
+  "lockout": {
+    "title": "Account temporarily locked due to too many attempts.",
+    "retryIn": "Try again in",
+    "retryNow": "You can try again now."
+  },
+  "errors": {
+    "network": "Unable to reach the server. Check your connection and try again.",
+    "unexpected": "An unexpected error occurred. Please try again later.",
+    "loadFailed": "Could not load the data. Please try again.",
+    "codes": {
+      "INVALID_CREDENTIALS": "Invalid credentials.",
+      "EMAIL_NOT_VERIFIED": "Your email has not been verified yet. Check your inbox for the confirmation link.",
+      "ACCOUNT_LOCKED": "Account temporarily locked due to too many attempts. Please try again later.",
+      "TOKEN_EXPIRED": "Your session has expired. Please log in again.",
+      "INVALID_TOKEN": "Invalid session. Please log in again.",
+      "NO_REFRESH_TOKEN": "Session expired. Please log in again.",
+      "REFRESH_TOKEN_EXPIRED": "Session expired. Please log in again.",
+      "INVALID_REFRESH_TOKEN": "Invalid session. Please log in again.",
+      "FORBIDDEN": "You do not have the necessary permissions for this operation.",
+      "CSRF_TOKEN_INVALID": "Invalid session. Reload the page and try again.",
+      "VALIDATION_ERROR": "Invalid input data.",
+      "DUPLICATE_VALUE": "This email address is already registered. Please choose another one.",
+      "NOT_FOUND": "Resource not found.",
+      "TOO_MANY_REQUESTS": "Too many requests. Please try again in a few minutes.",
+      "TOO_MANY_LOGIN_ATTEMPTS": "Too many login attempts. Please try again in 15 minutes.",
+      "USER_NOT_FOUND": "User not found.",
+      "EMAIL_TAKEN": "This email is already associated with another account.",
+      "INVALID_RESET_TOKEN": "Invalid or expired token.",
+      "EXPIRED_RESET_TOKEN": "Reset token expired.",
+      "EXPIRED_VERIFICATION_TOKEN": "Verification token expired.",
+      "INVALID_VERIFICATION_TOKEN": "Invalid or expired verification token.",
+      "EXPIRED_TOKEN": "The token has expired. Please request a new operation.",
+      "INVALID_ROLE": "Invalid role.",
+      "LAST_TEACHER": "Cannot delete or demote the last teacher.",
+      "SELF_ROLE_CHANGE_FORBIDDEN": "You cannot change your own role.",
+      "SELF_DELETE_FORBIDDEN": "You cannot delete your account from this section. Use the profile settings.",
+      "PAYLOAD_TOO_LARGE": "The request is too large.",
+      "CORS_ORIGIN_FORBIDDEN": "Origin not allowed."
+    }
+  },
+  "validation": {
+    "nomeRequired": "First name is required",
+    "nomeLength": "First name must be between 2 and 100 characters",
+    "nomeInvalid": "First name contains invalid characters",
+    "cognomeRequired": "Last name is required",
+    "cognomeLength": "Last name must be between 2 and 100 characters",
+    "cognomeInvalid": "Last name contains invalid characters",
+    "etaRequired": "Age is required",
+    "etaInt": "Age must be an integer between 14 and 99",
+    "etaMin": "Minimum age is {{min}} years",
+    "etaMax": "Maximum age is {{max}} years",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "emailMax": "Email cannot exceed 255 characters",
+    "passwordRequired": "Password is required",
+    "passwordComplexity": "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character",
+    "confirmRequired": "Confirm the password",
+    "passwordMismatch": "Passwords do not match",
+    "classeInvalid": "Class must be one of: {{values}}",
+    "roleInvalid": "Invalid role"
+  }
+}

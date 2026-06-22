@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { CLASSI, ROLE_OPTIONS } from '../../../constants/domain';
 import TextField from '../../../components/ui/TextField';
 import Select from '../../../components/ui/Select';
@@ -8,10 +9,10 @@ import styles from './UsersFilterBar.module.css';
 /**
  * Filtri per GET /gestione/utenti. Rispecchiano i parametri di query
  * REALMENTE supportati da `authService.getUtentiPerInsegnante`
- * (?ruolo=, ?classe=, ?nome=) — non sono inventati: confermati leggendo
- * il sorgente del backend, anche se non esplicitati nella documentazione.
+ * (?ruolo=, ?classe=, ?nome=).
  */
 const UsersFilterBar = ({ onFilterChange, currentFilters }) => {
+  const { t } = useTranslation();
   const { register, handleSubmit, reset } = useForm({
     defaultValues: currentFilters,
   });
@@ -33,35 +34,43 @@ const UsersFilterBar = ({ onFilterChange, currentFilters }) => {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.bar} noValidate>
       <div className={styles.field}>
         <TextField
-          label="Cerca per nome o cognome"
-          placeholder="Es. Tanaka"
+          label={t('users.filters.searchLabel')}
+          placeholder={t('users.filters.searchPlaceholder')}
           {...register('nome')}
         />
       </div>
       <div className={styles.fieldNarrow}>
-        <Select label="Ruolo" placeholder="Tutti" {...register('ruolo')}>
+        <Select
+          label={t('users.filters.roleLabel')}
+          placeholder={t('users.filters.roleAll')}
+          {...register('ruolo')}
+        >
           {ROLE_OPTIONS.map((role) => (
             <option key={role} value={role}>
-              {role}
+              {t(`roles.${role}`)}
             </option>
           ))}
         </Select>
       </div>
       <div className={styles.fieldNarrow}>
-        <Select label="Classe" placeholder="Tutte" {...register('classe')}>
+        <Select
+          label={t('users.filters.classeLabel')}
+          placeholder={t('users.filters.classeAll')}
+          {...register('classe')}
+        >
           {CLASSI.map((classe) => (
             <option key={classe} value={classe}>
-              {classe}
+              {t(`classi.${classe}`)}
             </option>
           ))}
         </Select>
       </div>
       <div className={styles.actions}>
         <Button type="submit" size="sm">
-          Filtra
+          {t('users.filters.submit')}
         </Button>
         <Button type="button" variant="ghost" size="sm" onClick={handleReset}>
-          Reimposta
+          {t('users.filters.reset')}
         </Button>
       </div>
     </form>

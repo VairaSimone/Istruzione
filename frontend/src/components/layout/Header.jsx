@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   useAuthStore,
   selectIsAuthenticated,
@@ -7,10 +8,12 @@ import {
 import { useLogout } from '../../hooks/useLogout';
 import { ROUTES } from '../../constants/routes';
 import Button from '../ui/Button';
+import LanguageSwitcher from '../ui/LanguageSwitcher';
 import toast from 'react-hot-toast';
 import styles from './Header.module.css';
 
 const Header = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
@@ -20,7 +23,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
-      toast.success('Logout effettuato con successo.');
+      toast.success(t('header.logoutSuccess'));
       navigate(ROUTES.LOGIN);
     } catch {
       navigate(ROUTES.LOGIN);
@@ -41,22 +44,23 @@ const Header = () => {
         </Link>
 
         {isAuthenticated && (
-          <nav className={styles.nav} aria-label="Navigazione principale">
+          <nav className={styles.nav} aria-label={t('nav.mainNavAria')}>
             <Link to={ROUTES.DASHBOARD} className={styles.navLink}>
-              Dashboard
+              {t('nav.dashboard')}
             </Link>
             <Link to={ROUTES.PROFILE} className={styles.navLink}>
-              Profilo
+              {t('nav.profile')}
             </Link>
             {isTeacher && (
               <Link to={ROUTES.USERS_MANAGEMENT} className={styles.navLink}>
-                Gestione utenti
+                {t('nav.usersManagement')}
               </Link>
             )}
           </nav>
         )}
 
         <div className={styles.actions}>
+          <LanguageSwitcher />
           {isAuthenticated ? (
             <>
               <span className={styles.userName}>
@@ -68,16 +72,16 @@ const Header = () => {
                 onClick={handleLogout}
                 isLoading={logoutMutation.isPending}
               >
-                Esci
+                {t('nav.logout')}
               </Button>
             </>
           ) : (
             <>
               <Link to={ROUTES.LOGIN} className={styles.navLink}>
-                Accedi
+                {t('nav.login')}
               </Link>
               <Button size="sm" onClick={() => navigate(ROUTES.REGISTER)}>
-                Registrati
+                {t('nav.register')}
               </Button>
             </>
           )}

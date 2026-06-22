@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useDeleteMyAccount } from '../../../hooks/useProfileMutations';
-import { parseApiError } from '../../../utils/parseApiError';
+import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { ROUTES } from '../../../constants/routes';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
@@ -15,6 +16,7 @@ import styles from './ProfileSections.module.css';
  * richiesta, per prevenire eliminazioni accidentali da un singolo click.
  */
 const DeleteAccountSection = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const deleteMutation = useDeleteMyAccount();
   const [isConfirming, setIsConfirming] = useState(false);
@@ -22,48 +24,43 @@ const DeleteAccountSection = () => {
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync();
-      toast.success('Il tuo account è stato eliminato.');
+      toast.success(t('profile.deleteSuccess'));
       navigate(ROUTES.HOME, { replace: true });
     } catch (error) {
-      toast.error(parseApiError(error).message);
+      toast.error(getApiErrorMessage(t, error));
       setIsConfirming(false);
     }
   };
 
   return (
     <Card className={styles.dangerZone}>
-      <h2 className={styles.sectionTitle}>Elimina account</h2>
-      <p className={styles.sectionDescription}>
-        Questa azione è permanente. Tutti i tuoi dati verranno eliminati definitivamente e
-        non potranno essere recuperati.
-      </p>
+      <h2 className={styles.sectionTitle}>{t('profile.deleteTitle')}</h2>
+      <p className={styles.sectionDescription}>{t('profile.deleteDescription')}</p>
 
       {isConfirming ? (
         <>
-          <p className={styles.confirmText}>
-            Sei sicuro? Questa operazione non può essere annullata.
-          </p>
+          <p className={styles.confirmText}>{t('profile.deleteConfirmText')}</p>
           <div className={styles.dangerActions}>
             <Button
               variant="danger"
               onClick={handleDelete}
               isLoading={deleteMutation.isPending}
             >
-              Sì, elimina definitivamente
+              {t('profile.deleteConfirm')}
             </Button>
             <Button
               variant="ghost"
               onClick={() => setIsConfirming(false)}
               disabled={deleteMutation.isPending}
             >
-              Annulla
+              {t('common.cancel')}
             </Button>
           </div>
         </>
       ) : (
         <div className={styles.dangerActions}>
           <Button variant="danger" onClick={() => setIsConfirming(true)}>
-            Elimina il mio account
+            {t('profile.deleteCta')}
           </Button>
         </div>
       )}

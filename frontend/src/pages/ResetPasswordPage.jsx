@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { resetPasswordSchema } from '../validators/authSchemas';
+import { useTranslation } from 'react-i18next';
+import { buildResetPasswordSchema } from '../validators/authSchemas';
 import { useResetPassword } from '../hooks/usePasswordAndEmailFlows';
-import { parseApiError } from '../utils/parseApiError';
+import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { ROUTES } from '../constants/routes';
 import Card from '../components/ui/Card';
 import TextField from '../components/ui/TextField';
@@ -17,6 +18,7 @@ import styles from './AuthPage.module.css';
  * /reset-password?token=<hex64>
  */
 const ResetPasswordPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -24,12 +26,14 @@ const ResetPasswordPage = () => {
   const [formError, setFormError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const schema = useMemo(() => buildResetPasswordSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(resetPasswordSchema),
+    resolver: zodResolver(schema),
   });
 
   const onSubmit = async ({ nuovaPassword }) => {
@@ -38,8 +42,7 @@ const ResetPasswordPage = () => {
       await resetPasswordMutation.mutateAsync({ token, nuovaPassword });
       setIsSuccess(true);
     } catch (error) {
-      const parsed = parseApiError(error);
-      setFormError(parsed.message);
+      setFormError(getApiErrorMessage(t, error));
     }
   };
 
@@ -47,10 +50,10 @@ const ResetPasswordPage = () => {
     return (
       <div className={styles.wrapper}>
         <Card className={styles.card}>
-          <FormError message="Link non valido: il token di ripristino è mancante. Richiedi un nuovo link dalla pagina 'Password dimenticata'." />
+          <FormError message={t('auth.reset.missingToken')} />
           <Link to={ROUTES.FORGOT_PASSWORD}>
             <Button fullWidth variant="secondary">
-              Richiedi nuovo link
+              {t('auth.reset.requestNew')}
             </Button>
           </Link>
         </Card>
@@ -66,13 +69,10 @@ const ResetPasswordPage = () => {
             <div className={styles.successIcon} aria-hidden="true">
               済
             </div>
-            <h1 className={styles.title}>Password aggiornata</h1>
-            <p className={styles.successText}>
-              La tua password è stata reimpostata con successo. Effettua nuovamente il
-              login con le nuove credenziali.
-            </p>
+            <h1 className={styles.title}>{t('auth.reset.successTitle')}</h1>
+            <p className={styles.successText}>{t('auth.reset.successText')}</p>
             <Button fullWidth onClick={() => navigate(ROUTES.LOGIN)}>
-              Vai al login
+              {t('auth.reset.successCta')}
             </Button>
           </div>
         </Card>
@@ -87,24 +87,24 @@ const ResetPasswordPage = () => {
           <span className={styles.mark} aria-hidden="true">
             鍵
           </span>
-          <h1 className={styles.title}>Reimposta password</h1>
-          <p className={styles.subtitle}>Scegli una nuova password sicura.</p>
+          <h1 className={styles.title}>{t('auth.reset.title')}</h1>
+          <p className={styles.subtitle}>{t('auth.reset.subtitle')}</p>
         </div>
 
         <FormError message={formError} />
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
-            label="Nuova password"
+            label={t('auth.fields.newPassword')}
             type="password"
             autoComplete="new-password"
             required
-            hint="Min. 8 caratteri, una maiuscola, una minuscola, un numero, un carattere speciale"
+            hint={t('auth.passwordHint')}
             error={errors.nuovaPassword?.message}
             {...register('nuovaPassword')}
           />
           <TextField
-            label="Conferma nuova password"
+            label={t('auth.fields.confirmNewPassword')}
             type="password"
             autoComplete="new-password"
             required
@@ -118,7 +118,7 @@ const ResetPasswordPage = () => {
             size="lg"
             isLoading={resetPasswordMutation.isPending}
           >
-            Aggiorna password
+            {t('auth.reset.submit')}
           </Button>
         </form>
       </Card>

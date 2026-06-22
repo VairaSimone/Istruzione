@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { loginSchema } from '../validators/authSchemas';
+import { buildLoginSchema } from '../validators/authSchemas';
 import { useLogin } from '../hooks/useLogin';
 import { parseApiError } from '../utils/parseApiError';
+import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { ROUTES } from '../constants/routes';
 import { API_ERROR_CODES } from '../constants/domain';
 import Card from '../components/ui/Card';
@@ -16,18 +18,22 @@ import LockoutNotice from '../features/auth/components/LockoutNotice';
 import styles from './AuthPage.module.css';
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const loginMutation = useLogin();
   const [formError, setFormError] = useState(null);
   const [isLocked, setIsLocked] = useState(false);
+  const [lockoutRaw, setLockoutRaw] = useState(null);
+
+  const schema = useMemo(() => buildLoginSchema(t), [t]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(schema),
   });
 
   const redirectTo = location.state?.from?.pathname || ROUTES.DASHBOARD;
@@ -35,36 +41,29 @@ const LoginPage = () => {
   const onSubmit = async (values) => {
     setFormError(null);
     setIsLocked(false);
+    setLockoutRaw(null);
 
     try {
       await loginMutation.mutateAsync(values);
-      toast.success('Accesso effettuato.');
+      toast.success(t('auth.login.success'));
       navigate(redirectTo, { replace: true });
     } catch (error) {
       const parsed = parseApiError(error);
+      const message = getApiErrorMessage(t, error);
 
-      // 403 = account bloccato per troppi tentativi falliti (vedi
-      // authService.loginUtente, MAX_TENTATIVI_FALLITI = 5)
-      if (parsed.statusCode === 403 || parsed.code === API_ERROR_CODES.ACCOUNT_LOCKED) {
+      // 403 = account bloccato per troppi tentativi falliti
+      if (
+        parsed.statusCode === 403 ||
+        parsed.code === API_ERROR_CODES.ACCOUNT_LOCKED
+      ) {
         setIsLocked(true);
-        setFormError(parsed.message);
+        // messaggio grezzo del backend: serve solo per estrarne i minuti
+        setLockoutRaw(parsed.message);
+        setFormError(message);
         return;
       }
 
-
-      if (parsed.code === API_ERROR_CODES.EMAIL_NOT_VERIFIED) {
-        setFormError(
-          'La tua email non è ancora stata verificata. Controlla la tua casella di posta per il link di conferma.'
-        );
-        return;
-      }
-
-      if (parsed.code === API_ERROR_CODES.TOO_MANY_LOGIN_ATTEMPTS) {
-        setFormError(parsed.message);
-        return;
-      }
-
-      setFormError(parsed.message);
+      setFormError(message);
     }
   };
 
@@ -75,19 +74,19 @@ const LoginPage = () => {
           <span className={styles.mark} aria-hidden="true">
             入
           </span>
-          <h1 className={styles.title}>Accedi</h1>
-          <p className={styles.subtitle}>Bentornato. Inserisci le tue credenziali.</p>
+          <h1 className={styles.title}>{t('auth.login.title')}</h1>
+          <p className={styles.subtitle}>{t('auth.login.subtitle')}</p>
         </div>
 
         {isLocked ? (
-          <LockoutNotice message={formError} />
+          <LockoutNotice message={lockoutRaw} />
         ) : (
           <FormError message={formError} />
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
-            label="Email"
+            label={t('auth.fields.email')}
             type="email"
             autoComplete="email"
             required
@@ -95,7 +94,7 @@ const LoginPage = () => {
             {...register('email')}
           />
           <TextField
-            label="Password"
+            label={t('auth.fields.password')}
             type="password"
             autoComplete="current-password"
             required
@@ -104,16 +103,16 @@ const LoginPage = () => {
           />
 
           <div className={styles.forgotLink}>
-            <Link to={ROUTES.FORGOT_PASSWORD}>Password dimenticata?</Link>
+            <Link to={ROUTES.FORGOT_PASSWORD}>{t('auth.login.forgot')}</Link>
           </div>
 
           <Button type="submit" fullWidth size="lg" isLoading={loginMutation.isPending}>
-            Accedi
+            {t('auth.login.submit')}
           </Button>
         </form>
 
         <p className={styles.switchAuth}>
-          Non hai un account? <Link to={ROUTES.REGISTER}>Registrati</Link>
+          {t('auth.login.noAccount')} <Link to={ROUTES.REGISTER}>{t('nav.register')}</Link>
         </p>
       </Card>
     </div>

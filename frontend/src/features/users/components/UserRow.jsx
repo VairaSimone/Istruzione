@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../../store/authStore';
 import {
   useUpdateUserRole,
   useDeleteUserByTeacher,
 } from '../../../hooks/useUserManagementMutations';
-import { parseApiError } from '../../../utils/parseApiError';
+import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { ROLE_OPTIONS } from '../../../constants/domain';
 import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
@@ -13,12 +14,14 @@ import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 import styles from './UserRow.module.css';
 
 const UserRow = ({ utente }) => {
+  const { t } = useTranslation();
   const currentUser = useAuthStore((state) => state.user);
   const updateRoleMutation = useUpdateUserRole();
   const deleteUserMutation = useDeleteUserByTeacher();
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   const isSelf = currentUser?.id === utente.id;
+  const fullName = `${utente.nome} ${utente.cognome}`;
 
   const handleRoleChange = async (event) => {
     const nuovoRuolo = event.target.value;
@@ -26,19 +29,24 @@ const UserRow = ({ utente }) => {
 
     try {
       await updateRoleMutation.mutateAsync({ id: utente.id, ruolo: nuovoRuolo });
-      toast.success(`Ruolo di ${utente.nome} aggiornato a "${nuovoRuolo}".`);
+      toast.success(
+        t('users.row.roleUpdated', {
+          name: utente.nome,
+          role: t(`roles.${nuovoRuolo}`),
+        })
+      );
     } catch (error) {
-      toast.error(parseApiError(error).message);
+      toast.error(getApiErrorMessage(t, error));
     }
   };
 
   const handleDelete = async () => {
     try {
       await deleteUserMutation.mutateAsync(utente.id);
-      toast.success(`Account di ${utente.nome} ${utente.cognome} eliminato.`);
+      toast.success(t('users.row.deleted', { name: fullName }));
       setIsConfirmingDelete(false);
     } catch (error) {
-      toast.error(parseApiError(error).message);
+      toast.error(getApiErrorMessage(t, error));
       setIsConfirmingDelete(false);
     }
   };
@@ -48,16 +56,16 @@ const UserRow = ({ utente }) => {
       <tr className={styles.row}>
         <td>
           <div className={styles.nameCell}>
-            <span className={styles.fullName}>
-              {utente.nome} {utente.cognome}
-            </span>
+            <span className={styles.fullName}>{fullName}</span>
             <span className={styles.email}>{utente.email}</span>
           </div>
         </td>
-        <td>{utente.classe}</td>
+        <td>{t(`classi.${utente.classe}`)}</td>
         <td>
           <Badge tone={utente.email_verificata ? 'matcha' : 'danger'}>
-            {utente.email_verificata ? 'Verificata' : 'Non verificata'}
+            {utente.email_verificata
+              ? t('profile.verified')
+              : t('profile.notVerified')}
           </Badge>
         </td>
         <td>
@@ -66,11 +74,11 @@ const UserRow = ({ utente }) => {
             value={utente.ruolo}
             onChange={handleRoleChange}
             disabled={updateRoleMutation.isPending || isSelf}
-            aria-label={`Ruolo di ${utente.nome} ${utente.cognome}`}
+            aria-label={t('users.row.roleAria', { name: fullName })}
           >
             {ROLE_OPTIONS.map((role) => (
               <option key={role} value={role}>
-                {role}
+                {t(`roles.${role}`)}
               </option>
             ))}
           </select>
@@ -82,16 +90,19 @@ const UserRow = ({ utente }) => {
             disabled={isSelf}
             onClick={() => setIsConfirmingDelete(true)}
           >
-            Elimina
+            {t('users.row.delete')}
           </Button>
         </td>
       </tr>
 
       <ConfirmDialog
         isOpen={isConfirmingDelete}
-        title="Eliminare questo account?"
-        description={`L'account di ${utente.nome} ${utente.cognome} (${utente.email}) verrà eliminato definitivamente. L'operazione non può essere annullata.`}
-        confirmLabel="Elimina definitivamente"
+        title={t('users.row.confirmTitle')}
+        description={t('users.row.confirmDescription', {
+          name: fullName,
+          email: utente.email,
+        })}
+        confirmLabel={t('users.row.confirmCta')}
         isLoading={deleteUserMutation.isPending}
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmingDelete(false)}

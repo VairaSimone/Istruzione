@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema } from '../validators/authSchemas';
+import { useTranslation } from 'react-i18next';
+import { buildForgotPasswordSchema } from '../validators/authSchemas';
 import { useForgotPassword } from '../hooks/usePasswordAndEmailFlows';
-import { parseApiError } from '../utils/parseApiError';
+import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { ROUTES } from '../constants/routes';
 import Card from '../components/ui/Card';
 import TextField from '../components/ui/TextField';
@@ -13,27 +14,28 @@ import FormError from '../components/shared/FormError';
 import styles from './AuthPage.module.css';
 
 const ForgotPasswordPage = () => {
+  const { t } = useTranslation();
   const forgotPasswordMutation = useForgotPassword();
   const [formError, setFormError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const schema = useMemo(() => buildForgotPasswordSchema(t), [t]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(forgotPasswordSchema),
+    resolver: zodResolver(schema),
   });
 
   const onSubmit = async (values) => {
     setFormError(null);
     try {
       await forgotPasswordMutation.mutateAsync(values);
-
       setIsSuccess(true);
     } catch (error) {
-      const parsed = parseApiError(error);
-      setFormError(parsed.message);
+      setFormError(getApiErrorMessage(t, error));
     }
   };
 
@@ -45,14 +47,11 @@ const ForgotPasswordPage = () => {
             <div className={styles.successIcon} aria-hidden="true">
               便
             </div>
-            <h1 className={styles.title}>Controlla la tua email</h1>
-            <p className={styles.successText}>
-              Se l'indirizzo inserito è registrato, riceverai a breve le istruzioni per
-              reimpostare la password.
-            </p>
+            <h1 className={styles.title}>{t('auth.forgot.successTitle')}</h1>
+            <p className={styles.successText}>{t('auth.forgot.successText')}</p>
             <Link to={ROUTES.LOGIN}>
               <Button fullWidth variant="secondary">
-                Torna al login
+                {t('auth.forgot.backToLogin')}
               </Button>
             </Link>
           </div>
@@ -68,17 +67,15 @@ const ForgotPasswordPage = () => {
           <span className={styles.mark} aria-hidden="true">
             鍵
           </span>
-          <h1 className={styles.title}>Password dimenticata</h1>
-          <p className={styles.subtitle}>
-            Inserisci la tua email: ti invieremo un link per reimpostarla.
-          </p>
+          <h1 className={styles.title}>{t('auth.forgot.title')}</h1>
+          <p className={styles.subtitle}>{t('auth.forgot.subtitle')}</p>
         </div>
 
         <FormError message={formError} />
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
-            label="Email"
+            label={t('auth.fields.email')}
             type="email"
             autoComplete="email"
             required
@@ -92,12 +89,12 @@ const ForgotPasswordPage = () => {
             size="lg"
             isLoading={forgotPasswordMutation.isPending}
           >
-            Invia istruzioni
+            {t('auth.forgot.submit')}
           </Button>
         </form>
 
         <p className={styles.switchAuth}>
-          <Link to={ROUTES.LOGIN}>Torna al login</Link>
+          <Link to={ROUTES.LOGIN}>{t('auth.forgot.backToLogin')}</Link>
         </p>
       </Card>
     </div>

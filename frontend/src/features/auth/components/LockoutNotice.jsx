@@ -1,19 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './LockoutNotice.module.css';
 
 /**
- * Mostra un countdown leggibile quando il login restituisce 403 per
- * lockout (5 tentativi falliti -> blocco 15 minuti, vedi
- * authService.loginUtente). Il backend non restituisce un timestamp di
- * sblocco esatto nel body — solo un messaggio testuale con i minuti
- * rimanenti (es. "Riprova tra 12 minuti") — quindi il countdown è
- * approssimato lato client a partire da quel messaggio iniziale e serve
- * solo come indicazione visiva, non come fonte di verità: il backend
- * resta l'unico arbitro reale dello sblocco.
+ * Countdown leggibile quando il login restituisce 403 per lockout.
+ * Il backend non restituisce un timestamp di sblocco esatto: solo un
+ * messaggio testuale con i minuti rimanenti. Il countdown è quindi
+ * approssimato lato client a partire dai minuti estratti dal messaggio
+ * GREZZO del backend (le sole cifre, indipendenti dalla lingua) e serve
+ * solo come indicazione visiva — il backend resta l'unico arbitro reale.
+ *
+ * Tutta la parte testuale (titolo, countdown) è localizzata.
  */
 const LockoutNotice = ({ message }) => {
-  // Estrae il numero di minuti dal messaggio del backend, se presente
-  const match = message?.match(/(\d+)\s*minut/i);
+  const { t } = useTranslation();
+
+  // Estrae i minuti dal messaggio del backend, se presenti (es. "15 min...")
+  const match = message?.match(/(\d+)\s*min/i);
   const initialMinutes = match ? parseInt(match[1], 10) : null;
 
   const [secondsLeft, setSecondsLeft] = useState(
@@ -33,7 +36,7 @@ const LockoutNotice = ({ message }) => {
   if (secondsLeft === null) {
     return (
       <div className={styles.banner} role="alert">
-        {message}
+        <p className={styles.text}>{t('lockout.title')}</p>
       </div>
     );
   }
@@ -43,18 +46,16 @@ const LockoutNotice = ({ message }) => {
 
   return (
     <div className={styles.banner} role="alert">
-      <p className={styles.text}>
-        Account temporaneamente bloccato per troppi tentativi.
-      </p>
+      <p className={styles.text}>{t('lockout.title')}</p>
       {secondsLeft > 0 ? (
         <p className={styles.countdown}>
-          Riprova tra{' '}
+          {t('lockout.retryIn')}{' '}
           <strong>
             {minutes}:{String(seconds).padStart(2, '0')}
           </strong>
         </p>
       ) : (
-        <p className={styles.countdown}>Puoi riprovare ora.</p>
+        <p className={styles.countdown}>{t('lockout.retryNow')}</p>
       )}
     </div>
   );

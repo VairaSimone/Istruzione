@@ -1,29 +1,29 @@
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useVerifyEmail } from '../hooks/usePasswordAndEmailFlows';
-import { parseApiError } from '../utils/parseApiError';
+import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { ROUTES } from '../constants/routes';
 import Card from '../components/ui/Card';
 import Spinner from '../components/ui/Spinner';
 import Button from '../components/ui/Button';
 import styles from './AuthPage.module.css';
 
-
-
 const VerifyEmailPage = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
-const { isSuccess, isError, error } = useVerifyEmail(token);
+  const { isSuccess, isError, error } = useVerifyEmail(token);
 
   if (!token) {
     return (
       <div className={styles.wrapper}>
         <Card className={styles.card}>
           <div className={styles.successBox}>
-            <h1 className={styles.title}>Verifica non riuscita</h1>
-            <p className={styles.successText}>Il link non contiene un token valido.</p>
+            <h1 className={styles.title}>{t('auth.verifyEmail.failTitle')}</h1>
+            <p className={styles.successText}>{t('auth.verifyEmail.failNoToken')}</p>
             <Link to={ROUTES.LOGIN}>
               <Button fullWidth variant="secondary">
-                Torna al login
+                {t('auth.verifyEmail.backToLogin')}
               </Button>
             </Link>
           </div>
@@ -40,12 +40,10 @@ const { isSuccess, isError, error } = useVerifyEmail(token);
             <div className={styles.successIcon} aria-hidden="true">
               済
             </div>
-            <h1 className={styles.title}>Email verificata!</h1>
-            <p className={styles.successText}>
-              Il tuo account è ora attivo. Puoi effettuare il login.
-            </p>
+            <h1 className={styles.title}>{t('auth.verifyEmail.successTitle')}</h1>
+            <p className={styles.successText}>{t('auth.verifyEmail.successText')}</p>
             <Link to={ROUTES.LOGIN}>
-              <Button fullWidth>Vai al login</Button>
+              <Button fullWidth>{t('auth.verifyEmail.successCta')}</Button>
             </Link>
           </div>
         </Card>
@@ -58,13 +56,13 @@ const { isSuccess, isError, error } = useVerifyEmail(token);
       <div className={styles.wrapper}>
         <Card className={styles.card}>
           <div className={styles.successBox}>
-            <h1 className={styles.title}>Verifica non riuscita</h1>
+            <h1 className={styles.title}>{t('auth.verifyEmail.failTitle')}</h1>
             <p className={styles.successText}>
-{parseApiError(error).message ||
-  'Il link di verifica non è valido o è scaduto. Prova a registrarti di nuovo o contatta il supporto.'}            </p>
+              {getApiErrorMessage(t, error) || t('auth.verifyEmail.failGeneric')}
+            </p>
             <Link to={ROUTES.LOGIN}>
               <Button fullWidth variant="secondary">
-                Torna al login
+                {t('auth.verifyEmail.backToLogin')}
               </Button>
             </Link>
           </div>
@@ -77,8 +75,8 @@ const { isSuccess, isError, error } = useVerifyEmail(token);
     <div className={styles.wrapper}>
       <Card className={styles.card}>
         <div className={styles.successBox}>
-          <Spinner label="Verifica email in corso" />
-          <p className={styles.successText}>Verifica della tua email in corso…</p>
+          <Spinner label={t('auth.verifyEmail.pendingAria')} />
+          <p className={styles.successText}>{t('auth.verifyEmail.pending')}</p>
         </div>
       </Card>
     </div>

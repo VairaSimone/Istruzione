@@ -63,6 +63,13 @@ const validateRegistrazione = [
     .notEmpty().withMessage('La classe è obbligatoria')
     .isIn(Utente.CLASSI_VALIDE)
     .withMessage(`La classe deve essere una di: ${Utente.CLASSI_VALIDE.join(', ')}`),
+
+  // `lingua` è OPZIONALE: il frontend la invia (lingua attiva nella UI) per
+  // localizzare l'email di verifica. Se assente, il service usa il default.
+  body('lingua')
+    .optional()
+    .isIn(['it', 'en'])
+    .withMessage('La lingua deve essere una di: it, en'),
 ];
 
 // ─────────────────────────────────────────────

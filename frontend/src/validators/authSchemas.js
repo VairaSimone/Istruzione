@@ -1,6 +1,20 @@
 import { z } from 'zod';
 import { CLASSI, ETA_MIN, ETA_MAX } from '../constants/domain';
 
+/**
+ * Schemi di validazione Zod localizzati.
+ *
+ * Poiché i messaggi devono essere tradotti nella lingua corrente, ogni schema
+ * è esposto come FUNZIONE che riceve la funzione di traduzione `t` di
+ * react-i18next. Nei componenti va costruito con `useMemo`:
+ *
+ *   const schema = useMemo(() => buildLoginSchema(t), [t]);
+ *
+ * In questo modo, al cambio lingua, gli schemi (e quindi i messaggi di errore)
+ * vengono rigenerati automaticamente.
+ *
+ * Le regole rispecchiano 1:1 i validator server-side (authValidators.js).
+ */
 
 // Stessa regex usata in authValidators.js -> passwordRegex
 const PASSWORD_REGEX =
@@ -9,97 +23,99 @@ const PASSWORD_REGEX =
 // Stessa regex usata per nome/cognome (supporta accenti, apostrofi, trattini)
 const NAME_REGEX = /^[a-zA-ZÀ-ÿ\s'-]+$/;
 
-const passwordSchema = z
-  .string()
-  .trim()
-  .min(1, 'La password è obbligatoria')
-  .regex(
-    PASSWORD_REGEX,
-    'La password deve contenere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale'
-  );
+const buildPasswordSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .min(1, t('validation.passwordRequired'))
+    .regex(PASSWORD_REGEX, t('validation.passwordComplexity'));
 
-export const registerSchema = z
-  .object({
-    nome: z
-      .string()
-      .trim()
-      .min(1, 'Il nome è obbligatorio')
-      .min(2, 'Il nome deve avere tra 2 e 100 caratteri')
-      .max(100, 'Il nome deve avere tra 2 e 100 caratteri')
-      .regex(NAME_REGEX, 'Il nome contiene caratteri non validi'),
+const buildEmailSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .min(1, t('validation.emailRequired'))
+    .email(t('validation.emailInvalid'))
+    .max(255, t('validation.emailMax'));
 
-    cognome: z
-      .string()
-      .trim()
-      .min(1, 'Il cognome è obbligatorio')
-      .min(2, 'Il cognome deve avere tra 2 e 100 caratteri')
-      .max(100, 'Il cognome deve avere tra 2 e 100 caratteri')
-      .regex(NAME_REGEX, 'Il cognome contiene caratteri non validi'),
+export const buildRegisterSchema = (t) =>
+  z
+    .object({
+      nome: z
+        .string()
+        .trim()
+        .min(1, t('validation.nomeRequired'))
+        .min(2, t('validation.nomeLength'))
+        .max(100, t('validation.nomeLength'))
+        .regex(NAME_REGEX, t('validation.nomeInvalid')),
 
-    eta: z.coerce
-      .number({ message: "L'età è obbligatoria" })
-      .int("L'età deve essere un numero intero tra 14 e 99")
-      .min(ETA_MIN, `L'età minima è ${ETA_MIN} anni`)
-      .max(ETA_MAX, `L'età massima è ${ETA_MAX} anni`),
+      cognome: z
+        .string()
+        .trim()
+        .min(1, t('validation.cognomeRequired'))
+        .min(2, t('validation.cognomeLength'))
+        .max(100, t('validation.cognomeLength'))
+        .regex(NAME_REGEX, t('validation.cognomeInvalid')),
 
+      eta: z.coerce
+        .number({ message: t('validation.etaRequired') })
+        .int(t('validation.etaInt'))
+        .min(ETA_MIN, t('validation.etaMin', { min: ETA_MIN }))
+        .max(ETA_MAX, t('validation.etaMax', { max: ETA_MAX })),
+
+      email: buildEmailSchema(t),
+
+      password: buildPasswordSchema(t),
+
+      confermaPassword: z.string().trim().min(1, t('validation.confirmRequired')),
+
+      classe: z.enum(CLASSI, {
+        message: t('validation.classeInvalid', { values: CLASSI.join(', ') }),
+      }),
+    })
+    .refine((data) => data.password === data.confermaPassword, {
+      message: t('validation.passwordMismatch'),
+      path: ['confermaPassword'],
+    });
+
+export const buildLoginSchema = (t) =>
+  z.object({
     email: z
       .string()
       .trim()
-      .min(1, "L'email è obbligatoria")
-      .email('Formato email non valido')
-      .max(255, "L'email non può superare i 255 caratteri"),
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+    password: z.string().trim().min(1, t('validation.passwordRequired')),
+  });
 
-    password: passwordSchema,
+export const buildForgotPasswordSchema = (t) =>
+  z.object({
+    email: z
+      .string()
+      .trim()
+      .min(1, t('validation.emailRequired'))
+      .email(t('validation.emailInvalid')),
+  });
 
-    confermaPassword: z.string().trim().min(1, 'Conferma la password'),
+export const buildResetPasswordSchema = (t) =>
+  z
+    .object({
+      nuovaPassword: buildPasswordSchema(t),
+      confermaPassword: z.string().trim().min(1, t('validation.confirmRequired')),
+    })
+    .refine((data) => data.nuovaPassword === data.confermaPassword, {
+      message: t('validation.passwordMismatch'),
+      path: ['confermaPassword'],
+    });
 
-    classe: z.enum(CLASSI, {
-      message: `La classe deve essere una di: ${CLASSI.join(', ')}`,
+export const buildChangeEmailSchema = (t) =>
+  z.object({
+    nuovaEmail: buildEmailSchema(t),
+  });
+
+export const buildUpdateRoleSchema = (t) =>
+  z.object({
+    ruolo: z.enum(['studente', 'insegnante'], {
+      message: t('validation.roleInvalid'),
     }),
-  })
-  .refine((data) => data.password === data.confermaPassword, {
-    message: 'Le password non coincidono',
-    path: ['confermaPassword'],
   });
-
-export const loginSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, "L'email è obbligatoria")
-    .email('Formato email non valido'),
-  password: z.string().trim().min(1, 'La password è obbligatoria'),
-});
-
-export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, "L'email è obbligatoria")
-    .email('Formato email non valido'),
-});
-
-export const resetPasswordSchema = z
-  .object({
-    nuovaPassword: passwordSchema,
-    confermaPassword: z.string().trim().min(1, 'Conferma la password'),
-  })
-  .refine((data) => data.nuovaPassword === data.confermaPassword, {
-    message: 'Le password non coincidono',
-    path: ['confermaPassword'],
-  });
-
-export const changeEmailSchema = z.object({
-  nuovaEmail: z
-    .string()
-    .trim()
-    .min(1, "L'email è obbligatoria")
-    .email('Formato email non valido')
-    .max(255, "L'email non può superare i 255 caratteri"),
-});
-
-export const updateRoleSchema = z.object({
-  ruolo: z.enum(['studente', 'insegnante'], {
-    message: 'Ruolo non valido',
-  }),
-});

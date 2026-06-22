@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema } from '../validators/authSchemas';
+import { useTranslation } from 'react-i18next';
+import { buildRegisterSchema } from '../validators/authSchemas';
 import { useRegister } from '../hooks/useRegister';
 import { parseApiError } from '../utils/parseApiError';
+import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { ROUTES } from '../constants/routes';
 import { CLASSI } from '../constants/domain';
 import Card from '../components/ui/Card';
@@ -15,10 +17,13 @@ import FormError from '../components/shared/FormError';
 import styles from './AuthPage.module.css';
 
 const RegisterPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const registerMutation = useRegister();
   const [formError, setFormError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const schema = useMemo(() => buildRegisterSchema(t), [t]);
 
   const {
     register,
@@ -26,7 +31,7 @@ const RegisterPage = () => {
     setError,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(schema),
   });
 
   const onSubmit = async ({ confermaPassword: _confermaPassword, ...payload }) => {
@@ -38,8 +43,7 @@ const RegisterPage = () => {
     } catch (error) {
       const parsed = parseApiError(error);
 
-      // Mappa eventuali errori per-campo restituiti dal validatore server
-      // (422) sui campi corrispondenti del form, oltre al banner generico.
+      // Mappa eventuali errori per-campo restituiti dal validatore server (422)
       if (parsed.fieldErrors) {
         Object.entries(parsed.fieldErrors).forEach(([field, message]) => {
           if (field in payload) {
@@ -48,7 +52,7 @@ const RegisterPage = () => {
         });
       }
 
-      setFormError(parsed.message);
+      setFormError(getApiErrorMessage(t, error));
     }
   };
 
@@ -60,13 +64,10 @@ const RegisterPage = () => {
             <div className={styles.successIcon} aria-hidden="true">
               済
             </div>
-            <h1 className={styles.title}>Registrazione completata</h1>
-            <p className={styles.successText}>
-              Ti abbiamo inviato un'email di verifica. Apri il link contenuto nel
-              messaggio per attivare il tuo account, poi potrai effettuare il login.
-            </p>
+            <h1 className={styles.title}>{t('auth.register.successTitle')}</h1>
+            <p className={styles.successText}>{t('auth.register.successText')}</p>
             <Button fullWidth onClick={() => navigate(ROUTES.LOGIN)}>
-              Vai al login
+              {t('auth.register.successCta')}
             </Button>
           </div>
         </Card>
@@ -81,10 +82,8 @@ const RegisterPage = () => {
           <span className={styles.mark} aria-hidden="true">
             登
           </span>
-          <h1 className={styles.title}>Crea il tuo account</h1>
-          <p className={styles.subtitle}>
-            Registrati per iniziare il tuo percorso di apprendimento.
-          </p>
+          <h1 className={styles.title}>{t('auth.register.title')}</h1>
+          <p className={styles.subtitle}>{t('auth.register.subtitle')}</p>
         </div>
 
         <FormError message={formError} />
@@ -92,14 +91,14 @@ const RegisterPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={styles.formRow}>
             <TextField
-              label="Nome"
+              label={t('auth.fields.nome')}
               autoComplete="given-name"
               required
               error={errors.nome?.message}
               {...register('nome')}
             />
             <TextField
-              label="Cognome"
+              label={t('auth.fields.cognome')}
               autoComplete="family-name"
               required
               error={errors.cognome?.message}
@@ -109,7 +108,7 @@ const RegisterPage = () => {
 
           <div className={styles.formRow}>
             <TextField
-              label="Età"
+              label={t('auth.fields.eta')}
               type="number"
               min={14}
               max={99}
@@ -118,21 +117,21 @@ const RegisterPage = () => {
               {...register('eta')}
             />
             <Select
-              label="Classe"
+              label={t('auth.fields.classe')}
               required
               error={errors.classe?.message}
               {...register('classe')}
             >
               {CLASSI.map((classe) => (
                 <option key={classe} value={classe}>
-                  {classe}
+                  {t(`classi.${classe}`)}
                 </option>
               ))}
             </Select>
           </div>
 
           <TextField
-            label="Email"
+            label={t('auth.fields.email')}
             type="email"
             autoComplete="email"
             required
@@ -141,17 +140,17 @@ const RegisterPage = () => {
           />
 
           <TextField
-            label="Password"
+            label={t('auth.fields.password')}
             type="password"
             autoComplete="new-password"
             required
-            hint="Min. 8 caratteri, una maiuscola, una minuscola, un numero, un carattere speciale"
+            hint={t('auth.passwordHint')}
             error={errors.password?.message}
             {...register('password')}
           />
 
           <TextField
-            label="Conferma password"
+            label={t('auth.fields.confirmPassword')}
             type="password"
             autoComplete="new-password"
             required
@@ -159,18 +158,13 @@ const RegisterPage = () => {
             {...register('confermaPassword')}
           />
 
-          <Button
-            type="submit"
-            fullWidth
-            size="lg"
-            isLoading={registerMutation.isPending}
-          >
-            Registrati
+          <Button type="submit" fullWidth size="lg" isLoading={registerMutation.isPending}>
+            {t('auth.register.submit')}
           </Button>
         </form>
 
         <p className={styles.switchAuth}>
-          Hai già un account? <Link to={ROUTES.LOGIN}>Accedi</Link>
+          {t('auth.register.haveAccount')} <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
         </p>
       </Card>
     </div>

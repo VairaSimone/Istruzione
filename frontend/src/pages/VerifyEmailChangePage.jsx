@@ -1,4 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useConfirmEmailChange } from '../hooks/usePasswordAndEmailFlows';
 import { parseApiError } from '../utils/parseApiError';
 import { API_ERROR_CODES } from '../constants/domain';
@@ -17,6 +18,7 @@ import styles from './AuthPage.module.css';
  * sempre gestito lato client.
  */
 const VerifyEmailChangePage = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
   const { isSuccess, isError, error } = useConfirmEmailChange(token);
@@ -26,14 +28,13 @@ const VerifyEmailChangePage = () => {
       <div className={styles.wrapper}>
         <Card className={styles.card}>
           <div className={styles.successBox}>
-            <h1 className={styles.title}>Link non valido</h1>
+            <h1 className={styles.title}>{t('auth.verifyEmailChange.invalidTitle')}</h1>
             <p className={styles.successText}>
-              Il link non contiene alcun token di sicurezza. Torna nel tuo profilo e
-              richiedi un nuovo cambio email.
+              {t('auth.verifyEmailChange.invalidText')}
             </p>
             <Link to={ROUTES.PROFILE}>
               <Button fullWidth variant="secondary">
-                Torna al Profilo
+                {t('auth.verifyEmailChange.backToProfile')}
               </Button>
             </Link>
           </div>
@@ -46,21 +47,20 @@ const VerifyEmailChangePage = () => {
     const parsed = parseApiError(error);
     const message =
       parsed.code === API_ERROR_CODES.EXPIRED_TOKEN
-        ? 'Il link di conferma è scaduto. Torna nel tuo profilo e richiedi un nuovo cambio email.'
+        ? t('auth.verifyEmailChange.failExpired')
         : parsed.code === API_ERROR_CODES.EMAIL_TAKEN
-          ? 'Questo indirizzo email è ora associato a un altro account.'
-          : parsed.message ||
-            'Il token non è valido o è già stato utilizzato. Richiedi un nuovo cambio email dal tuo profilo.';
+          ? t('auth.verifyEmailChange.failEmailTaken')
+          : t('auth.verifyEmailChange.failGeneric');
 
     return (
       <div className={styles.wrapper}>
         <Card className={styles.card}>
           <div className={styles.successBox}>
-            <h1 className={styles.title}>Modifica fallita</h1>
+            <h1 className={styles.title}>{t('auth.verifyEmailChange.failTitle')}</h1>
             <p className={styles.successText}>{message}</p>
             <Link to={ROUTES.PROFILE}>
               <Button fullWidth variant="secondary">
-                Torna al Profilo
+                {t('auth.verifyEmailChange.backToProfile')}
               </Button>
             </Link>
           </div>
@@ -77,13 +77,12 @@ const VerifyEmailChangePage = () => {
             <div className={styles.successIcon} aria-hidden="true">
               済
             </div>
-            <h1 className={styles.title}>Email aggiornata!</h1>
+            <h1 className={styles.title}>{t('auth.verifyEmailChange.successTitle')}</h1>
             <p className={styles.successText}>
-              Il tuo nuovo indirizzo email è stato confermato con successo. Potrai usarlo
-              per accedere da ora in poi.
+              {t('auth.verifyEmailChange.successText')}
             </p>
             <Link to={ROUTES.PROFILE}>
-              <Button fullWidth>Vai al Profilo</Button>
+              <Button fullWidth>{t('auth.verifyEmailChange.successCta')}</Button>
             </Link>
           </div>
         </Card>
@@ -95,8 +94,8 @@ const VerifyEmailChangePage = () => {
     <div className={styles.wrapper}>
       <Card className={styles.card}>
         <div className={styles.successBox}>
-          <Spinner label="Conferma del cambio email in corso" />
-          <p className={styles.successText}>Conferma del nuovo indirizzo email in corso…</p>
+          <Spinner label={t('auth.verifyEmailChange.pendingAria')} />
+          <p className={styles.successText}>{t('auth.verifyEmailChange.pending')}</p>
         </div>
       </Card>
     </div>

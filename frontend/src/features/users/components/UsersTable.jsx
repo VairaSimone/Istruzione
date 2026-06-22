@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import UserRow from './UserRow';
 import Skeleton from '../../../components/shared/Skeleton';
 import EmptyState from '../../../components/shared/EmptyState';
@@ -12,9 +13,18 @@ const SkeletonRow = () => (
   </tr>
 );
 
-const UsersTable = ({ users, isLoading, isError, error, onRetry, hasActiveFilters }) => {
+const UsersTable = ({
+  users,
+  isLoading,
+  isError,
+  errorMessage,
+  onRetry,
+  hasActiveFilters,
+}) => {
+  const { t } = useTranslation();
+
   if (isError) {
-    return <ErrorState message={error?.message} onRetry={onRetry} />;
+    return <ErrorState message={errorMessage} onRetry={onRetry} />;
   }
 
   if (!isLoading && users.length === 0) {
@@ -22,13 +32,13 @@ const UsersTable = ({ users, isLoading, isError, error, onRetry, hasActiveFilter
       <EmptyState
         title={
           hasActiveFilters
-            ? 'Nessun utente corrisponde ai filtri'
-            : 'Nessun utente registrato'
+            ? t('users.table.emptyFilteredTitle')
+            : t('users.table.emptyAllTitle')
         }
         description={
           hasActiveFilters
-            ? 'Prova a modificare o reimpostare i filtri di ricerca.'
-            : 'Quando gli studenti si registreranno, compariranno qui.'
+            ? t('users.table.emptyFilteredDescription')
+            : t('users.table.emptyAllDescription')
         }
       />
     );
@@ -39,12 +49,14 @@ const UsersTable = ({ users, isLoading, isError, error, onRetry, hasActiveFilter
       <table className={styles.table}>
         <thead>
           <tr>
-            <th scope="col">Utente</th>
-            <th scope="col">Classe</th>
-            <th scope="col">Stato email</th>
-            <th scope="col">Ruolo</th>
+            <th scope="col">{t('users.table.headerUser')}</th>
+            <th scope="col">{t('users.table.headerClasse')}</th>
+            <th scope="col">{t('users.table.headerEmailStatus')}</th>
+            <th scope="col">{t('users.table.headerRole')}</th>
             <th scope="col">
-              <span className="visually-hidden">Azioni</span>
+              <span className="visually-hidden">
+                {t('users.table.headerActionsAria')}
+              </span>
             </th>
           </tr>
         </thead>

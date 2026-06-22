@@ -1,50 +1,58 @@
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../../store/authStore';
 import { useUpdateLanguage } from '../../../hooks/useProfileMutations';
-import { parseApiError } from '../../../utils/parseApiError';
-import { LINGUA_OPTIONS } from '../../../constants/domain';
+import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
+import { SUPPORTED_LANGUAGES, getActiveLanguage } from '../../../i18n';
 import Card from '../../../components/ui/Card';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
 import styles from './ProfileSections.module.css';
 
+/**
+ * Sezione "Lingua di preferenza" nel profilo. Oltre a persistere la scelta
+ * lato backend (PATCH /me/lingua), aggiorna immediatamente l'interfaccia
+ * tramite i18n.changeLanguage, senza refresh di pagina.
+ */
 const LanguageSection = () => {
+  const { t, i18n } = useTranslation();
   const user = useAuthStore((state) => state.user);
   const updateLanguageMutation = useUpdateLanguage();
 
   const { register, handleSubmit } = useForm({
-    defaultValues: { lingua: user?.lingua || 'it' },
+    defaultValues: { lingua: user?.lingua || getActiveLanguage() },
   });
 
   const onSubmit = async (values) => {
     try {
       await updateLanguageMutation.mutateAsync(values);
-      toast.success('Lingua aggiornata con successo.');
+      if (SUPPORTED_LANGUAGES.includes(values.lingua)) {
+        await i18n.changeLanguage(values.lingua);
+      }
+      toast.success(t('language.updated'));
     } catch (error) {
-      toast.error(parseApiError(error).message);
+      toast.error(getApiErrorMessage(t, error));
     }
   };
 
   return (
     <Card>
-      <h2 className={styles.sectionTitle}>Lingua di preferenza</h2>
-      <p className={styles.sectionDescription}>
-        Determina la lingua usata nelle email automatiche inviate dalla piattaforma.
-      </p>
+      <h2 className={styles.sectionTitle}>{t('profile.languageTitle')}</h2>
+      <p className={styles.sectionDescription}>{t('profile.languageDescription')}</p>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.inlineForm}>
         <div className={styles.inlineFormField}>
-          <Select label="Lingua" {...register('lingua')}>
-            {LINGUA_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+          <Select label={t('language.label')} {...register('lingua')}>
+            {SUPPORTED_LANGUAGES.map((lng) => (
+              <option key={lng} value={lng}>
+                {t(`language.options.${lng}`)}
               </option>
             ))}
           </Select>
         </div>
         <div className={styles.inlineFormButton}>
           <Button type="submit" isLoading={updateLanguageMutation.isPending}>
-            Salva
+            {t('profile.languageSave')}
           </Button>
         </div>
       </form>

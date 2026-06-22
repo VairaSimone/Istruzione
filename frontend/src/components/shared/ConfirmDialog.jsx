@@ -1,25 +1,26 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import styles from './ConfirmDialog.module.css';
 
 /**
- * Dialog di conferma generico per azioni irreversibili (es. eliminazione
- * di un account da parte di un insegnante). Gestisce focus trap minimo
- * (focus sul bottone di conferma all'apertura) e chiusura via Escape.
+ * Dialog di conferma generico per azioni irreversibili. Gestisce focus
+ * minimo (focus sul bottone di conferma all'apertura) e chiusura via Escape.
  */
 const ConfirmDialog = ({
   isOpen,
   title,
   description,
-  confirmLabel = 'Conferma',
-  cancelLabel = 'Annulla',
+  confirmLabel,
+  cancelLabel,
   isLoading = false,
   onConfirm,
   onCancel,
   tone = 'danger',
 }) => {
+  const { t } = useTranslation();
   const confirmButtonRef = useRef(null);
 
   useEffect(() => {
@@ -60,10 +61,10 @@ const ConfirmDialog = ({
             onClick={onConfirm}
             isLoading={isLoading}
           >
-            {confirmLabel}
+            {confirmLabel ?? t('common.confirm')}
           </Button>
           <Button variant="ghost" onClick={onCancel} disabled={isLoading}>
-            {cancelLabel}
+            {cancelLabel ?? t('common.cancel')}
           </Button>
         </div>
       </Card>

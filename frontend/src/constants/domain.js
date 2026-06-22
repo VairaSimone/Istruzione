@@ -3,6 +3,11 @@
  * Rispecchiano ESATTAMENTE i valori validi definiti nel modello Sequelize
  * `Utente.js` (CLASSI_VALIDE, RUOLI_VALIDI, LINGUE_VALIDE) e nei validators
  * Express. Tenute centralizzate per evitare valori "magici" sparsi nei componenti.
+ *
+ * NOTA i18n: le etichette leggibili (ruoli, classi, lingue) NON sono più
+ * definite qui ma risolte a runtime tramite le chiavi di traduzione
+ * (`roles.*`, `classi.*`, `language.options.*`). Qui restano solo i VALORI
+ * di dominio, che coincidono con quelli persistiti dal backend.
  */
 
 export const ROLES = Object.freeze({
@@ -19,16 +24,12 @@ export const LINGUE = Object.freeze({
   EN: 'en',
 });
 
-export const LINGUA_OPTIONS = [
-  { value: LINGUE.IT, label: 'Italiano' },
-  { value: LINGUE.EN, label: 'English' },
-];
-
 /**
  * Codici di errore "machine-readable" restituiti dal backend
  * (vedi AppError, errorHandler.js, authService.js).
  * Usati per logica condizionale nel frontend (es. mostrare un countdown
- * sul lockout, o forzare un redirect su token scaduto).
+ * sul lockout, o forzare un redirect su token scaduto) e per mappare il
+ * messaggio localizzato in `getApiErrorMessage` (errors.codes.<CODE>).
  */
 export const API_ERROR_CODES = Object.freeze({
   TOKEN_EXPIRED: 'TOKEN_EXPIRED',
@@ -48,6 +49,7 @@ export const API_ERROR_CODES = Object.freeze({
   EMAIL_TAKEN: 'EMAIL_TAKEN',
   EMAIL_UNCHANGED: 'EMAIL_UNCHANGED',
   EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
   INVALID_RESET_TOKEN: 'INVALID_RESET_TOKEN',
   EXPIRED_RESET_TOKEN: 'EXPIRED_RESET_TOKEN',
   EXPIRED_VERIFICATION_TOKEN: 'EXPIRED_VERIFICATION_TOKEN',

@@ -1,0 +1,268 @@
+{
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "retry": "Riprova",
+    "delete": "Elimina",
+    "loading": "Caricamento in corso",
+    "selectPlaceholder": "Seleziona…"
+  },
+  "language": {
+    "label": "Lingua",
+    "aria": "Cambia lingua",
+    "options": {
+      "it": "Italiano",
+      "en": "English"
+    },
+    "updated": "Lingua aggiornata con successo."
+  },
+  "roles": {
+    "studente": "Studente",
+    "insegnante": "Insegnante"
+  },
+  "classi": {
+    "Prima": "Prima",
+    "Seconda": "Seconda",
+    "Terza": "Terza",
+    "Quarta": "Quarta",
+    "Quinta": "Quinta"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profilo",
+    "usersManagement": "Gestione utenti",
+    "login": "Accedi",
+    "register": "Registrati",
+    "logout": "Esci",
+    "mainNavAria": "Navigazione principale"
+  },
+  "header": {
+    "logoutSuccess": "Logout effettuato con successo."
+  },
+  "home": {
+    "subtitle": "La piattaforma per studenti e insegnanti per seguire il percorso di apprendimento della lingua giapponese, classe per classe.",
+    "start": "Inizia ora",
+    "haveAccount": "Ho già un account"
+  },
+  "auth": {
+    "fields": {
+      "nome": "Nome",
+      "cognome": "Cognome",
+      "eta": "Età",
+      "classe": "Classe",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Conferma password",
+      "newEmail": "Nuovo indirizzo email",
+      "newPassword": "Nuova password",
+      "confirmNewPassword": "Conferma nuova password"
+    },
+    "passwordHint": "Min. 8 caratteri, una maiuscola, una minuscola, un numero, un carattere speciale",
+    "login": {
+      "title": "Accedi",
+      "subtitle": "Bentornato. Inserisci le tue credenziali.",
+      "forgot": "Password dimenticata?",
+      "submit": "Accedi",
+      "noAccount": "Non hai un account?",
+      "success": "Accesso effettuato."
+    },
+    "register": {
+      "title": "Crea il tuo account",
+      "subtitle": "Registrati per iniziare il tuo percorso di apprendimento.",
+      "submit": "Registrati",
+      "haveAccount": "Hai già un account?",
+      "successTitle": "Registrazione completata",
+      "successText": "Ti abbiamo inviato un'email di verifica. Apri il link contenuto nel messaggio per attivare il tuo account, poi potrai effettuare il login.",
+      "successCta": "Vai al login"
+    },
+    "forgot": {
+      "title": "Password dimenticata",
+      "subtitle": "Inserisci la tua email: ti invieremo un link per reimpostarla.",
+      "submit": "Invia istruzioni",
+      "backToLogin": "Torna al login",
+      "successTitle": "Controlla la tua email",
+      "successText": "Se l'indirizzo inserito è registrato, riceverai a breve le istruzioni per reimpostare la password."
+    },
+    "reset": {
+      "title": "Reimposta password",
+      "subtitle": "Scegli una nuova password sicura.",
+      "submit": "Aggiorna password",
+      "missingToken": "Link non valido: il token di ripristino è mancante. Richiedi un nuovo link dalla pagina 'Password dimenticata'.",
+      "requestNew": "Richiedi nuovo link",
+      "successTitle": "Password aggiornata",
+      "successText": "La tua password è stata reimpostata con successo. Effettua nuovamente il login con le nuove credenziali.",
+      "successCta": "Vai al login"
+    },
+    "verifyEmail": {
+      "pending": "Verifica della tua email in corso…",
+      "pendingAria": "Verifica email in corso",
+      "successTitle": "Email verificata!",
+      "successText": "Il tuo account è ora attivo. Puoi effettuare il login.",
+      "successCta": "Vai al login",
+      "failTitle": "Verifica non riuscita",
+      "failNoToken": "Il link non contiene un token valido.",
+      "failGeneric": "Il link di verifica non è valido o è scaduto. Prova a registrarti di nuovo o contatta il supporto.",
+      "backToLogin": "Torna al login"
+    },
+    "verifyEmailChange": {
+      "pending": "Conferma del nuovo indirizzo email in corso…",
+      "pendingAria": "Conferma del cambio email in corso",
+      "successTitle": "Email aggiornata!",
+      "successText": "Il tuo nuovo indirizzo email è stato confermato con successo. Potrai usarlo per accedere da ora in poi.",
+      "successCta": "Vai al Profilo",
+      "invalidTitle": "Link non valido",
+      "invalidText": "Il link non contiene alcun token di sicurezza. Torna nel tuo profilo e richiedi un nuovo cambio email.",
+      "failTitle": "Modifica fallita",
+      "failExpired": "Il link di conferma è scaduto. Torna nel tuo profilo e richiedi un nuovo cambio email.",
+      "failEmailTaken": "Questo indirizzo email è ora associato a un altro account.",
+      "failGeneric": "Il token non è valido o è già stato utilizzato. Richiedi un nuovo cambio email dal tuo profilo.",
+      "backToProfile": "Torna al Profilo"
+    }
+  },
+  "dashboard": {
+    "greeting": "Ciao, {{name}}",
+    "subtitle": "Ecco un riepilogo del tuo account sulla piattaforma.",
+    "profileCardTitle": "Il tuo profilo",
+    "labelRole": "Ruolo",
+    "labelClasse": "Classe",
+    "labelEmail": "Email",
+    "manageProfile": "Gestisci profilo",
+    "teacherCardTitle": "Gestione classe",
+    "teacherCardText": "Visualizza l'elenco degli studenti, modifica i ruoli e gestisci gli account registrati sulla piattaforma.",
+    "teacherCardCta": "Vai alla gestione utenti"
+  },
+  "profile": {
+    "title": "Il tuo profilo",
+    "subtitle": "Gestisci le informazioni e le preferenze del tuo account.",
+    "infoTitle": "Informazioni anagrafiche",
+    "fullName": "Nome completo",
+    "email": "Email",
+    "age": "Età",
+    "ageValue": "{{age}} anni",
+    "classe": "Classe",
+    "role": "Ruolo",
+    "emailVerified": "Email verificata",
+    "verified": "Verificata",
+    "notVerified": "Non verificata",
+    "languageTitle": "Lingua di preferenza",
+    "languageDescription": "Determina la lingua dell'interfaccia e quella usata nelle email automatiche inviate dalla piattaforma.",
+    "languageSave": "Salva",
+    "changeEmailTitle": "Cambia indirizzo email",
+    "changeEmailDescription": "Riceverai un'email di conferma al nuovo indirizzo. Il cambio sarà effettivo solo dopo aver cliccato il link di conferma.",
+    "changeEmailSuccess": "Email di conferma inviata a <0>{{email}}</0>. Controlla la tua nuova casella di posta.",
+    "changeEmailSubmit": "Invia conferma",
+    "deleteTitle": "Elimina account",
+    "deleteDescription": "Questa azione è permanente. Tutti i tuoi dati verranno eliminati definitivamente e non potranno essere recuperati.",
+    "deleteConfirmText": "Sei sicuro? Questa operazione non può essere annullata.",
+    "deleteConfirm": "Sì, elimina definitivamente",
+    "deleteCta": "Elimina il mio account",
+    "deleteSuccess": "Il tuo account è stato eliminato."
+  },
+  "users": {
+    "managementTitle": "Gestione utenti",
+    "managementSubtitle": "Visualizza, filtra e gestisci gli account registrati sulla piattaforma.",
+    "filters": {
+      "searchLabel": "Cerca per nome o cognome",
+      "searchPlaceholder": "Es. Tanaka",
+      "roleLabel": "Ruolo",
+      "roleAll": "Tutti",
+      "classeLabel": "Classe",
+      "classeAll": "Tutte",
+      "submit": "Filtra",
+      "reset": "Reimposta"
+    },
+    "table": {
+      "headerUser": "Utente",
+      "headerClasse": "Classe",
+      "headerEmailStatus": "Stato email",
+      "headerRole": "Ruolo",
+      "headerActionsAria": "Azioni",
+      "emptyFilteredTitle": "Nessun utente corrisponde ai filtri",
+      "emptyFilteredDescription": "Prova a modificare o reimpostare i filtri di ricerca.",
+      "emptyAllTitle": "Nessun utente registrato",
+      "emptyAllDescription": "Quando gli studenti si registreranno, compariranno qui."
+    },
+    "row": {
+      "delete": "Elimina",
+      "roleAria": "Ruolo di {{name}}",
+      "confirmTitle": "Eliminare questo account?",
+      "confirmDescription": "L'account di {{name}} ({{email}}) verrà eliminato definitivamente. L'operazione non può essere annullata.",
+      "confirmCta": "Elimina definitivamente",
+      "roleUpdated": "Ruolo di {{name}} aggiornato a \"{{role}}\".",
+      "deleted": "Account di {{name}} eliminato."
+    }
+  },
+  "status": {
+    "notFoundTitle": "Pagina non trovata",
+    "notFoundText": "La pagina che stai cercando non esiste o è stata spostata.",
+    "notFoundCta": "Torna alla home",
+    "forbiddenTitle": "Accesso negato",
+    "forbiddenText": "Non hai i permessi necessari per visualizzare questa pagina.",
+    "forbiddenCta": "Torna alla dashboard"
+  },
+  "session": {
+    "checking": "Verifica della sessione in corso"
+  },
+  "lockout": {
+    "title": "Account temporaneamente bloccato per troppi tentativi.",
+    "retryIn": "Riprova tra",
+    "retryNow": "Puoi riprovare ora."
+  },
+  "errors": {
+    "network": "Impossibile contattare il server. Verifica la connessione e riprova.",
+    "unexpected": "Si è verificato un errore imprevisto. Riprova più tardi.",
+    "loadFailed": "Non è stato possibile caricare i dati. Riprova.",
+    "codes": {
+      "INVALID_CREDENTIALS": "Credenziali non valide.",
+      "EMAIL_NOT_VERIFIED": "La tua email non è ancora stata verificata. Controlla la tua casella di posta per il link di conferma.",
+      "ACCOUNT_LOCKED": "Account temporaneamente bloccato per troppi tentativi. Riprova più tardi.",
+      "TOKEN_EXPIRED": "La tua sessione è scaduta. Effettua nuovamente il login.",
+      "INVALID_TOKEN": "Sessione non valida. Effettua nuovamente il login.",
+      "NO_REFRESH_TOKEN": "Sessione scaduta. Effettua nuovamente il login.",
+      "REFRESH_TOKEN_EXPIRED": "Sessione scaduta. Effettua nuovamente il login.",
+      "INVALID_REFRESH_TOKEN": "Sessione non valida. Effettua nuovamente il login.",
+      "FORBIDDEN": "Non disponi dei permessi necessari per questa operazione.",
+      "CSRF_TOKEN_INVALID": "Sessione non valida. Ricarica la pagina e riprova.",
+      "VALIDATION_ERROR": "Dati di input non validi.",
+      "DUPLICATE_VALUE": "Questo indirizzo email è già registrato. Scegline un altro.",
+      "NOT_FOUND": "Risorsa non trovata.",
+      "TOO_MANY_REQUESTS": "Troppe richieste. Riprova tra qualche minuto.",
+      "TOO_MANY_LOGIN_ATTEMPTS": "Troppi tentativi di accesso. Riprova tra 15 minuti.",
+      "USER_NOT_FOUND": "Utente non trovato.",
+      "EMAIL_TAKEN": "Questa email è già associata a un altro account.",
+      "INVALID_RESET_TOKEN": "Token non valido o scaduto.",
+      "EXPIRED_RESET_TOKEN": "Token di ripristino scaduto.",
+      "EXPIRED_VERIFICATION_TOKEN": "Token di verifica scaduto.",
+      "INVALID_VERIFICATION_TOKEN": "Token di verifica non valido o scaduto.",
+      "EXPIRED_TOKEN": "Il token è scaduto. Richiedi una nuova operazione.",
+      "INVALID_ROLE": "Ruolo non valido.",
+      "LAST_TEACHER": "Impossibile eliminare o declassare l'ultimo insegnante.",
+      "SELF_ROLE_CHANGE_FORBIDDEN": "Non puoi modificare il tuo stesso ruolo.",
+      "SELF_DELETE_FORBIDDEN": "Non puoi eliminare il tuo account da questa sezione. Usa le impostazioni del profilo.",
+      "PAYLOAD_TOO_LARGE": "La richiesta è troppo grande.",
+      "CORS_ORIGIN_FORBIDDEN": "Origine non consentita."
+    }
+  },
+  "validation": {
+    "nomeRequired": "Il nome è obbligatorio",
+    "nomeLength": "Il nome deve avere tra 2 e 100 caratteri",
+    "nomeInvalid": "Il nome contiene caratteri non validi",
+    "cognomeRequired": "Il cognome è obbligatorio",
+    "cognomeLength": "Il cognome deve avere tra 2 e 100 caratteri",
+    "cognomeInvalid": "Il cognome contiene caratteri non validi",
+    "etaRequired": "L'età è obbligatoria",
+    "etaInt": "L'età deve essere un numero intero tra 14 e 99",
+    "etaMin": "L'età minima è {{min}} anni",
+    "etaMax": "L'età massima è {{max}} anni",
+    "emailRequired": "L'email è obbligatoria",
+    "emailInvalid": "Formato email non valido",
+    "emailMax": "L'email non può superare i 255 caratteri",
+    "passwordRequired": "La password è obbligatoria",
+    "passwordComplexity": "La password deve contenere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale",
+    "confirmRequired": "Conferma la password",
+    "passwordMismatch": "Le password non coincidono",
+    "classeInvalid": "La classe deve essere una di: {{values}}",
+    "roleInvalid": "Ruolo non valido"
+  }
+}

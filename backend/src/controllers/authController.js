@@ -27,9 +27,20 @@ const clearAuthCookies = (res) => {
 // POST /api/auth/register
 // ─────────────────────────────────────────────
 exports.register = catchAsync(async (req, res) => {
-  const { nome, cognome, eta, email, password, classe } = req.body;
+  const { nome, cognome, eta, email, password, classe, lingua } = req.body;
 
-  const utente = await authService.registraUtente({ nome, cognome, eta, email, password, classe });
+  // `lingua` è inviata dal frontend (lingua attiva nella UI) e usata dal
+  // service per localizzare l'email di verifica. Se assente, il service
+  // applica il default ('it').
+  const utente = await authService.registraUtente({
+    nome,
+    cognome,
+    eta,
+    email,
+    password,
+    classe,
+    lingua,
+  });
 
   res.status(201).json({
     status: 'success',

@@ -53,13 +53,17 @@ const loginUtente = async (email, password) => {
 
   if (!utente) {
     await fakeHashCompare();
-    throw new AppError('Credenziali non valide', 401);
+    throw new AppError('Credenziali non valide', 401, 'INVALID_CREDENTIALS');
   }
 
   if (utente.bloccato_fino_al && new Date(utente.bloccato_fino_al) > new Date()) {
     const millisecondiRimanenti = new Date(utente.bloccato_fino_al).getTime() - Date.now();
     const minutiRimanenti = Math.ceil(millisecondiRimanenti / 60000);
-    throw new AppError(`Account bloccato per troppi tentativi. Riprova tra ${minutiRimanenti} minuti.`, 403);
+    throw new AppError(
+      `Account bloccato per troppi tentativi. Riprova tra ${minutiRimanenti} minuti.`,
+      403,
+      'ACCOUNT_LOCKED'
+    );
   }
 
   // Il blocco è scaduto: azzera il contatore PRIMA di valutare la password,
@@ -80,10 +84,14 @@ const loginUtente = async (email, password) => {
       utente.bloccato_fino_al = dataSblocco;
 
       await utente.save();
-      throw new AppError(`Troppi tentativi falliti. Account bloccato per ${TEMPO_BLOCCO_MINUTI} minuti.`, 403);
+      throw new AppError(
+        `Troppi tentativi falliti. Account bloccato per ${TEMPO_BLOCCO_MINUTI} minuti.`,
+        403,
+        'ACCOUNT_LOCKED'
+      );
     } else {
       await utente.save();
-      throw new AppError('Credenziali non valide', 401);
+      throw new AppError('Credenziali non valide', 401, 'INVALID_CREDENTIALS');
     }
   }
 
@@ -92,7 +100,11 @@ const loginUtente = async (email, password) => {
     if (utente.changed()) {
       await utente.save();
     }
-    throw new AppError('Email non verificata. Controlla la tua casella di posta.', 401);
+    throw new AppError(
+      'Email non verificata. Controlla la tua casella di posta.',
+      401,
+      'EMAIL_NOT_VERIFIED'
+    );
   }
 
   const accessToken = generateAccessToken(utente);

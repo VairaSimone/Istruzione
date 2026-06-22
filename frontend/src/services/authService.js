@@ -1,4 +1,5 @@
 import apiClient from '../api/axiosClient';
+import { getActiveLanguage } from '../i18n';
 
 /**
  * Service layer per il modulo Auth.
@@ -8,8 +9,17 @@ import apiClient from '../api/axiosClient';
 
 // ── Endpoint pubblici ──────────────────────────────────────────────
 
+/**
+ * In registrazione inviamo esplicitamente `lingua` (lingua attiva del
+ * frontend) così l'account viene creato con la preferenza corretta e
+ * l'email di verifica parte già nella lingua giusta (il backend usa
+ * `utente.lingua` per le email transazionali).
+ */
 export const register = async (payload) => {
-  const { data } = await apiClient.post('/auth/register', payload);
+  const { data } = await apiClient.post('/auth/register', {
+    ...payload,
+    lingua: getActiveLanguage(),
+  });
   return data;
 };
 
@@ -38,7 +48,6 @@ export const forgotPassword = async ({ email }) => {
   return data;
 };
 
-
 export const resetPassword = async ({ token, nuovaPassword }) => {
   const { data } = await apiClient.post('/auth/reset-password', {
     token,
@@ -55,8 +64,7 @@ export const verifyEmail = async ({ token }) => {
 /**
  * Conferma il cambio email. Il link nell'email punta alla pagina
  * applicativa (/verify-email-change?token=...), che effettua questa
- * richiesta POST esplicita. Non è una GET che modifica lo stato, quindi
- * non è soggetta a prefetch/scansione dei link.
+ * richiesta POST esplicita.
  */
 export const confirmEmailChange = async ({ token }) => {
   const { data } = await apiClient.post('/auth/confirm-email-change', { token });

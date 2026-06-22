@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore, selectIsTeacher } from '../store/authStore';
 import { ROUTES } from '../constants/routes';
 import Card from '../components/ui/Card';
@@ -7,6 +8,7 @@ import Button from '../components/ui/Button';
 import styles from './DashboardPage.module.css';
 
 const DashboardPage = () => {
+  const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
   const isTeacher = useAuthStore(selectIsTeacher);
 
@@ -15,47 +17,44 @@ const DashboardPage = () => {
   return (
     <div className={styles.page}>
       <header className={styles.intro}>
-        <h1 className={styles.title}>Ciao, {user.nome}</h1>
-        <p className={styles.subtitle}>
-          Ecco un riepilogo del tuo account sulla piattaforma.
-        </p>
+        <h1 className={styles.title}>{t('dashboard.greeting', { name: user.nome })}</h1>
+        <p className={styles.subtitle}>{t('dashboard.subtitle')}</p>
       </header>
 
       <div className={styles.grid}>
         <Card className={styles.summaryCard}>
-          <h2 className={styles.cardTitle}>Il tuo profilo</h2>
+          <h2 className={styles.cardTitle}>{t('dashboard.profileCardTitle')}</h2>
           <dl className={styles.summaryList}>
             <div className={styles.summaryRow}>
-              <dt>Ruolo</dt>
+              <dt>{t('dashboard.labelRole')}</dt>
               <dd>
-                <Badge tone={isTeacher ? 'gold' : 'seal'}>{user.ruolo}</Badge>
+                <Badge tone={isTeacher ? 'gold' : 'seal'}>
+                  {t(`roles.${user.ruolo}`)}
+                </Badge>
               </dd>
             </div>
             <div className={styles.summaryRow}>
-              <dt>Classe</dt>
-              <dd>{user.classe}</dd>
+              <dt>{t('dashboard.labelClasse')}</dt>
+              <dd>{t(`classi.${user.classe}`)}</dd>
             </div>
             <div className={styles.summaryRow}>
-              <dt>Email</dt>
+              <dt>{t('dashboard.labelEmail')}</dt>
               <dd>{user.email}</dd>
             </div>
           </dl>
           <Link to={ROUTES.PROFILE}>
             <Button variant="secondary" size="sm">
-              Gestisci profilo
+              {t('dashboard.manageProfile')}
             </Button>
           </Link>
         </Card>
 
         {isTeacher && (
           <Card className={styles.summaryCard}>
-            <h2 className={styles.cardTitle}>Gestione classe</h2>
-            <p className={styles.cardText}>
-              Visualizza l'elenco degli studenti, modifica i ruoli e gestisci gli account
-              registrati sulla piattaforma.
-            </p>
+            <h2 className={styles.cardTitle}>{t('dashboard.teacherCardTitle')}</h2>
+            <p className={styles.cardText}>{t('dashboard.teacherCardText')}</p>
             <Link to={ROUTES.USERS_MANAGEMENT}>
-              <Button size="sm">Vai alla gestione utenti</Button>
+              <Button size="sm">{t('dashboard.teacherCardCta')}</Button>
             </Link>
           </Card>
         )}

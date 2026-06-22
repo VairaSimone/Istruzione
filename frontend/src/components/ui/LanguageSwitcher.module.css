@@ -1,0 +1,38 @@
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.option {
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.option + .option {
+  border-left: 1px solid var(--color-border);
+}
+
+.option:hover:not(.active) {
+  background-color: var(--color-paper-dim);
+  color: var(--color-ink);
+}
+
+.active {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  cursor: default;
+}

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getActiveLanguage } from '../i18n';
 
 /**
  * Istanza Axios condivisa da tutti i service.
@@ -11,8 +12,15 @@ import axios from 'axios';
  * Protezione CSRF (double-submit cookie): per le richieste mutative
  * (POST/PUT/PATCH/DELETE) viene letto il cookie NON httpOnly `csrf_token`
  * e rispedito nell'header `X-CSRF-Token`, che il backend confronta con il
- * cookie. Un attaccante cross-site non può leggere il cookie né impostare
- * l'header personalizzato.
+ * cookie.
+ *
+ * Internazionalizzazione: ad OGNI richiesta viene aggiunto il query param
+ * `lang` con la lingua attiva. Il backend (i18next-http-middleware) è
+ * configurato con detection order ['querystring','header'] e
+ * lookupQuerystring 'lang', quindi userà questa lingua per `req.t`
+ * (notifiche/contenuti localizzati lato server). Si usa il query param e
+ * NON l'header `Accept-Language` perché quest'ultimo è un "forbidden
+ * header" che il browser non consente di impostare via JS.
  */
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -31,6 +39,9 @@ const getCookie = (name) => {
 };
 
 apiClient.interceptors.request.use((config) => {
+  // Lingua corrente -> sempre disponibile al backend per i contenuti localizzati
+  config.params = { ...(config.params || {}), lang: getActiveLanguage() };
+
   const method = (config.method || 'get').toLowerCase();
   if (!CSRF_SAFE_METHODS.includes(method)) {
     const csrfToken = getCookie('csrf_token');
