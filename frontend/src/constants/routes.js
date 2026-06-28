@@ -13,6 +13,7 @@ export const ROUTES = Object.freeze({
   VERIFY_EMAIL_CHANGE: '/verify-email-change',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
+  QUIZ: '/quiz',
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
   ADMIN_TEACHER_REQUESTS: '/admin/candidature',

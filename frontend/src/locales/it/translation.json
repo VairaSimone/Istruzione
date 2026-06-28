@@ -27,15 +27,15 @@
   },
   "roles": {
     "studente": "Studente",
-    "insegnante": "Insegnante",
-    "admin": "Amministratore"
+    "insegnante": "Insegnante"
   },
   "classi": {
     "Prima": "Prima",
     "Seconda": "Seconda",
     "Terza": "Terza",
     "Quarta": "Quarta",
-    "Quinta": "Quinta"
+    "Quinta": "Quinta",
+    "null": "Insegnante"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -45,9 +45,7 @@
     "register": "Registrati",
     "logout": "Esci",
     "mainNavAria": "Navigazione principale",
-    "invitesManagement": "Inviti",
-    "teacherRequests": "Candidature",
-    "teacherRequest": "Candidati"
+    "quiz": "Quiz"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -55,10 +53,7 @@
   "home": {
     "subtitle": "La piattaforma per studenti e insegnanti per seguire il percorso di apprendimento della lingua giapponese, classe per classe.",
     "start": "Inizia ora",
-    "haveAccount": "Ho già un account",
-    "login": "Accedi",
-    "teacherCta": "Candidati come insegnante",
-    "studentInviteNote": "Gli studenti accedono alla piattaforma solo tramite invito del proprio insegnante."
+    "haveAccount": "Ho già un account"
   },
   "auth": {
     "fields": {
@@ -80,10 +75,7 @@
       "forgot": "Password dimenticata?",
       "submit": "Accedi",
       "noAccount": "Non hai un account?",
-      "success": "Accesso effettuato.",
-      "teacherPrompt": "Sei un insegnante?",
-      "teacherCta": "Invia una candidatura",
-      "studentInviteNote": "Gli studenti ricevono un invito via email dal proprio insegnante."
+      "success": "Accesso effettuato."
     },
     "register": {
       "title": "Crea il tuo account",
@@ -147,35 +139,6 @@
       "prompt": "Non hai ricevuto l'email di verifica?",
       "cta": "Re-invia email di verifica",
       "done": "Se l'indirizzo è registrato e non ancora verificato, riceverai a breve una nuova email di verifica."
-    },
-    "invite": {
-      "noTokenTitle": "Serve un invito",
-      "noTokenText": "Per registrarti hai bisogno di un link di invito valido. Gli studenti ricevono l'invito dal proprio insegnante.",
-      "goToLogin": "Vai al login",
-      "teacherPrompt": "Sei un insegnante?",
-      "teacherCta": "Invia una candidatura",
-      "checking": "Verifica dell'invito in corso",
-      "invalidTitle": "Invito non valido",
-      "successTitle": "Registrazione completata",
-      "successText": "Il tuo account è stato creato. Ora puoi effettuare il login.",
-      "successCta": "Vai al login",
-      "studentTitle": "Completa la registrazione",
-      "studentSubtitle": "Inserisci i tuoi dati per attivare l'account studente.",
-      "teacherTitle": "Completa la registrazione",
-      "teacherSubtitle": "Inserisci i tuoi dati per attivare l'account insegnante.",
-      "submit": "Completa registrazione",
-      "haveAccount": "Hai già un account?"
-    },
-    "teacherRequest": {
-      "title": "Candidatura insegnante",
-      "subtitle": "Invia la tua candidatura: un amministratore la valuterà prima di abilitare l'accesso.",
-      "submit": "Invia candidatura",
-      "haveAccount": "Hai già un account?",
-      "motivazioneLabel": "Messaggio (facoltativo)",
-      "motivazioneHint": "Aggiungi una breve presentazione per l'amministratore.",
-      "successTitle": "Candidatura inviata",
-      "successText": "La tua candidatura è in attesa di approvazione. Riceverai un'email quando un amministratore l'avrà esaminata.",
-      "successCta": "Torna al login"
     }
   },
   "dashboard": {
@@ -189,10 +152,9 @@
     "teacherCardTitle": "Gestione classe",
     "teacherCardText": "Visualizza l'elenco degli studenti, modifica i ruoli e gestisci gli account registrati sulla piattaforma.",
     "teacherCardCta": "Vai alla gestione utenti",
-    "invitesCardCta": "Gestisci inviti",
-    "adminCardTitle": "Candidature insegnante",
-    "adminCardText": "Esamina le richieste di accesso degli insegnanti e approva o rifiuta le candidature in attesa.",
-    "adminCardCta": "Vai alle candidature"
+    "quizCardTitle": "Quiz Kana",
+    "quizCardText": "Allenati su hiragana e katakana con un quiz a ripetizione spaziata: i caratteri che sbagli tornano più spesso. Accumula XP, livelli e streak.",
+    "quizCardCta": "Vai al quiz"
   },
   "profile": {
     "title": "Il tuo profilo",
@@ -307,22 +269,7 @@
       "GOOGLE_OAUTH_DISABLED": "Il login con Google non è al momento disponibile.",
       "USE_GOOGLE_LOGIN": "Questo account usa l'accesso con Google. Usa il pulsante “Continua con Google”.",
       "GOOGLE_NO_EMAIL": "Il profilo Google non espone un'email: impossibile completare l'accesso.",
-      "INVALID_LANGUAGE": "Lingua non supportata.",
-      "ACCOUNT_PENDING": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
-      "ACCOUNT_NOT_ACTIVE": "Questo account non è abilitato ad accedere. Contatta un amministratore.",
-      "GOOGLE_NO_ACCOUNT": "Nessun account associato a questo indirizzo Google. L'accesso è riservato agli utenti invitati.",
-      "INVALID_INVITE": "Invito non valido o revocato.",
-      "INVITE_EXPIRED": "Invito scaduto. Richiedine uno nuovo.",
-      "INVITE_ALREADY_USED": "Questo invito è già stato utilizzato.",
-      "INVITE_ROLE_MISMATCH": "Invito non valido per questo tipo di registrazione.",
-      "INVITE_NOT_FOUND": "Invito non trovato.",
-      "INVITE_NOT_PENDING": "Solo gli inviti ancora pendenti possono essere revocati.",
-      "EMAIL_ALREADY_REGISTERED": "Esiste già un account registrato con questa email.",
-      "INVALID_CLASS": "Classe non valida.",
-      "REQUEST_NOT_FOUND": "Candidatura insegnante non trovata.",
-      "ALREADY_ACTIVE": "Questo insegnante è già attivo.",
-      "ADMIN_ROLE_FORBIDDEN": "Operazione riservata agli amministratori.",
-      "LAST_ADMIN": "Impossibile eliminare o declassare l'ultimo amministratore."
+      "INVALID_LANGUAGE": "Lingua non supportata."
     }
   },
   "validation": {
@@ -344,61 +291,76 @@
     "confirmRequired": "Conferma la password",
     "passwordMismatch": "Le password non coincidono",
     "classeInvalid": "La classe deve essere una di: {{values}}",
-    "roleInvalid": "Ruolo non valido",
-    "motivazioneMax": "Il messaggio non può superare i {{max}} caratteri"
+    "roleInvalid": "Ruolo non valido"
   },
-  "stati": {
-    "attivo": "Attivo",
-    "in_attesa": "In attesa",
-    "rifiutato": "Rifiutato"
-  },
-  "invites": {
-    "managementTitle": "Gestione inviti",
-    "managementSubtitle": "Invita nuovi studenti e tieni traccia degli inviti inviati.",
-    "create": {
-      "studentTitle": "Invita uno studente",
-      "studentText": "Inserisci l'email dello studente e assegna una classe: riceverà un link per completare la registrazione.",
-      "teacherTitle": "Invita un insegnante",
-      "teacherText": "Inserisci l'email dell'insegnante: riceverà un link per completare la registrazione, senza bisogno di approvazione.",
-      "submit": "Invia invito",
-      "studentSuccess": "Invito inviato a {{email}}.",
-      "teacherSuccess": "Invito insegnante inviato a {{email}}."
+  "quiz": {
+    "pageTitle": "Quiz Kana",
+    "pageSubtitle": "Riconosci hiragana e katakana e digita la loro romanizzazione. I tuoi progressi vengono salvati: i caratteri più difficili torneranno più spesso.",
+    "startSession": "Inizia una partita",
+    "saving": "Salvataggio dei risultati…",
+    "alphabets": {
+      "hiragana": "Hiragana",
+      "katakana": "Katakana"
     },
-    "list": {
-      "title": "Inviti inviati",
-      "expires": "Scade il {{date}}",
-      "revoke": "Revoca",
-      "revoked": "Invito per {{email}} revocato.",
-      "confirmTitle": "Revocare questo invito?",
-      "confirmDescription": "Il link inviato a {{email}} non sarà più utilizzabile.",
-      "emptyTitle": "Nessun invito",
-      "emptyDescription": "Gli inviti che invii compariranno qui."
+    "groups": {
+      "vowels": "Vocali",
+      "k": "K",
+      "s": "S",
+      "t": "T",
+      "n": "N",
+      "h": "H",
+      "m": "M",
+      "y": "Y",
+      "r": "R",
+      "w": "W"
     },
-    "status": {
-      "pendente": "In attesa",
-      "completato": "Completato",
-      "revocato": "Revocato"
+    "stats": {
+      "level": "Livello",
+      "levelProgress": "Avanzamento del livello",
+      "xpProgress": "{{xp}} / {{next}} XP",
+      "streak": "Streak",
+      "record": "Record",
+      "mastered": "Padroneggiati",
+      "toReviewTitle": "Da rivedere",
+      "toReviewEmpty": "Nessun carattere critico al momento. Ottimo lavoro!"
     },
-    "filters": {
-      "statoLabel": "Stato",
-      "statoAll": "Tutti"
-    }
-  },
-  "admin": {
-    "requests": {
-      "title": "Candidature insegnante",
-      "subtitle": "Approva o rifiuta le richieste di accesso degli insegnanti.",
-      "filterLabel": "Stato",
-      "filterAll": "Tutte",
-      "approve": "Approva",
-      "reject": "Rifiuta",
-      "approved": "Candidatura di {{name}} approvata.",
-      "rejected": "Candidatura di {{name}} rifiutata.",
-      "submittedOn": "Inviata il {{date}}",
-      "confirmRejectTitle": "Rifiutare questa candidatura?",
-      "confirmRejectDescription": "La candidatura di {{name}} verrà rifiutata e l'accesso resterà negato.",
-      "emptyTitle": "Nessuna candidatura",
-      "emptyDescription": "Non ci sono candidature insegnante per il filtro selezionato."
+    "setup": {
+      "title": "Imposta la partita",
+      "subtitle": "Scegli cosa allenare. Verranno proposti fino a 20 caratteri.",
+      "alphabetLegend": "Alfabeto",
+      "rowsLegend": "Righe",
+      "rowsAllHint": "Nessuna riga selezionata: verranno incluse tutte le righe.",
+      "rowsSomeHint": "Verranno incluse solo le righe selezionate.",
+      "variantsLegend": "Varianti",
+      "includeDakuon": "Includi dakuon e handakuon (が, ぱ…)",
+      "includeYoon": "Includi yōon (きゃ, しょ…)",
+      "modeLegend": "Modalità",
+      "timerMode": "Modalità a tempo",
+      "timerModeHint": "Hai pochi secondi per ogni carattere, ma guadagni più XP.",
+      "start": "Inizia"
+    },
+    "play": {
+      "progress": "{{current}} di {{total}}",
+      "combo": "Combo {{count}}",
+      "comboBoost": "XP x2",
+      "prompt": "Quale romaji?",
+      "correct": "Corretto!",
+      "wrong": "Risposta corretta: {{answer}}",
+      "inputPlaceholder": "Scrivi il romaji…",
+      "check": "Verifica"
+    },
+    "results": {
+      "title": "Partita conclusa",
+      "correctOfTotal": "{{correct}} su {{total}} corrette",
+      "levelUp": "Sei salito dal livello {{from}} al livello {{to}}!",
+      "xpFromAnswers": "XP dalle risposte",
+      "xpCombo": "Bonus combo",
+      "xpAccuracy": "Bonus precisione",
+      "xpTotal": "Totale",
+      "correct": "Corrette",
+      "wrong": "Errate",
+      "playAgain": "Gioca ancora",
+      "backToDashboard": "Torna al riepilogo"
     }
   }
 }

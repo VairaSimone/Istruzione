@@ -28,14 +28,15 @@
   "roles": {
     "studente": "Student",
     "insegnante": "Teacher",
-    "admin": "Administrator"
+    "admin": "Admin"
   },
   "classi": {
     "Prima": "First year",
     "Seconda": "Second year",
     "Terza": "Third year",
     "Quarta": "Fourth year",
-    "Quinta": "Fifth year"
+    "Quinta": "Fifth year",
+    "null": "Teacher"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -45,9 +46,7 @@
     "register": "Sign up",
     "logout": "Log out",
     "mainNavAria": "Main navigation",
-    "invitesManagement": "Invites",
-    "teacherRequests": "Applications",
-    "teacherRequest": "Apply"
+    "quiz": "Quiz"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -55,10 +54,7 @@
   "home": {
     "subtitle": "The platform for students and teachers to follow their Japanese learning journey, class by class.",
     "start": "Get started",
-    "haveAccount": "I already have an account",
-    "login": "Sign in",
-    "teacherCta": "Apply as a teacher",
-    "studentInviteNote": "Students can only join the platform via an invitation from their teacher."
+    "haveAccount": "I already have an account"
   },
   "auth": {
     "fields": {
@@ -80,10 +76,7 @@
       "forgot": "Forgot your password?",
       "submit": "Log in",
       "noAccount": "Don't have an account?",
-      "success": "Logged in successfully.",
-      "teacherPrompt": "Are you a teacher?",
-      "teacherCta": "Submit an application",
-      "studentInviteNote": "Students receive an email invitation from their teacher."
+      "success": "Logged in successfully."
     },
     "register": {
       "title": "Create your account",
@@ -147,35 +140,6 @@
       "prompt": "Didn't receive the verification email?",
       "cta": "Resend verification email",
       "done": "If the address is registered and not yet verified, you'll receive a new verification email shortly."
-    },
-    "invite": {
-      "noTokenTitle": "An invitation is required",
-      "noTokenText": "To register you need a valid invitation link. Students receive their invitation from their teacher.",
-      "goToLogin": "Go to login",
-      "teacherPrompt": "Are you a teacher?",
-      "teacherCta": "Submit an application",
-      "checking": "Validating invitation",
-      "invalidTitle": "Invalid invitation",
-      "successTitle": "Registration complete",
-      "successText": "Your account has been created. You can now sign in.",
-      "successCta": "Go to login",
-      "studentTitle": "Complete your registration",
-      "studentSubtitle": "Enter your details to activate your student account.",
-      "teacherTitle": "Complete your registration",
-      "teacherSubtitle": "Enter your details to activate your teacher account.",
-      "submit": "Complete registration",
-      "haveAccount": "Already have an account?"
-    },
-    "teacherRequest": {
-      "title": "Teacher application",
-      "subtitle": "Submit your application: an administrator will review it before enabling access.",
-      "submit": "Submit application",
-      "haveAccount": "Already have an account?",
-      "motivazioneLabel": "Message (optional)",
-      "motivazioneHint": "Add a short introduction for the administrator.",
-      "successTitle": "Application submitted",
-      "successText": "Your application is pending approval. You will receive an email once an administrator has reviewed it.",
-      "successCta": "Back to login"
     }
   },
   "dashboard": {
@@ -189,10 +153,9 @@
     "teacherCardTitle": "Class management",
     "teacherCardText": "View the list of students, change roles and manage the accounts registered on the platform.",
     "teacherCardCta": "Go to user management",
-    "invitesCardCta": "Manage invites",
-    "adminCardTitle": "Teacher applications",
-    "adminCardText": "Review teacher access requests and approve or reject pending applications.",
-    "adminCardCta": "Go to applications"
+    "quizCardTitle": "Kana quiz",
+    "quizCardText": "Practise hiragana and katakana with a spaced-repetition quiz: the characters you miss come back more often. Earn XP, levels and streaks.",
+    "quizCardCta": "Go to the quiz"
   },
   "profile": {
     "title": "Your profile",
@@ -307,22 +270,7 @@
       "GOOGLE_OAUTH_DISABLED": "Google sign-in is currently unavailable.",
       "USE_GOOGLE_LOGIN": "This account uses Google sign-in. Use the “Continue with Google” button.",
       "GOOGLE_NO_EMAIL": "The Google profile doesn't expose an email: sign-in cannot be completed.",
-      "INVALID_LANGUAGE": "Unsupported language.",
-      "ACCOUNT_PENDING": "Your account is pending approval by an administrator.",
-      "ACCOUNT_NOT_ACTIVE": "This account is not allowed to sign in. Please contact an administrator.",
-      "GOOGLE_NO_ACCOUNT": "No account is associated with this Google address. Access is reserved for invited users.",
-      "INVALID_INVITE": "Invalid or revoked invitation.",
-      "INVITE_EXPIRED": "Invitation expired. Please request a new one.",
-      "INVITE_ALREADY_USED": "This invitation has already been used.",
-      "INVITE_ROLE_MISMATCH": "This invitation is not valid for this type of registration.",
-      "INVITE_NOT_FOUND": "Invitation not found.",
-      "INVITE_NOT_PENDING": "Only pending invitations can be revoked.",
-      "EMAIL_ALREADY_REGISTERED": "An account is already registered with this email.",
-      "INVALID_CLASS": "Invalid class.",
-      "REQUEST_NOT_FOUND": "Teacher application not found.",
-      "ALREADY_ACTIVE": "This teacher is already active.",
-      "ADMIN_ROLE_FORBIDDEN": "This operation is reserved for administrators.",
-      "LAST_ADMIN": "You cannot delete or demote the last administrator."
+      "INVALID_LANGUAGE": "Unsupported language."
     }
   },
   "validation": {
@@ -344,61 +292,76 @@
     "confirmRequired": "Confirm the password",
     "passwordMismatch": "Passwords do not match",
     "classeInvalid": "Class must be one of: {{values}}",
-    "roleInvalid": "Invalid role",
-    "motivazioneMax": "The message cannot exceed {{max}} characters"
+    "roleInvalid": "Invalid role"
   },
-  "stati": {
-    "attivo": "Active",
-    "in_attesa": "Pending",
-    "rifiutato": "Rejected"
-  },
-  "invites": {
-    "managementTitle": "Invite management",
-    "managementSubtitle": "Invite new students and keep track of the invitations you have sent.",
-    "create": {
-      "studentTitle": "Invite a student",
-      "studentText": "Enter the student's email and assign a class: they will receive a link to complete registration.",
-      "teacherTitle": "Invite a teacher",
-      "teacherText": "Enter the teacher's email: they will receive a link to complete registration, with no approval needed.",
-      "submit": "Send invite",
-      "studentSuccess": "Invitation sent to {{email}}.",
-      "teacherSuccess": "Teacher invitation sent to {{email}}."
+  "quiz": {
+    "pageTitle": "Kana quiz",
+    "pageSubtitle": "Recognise hiragana and katakana and type their romanisation. Your progress is saved: the trickiest characters will come back more often.",
+    "startSession": "Start a session",
+    "saving": "Saving your results…",
+    "alphabets": {
+      "hiragana": "Hiragana",
+      "katakana": "Katakana"
     },
-    "list": {
-      "title": "Sent invitations",
-      "expires": "Expires on {{date}}",
-      "revoke": "Revoke",
-      "revoked": "Invitation for {{email}} revoked.",
-      "confirmTitle": "Revoke this invitation?",
-      "confirmDescription": "The link sent to {{email}} will no longer be usable.",
-      "emptyTitle": "No invitations",
-      "emptyDescription": "The invitations you send will appear here."
+    "groups": {
+      "vowels": "Vowels",
+      "k": "K",
+      "s": "S",
+      "t": "T",
+      "n": "N",
+      "h": "H",
+      "m": "M",
+      "y": "Y",
+      "r": "R",
+      "w": "W"
     },
-    "status": {
-      "pendente": "Pending",
-      "completato": "Completed",
-      "revocato": "Revoked"
+    "stats": {
+      "level": "Level",
+      "levelProgress": "Level progress",
+      "xpProgress": "{{xp}} / {{next}} XP",
+      "streak": "Streak",
+      "record": "Best",
+      "mastered": "Mastered",
+      "toReviewTitle": "To review",
+      "toReviewEmpty": "No weak characters right now. Great job!"
     },
-    "filters": {
-      "statoLabel": "Status",
-      "statoAll": "All"
-    }
-  },
-  "admin": {
-    "requests": {
-      "title": "Teacher applications",
-      "subtitle": "Approve or reject teacher access requests.",
-      "filterLabel": "Status",
-      "filterAll": "All",
-      "approve": "Approve",
-      "reject": "Reject",
-      "approved": "{{name}}'s application approved.",
-      "rejected": "{{name}}'s application rejected.",
-      "submittedOn": "Submitted on {{date}}",
-      "confirmRejectTitle": "Reject this application?",
-      "confirmRejectDescription": "{{name}}'s application will be rejected and access will remain denied.",
-      "emptyTitle": "No applications",
-      "emptyDescription": "There are no teacher applications for the selected filter."
+    "setup": {
+      "title": "Set up the session",
+      "subtitle": "Choose what to practise. Up to 20 characters will be drawn.",
+      "alphabetLegend": "Alphabet",
+      "rowsLegend": "Rows",
+      "rowsAllHint": "No row selected: all rows will be included.",
+      "rowsSomeHint": "Only the selected rows will be included.",
+      "variantsLegend": "Variants",
+      "includeDakuon": "Include dakuon and handakuon (が, ぱ…)",
+      "includeYoon": "Include yōon (きゃ, しょ…)",
+      "modeLegend": "Mode",
+      "timerMode": "Timed mode",
+      "timerModeHint": "You have a few seconds per character, but earn more XP.",
+      "start": "Start"
+    },
+    "play": {
+      "progress": "{{current}} of {{total}}",
+      "combo": "Combo {{count}}",
+      "comboBoost": "XP x2",
+      "prompt": "Which romaji?",
+      "correct": "Correct!",
+      "wrong": "Correct answer: {{answer}}",
+      "inputPlaceholder": "Type the romaji…",
+      "check": "Check"
+    },
+    "results": {
+      "title": "Session complete",
+      "correctOfTotal": "{{correct}} of {{total}} correct",
+      "levelUp": "You went from level {{from}} to level {{to}}!",
+      "xpFromAnswers": "XP from answers",
+      "xpCombo": "Combo bonus",
+      "xpAccuracy": "Accuracy bonus",
+      "xpTotal": "Total",
+      "correct": "Correct",
+      "wrong": "Wrong",
+      "playAgain": "Play again",
+      "backToDashboard": "Back to overview"
     }
   }
 }

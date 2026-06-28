@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   useAuthStore,
   selectIsAuthenticated,
-  selectIsAdmin,
-  selectCanManage,
+  selectIsTeacher,
 } from '../../store/authStore';
 import { useLogout } from '../../hooks/useLogout';
 import { ROUTES } from '../../constants/routes';
@@ -19,8 +18,7 @@ const Header = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
-  const isAdmin = useAuthStore(selectIsAdmin);
-  const canManage = useAuthStore(selectCanManage);
+  const isTeacher = useAuthStore(selectIsTeacher);
   const logoutMutation = useLogout();
 
   const handleLogout = async () => {
@@ -51,22 +49,15 @@ const Header = () => {
             <Link to={ROUTES.DASHBOARD} className={styles.navLink}>
               {t('nav.dashboard')}
             </Link>
+            <Link to={ROUTES.QUIZ} className={styles.navLink}>
+              {t('nav.quiz')}
+            </Link>
             <Link to={ROUTES.PROFILE} className={styles.navLink}>
               {t('nav.profile')}
             </Link>
-            {canManage && (
-              <>
-                <Link to={ROUTES.USERS_MANAGEMENT} className={styles.navLink}>
-                  {t('nav.usersManagement')}
-                </Link>
-                <Link to={ROUTES.INVITES_MANAGEMENT} className={styles.navLink}>
-                  {t('nav.invitesManagement')}
-                </Link>
-              </>
-            )}
-            {isAdmin && (
-              <Link to={ROUTES.ADMIN_TEACHER_REQUESTS} className={styles.navLink}>
-                {t('nav.teacherRequests')}
+            {isTeacher && (
+              <Link to={ROUTES.USERS_MANAGEMENT} className={styles.navLink}>
+                {t('nav.usersManagement')}
               </Link>
             )}
           </nav>
@@ -94,9 +85,7 @@ const Header = () => {
               <Link to={ROUTES.LOGIN} className={styles.navLink}>
                 {t('nav.login')}
               </Link>
-              <Button size="sm" onClick={() => navigate(ROUTES.TEACHER_REQUEST)}>
-                {t('nav.teacherRequest')}
-              </Button>
+  
             </>
           )}
         </div>

@@ -4,6 +4,7 @@ import {
   useAuthStore,
   selectIsAdmin,
   selectCanManage,
+  selectIsTeacher,
 } from '../store/authStore';
 import { ROUTES } from '../constants/routes';
 import { ROLES } from '../constants/domain';
@@ -17,6 +18,7 @@ const DashboardPage = () => {
   const user = useAuthStore((state) => state.user);
   const isAdmin = useAuthStore(selectIsAdmin);
   const canManage = useAuthStore(selectCanManage);
+  const isTeacher = useAuthStore(selectIsTeacher);
 
   if (!user) return null; // ProtectedRoute garantisce che qui user esista sempre
 
@@ -30,6 +32,7 @@ const DashboardPage = () => {
       </header>
 
       <div className={styles.grid}>
+        {/* PROFILO CARD */}
         <Card className={styles.summaryCard}>
           <h2 className={styles.cardTitle}>{t('dashboard.profileCardTitle')}</h2>
           <dl className={styles.summaryList}>
@@ -57,7 +60,17 @@ const DashboardPage = () => {
           </Link>
         </Card>
 
-        {canManage && (
+        {/* QUIZ CARD */}
+        <Card className={styles.summaryCard}>
+          <h2 className={styles.cardTitle}>{t('dashboard.quizCardTitle')}</h2>
+          <p className={styles.cardText}>{t('dashboard.quizCardText')}</p>
+          <Link to={ROUTES.QUIZ}>
+            <Button size="sm">{t('dashboard.quizCardCta')}</Button>
+          </Link>
+        </Card>
+
+        {/* GESTIONE DOCENTE / CAN MANAGE */}
+        {(canManage || isTeacher) && (
           <Card className={styles.summaryCard}>
             <h2 className={styles.cardTitle}>{t('dashboard.teacherCardTitle')}</h2>
             <p className={styles.cardText}>{t('dashboard.teacherCardText')}</p>
@@ -74,6 +87,7 @@ const DashboardPage = () => {
           </Card>
         )}
 
+        {/* AMMINISTRAZIONE CARD */}
         {isAdmin && (
           <Card className={styles.summaryCard}>
             <h2 className={styles.cardTitle}>{t('dashboard.adminCardTitle')}</h2>
