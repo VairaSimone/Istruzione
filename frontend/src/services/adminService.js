@@ -32,3 +32,13 @@ export const rejectTeacher = async ({ id, motivazione }) => {
   });
   return data;
 };
+
+export const getSchools = async () => {
+  const response = await apiClient.get('/admin/schools');
+  return response.data.data.scuole;
+};
+
+export const createSchool = async (nome) => {
+  const response = await apiClient.post('/admin/schools', { nome });
+  return response.data.data.scuola;
+};

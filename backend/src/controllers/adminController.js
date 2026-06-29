@@ -1,8 +1,17 @@
 'use strict';
-
+const Scuola = require('../models/Scuola');
 const catchAsync = require('../utils/catchAsync');
 const adminService = require('../services/adminService');
+exports.createSchool = catchAsync(async (req, res) => {
+  const { nome } = req.body;
+  const scuola = await Scuola.create({ nome });
+  res.status(201).json({ status: 'success', data: { scuola } });
+});
 
+exports.getSchools = catchAsync(async (req, res) => {
+  const scuole = await Scuola.findAll();
+  res.status(200).json({ status: 'success', data: { scuole } });
+});
 /**
  * AdminController — livello sottile tra route e AdminService.
  * Gestione delle candidature insegnante (elenco / approvazione / rifiuto).

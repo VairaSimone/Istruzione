@@ -11,7 +11,9 @@ import Card from '../../../components/ui/Card';
 import TextField from '../../../components/ui/TextField';
 import Button from '../../../components/ui/Button';
 import styles from './Invites.module.css';
-
+import { useState, useEffect } from 'react';
+import { getSchools } from '../../../services/adminService';
+import Select from '../../../components/ui/Select';
 /**
  * Form di creazione invito INSEGNANTE (solo admin — onboarding diretto).
  * Nessuna classe: l'admin inserisce solo l'email.

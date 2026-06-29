@@ -138,7 +138,9 @@ const getUtentiPerInsegnante = async (filtri) => {
   if (classe) {
     where.classe = classe;
   }
-
+if (req.user.ruolo !== 'admin') {
+    where.scuolaId = req.user.scuolaId;
+  }
   if (nome) {
     // Escape dei wildcard LIKE (% _ \) sull'input utente per prevenire
     // LIKE injection e query a costo esponenziale.

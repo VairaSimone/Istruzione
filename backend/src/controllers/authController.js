@@ -9,6 +9,7 @@ const {
   REFRESH_TOKEN_MAX_AGE,
 } = require('../config/cookies');
 const { setCsrfCookie } = require('../middleware/csrf');
+const Invito = require('../models/Invito');
 
 /**
  * AuthController — livello sottile tra route e AuthService.
@@ -43,9 +44,10 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
 // ─────────────────────────────────────────────
 exports.registerStudent = catchAsync(async (req, res) => {
   const { token, nome, cognome, eta, password } = req.body;
-
+const invito = await Invito.findOne({ where: { token } });
+  if (!invito) throw new AppError('Invito non valido', 400);
   const utente = await authService.registraStudenteDaInvito({
-    token, nome, cognome, eta, password,
+    token, nome, cognome, eta, password, scuolaId: invito.scuolaId
   });
 
   res.status(201).json({
