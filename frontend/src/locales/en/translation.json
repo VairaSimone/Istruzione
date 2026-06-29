@@ -46,7 +46,10 @@
     "register": "Sign up",
     "logout": "Log out",
     "mainNavAria": "Main navigation",
-    "quiz": "Quiz"
+    "quiz": "Quiz",
+    "invitesManagement": "Invites",
+    "teacherRequests": "Applications",
+    "teacherRequest": "Apply"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -54,7 +57,10 @@
   "home": {
     "subtitle": "The platform for students and teachers to follow their Japanese learning journey, class by class.",
     "start": "Get started",
-    "haveAccount": "I already have an account"
+    "haveAccount": "I already have an account",
+    "login": "Sign in",
+    "teacherCta": "Apply as a teacher",
+    "studentInviteNote": "Students can only join the platform via an invitation from their teacher."
   },
   "auth": {
     "fields": {
@@ -76,7 +82,10 @@
       "forgot": "Forgot your password?",
       "submit": "Log in",
       "noAccount": "Don't have an account?",
-      "success": "Logged in successfully."
+      "success": "Logged in successfully.",
+      "teacherPrompt": "Are you a teacher?",
+      "teacherCta": "Submit an application",
+      "studentInviteNote": "Students receive an email invitation from their teacher."
     },
     "register": {
       "title": "Create your account",
@@ -140,6 +149,35 @@
       "prompt": "Didn't receive the verification email?",
       "cta": "Resend verification email",
       "done": "If the address is registered and not yet verified, you'll receive a new verification email shortly."
+    },
+    "invite": {
+      "noTokenTitle": "An invitation is required",
+      "noTokenText": "To register you need a valid invitation link. Students receive their invitation from their teacher.",
+      "goToLogin": "Go to login",
+      "teacherPrompt": "Are you a teacher?",
+      "teacherCta": "Submit an application",
+      "checking": "Validating invitation",
+      "invalidTitle": "Invalid invitation",
+      "successTitle": "Registration complete",
+      "successText": "Your account has been created. You can now sign in.",
+      "successCta": "Go to login",
+      "studentTitle": "Complete your registration",
+      "studentSubtitle": "Enter your details to activate your student account.",
+      "teacherTitle": "Complete your registration",
+      "teacherSubtitle": "Enter your details to activate your teacher account.",
+      "submit": "Complete registration",
+      "haveAccount": "Already have an account?"
+    },
+    "teacherRequest": {
+      "title": "Teacher application",
+      "subtitle": "Submit your application: an administrator will review it before enabling access.",
+      "submit": "Submit application",
+      "haveAccount": "Already have an account?",
+      "motivazioneLabel": "Message (optional)",
+      "motivazioneHint": "Add a short introduction for the administrator.",
+      "successTitle": "Application submitted",
+      "successText": "Your application is pending approval. You will receive an email once an administrator has reviewed it.",
+      "successCta": "Back to login"
     }
   },
   "dashboard": {
@@ -270,7 +308,22 @@
       "GOOGLE_OAUTH_DISABLED": "Google sign-in is currently unavailable.",
       "USE_GOOGLE_LOGIN": "This account uses Google sign-in. Use the “Continue with Google” button.",
       "GOOGLE_NO_EMAIL": "The Google profile doesn't expose an email: sign-in cannot be completed.",
-      "INVALID_LANGUAGE": "Unsupported language."
+      "INVALID_LANGUAGE": "Unsupported language.",
+      "ACCOUNT_PENDING": "Your account is pending approval by an administrator.",
+      "ACCOUNT_NOT_ACTIVE": "This account is not allowed to sign in. Please contact an administrator.",
+      "GOOGLE_NO_ACCOUNT": "No account is associated with this Google address. Access is reserved for invited users.",
+      "INVALID_INVITE": "Invalid or revoked invitation.",
+      "INVITE_EXPIRED": "Invitation expired. Please request a new one.",
+      "INVITE_ALREADY_USED": "This invitation has already been used.",
+      "INVITE_ROLE_MISMATCH": "This invitation is not valid for this type of registration.",
+      "INVITE_NOT_FOUND": "Invitation not found.",
+      "INVITE_NOT_PENDING": "Only pending invitations can be revoked.",
+      "EMAIL_ALREADY_REGISTERED": "An account is already registered with this email.",
+      "INVALID_CLASS": "Invalid class.",
+      "REQUEST_NOT_FOUND": "Teacher application not found.",
+      "ALREADY_ACTIVE": "This teacher is already active.",
+      "ADMIN_ROLE_FORBIDDEN": "This operation is reserved for administrators.",
+      "LAST_ADMIN": "You cannot delete or demote the last administrator."
     }
   },
   "validation": {
@@ -292,7 +345,45 @@
     "confirmRequired": "Confirm the password",
     "passwordMismatch": "Passwords do not match",
     "classeInvalid": "Class must be one of: {{values}}",
-    "roleInvalid": "Invalid role"
+    "roleInvalid": "Invalid role",
+    "motivazioneMax": "The message cannot exceed {{max}} characters"
+  },
+  "stati": {
+    "attivo": "Active",
+    "in_attesa": "Pending",
+    "rifiutato": "Rejected"
+  },
+  "invites": {
+    "managementTitle": "Invite management",
+    "managementSubtitle": "Invite new students and keep track of the invitations you have sent.",
+    "create": {
+      "studentTitle": "Invite a student",
+      "studentText": "Enter the student's email and assign a class: they will receive a link to complete registration.",
+      "teacherTitle": "Invite a teacher",
+      "teacherText": "Enter the teacher's email: they will receive a link to complete registration, with no approval needed.",
+      "submit": "Send invite",
+      "studentSuccess": "Invitation sent to {{email}}.",
+      "teacherSuccess": "Teacher invitation sent to {{email}}."
+    },
+    "list": {
+      "title": "Sent invitations",
+      "expires": "Expires on {{date}}",
+      "revoke": "Revoke",
+      "revoked": "Invitation for {{email}} revoked.",
+      "confirmTitle": "Revoke this invitation?",
+      "confirmDescription": "The link sent to {{email}} will no longer be usable.",
+      "emptyTitle": "No invitations",
+      "emptyDescription": "The invitations you send will appear here."
+    },
+    "status": {
+      "pendente": "Pending",
+      "completato": "Completed",
+      "revocato": "Revoked"
+    },
+    "filters": {
+      "statoLabel": "Status",
+      "statoAll": "All"
+    }
   },
   "quiz": {
     "pageTitle": "Kana quiz",
@@ -362,6 +453,23 @@
       "wrong": "Wrong",
       "playAgain": "Play again",
       "backToDashboard": "Back to overview"
+    }
+  },
+  "admin": {
+    "requests": {
+      "title": "Teacher applications",
+      "subtitle": "Approve or reject teacher access requests.",
+      "filterLabel": "Status",
+      "filterAll": "All",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "{{name}}'s application approved.",
+      "rejected": "{{name}}'s application rejected.",
+      "submittedOn": "Submitted on {{date}}",
+      "confirmRejectTitle": "Reject this application?",
+      "confirmRejectDescription": "{{name}}'s application will be rejected and access will remain denied.",
+      "emptyTitle": "No applications",
+      "emptyDescription": "There are no teacher applications for the selected filter."
     }
   }
 }
