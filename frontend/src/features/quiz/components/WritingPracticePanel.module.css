@@ -1,0 +1,198 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}
+
+/* ── Selettore alfabeto (segmented) ──────────────────────── */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  background-color: var(--color-paper-dim);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.segment {
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.segmentActive {
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Area di studio ──────────────────────────────────────── */
+.studio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.intestazione {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+.glifoBlocco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.glifo {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.romaji {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--color-seal);
+  letter-spacing: 0.02em;
+}
+
+.sezione {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.sezioneTitolo {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  align-self: flex-start;
+  color: var(--color-ink);
+}
+
+.suggerimento {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  align-self: flex-start;
+}
+
+.canvasGriglia {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── Navigazione ─────────────────────────────────────────── */
+.navigazione {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.contatore {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Griglia di selezione caratteri ──────────────────────── */
+.grigliaCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr));
+  gap: var(--space-2);
+}
+
+.cellaKana {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color 0.12s ease,
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.cellaKana:hover {
+  border-color: var(--color-seal);
+  color: var(--color-seal);
+}
+
+.cellaKana:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 1px;
+}
+
+.cellaKanaAttiva {
+  color: #fff;
+  background-color: var(--color-seal);
+  border-color: var(--color-seal);
+}
+
+.cellaKanaAttiva:hover {
+  color: #fff;
+}
+
+.attribuzione {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment,
+  .cellaKana {
+    transition: none;
+  }
+}

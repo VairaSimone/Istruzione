@@ -1,6 +1,6 @@
 'use strict';
 
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { ALFABETI, GRUPPI_VALIDI } = require('../constants/kanaData');
 
 /**
@@ -65,7 +65,18 @@ const validateSubmitQuiz = [
     .isBoolean().withMessage('timerMode deve essere booleano').toBoolean(),
 ];
 
+// ─────────────────────────────────────────────
+// GET /api/quiz/stroke/:alfabeto
+// ─────────────────────────────────────────────
+const validateStrokeOrder = [
+  param('alfabeto')
+    .trim()
+    .notEmpty().withMessage("L'alfabeto è obbligatorio")
+    .isIn(ALFABETI).withMessage(`L'alfabeto deve essere uno di: ${ALFABETI.join(', ')}`),
+];
+
 module.exports = {
   validateGenerateQuiz,
   validateSubmitQuiz,
+  validateStrokeOrder,
 };

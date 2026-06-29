@@ -53,3 +53,15 @@ export const submitQuizResults = async ({ risposte, datiBonus }) => {
   const { data } = await apiClient.post('/quiz/submit', { risposte, datiBonus });
   return data;
 };
+
+/**
+ * GET /quiz/stroke/:alfabeto (sola lettura: nessuna mutazione ⇒ niente CSRF)
+ * Restituisce l'ordine dei tratti di tutti i kana dell'alfabeto (dati statici
+ * KanjiVG). Usato dalla visualizzazione animata e dagli esercizi di scrittura.
+ *
+ * @param {string} alfabeto 'hiragana' | 'katakana'
+ */
+export const getStrokeOrder = async (alfabeto) => {
+  const { data } = await apiClient.get(`/quiz/stroke/${alfabeto}`);
+  return data;
+};

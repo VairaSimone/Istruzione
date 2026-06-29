@@ -1,0 +1,96 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.button:hover:not(:disabled) {
+  color: var(--color-seal);
+  border-color: var(--color-seal);
+  background-color: color-mix(in srgb, var(--color-seal) 8%, transparent);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* In riproduzione: accento + onde animate. */
+.active {
+  color: var(--color-seal);
+  border-color: var(--color-seal);
+  background-color: color-mix(in srgb, var(--color-seal) 12%, transparent);
+}
+
+/* ── Dimensioni ─────────────────────────────────────────── */
+.sm {
+  width: 2rem;
+  height: 2rem;
+}
+.md {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.lg {
+  width: 3rem;
+  height: 3rem;
+}
+
+.icon {
+  width: 55%;
+  height: 55%;
+}
+
+/* ── Onde sonore: visibili sempre, animate in riproduzione ── */
+.wave1,
+.wave2 {
+  opacity: 0.9;
+  transform-origin: 9px 12px;
+}
+
+.active .wave1 {
+  animation: pulse 0.9s ease-in-out infinite;
+}
+.active .wave2 {
+  animation: pulse 0.9s ease-in-out infinite 0.15s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .active .wave1,
+  .active .wave2 {
+    animation: none;
+    opacity: 1;
+  }
+  .button {
+    transition: none;
+  }
+}

@@ -11,6 +11,7 @@ import QuizStatsPanel from '../features/quiz/components/QuizStatsPanel';
 import QuizSetup from '../features/quiz/components/QuizSetup';
 import QuizPlay from '../features/quiz/components/QuizPlay';
 import QuizResults from '../features/quiz/components/QuizResults';
+import WritingPracticePanel from '../features/quiz/components/WritingPracticePanel';
 import styles from './QuizPage.module.css';
 
 /**
@@ -27,6 +28,7 @@ const FASI = {
   PLAYING: 'playing',
   SUBMITTING: 'submitting',
   RESULTS: 'results',
+  PRACTICE: 'practice',
 };
 
 const QuizPage = () => {
@@ -112,11 +114,21 @@ const QuizPage = () => {
                 <Button size="lg" onClick={vaiAllaConfigurazione}>
                   {t('quiz.startSession')}
                 </Button>
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  onClick={() => setFase(FASI.PRACTICE)}
+                >
+                  {t('quiz.practiceWriting')}
+                </Button>
               </div>
             </div>
           )}
         </>
       )}
+
+      {/* ── PRACTICE: ordine tratti, scrittura su schermo, audio ─ */}
+      {fase === FASI.PRACTICE && <WritingPracticePanel onBack={tornaAllaHome} />}
 
       {/* ── SETUP: filtri di gioco ────────────────────────────── */}
       {fase === FASI.SETUP && (

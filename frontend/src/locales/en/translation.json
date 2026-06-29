@@ -453,6 +453,39 @@
       "wrong": "Wrong",
       "playAgain": "Play again",
       "backToDashboard": "Back to overview"
+    },
+    "practiceWriting": "Writing practice",
+    "audio": {
+      "listen": "Listen to the pronunciation",
+      "noVoice": "No Japanese voice available on this device",
+      "unsupported": "Speech synthesis is not supported by your browser"
+    },
+    "strokeOrder": {
+      "title": "Stroke order",
+      "svgLabel": "Stroke order of the character {{char}}",
+      "replay": "Replay animation",
+      "replayDisabled": "Animation disabled (reduced motion)",
+      "toggleNumbers": "Show/hide numbers",
+      "strokeCount_one": "{{count}} stroke",
+      "strokeCount_other": "{{count}} strokes",
+      "attribution": "Stroke data from {{source}} ({{license}})"
+    },
+    "writing": {
+      "title": "On-screen writing",
+      "hint": "Draw the character with your finger or mouse, following the stroke order.",
+      "completed": "Completed",
+      "allStrokesDone": "Character completed! Great job.",
+      "retryStroke": "Stroke not recognized: try again following the guide.",
+      "strokeProgress": "Stroke {{current}} of {{total}}",
+      "undo": "Undo",
+      "clear": "Clear"
+    },
+    "practice": {
+      "back": "Back to quiz",
+      "prev": "Previous",
+      "next": "Next",
+      "counter": "{{current}} of {{total}}",
+      "pickerTitle": "Choose a character"
     }
   },
   "admin": {

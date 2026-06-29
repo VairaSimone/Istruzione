@@ -361,6 +361,39 @@
       "wrong": "Errate",
       "playAgain": "Gioca ancora",
       "backToDashboard": "Torna al riepilogo"
+    },
+    "practiceWriting": "Pratica di scrittura",
+    "audio": {
+      "listen": "Ascolta la pronuncia",
+      "noVoice": "Nessuna voce giapponese disponibile su questo dispositivo",
+      "unsupported": "Sintesi vocale non supportata dal browser"
+    },
+    "strokeOrder": {
+      "title": "Ordine dei tratti",
+      "svgLabel": "Ordine dei tratti del carattere {{char}}",
+      "replay": "Rivedi l’animazione",
+      "replayDisabled": "Animazione disattivata (riduzione del movimento)",
+      "toggleNumbers": "Mostra/nascondi i numeri",
+      "strokeCount_one": "{{count}} tratto",
+      "strokeCount_other": "{{count}} tratti",
+      "attribution": "Dati dei tratti da {{source}} ({{license}})"
+    },
+    "writing": {
+      "title": "Scrittura su schermo",
+      "hint": "Disegna il carattere con il dito o il mouse, seguendo l’ordine dei tratti.",
+      "completed": "Completato",
+      "allStrokesDone": "Carattere completato! Ottimo lavoro.",
+      "retryStroke": "Tratto non riconosciuto: riprova seguendo la guida.",
+      "strokeProgress": "Tratto {{current}} di {{total}}",
+      "undo": "Annulla",
+      "clear": "Cancella"
+    },
+    "practice": {
+      "back": "Torna al quiz",
+      "prev": "Precedente",
+      "next": "Successivo",
+      "counter": "{{current}} di {{total}}",
+      "pickerTitle": "Scegli un carattere"
     }
   }
 }

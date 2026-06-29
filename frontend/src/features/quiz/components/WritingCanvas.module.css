@@ -1,0 +1,117 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 18rem;
+  margin: 0 auto;
+}
+
+.canvasBox {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.canvas {
+  width: 100%;
+  display: block;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  /* Indispensabile per disegnare col dito senza far scrollare la pagina. */
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.hiddenSvg {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Overlay "completato". */
+.completato {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.completatoBadge {
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-matcha-dark);
+  background-color: var(--color-success-bg);
+  border: 1px solid color-mix(in srgb, var(--color-matcha) 35%, transparent);
+  border-radius: 999px;
+}
+
+/* ── Barra di stato + azioni ─────────────────────────────── */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.stato {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.statoOk {
+  color: var(--color-matcha-dark);
+}
+
+.statoWrong {
+  color: var(--color-danger);
+}
+
+.azioni {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.azione {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8125rem;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.azione:hover:not(:disabled) {
+  color: var(--color-seal);
+  border-color: var(--color-seal);
+}
+
+.azione:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.azione:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .azione {
+    transition: none;
+  }
+}

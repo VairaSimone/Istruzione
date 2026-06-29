@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
+import PronunciationButton from '../../../components/ui/PronunciationButton';
 import { ROMAJI_ALTERNATIVI, TIMER_SECONDI, COMBO_SOGLIA } from '../../../constants/quizDomain';
 import styles from './QuizPlay.module.css';
 
@@ -168,6 +169,11 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
             ) : (
               <span>{t('quiz.play.wrong', { answer: feedback.atteso })}</span>
             )}
+            <PronunciationButton
+              testo={corrente.kana}
+              label={corrente.kana}
+              size="sm"
+            />
           </div>
         ) : (
           <div className={styles.inputRow}>
