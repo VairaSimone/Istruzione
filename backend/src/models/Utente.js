@@ -292,6 +292,43 @@ Utente.init(
         max: { args: [100], msg: 'Il punteggio record non può superare 100' },
       },
     },
+
+    // Numero di quiz completati (submit andati a buon fine). Alimenta i badge
+    // "Primo quiz" / "Veterano".
+    quiz_completati: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'quiz_completati',
+      validate: {
+        min: { args: [0], msg: 'Il numero di quiz completati non può essere negativo' },
+      },
+    },
+
+    // Numero totale di tratti validati sul canvas di scrittura. Alimenta i
+    // badge di scrittura ("Scrittore instancabile").
+    tratti_validati: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'tratti_validati',
+      validate: {
+        min: { args: [0], msg: 'Il numero di tratti validati non può essere negativo' },
+      },
+    },
+
+    // Contatore MONOTÒNO delle righe base di kana sbloccate (portate al
+    // punteggio SRS massimo). Garantisce l'assegnazione una-tantum degli XP di
+    // sblocco riga: non decresce mai, anche se una riga tornasse non completa.
+    righe_sbloccate: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'righe_sbloccate',
+      validate: {
+        min: { args: [0], msg: 'Il numero di righe sbloccate non può essere negativo' },
+      },
+    },
   },
   {
     sequelize,

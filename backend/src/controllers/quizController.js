@@ -3,6 +3,7 @@
 const catchAsync = require('../utils/catchAsync');
 const quizService = require('../services/quizService');
 const strokeService = require('../services/strokeService');
+const gamificationService = require('../services/gamificationService');
 
 /**
  * QuizController — livello sottile tra route e QuizService.
@@ -73,5 +74,36 @@ exports.ordineTratti = catchAsync(async (req, res) => {
   res.status(200).json({
     status: 'success',
     data: { ordineTratti },
+  });
+});
+
+// ─────────────────────────────────────────────
+// POST /api/quiz/scrittura
+// Registra una sessione di scrittura su canvas (numero di tratti validati
+// lato client), assegna gli XP relativi e valuta i badge. Muta lo stato.
+// ─────────────────────────────────────────────
+exports.registraScrittura = catchAsync(async (req, res) => {
+  const { trattiValidati } = req.body;
+
+  const esito = await gamificationService.registraScrittura(req.user.id, trattiValidati);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Progresso di scrittura registrato.',
+    data: esito,
+  });
+});
+
+// ─────────────────────────────────────────────
+// GET /api/quiz/badge
+// Catalogo completo dei badge con lo stato di sblocco dell'utente, le
+// statistiche di gioco e i totali per le barre di progresso. Sola lettura.
+// ─────────────────────────────────────────────
+exports.profiloBadge = catchAsync(async (req, res) => {
+  const dati = await gamificationService.getProfiloBadge(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: dati,
   });
 });

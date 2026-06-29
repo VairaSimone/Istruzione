@@ -172,6 +172,26 @@ const quizSubmitLimiter = rateLimit({
   },
 });
 
+/**
+ * Limita la registrazione delle sessioni di scrittura su canvas: evita che un
+ * client abusi dell'endpoint per gonfiare XP/badge tramite invii massivi. Più
+ * permissivo del submit (le sessioni di scrittura sono frequenti e leggere).
+ */
+const quizScritturaLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minuti
+  max: parseInt(process.env.QUIZ_SCRITTURA_RATE_LIMIT_MAX) || 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'fail',
+    code: 'TOO_MANY_REQUESTS',
+    message: 'Troppe registrazioni di scrittura. Riprova tra qualche minuto.',
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  },
+});
+
 module.exports = {
   globalLimiter,
   loginLimiter,
@@ -182,4 +202,5 @@ module.exports = {
   inviteLimiter,
   teacherRequestLimiter,
   quizSubmitLimiter,
+  quizScritturaLimiter,
 };

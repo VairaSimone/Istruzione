@@ -7,6 +7,8 @@ const ProgressoKana = require('../models/ProgressoKana');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 const { filtraKana, trovaKana, ALFABETI } = require('../constants/kanaData');
+const { calcolaLivello, infoLivello, serializzaStatistiche } = require('../utils/gameStats');
+const gamificationService = require('./gamificationService');
 
 /**
  * QuizService — logica di business del Quiz Kana.
@@ -49,31 +51,10 @@ const LIMITE_PEGGIORI_KANA = 12;
 
 // ─────────────────────────────────────────────
 // Helpers — livello / XP
+// `calcolaLivello`, `infoLivello` e `serializzaStatistiche` vivono ora in
+// `utils/gameStats` per essere condivisi con `gamificationService` senza
+// dipendenze circolari. Sono re-esportati in fondo per compatibilità/test.
 // ─────────────────────────────────────────────
-
-/** Livello derivato dagli XP: Math.floor(sqrt(xp / 100)) + 1. */
-const calcolaLivello = (xp) => Math.floor(Math.sqrt(Math.max(0, xp) / 100)) + 1;
-
-/**
- * Informazioni complete sul livello, utili al frontend per la barra di
- * avanzamento (XP di inizio livello, XP del livello successivo, % progresso).
- */
-const infoLivello = (xp) => {
-  const xpSicuro = Math.max(0, xp);
-  const livello = calcolaLivello(xpSicuro);
-  const xpInizioLivello = Math.pow(livello - 1, 2) * 100;
-  const xpProssimoLivello = Math.pow(livello, 2) * 100;
-  const intervallo = xpProssimoLivello - xpInizioLivello;
-  const progressoLivello =
-    intervallo > 0 ? Math.round(((xpSicuro - xpInizioLivello) / intervallo) * 100) : 0;
-
-  return {
-    livello,
-    xpInizioLivello,
-    xpProssimoLivello,
-    progressoLivello: Math.max(0, Math.min(100, progressoLivello)),
-  };
-};
 
 // ─────────────────────────────────────────────
 // Helpers — date (normalizzate in UTC, colonna DATEONLY 'YYYY-MM-DD')
@@ -110,18 +91,8 @@ const mescola = (arr) => {
 };
 
 // ─────────────────────────────────────────────
-// Serializzazione statistiche utente
+// (serializzaStatistiche è importato da utils/gameStats)
 // ─────────────────────────────────────────────
-const serializzaStatistiche = (utente) => {
-  const xp = utente.xp || 0;
-  return {
-    xp,
-    streak: utente.streak || 0,
-    punteggioRecord: utente.punteggio_record || 0,
-    ultimaDataStudio: utente.ultima_data_studio || null,
-    ...infoLivello(xp),
-  };
-};
 
 // ─────────────────────────────────────────────
 // GENERAZIONE POOL QUIZ (SRS ibrido)
@@ -309,8 +280,9 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}) => {
       transaction: t,
     });
 
-    // 3c. XP.
-    utente.xp = (utente.xp || 0) + xpGuadagnati;
+    // 3c. XP del round.
+    const xpIniziale = utente.xp || 0;
+    utente.xp = xpIniziale + xpGuadagnati;
 
     // 3d. Streak.
     const oggi = mezzanotteOdiernaUTC();
@@ -322,15 +294,27 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}) => {
       utente.punteggio_record = percentuale;
     }
 
+    // 3f. Contatore quiz completati (per i badge).
+    utente.quiz_completati = (utente.quiz_completati || 0) + 1;
+
+    // 3g. Valutazione progressi (sblocco righe + badge), nella stessa
+    //     transazione. Può aggiungere altri XP (sblocco riga) sull'utente
+    //     prima del salvataggio.
+    const valutazione = await gamificationService.valutaProgressi(utente, t);
+
     await utente.save({ transaction: t });
-    return utente;
+    return { utente, xpIniziale, valutazione };
   });
 
-  const livelloPrima = calcolaLivello(utenteAggiornato.xp - xpGuadagnati);
-  const livelloDopo = calcolaLivello(utenteAggiornato.xp);
+  const { utente: utenteFinale, xpIniziale, valutazione } = utenteAggiornato;
+  const livelloPrima = calcolaLivello(xpIniziale);
+  const livelloDopo = calcolaLivello(utenteFinale.xp);
 
   logger.info(
-    `[QUIZ] Utente ${userId} ha inviato un round: ${corrette}/${totale} (${percentuale}%), +${xpGuadagnati} XP`
+    `[QUIZ] Utente ${userId} ha inviato un round: ${corrette}/${totale} (${percentuale}%), ` +
+      `+${xpGuadagnati} XP` +
+      (valutazione.xpRighe ? ` (+${valutazione.xpRighe} XP sblocco righe)` : '') +
+      (valutazione.nuoviBadge.length ? `, badge: ${valutazione.nuoviBadge.join(', ')}` : '')
   );
 
   return {
@@ -343,11 +327,15 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}) => {
       xpRisposte,
       bonusCombo,
       bonusPercentuale,
+      // XP una-tantum per eventuali righe di kana sbloccate in questo round.
+      xpRighe: valutazione.xpRighe,
       livelloPrima,
       livelloDopo,
       salitoDiLivello: livelloDopo > livelloPrima,
+      // Codici dei badge sbloccati in questo round (per i toast frontend).
+      nuoviBadge: valutazione.nuoviBadge,
     },
-    statistiche: serializzaStatistiche(utenteAggiornato),
+    statistiche: serializzaStatistiche(utenteFinale),
   };
 };
 
@@ -358,13 +346,16 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}) => {
 // ─────────────────────────────────────────────
 const getDashboard = async (userId) => {
   const utente = await Utente.findByPk(userId, {
-    attributes: ['id', 'xp', 'streak', 'punteggio_record', 'ultima_data_studio'],
+    attributes: [
+      'id', 'xp', 'streak', 'punteggio_record', 'ultima_data_studio',
+      'quiz_completati', 'tratti_validati', 'righe_sbloccate',
+    ],
   });
   if (!utente) {
     throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
   }
 
-  const [mastered, peggiori] = await Promise.all([
+  const [mastered, peggiori, riepilogoBadge] = await Promise.all([
     ProgressoKana.count({
       where: { utente_id: userId, punteggio: PUNTEGGIO_SRS_MAX },
     }),
@@ -374,12 +365,14 @@ const getDashboard = async (userId) => {
       order: [['punteggio', 'ASC'], ['updated_at', 'DESC']],
       limit: LIMITE_PEGGIORI_KANA,
     }),
+    gamificationService.getRiepilogoBadge(userId),
   ]);
 
   return {
     statistiche: serializzaStatistiche(utente),
     mastered,
     peggioriKana: peggiori.map((p) => p.toPublicJSON()),
+    badge: riepilogoBadge,
   };
 };
 

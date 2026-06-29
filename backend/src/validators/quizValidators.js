@@ -75,8 +75,25 @@ const validateStrokeOrder = [
     .isIn(ALFABETI).withMessage(`L'alfabeto deve essere uno di: ${ALFABETI.join(', ')}`),
 ];
 
+// ─────────────────────────────────────────────
+// POST /api/quiz/scrittura
+// Numero di tratti validati sul canvas in una sessione. Tetto rigido (50)
+// allineato al limite difensivo del gamificationService.
+// ─────────────────────────────────────────────
+const MAX_TRATTI_SCRITTURA = 50;
+
+const validateRegistraScrittura = [
+  body('trattiValidati')
+    .exists().withMessage('Il numero di tratti validati è obbligatorio')
+    .bail()
+    .isInt({ min: 1, max: MAX_TRATTI_SCRITTURA })
+    .withMessage(`I tratti validati devono essere un intero tra 1 e ${MAX_TRATTI_SCRITTURA}`)
+    .toInt(),
+];
+
 module.exports = {
   validateGenerateQuiz,
   validateSubmitQuiz,
   validateStrokeOrder,
+  validateRegistraScrittura,
 };
