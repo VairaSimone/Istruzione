@@ -271,7 +271,9 @@
       "GOOGLE_OAUTH_DISABLED": "Il login con Google non è al momento disponibile.",
       "USE_GOOGLE_LOGIN": "Questo account usa l'accesso con Google. Usa il pulsante “Continua con Google”.",
       "GOOGLE_NO_EMAIL": "Il profilo Google non espone un'email: impossibile completare l'accesso.",
-      "INVALID_LANGUAGE": "Lingua non supportata."
+      "INVALID_LANGUAGE": "Lingua non supportata.",
+      "EMPTY_TRAINING_POOL": "Nessun carattere problematico: completa prima qualche quiz.",
+      "INVALID_ALPHABET": "Alfabeto non valido."
     }
   },
   "validation": {
@@ -324,7 +326,9 @@
       "record": "Record",
       "mastered": "Padroneggiati",
       "toReviewTitle": "Da rivedere",
-      "toReviewEmpty": "Nessun carattere critico al momento. Ottimo lavoro!"
+      "toReviewEmpty": "Nessun carattere critico al momento. Ottimo lavoro!",
+      "streakRecord_one": "record {{count}}",
+      "streakRecord_other": "record {{count}}"
     },
     "setup": {
       "title": "Imposta la partita",
@@ -480,6 +484,44 @@
           "description": "Sblocca 5 righe di kana portandole al punteggio massimo."
         }
       }
+    },
+    "progress": {
+      "title": "I tuoi progressi"
+    },
+    "streak": {
+      "daysUnit_one": "giorno",
+      "daysUnit_other": "giorni",
+      "flame_one": "Sei in un fuoco di {{count}} giorno! 🔥",
+      "flame_other": "Sei in un fuoco di {{count}} giorni! 🔥",
+      "none": "Completa un quiz oggi per accendere la tua streak.",
+      "record_one": "Record: {{count}} giorno",
+      "record_other": "Record: {{count}} giorni",
+      "studiedToday": "Studiato oggi ✓",
+      "atRisk": "Studia oggi per non perderla!"
+    },
+    "heatmap": {
+      "title": "Attività di studio",
+      "summary": "{{active}} giorni attivi · {{xp}} XP nel periodo",
+      "less": "Meno",
+      "more": "Più",
+      "tooltip": "{{date}}: {{quiz}} quiz · {{answers}} risposte · {{strokes}} tratti",
+      "tooltipEmpty": "{{date}}: nessuna attività"
+    },
+    "problematic": {
+      "title": "Caratteri problematici",
+      "subtitle": "Dove sbagli più spesso, per risposta o per ordine dei tratti.",
+      "filterLegend": "Filtra per alfabeto",
+      "filterAll": "Tutti",
+      "empty": "Nessun carattere problematico al momento. Ottimo lavoro!",
+      "hint": "Completa qualche quiz per individuare i caratteri da rinforzare.",
+      "errorRate": "{{rate}}% errori",
+      "strokeErrors_one": "{{count}} errore tratti",
+      "strokeErrors_other": "{{count}} errori tratti",
+      "startIntensive_one": "Allenamento intensivo ({{count}})",
+      "startIntensive_other": "Allenamento intensivo ({{count}})"
+    },
+    "intensive": {
+      "starting": "Preparazione…"
     }
   }
 }

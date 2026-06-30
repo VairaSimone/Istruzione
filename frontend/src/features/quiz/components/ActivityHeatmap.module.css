@@ -1,0 +1,90 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.titolo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-ink);
+}
+
+.sottotitolo {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* Scroll orizzontale su schermi stretti (mobile). */
+.grigliaScroll {
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+}
+
+.griglia {
+  display: flex;
+  gap: 3px;
+  width: max-content;
+}
+
+.colonna {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cella {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--color-paper-dim);
+  border: 1px solid var(--color-border);
+}
+
+/* Cella di padding (prima dell'inizio finestra): invisibile ma occupa spazio. */
+.pad {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Scala di intensità (0 = nessuna attività → 4 = massima). */
+.liv0 {
+  background: var(--color-paper-dim);
+}
+.liv1 {
+  background: color-mix(in srgb, var(--color-matcha) 35%, var(--color-paper));
+  border-color: color-mix(in srgb, var(--color-matcha) 30%, var(--color-border));
+}
+.liv2 {
+  background: color-mix(in srgb, var(--color-matcha) 60%, var(--color-paper));
+  border-color: color-mix(in srgb, var(--color-matcha) 50%, var(--color-border));
+}
+.liv3 {
+  background: var(--color-matcha);
+  border-color: var(--color-matcha);
+}
+.liv4 {
+  background: var(--color-matcha-dark);
+  border-color: var(--color-matcha-dark);
+}
+
+.legenda {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.legendaTesto {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 0 4px;
+}

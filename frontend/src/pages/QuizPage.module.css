@@ -32,6 +32,24 @@
   gap: var(--space-3);
 }
 
+/* Sezione progressi: streak + heatmap + caratteri problematici.
+   Una colonna su mobile, due colonne da tablet in su (heatmap a tutta riga). */
+.progressi {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .progressi {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* La heatmap occupa l'intera riga. */
+  .progressi > :nth-child(2) {
+    grid-column: 1 / -1;
+  }
+}
+
 .submitting {
   display: flex;
   flex-direction: column;

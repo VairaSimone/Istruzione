@@ -25,7 +25,9 @@ import styles from './WritingCanvas.module.css';
  *
  * @param {{carattere:string, strokes:string[]}} componente
  * @param {string}   viewBox            es. '0 0 109 109'
- * @param {() => void} [onCompletato]   invocato quando tutti i tratti sono ok
+ * @param {(nTratti:number, nErroriTratti:number) => void} [onCompletato]
+ *        invocato quando tutti i tratti sono ok, con il numero di tratti
+ *        validati e il numero di tentativi errati (errori di ordine/forma).
  */
 
 const N_CAMPIONI = 24; // punti di ri-campionamento per il confronto
@@ -105,6 +107,10 @@ const WritingCanvas = ({ componente, viewBox = '0 0 109 109', onCompletato }) =>
   // per montaggio (cambio carattere/componente ⇒ `key` ⇒ nuovo montaggio ⇒
   // si può guadagnare di nuovo). Evita doppi conteggi su clear+ridisegno.
   const giaNotificatoRef = useRef(false);
+
+  // Conta i tratti rifiutati dalla validazione (ordine/forma errati) durante il
+  // montaggio: riportato al genitore per la sezione "caratteri problematici".
+  const erroriTrattiRef = useRef(0);
 
   // Campiona un tratto atteso (path `d`) in `n` punti, coordinate VIEW.
   const campionaAtteso = useCallback((d, n) => {
@@ -303,13 +309,15 @@ const WritingCanvas = ({ componente, viewBox = '0 0 109 109', onCompletato }) =>
         // componente, una sola volta per montaggio.
         if (!giaNotificatoRef.current) {
           giaNotificatoRef.current = true;
-          onCompletato?.(strokes.length);
+          onCompletato?.(strokes.length, erroriTrattiRef.current);
         }
       } else {
         setIndiceTratto(nuovoIndice);
       }
     } else {
-      // Tratto errato: lampeggia in rosso, poi rimuovi il tentativo.
+      // Tratto errato: conta l'errore (per i caratteri problematici), lampeggia
+      // in rosso, poi rimuovi il tentativo.
+      erroriTrattiRef.current += 1;
       setFeedback('wrong');
       ridisegna();
       setTimeout(() => {

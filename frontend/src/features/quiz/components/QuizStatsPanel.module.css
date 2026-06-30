@@ -89,6 +89,12 @@
   letter-spacing: 0.04em;
 }
 
+.metricSub {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
 /* ── Kana da rivedere ────────────────────────────────────── */
 .reviewCard {
   display: flex;

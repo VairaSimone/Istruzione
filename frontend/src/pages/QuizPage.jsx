@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useQuizDashboard } from '../hooks/useQuizDashboard';
 import { useGenerateQuiz, useSubmitQuizResults } from '../hooks/useQuizMutations';
+import { useAllenamentoIntensivo } from '../hooks/useAllenamentoIntensivo';
 import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import Spinner from '../components/ui/Spinner';
 import Button from '../components/ui/Button';
@@ -12,6 +13,9 @@ import QuizSetup from '../features/quiz/components/QuizSetup';
 import QuizPlay from '../features/quiz/components/QuizPlay';
 import QuizResults from '../features/quiz/components/QuizResults';
 import WritingPracticePanel from '../features/quiz/components/WritingPracticePanel';
+import StreakCard from '../features/quiz/components/StreakCard';
+import ActivityHeatmap from '../features/quiz/components/ActivityHeatmap';
+import ProblematicCharsPanel from '../features/quiz/components/ProblematicCharsPanel';
 import { mostraBadgeSbloccati } from '../features/quiz/badgeToasts';
 import styles from './QuizPage.module.css';
 
@@ -43,6 +47,7 @@ const QuizPage = () => {
   const dashboard = useQuizDashboard();
   const generateMutation = useGenerateQuiz();
   const submitMutation = useSubmitQuizResults();
+  const intensivoMutation = useAllenamentoIntensivo();
 
   // ── Avvio partita: genera la sessione, poi passa al gioco ──────────
   const handleStart = (filtri, modalitaTempo) => {
@@ -54,6 +59,23 @@ const QuizPage = () => {
       },
       // L'errore è mostrato in linea dentro QuizSetup (vedi sotto).
     });
+  };
+
+  // ── Avvio Allenamento Intensivo: pool mirato sui caratteri deboli ──
+  const handleStartIntensivo = (alfabeto) => {
+    intensivoMutation.mutate(
+      { alfabeto },
+      {
+        onSuccess: (data) => {
+          setTimerMode(false);
+          setSessione(data.data.sessione);
+          setFase(FASI.PLAYING);
+        },
+        onError: (err) => {
+          toast.error(getApiErrorMessage(t, err));
+        },
+      }
+    );
   };
 
   // ── Fine partita: invia i risultati, poi mostra l'esito ────────────
@@ -125,6 +147,16 @@ const QuizPage = () => {
                   {t('quiz.practiceWriting')}
                 </Button>
               </div>
+
+              {/* Progressi: streak, heatmap attività, caratteri problematici */}
+              <section className={styles.progressi} aria-label={t('quiz.progress.title')}>
+                <StreakCard />
+                <ActivityHeatmap />
+                <ProblematicCharsPanel
+                  onStartIntensivo={handleStartIntensivo}
+                  isStarting={intensivoMutation.isPending}
+                />
+              </section>
             </div>
           )}
         </>

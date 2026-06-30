@@ -26,4 +26,10 @@ export const queryKeys = Object.freeze({
     badge: ['quiz', 'badge'],
     strokeOrder: (alfabeto) => ['quiz', 'strokeOrder', alfabeto],
   },
+  statistiche: {
+    all: ['statistiche'],
+    heatmap: (giorni) => ['statistiche', 'heatmap', giorni ?? 365],
+    streak: ['statistiche', 'streak'],
+    caratteriProblematici: (filtri) => ['statistiche', 'caratteriProblematici', filtri ?? {}],
+  },
 });

@@ -325,7 +325,9 @@
       "REQUEST_NOT_FOUND": "Teacher application not found.",
       "ALREADY_ACTIVE": "This teacher is already active.",
       "ADMIN_ROLE_FORBIDDEN": "This operation is reserved for administrators.",
-      "LAST_ADMIN": "You cannot delete or demote the last administrator."
+      "LAST_ADMIN": "You cannot delete or demote the last administrator.",
+      "EMPTY_TRAINING_POOL": "No problem characters yet — play a few quizzes first.",
+      "INVALID_ALPHABET": "Invalid alphabet."
     }
   },
   "validation": {
@@ -416,7 +418,9 @@
       "record": "Best",
       "mastered": "Mastered",
       "toReviewTitle": "To review",
-      "toReviewEmpty": "No weak characters right now. Great job!"
+      "toReviewEmpty": "No weak characters right now. Great job!",
+      "streakRecord_one": "best {{count}}",
+      "streakRecord_other": "best {{count}}"
     },
     "setup": {
       "title": "Set up the session",
@@ -572,6 +576,44 @@
           "description": "Unlock 5 kana rows by bringing them to the maximum score."
         }
       }
+    },
+    "progress": {
+      "title": "Your progress"
+    },
+    "streak": {
+      "daysUnit_one": "day",
+      "daysUnit_other": "days",
+      "flame_one": "You're on a {{count}}-day streak! 🔥",
+      "flame_other": "You're on a {{count}}-day streak! 🔥",
+      "none": "Finish a quiz today to start your streak.",
+      "record_one": "Best: {{count}} day",
+      "record_other": "Best: {{count}} days",
+      "studiedToday": "Studied today ✓",
+      "atRisk": "Study today so you don't lose it!"
+    },
+    "heatmap": {
+      "title": "Study activity",
+      "summary": "{{active}} active days · {{xp}} XP in this period",
+      "less": "Less",
+      "more": "More",
+      "tooltip": "{{date}}: {{quiz}} quizzes · {{answers}} answers · {{strokes}} strokes",
+      "tooltipEmpty": "{{date}}: no activity"
+    },
+    "problematic": {
+      "title": "Problem characters",
+      "subtitle": "Where you slip up most, by answer or stroke order.",
+      "filterLegend": "Filter by alphabet",
+      "filterAll": "All",
+      "empty": "No problem characters right now. Great job!",
+      "hint": "Play a few quizzes to find characters to reinforce.",
+      "errorRate": "{{rate}}% wrong",
+      "strokeErrors_one": "{{count}} stroke error",
+      "strokeErrors_other": "{{count}} stroke errors",
+      "startIntensive_one": "Intensive training ({{count}})",
+      "startIntensive_other": "Intensive training ({{count}})"
+    },
+    "intensive": {
+      "starting": "Preparing…"
     }
   },
   "admin": {

@@ -54,11 +54,23 @@ const WritingPracticePanel = ({ onBack }) => {
    * sempre molti meno. Gli errori sono mostrati come toast non bloccante: la
    * pratica resta comunque utilizzabile anche offline o se la chiamata fallisce.
    */
-  const handleScritturaCompletata = (nTratti) => {
+  const handleScritturaCompletata = (nTratti, nErroriTratti = 0) => {
     if (!Number.isInteger(nTratti) || nTratti < 1) return;
 
+    // Una voce per ogni tratto sbagliato del componente, attribuita al kana
+    // corrente: alimenta la sezione "caratteri problematici" (errori_tratti).
+    // Cap a 50 per coerenza col tetto del validator backend.
+    const erroriDaSegnalare = Math.max(0, Math.min(Number(nErroriTratti) || 0, 50));
+    const caratteriErrati =
+      erroriDaSegnalare > 0 && corrente
+        ? Array.from({ length: erroriDaSegnalare }, () => ({
+            kana: corrente.kana,
+            tipo: alfabeto,
+          }))
+        : undefined;
+
     registraScritturaMutation.mutate(
-      { trattiValidati: nTratti },
+      { trattiValidati: nTratti, caratteriErrati },
       {
         onSuccess: (risposta) => {
           const risultato = risposta?.data?.risultato;

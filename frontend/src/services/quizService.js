@@ -74,9 +74,15 @@ export const getQuizBadge = async () => {
  *
  * @param {Object} payload
  * @param {number} payload.trattiValidati  intero 1..50 (tetto del backend)
+ * @param {Array<{kana:string, tipo:string}>} [payload.caratteriErrati]
+ *        caratteri il cui ordine dei tratti è stato sbagliato nella sessione
+ *        (una voce per errore). Facoltativo: se omesso, comportamento invariato.
  */
-export const registraScrittura = async ({ trattiValidati }) => {
-  const { data } = await apiClient.post('/quiz/scrittura', { trattiValidati });
+export const registraScrittura = async ({ trattiValidati, caratteriErrati }) => {
+  const { data } = await apiClient.post('/quiz/scrittura', {
+    trattiValidati,
+    ...(caratteriErrati && caratteriErrati.length ? { caratteriErrati } : {}),
+  });
   return data;
 };
 

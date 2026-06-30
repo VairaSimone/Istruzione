@@ -19,6 +19,7 @@ const QuizStatsPanel = ({ statistiche, mastered = 0, peggioriKana = [] }) => {
   const {
     xp = 0,
     streak = 0,
+    streakRecord = 0,
     punteggioRecord = 0,
     livello = 1,
     xpProssimoLivello = 100,
@@ -57,6 +58,11 @@ const QuizStatsPanel = ({ statistiche, mastered = 0, peggioriKana = [] }) => {
             </span>
           </span>
           <span className={styles.metricLabel}>{t('quiz.stats.streak')}</span>
+          {streakRecord > 0 && (
+            <span className={styles.metricSub}>
+              {t('quiz.stats.streakRecord', { count: streakRecord })}
+            </span>
+          )}
         </Card>
 
         <Card className={styles.metricCard}>

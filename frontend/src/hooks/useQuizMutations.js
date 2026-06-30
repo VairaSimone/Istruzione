@@ -28,6 +28,8 @@ export const useSubmitQuizResults = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.dashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.badge });
+      // Heatmap, streak e caratteri problematici cambiano ad ogni round.
+      queryClient.invalidateQueries({ queryKey: queryKeys.statistiche.all });
     },
   });
 };
@@ -45,6 +47,8 @@ export const useRegistraScrittura = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.dashboard });
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.badge });
+      // La scrittura aggiorna heatmap (tratti del giorno) ed errori di tratto.
+      queryClient.invalidateQueries({ queryKey: queryKeys.statistiche.all });
     },
   });
 };

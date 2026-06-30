@@ -1,0 +1,118 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.titolo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--color-ink);
+}
+
+.sottotitolo {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+/* Filtro segmentato (Tutti / Hiragana / Katakana). */
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.segment {
+  border: 0;
+  background: var(--color-paper);
+  color: var(--color-text-muted);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.segment:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.segmentActive {
+  background: var(--color-matcha);
+  color: var(--color-paper);
+  font-weight: 600;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+}
+
+.vuoto {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.riga {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-paper-dim);
+}
+
+.kana {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+  min-width: 2ch;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.romaji {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  min-width: 4ch;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.azione {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.suggerimento {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
