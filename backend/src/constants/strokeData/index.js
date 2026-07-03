@@ -1,15 +1,33 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 const hiragana = require('./hiragana.json');
 const katakana = require('./katakana.json');
 
+// Tratti dei KANJI: caricati in modo DIFENSIVO. Il file è generato offline da
+// `scripts/generaStrokeDataKanji.js` (KanjiVG, stessa fonte dei kana) e può
+// coprire solo un sottoinsieme di livelli JLPT. Se assente, il lookup dei kanji
+// restituisce semplicemente `null` (glifo non mappato ⇒ omesso a valle), senza
+// impatti sui kana.
+const kanji = (() => {
+  const file = path.join(__dirname, 'kanji.json');
+  try {
+    return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  } catch {
+    return {};
+  }
+})();
+
 /**
- * Costanti dell'ORDINE DEI TRATTI (stroke order) dei kana.
+ * Costanti dell'ORDINE DEI TRATTI (stroke order) di kana e kanji.
  *
- * Fonte di verità per i dati grafici dei tratti, speculare a `kanaData.js` per
- * la parte testuale del Quiz. I dataset JSON sono generati offline da KanjiVG
- * tramite `scripts/generaStrokeData.js` (vedi quel file per i dettagli) e qui
- * vengono solo caricati ed esposti con utility di lookup.
+ * Fonte di verità per i dati grafici dei tratti, speculare a `kanaData.js` /
+ * `kanjiData/` per la parte testuale del Quiz. I dataset JSON sono generati
+ * offline da KanjiVG tramite `scripts/generaStrokeData.js` (kana) e
+ * `scripts/generaStrokeDataKanji.js` (kanji) e qui vengono solo caricati ed
+ * esposti con utility di lookup comuni a entrambi i domini.
  *
  * Struttura dei dataset (keyed per singolo carattere):
  *   { 'あ': { strokes: ['<d1>', '<d2>', ...] }, ... }
@@ -37,16 +55,19 @@ const STROKE_LICENZA = Object.freeze({
   licenzaUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
 });
 
-// Mappa per tipo, così il lookup è O(1) e indipendente dal blocco Unicode.
+// Mappa per dominio, così il lookup è O(1) e indipendente dal blocco Unicode.
+// L'aggiunta di `kanji` rende automaticamente disponibile il lookup unificato
+// (`trattiPerCarattere` / `componentiTratti`) anche per gli ideogrammi.
 const SORGENTI_TRATTI = {
   hiragana,
   katakana,
+  kanji,
 };
 
 /**
- * Restituisce l'array di tratti (stringhe `d`) di un singolo carattere kana,
- * cercandolo in entrambi i dataset, oppure `null` se assente.
- * @param {string} carattere singolo code point (es. 'き', 'ゃ')
+ * Restituisce l'array di tratti (stringhe `d`) di un singolo carattere
+ * (kana O kanji), cercandolo in tutti i dataset, oppure `null` se assente.
+ * @param {string} carattere singolo code point (es. 'き', 'ゃ', '日')
  * @returns {string[]|null}
  */
 const trattiPerCarattere = (carattere) => {

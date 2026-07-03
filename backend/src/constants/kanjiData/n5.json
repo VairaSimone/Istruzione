@@ -1,0 +1,1801 @@
+{
+  "livello": "N5",
+  "licenza": {
+    "fonte": "KANJIDIC2 (EDRDG) + liste JLPT moderne, via davidluzgouveia/kanji-data",
+    "url": "https://github.com/davidluzgouveia/kanji-data",
+    "licenza": "CC BY-SA 4.0",
+    "licenzaUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  "totale": 79,
+  "kanji": [
+    {
+      "ideogramma": "日",
+      "onYomi": [
+        "ニチ",
+        "ジツ"
+      ],
+      "kunYomi": [
+        "ひ",
+        "び",
+        "か"
+      ],
+      "significati": {
+        "it": [
+          "giorno",
+          "sole",
+          "Giappone"
+        ],
+        "en": [
+          "Day",
+          "Sun",
+          "Japan",
+          "Counter For Days"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "一",
+      "onYomi": [
+        "イチ",
+        "イツ"
+      ],
+      "kunYomi": [
+        "ひと"
+      ],
+      "significati": {
+        "it": [
+          "uno"
+        ],
+        "en": [
+          "One"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 1
+    },
+    {
+      "ideogramma": "国",
+      "onYomi": [
+        "コク"
+      ],
+      "kunYomi": [
+        "くに"
+      ],
+      "significati": {
+        "it": [
+          "paese",
+          "nazione"
+        ],
+        "en": [
+          "Country"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "人",
+      "onYomi": [
+        "ジン",
+        "ニン"
+      ],
+      "kunYomi": [
+        "ひと",
+        "り",
+        "と"
+      ],
+      "significati": {
+        "it": [
+          "persona"
+        ],
+        "en": [
+          "Person"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "年",
+      "onYomi": [
+        "ネン"
+      ],
+      "kunYomi": [
+        "とし"
+      ],
+      "significati": {
+        "it": [
+          "anno"
+        ],
+        "en": [
+          "Year",
+          "Counter For Years"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "大",
+      "onYomi": [
+        "ダイ",
+        "タイ"
+      ],
+      "kunYomi": [
+        "おお"
+      ],
+      "significati": {
+        "it": [
+          "grande"
+        ],
+        "en": [
+          "Large",
+          "Big"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "十",
+      "onYomi": [
+        "ジュウ",
+        "ジッ",
+        "ジュッ"
+      ],
+      "kunYomi": [
+        "とお",
+        "と"
+      ],
+      "significati": {
+        "it": [
+          "dieci"
+        ],
+        "en": [
+          "Ten"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "二",
+      "onYomi": [
+        "ニ",
+        "ジ"
+      ],
+      "kunYomi": [
+        "ふた",
+        "ふたたび"
+      ],
+      "significati": {
+        "it": [
+          "due"
+        ],
+        "en": [
+          "Two"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "本",
+      "onYomi": [
+        "ホン"
+      ],
+      "kunYomi": [
+        "もと"
+      ],
+      "significati": {
+        "it": [
+          "libro",
+          "origine",
+          "principale"
+        ],
+        "en": [
+          "Book",
+          "Present",
+          "Main",
+          "Origin",
+          "True",
+          "Real",
+          "Counter For Long Cylindrical Things"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "中",
+      "onYomi": [
+        "チュウ"
+      ],
+      "kunYomi": [
+        "なか",
+        "うち",
+        "あた"
+      ],
+      "significati": {
+        "it": [
+          "dentro",
+          "mezzo",
+          "centro"
+        ],
+        "en": [
+          "In",
+          "Inside",
+          "Middle",
+          "Mean",
+          "Center"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "長",
+      "onYomi": [
+        "チョウ"
+      ],
+      "kunYomi": [
+        "なが",
+        "おさ"
+      ],
+      "significati": {
+        "it": [
+          "lungo",
+          "capo"
+        ],
+        "en": [
+          "Long",
+          "Leader",
+          "Superior",
+          "Senior"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "出",
+      "onYomi": [
+        "シュツ",
+        "スイ"
+      ],
+      "kunYomi": [
+        "で",
+        "だ",
+        "い"
+      ],
+      "significati": {
+        "it": [
+          "uscire",
+          "uscita"
+        ],
+        "en": [
+          "Exit",
+          "Leave",
+          "Go Out",
+          "Come Out",
+          "Put Out",
+          "Protrude"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "三",
+      "onYomi": [
+        "サン",
+        "ゾウ"
+      ],
+      "kunYomi": [
+        "み",
+        "みっ"
+      ],
+      "significati": {
+        "it": [
+          "tre"
+        ],
+        "en": [
+          "Three"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "時",
+      "onYomi": [
+        "ジ"
+      ],
+      "kunYomi": [
+        "とき",
+        "どき"
+      ],
+      "significati": {
+        "it": [
+          "tempo",
+          "ora"
+        ],
+        "en": [
+          "Time",
+          "Hour"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "行",
+      "onYomi": [
+        "コウ",
+        "ギョウ",
+        "アン"
+      ],
+      "kunYomi": [
+        "い",
+        "ゆ",
+        "ゆき",
+        "いき",
+        "おこな",
+        "おこ"
+      ],
+      "significati": {
+        "it": [
+          "andare",
+          "viaggio",
+          "fila"
+        ],
+        "en": [
+          "Going",
+          "Journey",
+          "Carry Out",
+          "Conduct",
+          "Act",
+          "Line",
+          "Row",
+          "Bank"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "見",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [
+        "み"
+      ],
+      "significati": {
+        "it": [
+          "vedere",
+          "guardare"
+        ],
+        "en": [
+          "See",
+          "Hopes",
+          "Chances",
+          "Idea",
+          "Opinion",
+          "Look At",
+          "Visible"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "月",
+      "onYomi": [
+        "ゲツ",
+        "ガツ"
+      ],
+      "kunYomi": [
+        "つき"
+      ],
+      "significati": {
+        "it": [
+          "mese",
+          "luna"
+        ],
+        "en": [
+          "Month",
+          "Moon"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "後",
+      "onYomi": [
+        "ゴ",
+        "コウ"
+      ],
+      "kunYomi": [
+        "のち",
+        "うし",
+        "うしろ",
+        "あと",
+        "おく"
+      ],
+      "significati": {
+        "it": [
+          "dietro",
+          "dopo"
+        ],
+        "en": [
+          "Behind",
+          "Back",
+          "Later"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "前",
+      "onYomi": [
+        "ゼン"
+      ],
+      "kunYomi": [
+        "まえ"
+      ],
+      "significati": {
+        "it": [
+          "davanti",
+          "prima"
+        ],
+        "en": [
+          "In Front",
+          "Before"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "生",
+      "onYomi": [
+        "セイ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "い",
+        "う",
+        "うま",
+        "うまれ",
+        "お",
+        "は",
+        "き",
+        "なま",
+        "な",
+        "む"
+      ],
+      "significati": {
+        "it": [
+          "vita",
+          "nascere"
+        ],
+        "en": [
+          "Life",
+          "Genuine",
+          "Birth"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "五",
+      "onYomi": [
+        "ゴ"
+      ],
+      "kunYomi": [
+        "いつ"
+      ],
+      "significati": {
+        "it": [
+          "cinque"
+        ],
+        "en": [
+          "Five"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "間",
+      "onYomi": [
+        "カン",
+        "ケン"
+      ],
+      "kunYomi": [
+        "あいだ",
+        "ま",
+        "あい"
+      ],
+      "significati": {
+        "it": [
+          "intervallo",
+          "spazio"
+        ],
+        "en": [
+          "Interval",
+          "Space"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "上",
+      "onYomi": [
+        "ジョウ",
+        "ショウ",
+        "シャン"
+      ],
+      "kunYomi": [
+        "うえ",
+        "うわ",
+        "かみ",
+        "あ",
+        "のぼ",
+        "たてまつ"
+      ],
+      "significati": {
+        "it": [
+          "sopra",
+          "su"
+        ],
+        "en": [
+          "Above",
+          "Up"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "東",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "ひがし"
+      ],
+      "significati": {
+        "it": [
+          "est"
+        ],
+        "en": [
+          "East"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "四",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "よ",
+        "よっ",
+        "よん"
+      ],
+      "significati": {
+        "it": [
+          "quattro"
+        ],
+        "en": [
+          "Four"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "今",
+      "onYomi": [
+        "コン",
+        "キン"
+      ],
+      "kunYomi": [
+        "いま"
+      ],
+      "significati": {
+        "it": [
+          "adesso",
+          "ora"
+        ],
+        "en": [
+          "Now"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "金",
+      "onYomi": [
+        "キン",
+        "コン",
+        "ゴン"
+      ],
+      "kunYomi": [
+        "かね",
+        "かな",
+        "がね"
+      ],
+      "significati": {
+        "it": [
+          "oro",
+          "denaro"
+        ],
+        "en": [
+          "Gold"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "九",
+      "onYomi": [
+        "キュウ",
+        "ク"
+      ],
+      "kunYomi": [
+        "ここの"
+      ],
+      "significati": {
+        "it": [
+          "nove"
+        ],
+        "en": [
+          "Nine"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "入",
+      "onYomi": [
+        "ニュウ",
+        "ジュ"
+      ],
+      "kunYomi": [
+        "い",
+        "はい"
+      ],
+      "significati": {
+        "it": [
+          "entrare",
+          "inserire"
+        ],
+        "en": [
+          "Enter",
+          "Insert"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "学",
+      "onYomi": [
+        "ガク"
+      ],
+      "kunYomi": [
+        "まな"
+      ],
+      "significati": {
+        "it": [
+          "studio",
+          "imparare"
+        ],
+        "en": [
+          "Study",
+          "Learning",
+          "Science"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "高",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "たか",
+        "だか"
+      ],
+      "significati": {
+        "it": [
+          "alto",
+          "costoso"
+        ],
+        "en": [
+          "Tall",
+          "High",
+          "Expensive"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "円",
+      "onYomi": [
+        "エン"
+      ],
+      "kunYomi": [
+        "まる",
+        "まど",
+        "まろ"
+      ],
+      "significati": {
+        "it": [
+          "cerchio",
+          "yen",
+          "rotondo"
+        ],
+        "en": [
+          "Circle",
+          "Yen",
+          "Round"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "子",
+      "onYomi": [
+        "シ",
+        "ス",
+        "ツ"
+      ],
+      "kunYomi": [
+        "こ",
+        "ね"
+      ],
+      "significati": {
+        "it": [
+          "bambino",
+          "figlio"
+        ],
+        "en": [
+          "Child",
+          "Sign Of The Rat",
+          "11pm-1am",
+          "First Sign Of Chinese Zodiac"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "外",
+      "onYomi": [
+        "ガイ",
+        "ゲ"
+      ],
+      "kunYomi": [
+        "そと",
+        "ほか",
+        "はず",
+        "と"
+      ],
+      "significati": {
+        "it": [
+          "fuori",
+          "esterno"
+        ],
+        "en": [
+          "Outside"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "八",
+      "onYomi": [
+        "ハチ"
+      ],
+      "kunYomi": [
+        "や",
+        "やっ",
+        "よう"
+      ],
+      "significati": {
+        "it": [
+          "otto"
+        ],
+        "en": [
+          "Eight"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "六",
+      "onYomi": [
+        "ロク",
+        "リク"
+      ],
+      "kunYomi": [
+        "む",
+        "むっ",
+        "むい"
+      ],
+      "significati": {
+        "it": [
+          "sei"
+        ],
+        "en": [
+          "Six"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "下",
+      "onYomi": [
+        "カ",
+        "ゲ"
+      ],
+      "kunYomi": [
+        "した",
+        "しも",
+        "もと",
+        "さ",
+        "くだ",
+        "お"
+      ],
+      "significati": {
+        "it": [
+          "sotto",
+          "giù",
+          "scendere",
+          "inferiore"
+        ],
+        "en": [
+          "Below",
+          "Down",
+          "Descend",
+          "Give",
+          "Low",
+          "Inferior"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "来",
+      "onYomi": [
+        "ライ",
+        "タイ"
+      ],
+      "kunYomi": [
+        "く",
+        "きた",
+        "き",
+        "こ"
+      ],
+      "significati": {
+        "it": [
+          "venire",
+          "prossimo"
+        ],
+        "en": [
+          "Come",
+          "Due",
+          "Next",
+          "Cause",
+          "Become"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "気",
+      "onYomi": [
+        "キ",
+        "ケ"
+      ],
+      "kunYomi": [
+        "いき"
+      ],
+      "significati": {
+        "it": [
+          "spirito",
+          "energia",
+          "umore"
+        ],
+        "en": [
+          "Spirit",
+          "Mind",
+          "Air",
+          "Atmosphere",
+          "Mood"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "小",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "ちい",
+        "こ",
+        "お",
+        "さ"
+      ],
+      "significati": {
+        "it": [
+          "piccolo"
+        ],
+        "en": [
+          "Little",
+          "Small"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "七",
+      "onYomi": [
+        "シチ"
+      ],
+      "kunYomi": [
+        "なな",
+        "なの"
+      ],
+      "significati": {
+        "it": [
+          "sette"
+        ],
+        "en": [
+          "Seven"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "山",
+      "onYomi": [
+        "サン",
+        "セン"
+      ],
+      "kunYomi": [
+        "やま"
+      ],
+      "significati": {
+        "it": [
+          "montagna"
+        ],
+        "en": [
+          "Mountain"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "話",
+      "onYomi": [
+        "ワ"
+      ],
+      "kunYomi": [
+        "はな",
+        "はなし"
+      ],
+      "significati": {
+        "it": [
+          "discorso",
+          "parlare",
+          "storia"
+        ],
+        "en": [
+          "Tale",
+          "Talk"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "女",
+      "onYomi": [
+        "ジョ",
+        "ニョ",
+        "ニョウ"
+      ],
+      "kunYomi": [
+        "おんな",
+        "め"
+      ],
+      "significati": {
+        "it": [
+          "donna",
+          "femmina"
+        ],
+        "en": [
+          "Woman",
+          "Female"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "北",
+      "onYomi": [
+        "ホク"
+      ],
+      "kunYomi": [
+        "きた"
+      ],
+      "significati": {
+        "it": [
+          "nord"
+        ],
+        "en": [
+          "North"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "午",
+      "onYomi": [
+        "ゴ"
+      ],
+      "kunYomi": [
+        "うま"
+      ],
+      "significati": {
+        "it": [
+          "mezzogiorno"
+        ],
+        "en": [
+          "Noon",
+          "Sign Of The Horse",
+          "11am-1pm",
+          "Seventh Sign Of Chinese Zodiac"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "百",
+      "onYomi": [
+        "ヒャク",
+        "ビャク"
+      ],
+      "kunYomi": [
+        "もも"
+      ],
+      "significati": {
+        "it": [
+          "cento"
+        ],
+        "en": [
+          "Hundred"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "書",
+      "onYomi": [
+        "ショ"
+      ],
+      "kunYomi": [
+        "か",
+        "が",
+        "がき"
+      ],
+      "significati": {
+        "it": [
+          "scrivere"
+        ],
+        "en": [
+          "Write"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "先",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "さき",
+        "ま"
+      ],
+      "significati": {
+        "it": [
+          "prima",
+          "precedente",
+          "avanti"
+        ],
+        "en": [
+          "Before",
+          "Ahead",
+          "Previous",
+          "Future",
+          "Precedence"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "名",
+      "onYomi": [
+        "メイ",
+        "ミョウ"
+      ],
+      "kunYomi": [
+        "な"
+      ],
+      "significati": {
+        "it": [
+          "nome",
+          "fama"
+        ],
+        "en": [
+          "Name",
+          "Noted",
+          "Distinguished",
+          "Reputation"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "川",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "かわ"
+      ],
+      "significati": {
+        "it": [
+          "fiume",
+          "corso d'acqua"
+        ],
+        "en": [
+          "Stream",
+          "River"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "千",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "ち"
+      ],
+      "significati": {
+        "it": [
+          "mille"
+        ],
+        "en": [
+          "Thousand"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "水",
+      "onYomi": [
+        "スイ"
+      ],
+      "kunYomi": [
+        "みず"
+      ],
+      "significati": {
+        "it": [
+          "acqua"
+        ],
+        "en": [
+          "Water"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "半",
+      "onYomi": [
+        "ハン"
+      ],
+      "kunYomi": [
+        "なか"
+      ],
+      "significati": {
+        "it": [
+          "metà",
+          "mezzo"
+        ],
+        "en": [
+          "Half",
+          "Middle",
+          "Odd Number",
+          "Semi-",
+          "Part-"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "男",
+      "onYomi": [
+        "ダン",
+        "ナン"
+      ],
+      "kunYomi": [
+        "おとこ",
+        "お"
+      ],
+      "significati": {
+        "it": [
+          "maschio",
+          "uomo"
+        ],
+        "en": [
+          "Male"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "西",
+      "onYomi": [
+        "セイ",
+        "サイ",
+        "ス"
+      ],
+      "kunYomi": [
+        "にし"
+      ],
+      "significati": {
+        "it": [
+          "ovest"
+        ],
+        "en": [
+          "West",
+          "Spain"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "電",
+      "onYomi": [
+        "デン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [
+          "elettricità"
+        ],
+        "en": [
+          "Electricity"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "校",
+      "onYomi": [
+        "コウ",
+        "キョウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [
+          "scuola"
+        ],
+        "en": [
+          "Exam",
+          "School",
+          "Printing",
+          "Proof",
+          "Correction"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "語",
+      "onYomi": [
+        "ゴ"
+      ],
+      "kunYomi": [
+        "かた"
+      ],
+      "significati": {
+        "it": [
+          "parola",
+          "lingua"
+        ],
+        "en": [
+          "Word",
+          "Speech",
+          "Language"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "土",
+      "onYomi": [
+        "ド",
+        "ト"
+      ],
+      "kunYomi": [
+        "つち"
+      ],
+      "significati": {
+        "it": [
+          "terra",
+          "suolo"
+        ],
+        "en": [
+          "Soil",
+          "Earth",
+          "Ground",
+          "Turkey"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "木",
+      "onYomi": [
+        "ボク",
+        "モク"
+      ],
+      "kunYomi": [
+        "き",
+        "こ"
+      ],
+      "significati": {
+        "it": [
+          "albero",
+          "legno"
+        ],
+        "en": [
+          "Tree",
+          "Wood"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "聞",
+      "onYomi": [
+        "ブン",
+        "モン"
+      ],
+      "kunYomi": [
+        "き"
+      ],
+      "significati": {
+        "it": [
+          "sentire",
+          "ascoltare",
+          "chiedere"
+        ],
+        "en": [
+          "Hear",
+          "Ask",
+          "Listen"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "食",
+      "onYomi": [
+        "ショク",
+        "ジキ"
+      ],
+      "kunYomi": [
+        "く",
+        "た",
+        "は"
+      ],
+      "significati": {
+        "it": [
+          "mangiare",
+          "cibo"
+        ],
+        "en": [
+          "Eat",
+          "Food"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "車",
+      "onYomi": [
+        "シャ"
+      ],
+      "kunYomi": [
+        "くるま"
+      ],
+      "significati": {
+        "it": [
+          "automobile",
+          "veicolo"
+        ],
+        "en": [
+          "Car"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "何",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [
+        "なに",
+        "なん"
+      ],
+      "significati": {
+        "it": [
+          "cosa",
+          "che"
+        ],
+        "en": [
+          "What"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "南",
+      "onYomi": [
+        "ナン",
+        "ナ"
+      ],
+      "kunYomi": [
+        "みなみ"
+      ],
+      "significati": {
+        "it": [
+          "sud"
+        ],
+        "en": [
+          "South"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "万",
+      "onYomi": [
+        "マン",
+        "バン"
+      ],
+      "kunYomi": [
+        "よろず"
+      ],
+      "significati": {
+        "it": [
+          "diecimila"
+        ],
+        "en": [
+          "Ten Thousand",
+          "10,000"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "毎",
+      "onYomi": [
+        "マイ"
+      ],
+      "kunYomi": [
+        "ごと"
+      ],
+      "significati": {
+        "it": [
+          "ogni"
+        ],
+        "en": [
+          "Every"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "白",
+      "onYomi": [
+        "ハク",
+        "ビャク"
+      ],
+      "kunYomi": [
+        "しろ",
+        "しら"
+      ],
+      "significati": {
+        "it": [
+          "bianco"
+        ],
+        "en": [
+          "White"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "天",
+      "onYomi": [
+        "テン"
+      ],
+      "kunYomi": [
+        "あまつ",
+        "あめ",
+        "あま"
+      ],
+      "significati": {
+        "it": [
+          "cielo",
+          "paradiso"
+        ],
+        "en": [
+          "Heavens",
+          "Sky",
+          "Imperial"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "母",
+      "onYomi": [
+        "ボ"
+      ],
+      "kunYomi": [
+        "はは",
+        "も"
+      ],
+      "significati": {
+        "it": [
+          "madre"
+        ],
+        "en": [
+          "Mother"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "火",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [
+        "ひ",
+        "び",
+        "ほ"
+      ],
+      "significati": {
+        "it": [
+          "fuoco"
+        ],
+        "en": [
+          "Fire"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "右",
+      "onYomi": [
+        "ウ",
+        "ユウ"
+      ],
+      "kunYomi": [
+        "みぎ"
+      ],
+      "significati": {
+        "it": [
+          "destra"
+        ],
+        "en": [
+          "Right"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "読",
+      "onYomi": [
+        "ドク",
+        "トク",
+        "トウ"
+      ],
+      "kunYomi": [
+        "よ"
+      ],
+      "significati": {
+        "it": [
+          "leggere"
+        ],
+        "en": [
+          "Read"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "友",
+      "onYomi": [
+        "ユウ"
+      ],
+      "kunYomi": [
+        "とも"
+      ],
+      "significati": {
+        "it": [
+          "amico"
+        ],
+        "en": [
+          "Friend"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "左",
+      "onYomi": [
+        "サ",
+        "シャ"
+      ],
+      "kunYomi": [
+        "ひだり"
+      ],
+      "significati": {
+        "it": [
+          "sinistra"
+        ],
+        "en": [
+          "Left"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "休",
+      "onYomi": [
+        "キュウ"
+      ],
+      "kunYomi": [
+        "やす"
+      ],
+      "significati": {
+        "it": [
+          "riposo",
+          "riposare"
+        ],
+        "en": [
+          "Rest",
+          "Day Off",
+          "Retire",
+          "Sleep"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "父",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [
+        "ちち"
+      ],
+      "significati": {
+        "it": [
+          "padre"
+        ],
+        "en": [
+          "Father"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "雨",
+      "onYomi": [
+        "ウ"
+      ],
+      "kunYomi": [
+        "あめ",
+        "あま",
+        "さめ"
+      ],
+      "significati": {
+        "it": [
+          "pioggia"
+        ],
+        "en": [
+          "Rain"
+        ]
+      },
+      "livello_jlpt": "N5",
+      "tratti": 8
+    }
+  ]
+}

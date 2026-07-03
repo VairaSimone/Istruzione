@@ -3,13 +3,20 @@
 const AppError = require('../utils/AppError');
 const { INDICE_KANA, ALFABETI } = require('../constants/kanaData');
 const {
+  LIVELLI_JLPT,
+  INDICE_KANJI,
+  LICENZA_KANJI,
+  livelloValido,
+  significatiPerLingua,
+} = require('../constants/kanjiData');
+const {
   STROKE_VIEWBOX,
   STROKE_LICENZA,
   componentiTratti,
 } = require('../constants/strokeData');
 
 /**
- * StrokeService — dati dell'ORDINE DEI TRATTI per il Quiz Kana.
+ * StrokeService — dati dell'ORDINE DEI TRATTI per il Quiz (Kana e Kanji).
  *
  * Speculare a `quizService` (che gestisce SRS/XP/statistiche), questo service
  * espone i dati grafici dei tratti necessari a:
@@ -17,7 +24,11 @@ const {
  *   - gli esercizi di scrittura su canvas (validazione basilare del tratto).
  *
  * I dati sono statici (derivati da KanjiVG) e non dipendono dall'utente: il
- * frontend li recupera una sola volta per alfabeto e li mette in cache a lungo.
+ * frontend li recupera una sola volta per alfabeto/livello e li mette in cache.
+ *
+ * La decomposizione grafica è unificata: sia i kana sia i kanji passano per
+ * `componentiTratti` (constants/strokeData), che a sua volta interroga il
+ * lookup unico dei tratti. Nessuna logica duplicata tra i due domini.
  */
 
 /**
@@ -30,9 +41,7 @@ const {
  *
  * @param {string} alfabeto 'hiragana' | 'katakana'
  * @returns {{
- *   alfabeto:string,
- *   viewBox:string,
- *   licenza:object,
+ *   dominio:'kana', alfabeto:string, viewBox:string, licenza:object,
  *   totale:number,
  *   caratteri:Array<{
  *     kana:string, romaji:string, categoria:string, gruppo:string,
@@ -66,6 +75,7 @@ const getStrokeOrderByAlfabeto = (alfabeto) => {
   }
 
   return {
+    dominio: 'kana',
     alfabeto,
     viewBox: STROKE_VIEWBOX,
     licenza: STROKE_LICENZA,
@@ -74,6 +84,96 @@ const getStrokeOrderByAlfabeto = (alfabeto) => {
   };
 };
 
+/**
+ * Restituisce l'ordine dei tratti di TUTTI i kanji di un livello JLPT.
+ *
+ * Parallelo esatto di `getStrokeOrderByAlfabeto` ma sul dominio kanji: itera
+ * l'indice canonico dei kanji (`INDICE_KANJI`) filtrato per livello e ne
+ * scompone l'ideogramma con la STESSA funzione `componentiTratti` usata per i
+ * kana (interfaccia unica di recupero tratti). I kanji privi di dati grafici
+ * — ad es. i livelli per cui lo stroke dataset non è ancora stato generato —
+ * vengono omessi, così l'endpoint resta coerente e mai in errore.
+ *
+ * Ogni voce include anche letture e significati (nella lingua richiesta) così
+ * che il frontend possa mostrare l'etichetta accanto all'animazione senza una
+ * seconda chiamata.
+ *
+ * @param {string} livello uno di LIVELLI_JLPT ('N5'…'N1')
+ * @param {string} [lingua='it'] lingua dei significati (fallback all'inglese)
+ * @returns {{
+ *   dominio:'kanji', livello:string, viewBox:string, licenza:object,
+ *   totale:number,
+ *   caratteri:Array<{
+ *     kanji:string, onYomi:string[], kunYomi:string[], significati:string[],
+ *     componenti:Array<{ carattere:string, strokes:string[] }>
+ *   }>
+ * }}
+ */
+const getStrokeOrderKanji = (livello, lingua = 'it') => {
+  if (!livelloValido(livello)) {
+    throw new AppError(
+      `Livello JLPT non valido o non disponibile. Usa uno di: ${LIVELLI_JLPT.join(', ')}.`,
+      422,
+      'INVALID_JLPT_LEVEL'
+    );
+  }
+
+  const caratteri = [];
+  for (const entry of INDICE_KANJI) {
+    if (entry.livello !== livello) continue;
+
+    const componenti = componentiTratti(entry.ideogramma);
+    if (!componenti) continue; // stroke data non disponibile ⇒ omesso
+
+    caratteri.push({
+      kanji: entry.ideogramma,
+      onYomi: entry.onYomi,
+      kunYomi: entry.kunYomi,
+      significati: significatiPerLingua(entry, lingua),
+      componenti,
+    });
+  }
+
+  return {
+    dominio: 'kanji',
+    livello,
+    viewBox: STROKE_VIEWBOX,
+    licenza: LICENZA_KANJI || STROKE_LICENZA,
+    totale: caratteri.length,
+    caratteri,
+  };
+};
+
+/**
+ * Interfaccia UNICA di recupero tratti per entrambi i domini.
+ *
+ * Dispatcher sottile che instrada verso il recupero kana o kanji in base al
+ * `dominio`. Consente al controller di esporre un solo punto d'ingresso logico
+ * mantenendo però la retrocompatibilità delle route esistenti (che continuano
+ * a chiamare direttamente `getStrokeOrderByAlfabeto`).
+ *
+ * @param {Object} opts
+ * @param {string} [opts.dominio='kana'] 'kana' | 'kanji'
+ * @param {string} [opts.alfabeto] richiesto se dominio='kana'
+ * @param {string} [opts.livello]  richiesto se dominio='kanji'
+ * @param {string} [opts.lingua='it'] lingua dei significati (solo kanji)
+ */
+const getStrokeOrder = ({ dominio = 'kana', alfabeto, livello, lingua = 'it' } = {}) => {
+  if (dominio === 'kanji') {
+    return getStrokeOrderKanji(livello, lingua);
+  }
+  if (dominio === 'kana') {
+    return getStrokeOrderByAlfabeto(alfabeto);
+  }
+  throw new AppError(
+    'Dominio non valido. Usa "kana" o "kanji".',
+    422,
+    'INVALID_DOMAIN'
+  );
+};
+
 module.exports = {
   getStrokeOrderByAlfabeto,
+  getStrokeOrderKanji,
+  getStrokeOrder,
 };

@@ -26,15 +26,36 @@ exports.dashboard = catchAsync(async (req, res) => {
 // ─────────────────────────────────────────────
 // POST /api/quiz/generate
 // Riceve i filtri di gioco e restituisce la sessione di quiz generata.
+//
+// Supporta due domini tramite lo stesso endpoint (nessuna duplicazione):
+//   - dominio='kana'  (default): usa alfabeto/gruppi/includiDakuon/includiYoon;
+//   - dominio='kanji':           usa livello (JLPT), tipoQuiz, lingua.
+// L'assenza di `dominio` mantiene il comportamento storico (retrocompatibilità
+// con il frontend esistente, che invia solo i filtri kana).
 // ─────────────────────────────────────────────
 exports.generaQuiz = catchAsync(async (req, res) => {
-  const { alfabeto, gruppi, includiDakuon, includiYoon } = req.body;
-
-  const sessione = await quizService.generateQuizPool(req.user.id, {
+  const {
+    dominio,
     alfabeto,
     gruppi,
     includiDakuon,
     includiYoon,
+    livello,
+    tipoQuiz,
+    lingua,
+  } = req.body;
+
+  const sessione = await quizService.generateQuizPool(req.user.id, {
+    // dominio kana (default)
+    dominio,
+    alfabeto,
+    gruppi,
+    includiDakuon,
+    includiYoon,
+    // dominio kanji
+    livello,
+    tipoQuiz,
+    lingua: lingua || req.language || 'it',
   });
 
   res.status(200).json({
@@ -47,11 +68,20 @@ exports.generaQuiz = catchAsync(async (req, res) => {
 // POST /api/quiz/submit
 // Riceve l'esito della partita, aggiorna il DB e restituisce le statistiche
 // aggiornate insieme agli XP/livelli guadagnati nel round.
+//
+// `dominio` (default 'kana') instrada l'aggiornamento SRS verso il modello
+// corretto (ProgressoKana | ProgressoKanji); la parte utente (XP/streak/record)
+// è condivisa. L'assenza del campo preserva il comportamento storico.
 // ─────────────────────────────────────────────
 exports.inviaRisultati = catchAsync(async (req, res) => {
-  const { risposte, datiBonus } = req.body;
+  const { risposte, datiBonus, dominio } = req.body;
 
-  const esito = await quizService.submitQuizResults(req.user.id, risposte, datiBonus || {});
+  const esito = await quizService.submitQuizResults(
+    req.user.id,
+    risposte,
+    datiBonus || {},
+    dominio || 'kana'
+  );
 
   res.status(200).json({
     status: 'success',
@@ -78,7 +108,23 @@ exports.ordineTratti = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// POST /api/quiz/scrittura
+// GET /api/quiz/stroke/kanji/:livello
+// Ordine dei tratti (dati statici KanjiVG) di tutti i kanji di un livello JLPT:
+// alimenta la stessa visualizzazione animata / esercizi di scrittura dei kana,
+// tramite l'interfaccia unica dello strokeService. Sola lettura, cacheabile.
+// La lingua dei significati arriva da `?lingua=` o dalla lingua della richiesta.
+// ─────────────────────────────────────────────
+exports.ordineTrattiKanji = catchAsync(async (req, res) => {
+  const { livello } = req.params;
+  const lingua = req.query.lingua || req.language || 'it';
+
+  const ordineTratti = strokeService.getStrokeOrderKanji(livello, lingua);
+
+  res.status(200).json({
+    status: 'success',
+    data: { ordineTratti },
+  });
+});
 // Registra una sessione di scrittura su canvas (numero di tratti validati
 // lato client), assegna gli XP relativi e valuta i badge. Muta lo stato.
 // ─────────────────────────────────────────────

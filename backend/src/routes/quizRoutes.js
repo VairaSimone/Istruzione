@@ -14,20 +14,26 @@ const {
   validateGenerateQuiz,
   validateSubmitQuiz,
   validateStrokeOrder,
+  validateStrokeOrderKanji,
   validateRegistraScrittura,
 } = require('../validators/quizValidators');
 
 /**
- * Route del QUIZ KANA — montate sotto `/api/quiz`.
+ * Route del QUIZ (Kana e Kanji) — montate sotto `/api/quiz`.
  * Accessibili a qualsiasi utente autenticato e attivo (studenti, insegnanti,
  * admin): la difesa sullo stato dell'account è già in `authenticateJWT`.
  *
- *   GET  /api/quiz/dashboard  → statistiche + mastered + peggiori kana + badge
- *   GET  /api/quiz/badge      → catalogo badge + stato di sblocco (profilo)
- *   GET  /api/quiz/stroke/:alfabeto → ordine dei tratti dei kana (statico)
- *   POST /api/quiz/generate   → genera la sessione di quiz (sola lettura)
- *   POST /api/quiz/submit     → invia l'esito della partita (muta lo stato)
- *   POST /api/quiz/scrittura  → registra i tratti validati sul canvas (muta)
+ * Il dominio (kana|kanji) viaggia nel body di generate/submit; le route non si
+ * duplicano. L'unica route aggiuntiva è quella dei tratti dei kanji, che ha una
+ * chiave diversa (livello JLPT anziché alfabeto).
+ *
+ *   GET  /api/quiz/dashboard          → statistiche + mastered + peggiori kana + badge
+ *   GET  /api/quiz/badge              → catalogo badge + stato di sblocco (profilo)
+ *   GET  /api/quiz/stroke/:alfabeto   → ordine dei tratti dei kana (statico)
+ *   GET  /api/quiz/stroke/kanji/:livello → ordine dei tratti dei kanji (statico)
+ *   POST /api/quiz/generate           → genera la sessione di quiz (sola lettura)
+ *   POST /api/quiz/submit             → invia l'esito della partita (muta lo stato)
+ *   POST /api/quiz/scrittura          → registra i tratti validati sul canvas (muta)
  */
 
 router.use(authenticateJWT);
@@ -37,6 +43,16 @@ router.get('/dashboard', quizController.dashboard);
 
 // Sola lettura: catalogo badge + stato di sblocco dell'utente.
 router.get('/badge', quizController.profiloBadge);
+
+// Sola lettura: dati statici dell'ordine dei tratti dei KANJI (per livello JLPT).
+// Registrata prima della route kana per chiarezza; i percorsi non collidono
+// (segmenti diversi), ma la più specifica resta in testa.
+router.get(
+  '/stroke/kanji/:livello',
+  validateStrokeOrderKanji,
+  validate,
+  quizController.ordineTrattiKanji
+);
 
 // Sola lettura: dati statici dell'ordine dei tratti (animazione + scrittura).
 router.get('/stroke/:alfabeto', validateStrokeOrder, validate, quizController.ordineTratti);

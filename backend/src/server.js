@@ -9,6 +9,7 @@ const logger = require('./utils/logger');
 require('./models/Utente');
 require('./models/Invito');
 require('./models/ProgressoKana');
+require('./models/ProgressoKanji');
 require('./models/AttivitaGiornaliera');
 
 const PORT = parseInt(process.env.PORT) || 3000;

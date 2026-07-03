@@ -1,0 +1,7393 @@
+{
+  "livello": "N2",
+  "licenza": {
+    "fonte": "KANJIDIC2 (EDRDG) + liste JLPT moderne, via davidluzgouveia/kanji-data",
+    "url": "https://github.com/davidluzgouveia/kanji-data",
+    "licenza": "CC BY-SA 4.0",
+    "licenzaUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  "totale": 367,
+  "kanji": [
+    {
+      "ideogramma": "党",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "なかま",
+        "むら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Party",
+          "Faction",
+          "Clique"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "協",
+      "onYomi": [
+        "キョウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Co-",
+          "Cooperation"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "総",
+      "onYomi": [
+        "ソウ"
+      ],
+      "kunYomi": [
+        "す",
+        "すべ",
+        "ふさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "General",
+          "Whole",
+          "All",
+          "Full",
+          "Total"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "区",
+      "onYomi": [
+        "ク",
+        "オウ",
+        "コウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Ward",
+          "District"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "領",
+      "onYomi": [
+        "リョウ"
+      ],
+      "kunYomi": [
+        "えり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Jurisdiction",
+          "Dominion",
+          "Territory",
+          "Fief",
+          "Reign"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "県",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [
+        "か"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Prefecture"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "設",
+      "onYomi": [
+        "セツ"
+      ],
+      "kunYomi": [
+        "もう"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Establishment",
+          "Provision",
+          "Prepare"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "改",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "あらた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Reformation",
+          "Change",
+          "Modify",
+          "Mend",
+          "Renew",
+          "Examine",
+          "Inspect",
+          "Search"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "府",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Borough",
+          "Urban Prefecture",
+          "Govt Office",
+          "Representative Body",
+          "Storehouse"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "査",
+      "onYomi": [
+        "サ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Investigate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "委",
+      "onYomi": [
+        "イ"
+      ],
+      "kunYomi": [
+        "ゆだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Committee",
+          "Entrust To",
+          "Leave To",
+          "Devote",
+          "Discard"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "軍",
+      "onYomi": [
+        "グン"
+      ],
+      "kunYomi": [
+        "いくさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Army",
+          "Force",
+          "Troops",
+          "War",
+          "Battle"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "団",
+      "onYomi": [
+        "ダン",
+        "トン"
+      ],
+      "kunYomi": [
+        "かたまり",
+        "まる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Group",
+          "Association"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "各",
+      "onYomi": [
+        "カク"
+      ],
+      "kunYomi": [
+        "おのおの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Each",
+          "Every",
+          "Either"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "島",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "しま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Island"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "革",
+      "onYomi": [
+        "カク"
+      ],
+      "kunYomi": [
+        "かわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Leather",
+          "Skin",
+          "Reform",
+          "Become Serious"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "村",
+      "onYomi": [
+        "ソン"
+      ],
+      "kunYomi": [
+        "むら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Village",
+          "Town"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "勢",
+      "onYomi": [
+        "セイ",
+        "ゼイ"
+      ],
+      "kunYomi": [
+        "いきお",
+        "はずみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Forces",
+          "Energy",
+          "Military Strength"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "減",
+      "onYomi": [
+        "ゲン"
+      ],
+      "kunYomi": [
+        "へ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dwindle",
+          "Decrease",
+          "Reduce",
+          "Decline",
+          "Curtail",
+          "Get Hungry"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "再",
+      "onYomi": [
+        "サイ",
+        "サ"
+      ],
+      "kunYomi": [
+        "ふたた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Again",
+          "Twice",
+          "Second Time"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "税",
+      "onYomi": [
+        "ゼイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tax",
+          "Duty"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "営",
+      "onYomi": [
+        "エイ"
+      ],
+      "kunYomi": [
+        "いとな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Occupation",
+          "Camp",
+          "Perform",
+          "Build",
+          "Conduct (business)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "比",
+      "onYomi": [
+        "ヒ"
+      ],
+      "kunYomi": [
+        "くら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Compare",
+          "Race",
+          "Ratio",
+          "Philippines"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "防",
+      "onYomi": [
+        "ボウ"
+      ],
+      "kunYomi": [
+        "ふせ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Ward Off",
+          "Defend",
+          "Protect",
+          "Resist"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "補",
+      "onYomi": [
+        "ホ"
+      ],
+      "kunYomi": [
+        "おぎな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Supplement",
+          "Supply",
+          "Make Good",
+          "Offset",
+          "Compensate",
+          "Assistant",
+          "Learner"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "境",
+      "onYomi": [
+        "キョウ",
+        "ケイ"
+      ],
+      "kunYomi": [
+        "さかい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Boundary",
+          "Border",
+          "Region"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "導",
+      "onYomi": [
+        "ドウ"
+      ],
+      "kunYomi": [
+        "みちび"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Guidance",
+          "Leading",
+          "Conduct",
+          "Usher"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "副",
+      "onYomi": [
+        "フク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Vice-",
+          "Assistant",
+          "Aide",
+          "Duplicate",
+          "Copy"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "算",
+      "onYomi": [
+        "サン"
+      ],
+      "kunYomi": [
+        "そろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Calculate",
+          "Divining",
+          "Number",
+          "Abacus",
+          "Probability"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "輸",
+      "onYomi": [
+        "ユ",
+        "シュ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Transport",
+          "Send",
+          "Be Inferior"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "述",
+      "onYomi": [
+        "ジュツ"
+      ],
+      "kunYomi": [
+        "の"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mention",
+          "State",
+          "Speak",
+          "Relate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "線",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "すじ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Line",
+          "Track"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "農",
+      "onYomi": [
+        "ノウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Agriculture",
+          "Farmers"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "州",
+      "onYomi": [
+        "シュウ",
+        "ス"
+      ],
+      "kunYomi": [
+        "す"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "State",
+          "Province"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "武",
+      "onYomi": [
+        "ブ",
+        "ム"
+      ],
+      "kunYomi": [
+        "たけ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Warrior",
+          "Military",
+          "Chivalry",
+          "Arms"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "象",
+      "onYomi": [
+        "ショウ",
+        "ゾウ"
+      ],
+      "kunYomi": [
+        "かたど"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Elephant",
+          "Pattern After",
+          "Imitate",
+          "Image",
+          "Shape",
+          "Sign (of The Times)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "域",
+      "onYomi": [
+        "イキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Range",
+          "Region",
+          "Limits",
+          "Stage",
+          "Level"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "額",
+      "onYomi": [
+        "ガク"
+      ],
+      "kunYomi": [
+        "ひたい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Forehead",
+          "Tablet",
+          "Plaque",
+          "Framed Picture",
+          "Sum",
+          "Amount",
+          "Volume"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 18
+    },
+    {
+      "ideogramma": "欧",
+      "onYomi": [
+        "オウ"
+      ],
+      "kunYomi": [
+        "うた",
+        "は"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Europe"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "担",
+      "onYomi": [
+        "タン"
+      ],
+      "kunYomi": [
+        "かつ",
+        "にな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shouldering",
+          "Carry",
+          "Raise",
+          "Bear"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "準",
+      "onYomi": [
+        "ジュン"
+      ],
+      "kunYomi": [
+        "じゅん",
+        "なぞら",
+        "のり",
+        "ひと",
+        "みずもり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Semi-",
+          "Correspond To",
+          "Proportionate To",
+          "Conform",
+          "Imitate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "賞",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "ほ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Prize",
+          "Reward",
+          "Praise"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "辺",
+      "onYomi": [
+        "ヘン"
+      ],
+      "kunYomi": [
+        "あた",
+        "ほと",
+        "べ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Environs",
+          "Boundary",
+          "Border",
+          "Vicinity"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "造",
+      "onYomi": [
+        "ゾウ"
+      ],
+      "kunYomi": [
+        "つく",
+        "づく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Create",
+          "Make",
+          "Structure",
+          "Physique"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "被",
+      "onYomi": [
+        "ヒ"
+      ],
+      "kunYomi": [
+        "こうむ",
+        "おお",
+        "かぶ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Incur",
+          "Cover",
+          "Veil",
+          "Brood Over",
+          "Shelter",
+          "Wear",
+          "Put On",
+          "Be Exposed (film)",
+          "Receiving"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "技",
+      "onYomi": [
+        "ギ"
+      ],
+      "kunYomi": [
+        "わざ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Skill",
+          "Art",
+          "Craft",
+          "Ability",
+          "Feat",
+          "Performance",
+          "Vocation",
+          "Arts"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "低",
+      "onYomi": [
+        "テイ"
+      ],
+      "kunYomi": [
+        "ひく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lower",
+          "Short",
+          "Humble"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "復",
+      "onYomi": [
+        "フク"
+      ],
+      "kunYomi": [
+        "また"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Restore",
+          "Return To",
+          "Revert",
+          "Resume"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "移",
+      "onYomi": [
+        "イ"
+      ],
+      "kunYomi": [
+        "うつ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shift",
+          "Move",
+          "Change",
+          "Drift",
+          "Catch (cold, Fire)",
+          "Pass Into"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "個",
+      "onYomi": [
+        "コ",
+        "カ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Individual",
+          "Counter For Articles"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "門",
+      "onYomi": [
+        "モン"
+      ],
+      "kunYomi": [
+        "かど",
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Gate",
+          "Counter For Cannons"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "課",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Chapter",
+          "Lesson",
+          "Section",
+          "Department",
+          "Division",
+          "Counter For Chapters (of A Book)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "脳",
+      "onYomi": [
+        "ノウ",
+        "ドウ"
+      ],
+      "kunYomi": [
+        "のうずる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Brain",
+          "Memory"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "極",
+      "onYomi": [
+        "キョク",
+        "ゴク"
+      ],
+      "kunYomi": [
+        "きわ",
+        "き",
+        "ぎ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Poles",
+          "Settlement",
+          "Conclusion",
+          "End",
+          "Highest Rank",
+          "Electric Poles",
+          "Very",
+          "Extremely",
+          "Most",
+          "Highly",
+          "10**48"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "含",
+      "onYomi": [
+        "ガン"
+      ],
+      "kunYomi": [
+        "ふく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Contain",
+          "Include",
+          "Hold In The Mouth",
+          "Bear In Mind",
+          "Understand",
+          "Cherish"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "蔵",
+      "onYomi": [
+        "ゾウ",
+        "ソウ"
+      ],
+      "kunYomi": [
+        "くら",
+        "おさ",
+        "かく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Storehouse",
+          "Hide",
+          "Own",
+          "Have",
+          "Possess"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "量",
+      "onYomi": [
+        "リョウ"
+      ],
+      "kunYomi": [
+        "はか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Quantity",
+          "Measure",
+          "Weight",
+          "Amount",
+          "Consider",
+          "Estimate",
+          "Surmise"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "型",
+      "onYomi": [
+        "ケイ"
+      ],
+      "kunYomi": [
+        "かた",
+        "がた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mould",
+          "Type",
+          "Model"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "況",
+      "onYomi": [
+        "キョウ"
+      ],
+      "kunYomi": [
+        "まし",
+        "いわ",
+        "おもむき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Condition",
+          "Situation"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "針",
+      "onYomi": [
+        "シン"
+      ],
+      "kunYomi": [
+        "はり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Needle",
+          "Pin",
+          "Staple",
+          "Stinger"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "専",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "もっぱ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Specialty",
+          "Exclusive",
+          "Mainly",
+          "Solely"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "谷",
+      "onYomi": [
+        "コク"
+      ],
+      "kunYomi": [
+        "たに",
+        "きわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Valley"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "史",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "History",
+          "Chronicle"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "階",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "きざはし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Storey",
+          "Stair",
+          "Counter For Storeys Of A Building"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "管",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "くだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pipe",
+          "Tube",
+          "Wind Instrument",
+          "Drunken Talk",
+          "Control",
+          "Jurisdiction"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "兵",
+      "onYomi": [
+        "ヘイ",
+        "ヒョウ"
+      ],
+      "kunYomi": [
+        "つわもの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Soldier",
+          "Private",
+          "Troops",
+          "Army",
+          "Warfare",
+          "Strategy",
+          "Tactics"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "接",
+      "onYomi": [
+        "セツ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "つ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Touch",
+          "Contact",
+          "Adjoin",
+          "Piece Together"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "細",
+      "onYomi": [
+        "サイ"
+      ],
+      "kunYomi": [
+        "ほそ",
+        "こま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dainty",
+          "Get Thin",
+          "Taper",
+          "Slender",
+          "Narrow",
+          "Detailed",
+          "Precise"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "効",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "き",
+        "ききめ",
+        "なら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Merit",
+          "Efficacy",
+          "Efficiency",
+          "Benefit"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "丸",
+      "onYomi": [
+        "ガン"
+      ],
+      "kunYomi": [
+        "まる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Round",
+          "Full (month)",
+          "Perfection",
+          "-ship",
+          "Pills",
+          "Make Round",
+          "Roll Up",
+          "Curl Up",
+          "Seduce",
+          "Explain Away"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "湾",
+      "onYomi": [
+        "ワン"
+      ],
+      "kunYomi": [
+        "いりえ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Gulf",
+          "Bay",
+          "Inlet"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "録",
+      "onYomi": [
+        "ロク"
+      ],
+      "kunYomi": [
+        "しる",
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Record"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "省",
+      "onYomi": [
+        "セイ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "かえり",
+        "はぶ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Focus",
+          "Government Ministry",
+          "Conserve"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "旧",
+      "onYomi": [
+        "キュウ"
+      ],
+      "kunYomi": [
+        "ふる",
+        "もと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Old Times",
+          "Old Things",
+          "Old Friend",
+          "Former",
+          "Ex-"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "橋",
+      "onYomi": [
+        "キョウ"
+      ],
+      "kunYomi": [
+        "はし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bridge"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "岸",
+      "onYomi": [
+        "ガン"
+      ],
+      "kunYomi": [
+        "きし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Beach"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "周",
+      "onYomi": [
+        "シュウ"
+      ],
+      "kunYomi": [
+        "まわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Circumference",
+          "Circuit",
+          "Lap"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "材",
+      "onYomi": [
+        "ザイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lumber",
+          "Log",
+          "Timber",
+          "Wood",
+          "Materials",
+          "Ingredients",
+          "Talent"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "戸",
+      "onYomi": [
+        "コ"
+      ],
+      "kunYomi": [
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Door",
+          "Counter For Houses"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "央",
+      "onYomi": [
+        "オウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Center",
+          "Middle"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "券",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Ticket"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "編",
+      "onYomi": [
+        "ヘン"
+      ],
+      "kunYomi": [
+        "あ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Compilation",
+          "Knit",
+          "Plait",
+          "Braid",
+          "Twist",
+          "Editing",
+          "Completed Poem",
+          "Part Of A Book"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "捜",
+      "onYomi": [
+        "ソウ",
+        "シュ",
+        "シュウ"
+      ],
+      "kunYomi": [
+        "さが"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Search",
+          "Look For",
+          "Locate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "竹",
+      "onYomi": [
+        "チク"
+      ],
+      "kunYomi": [
+        "たけ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bamboo"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "超",
+      "onYomi": [
+        "チョウ"
+      ],
+      "kunYomi": [
+        "こ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Transcend",
+          "Super-",
+          "Ultra-"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "並",
+      "onYomi": [
+        "ヘイ",
+        "ホウ"
+      ],
+      "kunYomi": [
+        "な",
+        "なみ",
+        "なら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Row",
+          "And",
+          "Besides",
+          "As Well As",
+          "Line Up",
+          "Rank With",
+          "Rival",
+          "Equal"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "療",
+      "onYomi": [
+        "リョウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Heal",
+          "Cure"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "採",
+      "onYomi": [
+        "サイ"
+      ],
+      "kunYomi": [
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pick",
+          "Take",
+          "Fetch",
+          "Take Up"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "森",
+      "onYomi": [
+        "シン"
+      ],
+      "kunYomi": [
+        "もり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Forest",
+          "Woods"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "競",
+      "onYomi": [
+        "キョウ",
+        "ケイ"
+      ],
+      "kunYomi": [
+        "きそ",
+        "せ",
+        "くら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Emulate",
+          "Compete With",
+          "Bid",
+          "Sell At Auction",
+          "Bout",
+          "Contest",
+          "Race"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 20
+    },
+    {
+      "ideogramma": "介",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Jammed In",
+          "Shellfish",
+          "Mediate",
+          "Concern Oneself With"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "根",
+      "onYomi": [
+        "コン"
+      ],
+      "kunYomi": [
+        "ね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Root",
+          "Radical",
+          "Head (pimple)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "販",
+      "onYomi": [
+        "ハン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Marketing",
+          "Sell",
+          "Trade"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "歴",
+      "onYomi": [
+        "レキ",
+        "レッキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Curriculum",
+          "Continuation",
+          "Passage Of Time"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "将",
+      "onYomi": [
+        "ショウ",
+        "ソウ"
+      ],
+      "kunYomi": [
+        "まさ",
+        "はた",
+        "ひきい",
+        "もって"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Leader",
+          "Commander",
+          "General",
+          "Admiral",
+          "Or",
+          "And Again",
+          "Soon",
+          "From Now On",
+          "Just About"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "幅",
+      "onYomi": [
+        "フク"
+      ],
+      "kunYomi": [
+        "はば"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Hanging Scroll",
+          "Width"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "般",
+      "onYomi": [
+        "ハン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Carrier",
+          "Carry",
+          "All",
+          "General",
+          "Sort",
+          "Kind"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "貿",
+      "onYomi": [
+        "ボウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Trade",
+          "Exchange"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "講",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lecture",
+          "Club",
+          "Association"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "林",
+      "onYomi": [
+        "リン"
+      ],
+      "kunYomi": [
+        "はやし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Grove",
+          "Forest"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "装",
+      "onYomi": [
+        "ソウ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "よそお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Attire",
+          "Dress",
+          "Pretend",
+          "Disguise",
+          "Profess"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "諸",
+      "onYomi": [
+        "ショ"
+      ],
+      "kunYomi": [
+        "もろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Various",
+          "Many",
+          "Several",
+          "Together"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "劇",
+      "onYomi": [
+        "ゲキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Drama",
+          "Play"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "河",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [
+        "かわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "River"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "航",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Navigate",
+          "Sail",
+          "Cruise",
+          "Fly"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "鉄",
+      "onYomi": [
+        "テツ"
+      ],
+      "kunYomi": [
+        "くろがね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Iron"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "児",
+      "onYomi": [
+        "ジ",
+        "ニ",
+        "ゲイ"
+      ],
+      "kunYomi": [
+        "こ",
+        "っこ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Newborn Babe",
+          "Child",
+          "Young Of Animals"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "禁",
+      "onYomi": [
+        "キン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Prohibition",
+          "Ban",
+          "Forbid"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "印",
+      "onYomi": [
+        "イン"
+      ],
+      "kunYomi": [
+        "しるし",
+        "じるし",
+        "しる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Stamp",
+          "Seal",
+          "Mark",
+          "Imprint",
+          "Symbol",
+          "Emblem",
+          "Trademark",
+          "Evidence",
+          "Souvenir",
+          "India"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "逆",
+      "onYomi": [
+        "ギャク",
+        "ゲキ"
+      ],
+      "kunYomi": [
+        "さか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Inverted",
+          "Reverse",
+          "Opposite",
+          "Wicked"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "換",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "か"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Interchange",
+          "Period",
+          "Change",
+          "Convert",
+          "Replace",
+          "Renew"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "久",
+      "onYomi": [
+        "キュウ",
+        "ク"
+      ],
+      "kunYomi": [
+        "ひさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Long Time",
+          "Old Story"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "短",
+      "onYomi": [
+        "タン"
+      ],
+      "kunYomi": [
+        "みじか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Short",
+          "Brevity",
+          "Fault",
+          "Defect",
+          "Weak Point"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "油",
+      "onYomi": [
+        "ユ",
+        "ユウ"
+      ],
+      "kunYomi": [
+        "あぶら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Oil",
+          "Fat"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "暴",
+      "onYomi": [
+        "ボウ",
+        "バク"
+      ],
+      "kunYomi": [
+        "あば"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Outburst",
+          "Rave",
+          "Fret",
+          "Force",
+          "Violence",
+          "Cruelty",
+          "Outrage"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "輪",
+      "onYomi": [
+        "リン"
+      ],
+      "kunYomi": [
+        "わ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Wheel",
+          "Ring",
+          "Circle",
+          "Link",
+          "Loop",
+          "Counter For Wheels And Flowers"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "占",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "し",
+        "うらな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fortune-telling",
+          "Divining",
+          "Forecasting",
+          "Occupy",
+          "Hold",
+          "Have",
+          "Get",
+          "Take"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "植",
+      "onYomi": [
+        "ショク"
+      ],
+      "kunYomi": [
+        "う"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Plant"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "清",
+      "onYomi": [
+        "セイ",
+        "ショウ",
+        "シン"
+      ],
+      "kunYomi": [
+        "きよ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pure",
+          "Purify",
+          "Cleanse",
+          "Exorcise",
+          "Manchu Dynasty"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "倍",
+      "onYomi": [
+        "バイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Double",
+          "Twice",
+          "Times",
+          "Fold"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "均",
+      "onYomi": [
+        "キン"
+      ],
+      "kunYomi": [
+        "なら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Level",
+          "Average"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "億",
+      "onYomi": [
+        "オク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Hundred Million",
+          "10**8"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "圧",
+      "onYomi": [
+        "アツ",
+        "エン",
+        "オウ"
+      ],
+      "kunYomi": [
+        "お",
+        "へ",
+        "おさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pressure",
+          "Push",
+          "Overwhelm",
+          "Oppress",
+          "Dominate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "芸",
+      "onYomi": [
+        "ゲイ",
+        "ウン"
+      ],
+      "kunYomi": [
+        "う",
+        "のり",
+        "わざ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Technique",
+          "Art",
+          "Craft",
+          "Performance",
+          "Acting",
+          "Trick",
+          "Stunt"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "署",
+      "onYomi": [
+        "ショ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Signature",
+          "Govt Office",
+          "Police Station"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "伸",
+      "onYomi": [
+        "シン"
+      ],
+      "kunYomi": [
+        "の"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Expand",
+          "Stretch",
+          "Extend",
+          "Lengthen",
+          "Increase"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "停",
+      "onYomi": [
+        "テイ"
+      ],
+      "kunYomi": [
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Halt",
+          "Stopping"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "爆",
+      "onYomi": [
+        "バク"
+      ],
+      "kunYomi": [
+        "は"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bomb",
+          "Burst Open",
+          "Pop",
+          "Split"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 19
+    },
+    {
+      "ideogramma": "陸",
+      "onYomi": [
+        "リク",
+        "ロク"
+      ],
+      "kunYomi": [
+        "おか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Land",
+          "Six"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "玉",
+      "onYomi": [
+        "ギョク"
+      ],
+      "kunYomi": [
+        "たま",
+        "だま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Jewel",
+          "Ball"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "波",
+      "onYomi": [
+        "ハ"
+      ],
+      "kunYomi": [
+        "なみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Waves",
+          "Billows",
+          "Poland"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "帯",
+      "onYomi": [
+        "タイ"
+      ],
+      "kunYomi": [
+        "お",
+        "おび"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sash",
+          "Belt",
+          "Obi",
+          "Zone",
+          "Region"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "延",
+      "onYomi": [
+        "エン"
+      ],
+      "kunYomi": [
+        "の"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Prolong",
+          "Stretching"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "羽",
+      "onYomi": [
+        "ウ"
+      ],
+      "kunYomi": [
+        "は",
+        "わ",
+        "はね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Feathers",
+          "Counter For Birds, Rabbits"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "固",
+      "onYomi": [
+        "コ"
+      ],
+      "kunYomi": [
+        "かた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Harden",
+          "Set",
+          "Clot",
+          "Curdle"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "則",
+      "onYomi": [
+        "ソク"
+      ],
+      "kunYomi": [
+        "のっと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Rule",
+          "Follow",
+          "Based On",
+          "Model After"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "乱",
+      "onYomi": [
+        "ラン",
+        "ロン"
+      ],
+      "kunYomi": [
+        "みだ",
+        "おさ",
+        "わた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Riot",
+          "War",
+          "Disorder",
+          "Disturb"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "普",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [
+        "あまね",
+        "あまねし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Universal",
+          "Wide(ly)",
+          "Generally",
+          "Prussia"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "測",
+      "onYomi": [
+        "ソク"
+      ],
+      "kunYomi": [
+        "はか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fathom",
+          "Plan",
+          "Scheme",
+          "Measure"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "豊",
+      "onYomi": [
+        "ホウ",
+        "ブ"
+      ],
+      "kunYomi": [
+        "ゆた",
+        "とよ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bountiful",
+          "Excellent",
+          "Rich"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "厚",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "あつ",
+        "あか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Thick",
+          "Heavy",
+          "Rich",
+          "Kind",
+          "Cordial",
+          "Brazen",
+          "Shameless"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "齢",
+      "onYomi": [
+        "レイ"
+      ],
+      "kunYomi": [
+        "よわい",
+        "とし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Age"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "囲",
+      "onYomi": [
+        "イ"
+      ],
+      "kunYomi": [
+        "かこ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Surround",
+          "Besiege",
+          "Store",
+          "Paling",
+          "Enclosure",
+          "Encircle",
+          "Preserve",
+          "Keep"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "卒",
+      "onYomi": [
+        "ソツ",
+        "シュツ"
+      ],
+      "kunYomi": [
+        "そっ",
+        "お",
+        "ついに",
+        "にわか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Graduate",
+          "Soldier",
+          "Private",
+          "Die"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "略",
+      "onYomi": [
+        "リャク"
+      ],
+      "kunYomi": [
+        "ほぼ",
+        "はぶ",
+        "おか",
+        "おさ",
+        "はかりごと",
+        "はか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Abbreviation",
+          "Omission",
+          "Outline",
+          "Shorten",
+          "Capture",
+          "Plunder"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "承",
+      "onYomi": [
+        "ショウ",
+        "ジョウ"
+      ],
+      "kunYomi": [
+        "うけたまわ",
+        "う"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Acquiesce",
+          "Hear",
+          "Listen To",
+          "Be Informed",
+          "Receive"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "順",
+      "onYomi": [
+        "ジュン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Obey",
+          "Order",
+          "Turn",
+          "Right",
+          "Docility",
+          "Occasion"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "岩",
+      "onYomi": [
+        "ガン"
+      ],
+      "kunYomi": [
+        "いわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Boulder",
+          "Rock",
+          "Cliff"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "練",
+      "onYomi": [
+        "レン"
+      ],
+      "kunYomi": [
+        "ね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Practice",
+          "Gloss",
+          "Train",
+          "Drill",
+          "Polish",
+          "Refine"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "軽",
+      "onYomi": [
+        "ケイ",
+        "キョウ",
+        "キン"
+      ],
+      "kunYomi": [
+        "かる",
+        "かろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lightly",
+          "Trifling",
+          "Unimportant"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "了",
+      "onYomi": [
+        "リョウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Complete",
+          "Finish"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 2
+    },
+    {
+      "ideogramma": "庁",
+      "onYomi": [
+        "チョウ",
+        "テイ"
+      ],
+      "kunYomi": [
+        "やくしょ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Government Office"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "城",
+      "onYomi": [
+        "ジョウ",
+        "セイ"
+      ],
+      "kunYomi": [
+        "しろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Castle"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "患",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "わずら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Afflicted",
+          "Disease",
+          "Suffer From",
+          "Be Ill"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "層",
+      "onYomi": [
+        "ソウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Stratum",
+          "Social Class",
+          "Layer",
+          "Story",
+          "Floor"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "版",
+      "onYomi": [
+        "ハン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Printing Block",
+          "Printing Plate",
+          "Edition",
+          "Impression",
+          "Label"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "令",
+      "onYomi": [
+        "レイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Orders",
+          "Ancient Laws",
+          "Command",
+          "Decree"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "角",
+      "onYomi": [
+        "カク"
+      ],
+      "kunYomi": [
+        "かど",
+        "つの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Angle",
+          "Corner",
+          "Square",
+          "Horn",
+          "Antlers"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "絡",
+      "onYomi": [
+        "ラク"
+      ],
+      "kunYomi": [
+        "から"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Entwine",
+          "Coil Around",
+          "Get Caught In"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "損",
+      "onYomi": [
+        "ソン"
+      ],
+      "kunYomi": [
+        "そこ",
+        "そこな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Damage",
+          "Loss",
+          "Disadvantage",
+          "Hurt",
+          "Injure"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "募",
+      "onYomi": [
+        "ボ"
+      ],
+      "kunYomi": [
+        "つの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Recruit",
+          "Campaign",
+          "Gather (contributions)",
+          "Enlist",
+          "Grow Violent"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "裏",
+      "onYomi": [
+        "リ"
+      ],
+      "kunYomi": [
+        "うら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Back",
+          "Amidst",
+          "In",
+          "Reverse",
+          "Inside",
+          "Palm",
+          "Sole",
+          "Rear",
+          "Lining",
+          "Wrong Side"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "仏",
+      "onYomi": [
+        "ブツ",
+        "フツ"
+      ],
+      "kunYomi": [
+        "ほとけ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Buddha",
+          "The Dead",
+          "France"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "績",
+      "onYomi": [
+        "セキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Exploits",
+          "Achievements",
+          "Unreeling Cocoons"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "築",
+      "onYomi": [
+        "チク"
+      ],
+      "kunYomi": [
+        "きず"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fabricate",
+          "Build",
+          "Construct"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "貨",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [
+        "たから"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Freight",
+          "Goods",
+          "Property"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "混",
+      "onYomi": [
+        "コン"
+      ],
+      "kunYomi": [
+        "ま",
+        "こ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mix",
+          "Blend",
+          "Confuse"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "昇",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "のぼ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Rise Up"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "池",
+      "onYomi": [
+        "チ"
+      ],
+      "kunYomi": [
+        "いけ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pond",
+          "Cistern",
+          "Pool",
+          "Reservoir"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "血",
+      "onYomi": [
+        "ケツ"
+      ],
+      "kunYomi": [
+        "ち"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Blood"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "温",
+      "onYomi": [
+        "オン"
+      ],
+      "kunYomi": [
+        "あたた",
+        "ぬく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Warm"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "季",
+      "onYomi": [
+        "キ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Seasons"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "星",
+      "onYomi": [
+        "セイ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "ほし",
+        "ぼし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Star",
+          "Spot",
+          "Dot",
+          "Mark"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "永",
+      "onYomi": [
+        "エイ"
+      ],
+      "kunYomi": [
+        "なが"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Eternity",
+          "Long",
+          "Lengthy"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "著",
+      "onYomi": [
+        "チョ",
+        "チャク"
+      ],
+      "kunYomi": [
+        "あらわ",
+        "いちじる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Renowned",
+          "Publish",
+          "Write",
+          "Remarkable",
+          "Phenomenal",
+          "Put On",
+          "Don",
+          "Wear",
+          "Arrival",
+          "Finish (race)",
+          "Counter For Suits Of Clothing",
+          "Literary Work"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "誌",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Document",
+          "Records"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "庫",
+      "onYomi": [
+        "コ",
+        "ク"
+      ],
+      "kunYomi": [
+        "くら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Warehouse",
+          "Storehouse"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "刊",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Publish",
+          "Carve",
+          "Engrave"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "像",
+      "onYomi": [
+        "ゾウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Statue",
+          "Picture",
+          "Image",
+          "Figure",
+          "Portrait"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "香",
+      "onYomi": [
+        "コウ",
+        "キョウ"
+      ],
+      "kunYomi": [
+        "か",
+        "かお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Incense",
+          "Smell",
+          "Perfume"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "坂",
+      "onYomi": [
+        "ハン"
+      ],
+      "kunYomi": [
+        "さか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Slope",
+          "Incline",
+          "Hill"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "底",
+      "onYomi": [
+        "テイ"
+      ],
+      "kunYomi": [
+        "そこ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bottom",
+          "Sole",
+          "Depth",
+          "Bottom Price",
+          "Base",
+          "Kind",
+          "Sort"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "布",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [
+        "ぬの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Linen",
+          "Cloth",
+          "Spread",
+          "Distribute"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "寺",
+      "onYomi": [
+        "ジ"
+      ],
+      "kunYomi": [
+        "てら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Buddhist Temple"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "宇",
+      "onYomi": [
+        "ウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Eaves",
+          "Roof",
+          "House",
+          "Heaven"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "巨",
+      "onYomi": [
+        "キョ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Gigantic",
+          "Big",
+          "Large",
+          "Great"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "震",
+      "onYomi": [
+        "シン"
+      ],
+      "kunYomi": [
+        "ふる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Quake",
+          "Shake",
+          "Tremble",
+          "Quiver",
+          "Shiver"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "希",
+      "onYomi": [
+        "キ",
+        "ケ"
+      ],
+      "kunYomi": [
+        "まれ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Hope",
+          "Beg",
+          "Request",
+          "Pray",
+          "Beseech",
+          "Greece",
+          "Dilute (acid)",
+          "Rare",
+          "Few",
+          "Phenomenal"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "触",
+      "onYomi": [
+        "ショク"
+      ],
+      "kunYomi": [
+        "ふ",
+        "さわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Contact",
+          "Touch",
+          "Feel",
+          "Hit",
+          "Proclaim",
+          "Announce",
+          "Conflict"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "依",
+      "onYomi": [
+        "イ",
+        "エ"
+      ],
+      "kunYomi": [
+        "よ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Reliant",
+          "Depend On",
+          "Consequently",
+          "Therefore",
+          "Due To"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "籍",
+      "onYomi": [
+        "セキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Enroll",
+          "Domiciliary Register",
+          "Membership"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 20
+    },
+    {
+      "ideogramma": "汚",
+      "onYomi": [
+        "オ"
+      ],
+      "kunYomi": [
+        "けが",
+        "よご",
+        "きたな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dirty",
+          "Pollute",
+          "Disgrace",
+          "Rape",
+          "Defile"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "枚",
+      "onYomi": [
+        "マイ",
+        "バイ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sheet Of...",
+          "Counter For Flat Thin Objects Or Sheets"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "複",
+      "onYomi": [
+        "フク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Duplicate",
+          "Double",
+          "Compound",
+          "Multiple"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "郵",
+      "onYomi": [
+        "ユウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mail",
+          "Stagecoach Stop"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "仲",
+      "onYomi": [
+        "チュウ"
+      ],
+      "kunYomi": [
+        "なか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Go-between",
+          "Relationship"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "栄",
+      "onYomi": [
+        "エイ",
+        "ヨウ"
+      ],
+      "kunYomi": [
+        "さか",
+        "は",
+        "ば",
+        "え"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Flourish",
+          "Prosperity",
+          "Honor",
+          "Glory",
+          "Splendor"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "札",
+      "onYomi": [
+        "サツ"
+      ],
+      "kunYomi": [
+        "ふだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tag",
+          "Paper Money",
+          "Counter For Bonds",
+          "Placard",
+          "Bid"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "板",
+      "onYomi": [
+        "ハン",
+        "バン"
+      ],
+      "kunYomi": [
+        "いた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Plank",
+          "Board",
+          "Plate",
+          "Stage"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "骨",
+      "onYomi": [
+        "コツ"
+      ],
+      "kunYomi": [
+        "ほね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Skeleton",
+          "Bone",
+          "Remains",
+          "Frame"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "傾",
+      "onYomi": [
+        "ケイ"
+      ],
+      "kunYomi": [
+        "かたむ",
+        "かたぶ",
+        "かた",
+        "かし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lean",
+          "Incline",
+          "Tilt",
+          "Trend",
+          "Wane",
+          "Sink",
+          "Ruin",
+          "Bias"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "届",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "とど"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Deliver",
+          "Reach",
+          "Arrive",
+          "Report",
+          "Notify",
+          "Forward"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "巻",
+      "onYomi": [
+        "カン",
+        "ケン"
+      ],
+      "kunYomi": [
+        "ま",
+        "まき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Scroll",
+          "Volume",
+          "Book",
+          "Part",
+          "Roll Up",
+          "Wind Up",
+          "Tie",
+          "Coil",
+          "Counter For Texts (or Book Scrolls)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "燃",
+      "onYomi": [
+        "ネン"
+      ],
+      "kunYomi": [
+        "も"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Burn",
+          "Blaze",
+          "Glow"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "跡",
+      "onYomi": [
+        "セキ"
+      ],
+      "kunYomi": [
+        "あと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tracks",
+          "Mark",
+          "Print",
+          "Impression"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "包",
+      "onYomi": [
+        "ホウ"
+      ],
+      "kunYomi": [
+        "つつ",
+        "くる"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Wrap",
+          "Pack Up",
+          "Cover",
+          "Conceal"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "駐",
+      "onYomi": [
+        "チュウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Stop-over",
+          "Reside In",
+          "Resident"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "弱",
+      "onYomi": [
+        "ジャク"
+      ],
+      "kunYomi": [
+        "よわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Weak",
+          "Frail"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "紹",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Introduce",
+          "Inherit",
+          "Help"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "雇",
+      "onYomi": [
+        "コ"
+      ],
+      "kunYomi": [
+        "やと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Employ",
+          "Hire"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "替",
+      "onYomi": [
+        "タイ"
+      ],
+      "kunYomi": [
+        "か"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Exchange",
+          "Spare",
+          "Substitute",
+          "Per-"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "預",
+      "onYomi": [
+        "ヨ"
+      ],
+      "kunYomi": [
+        "あず"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Deposit",
+          "Custody",
+          "Leave With",
+          "Entrust To"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "焼",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "や"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bake",
+          "Burning"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "簡",
+      "onYomi": [
+        "カン",
+        "ケン"
+      ],
+      "kunYomi": [
+        "えら",
+        "ふだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Simplicity",
+          "Brevity"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 18
+    },
+    {
+      "ideogramma": "章",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Badge",
+          "Chapter",
+          "Composition",
+          "Poem",
+          "Design"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "臓",
+      "onYomi": [
+        "ゾウ"
+      ],
+      "kunYomi": [
+        "はらわた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Entrails",
+          "Viscera",
+          "Bowels"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 19
+    },
+    {
+      "ideogramma": "律",
+      "onYomi": [
+        "リツ",
+        "リチ",
+        "レツ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Rhythm",
+          "Law",
+          "Regulation",
+          "Gauge",
+          "Control"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "贈",
+      "onYomi": [
+        "ゾウ",
+        "ソウ"
+      ],
+      "kunYomi": [
+        "おく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Presents",
+          "Send",
+          "Give To",
+          "Award To",
+          "Confer On",
+          "Presenting Something"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 18
+    },
+    {
+      "ideogramma": "照",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "て"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Illuminate",
+          "Shine",
+          "Compare",
+          "Bashful"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "薄",
+      "onYomi": [
+        "ハク"
+      ],
+      "kunYomi": [
+        "うす",
+        "すすき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dilute",
+          "Thin",
+          "Weak (tea)",
+          "Pampas Grass"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "群",
+      "onYomi": [
+        "グン"
+      ],
+      "kunYomi": [
+        "む",
+        "むら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Flock",
+          "Group",
+          "Crowd",
+          "Herd",
+          "Swarm",
+          "Cluster"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "秒",
+      "onYomi": [
+        "ビョウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Second (1/60 Minute)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "奥",
+      "onYomi": [
+        "オウ"
+      ],
+      "kunYomi": [
+        "おく",
+        "くま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Heart",
+          "Interior"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "詰",
+      "onYomi": [
+        "キツ",
+        "キチ"
+      ],
+      "kunYomi": [
+        "つ",
+        "づ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Packed",
+          "Close",
+          "Pressed",
+          "Reprove",
+          "Rebuke",
+          "Blame"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "双",
+      "onYomi": [
+        "ソウ"
+      ],
+      "kunYomi": [
+        "ふた",
+        "たぐい",
+        "ならぶ",
+        "ふたつ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pair",
+          "Set",
+          "Comparison",
+          "Counter For Pairs"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "刺",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "さ",
+        "さし",
+        "とげ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Thorn",
+          "Pierce",
+          "Stab",
+          "Prick",
+          "Sting",
+          "Calling Card"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "純",
+      "onYomi": [
+        "ジュン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Genuine",
+          "Purity",
+          "Innocence",
+          "Net (profit)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "翌",
+      "onYomi": [
+        "ヨク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "The Following",
+          "Next"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "快",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "こころよ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cheerful",
+          "Pleasant",
+          "Agreeable",
+          "Comfortable"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "片",
+      "onYomi": [
+        "ヘン"
+      ],
+      "kunYomi": [
+        "かた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "One-sided",
+          "Leaf",
+          "Sheet"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "敬",
+      "onYomi": [
+        "ケイ",
+        "キョウ"
+      ],
+      "kunYomi": [
+        "うやま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Awe",
+          "Respect",
+          "Honor",
+          "Revere"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "悩",
+      "onYomi": [
+        "ノウ"
+      ],
+      "kunYomi": [
+        "なや",
+        "なやみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Trouble",
+          "Worry",
+          "In Pain",
+          "Distress",
+          "Illness"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "泉",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "いずみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Spring",
+          "Fountain"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "皮",
+      "onYomi": [
+        "ヒ"
+      ],
+      "kunYomi": [
+        "かわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pelt",
+          "Skin",
+          "Hide",
+          "Leather"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "漁",
+      "onYomi": [
+        "ギョ",
+        "リョウ"
+      ],
+      "kunYomi": [
+        "あさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fishing",
+          "Fishery"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "荒",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "あら",
+        "あ",
+        "すさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Laid Waste",
+          "Rough",
+          "Rude",
+          "Wild"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "貯",
+      "onYomi": [
+        "チョ"
+      ],
+      "kunYomi": [
+        "た",
+        "たくわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Savings",
+          "Store",
+          "Lay In",
+          "Keep",
+          "Wear Mustache"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "硬",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "かた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Stiff",
+          "Hard"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "埋",
+      "onYomi": [
+        "マイ"
+      ],
+      "kunYomi": [
+        "う",
+        "うず",
+        "い"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bury",
+          "Be Filled Up",
+          "Embedded"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "柱",
+      "onYomi": [
+        "チュウ"
+      ],
+      "kunYomi": [
+        "はしら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pillar",
+          "Post",
+          "Cylinder",
+          "Support"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "祭",
+      "onYomi": [
+        "サイ"
+      ],
+      "kunYomi": [
+        "まつ",
+        "まつり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Ritual",
+          "Offer Prayers",
+          "Celebrate",
+          "Deify",
+          "Enshrine",
+          "Worship"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "袋",
+      "onYomi": [
+        "タイ",
+        "ダイ"
+      ],
+      "kunYomi": [
+        "ふくろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sack",
+          "Bag",
+          "Pouch"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "筆",
+      "onYomi": [
+        "ヒツ"
+      ],
+      "kunYomi": [
+        "ふで"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Writing Brush",
+          "Writing",
+          "Painting Brush",
+          "Handwriting"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "訓",
+      "onYomi": [
+        "クン",
+        "キン"
+      ],
+      "kunYomi": [
+        "おし",
+        "よ",
+        "くん"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Instruction",
+          "Japanese Character Reading",
+          "Explanation",
+          "Read"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "浴",
+      "onYomi": [
+        "ヨク"
+      ],
+      "kunYomi": [
+        "あ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bathe",
+          "Be Favored With",
+          "Bask In"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "童",
+      "onYomi": [
+        "ドウ"
+      ],
+      "kunYomi": [
+        "わらべ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Juvenile",
+          "Child"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "宝",
+      "onYomi": [
+        "ホウ"
+      ],
+      "kunYomi": [
+        "たから"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Treasure",
+          "Wealth",
+          "Valuables"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "封",
+      "onYomi": [
+        "フウ",
+        "ホウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Seal",
+          "Closing"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "胸",
+      "onYomi": [
+        "キョウ"
+      ],
+      "kunYomi": [
+        "むね",
+        "むな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bosom",
+          "Breast",
+          "Chest",
+          "Heart",
+          "Feelings"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "砂",
+      "onYomi": [
+        "サ",
+        "シャ"
+      ],
+      "kunYomi": [
+        "すな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sand"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "塩",
+      "onYomi": [
+        "エン"
+      ],
+      "kunYomi": [
+        "しお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Salt"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "賢",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [
+        "かしこ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Intelligent",
+          "Wise",
+          "Wisdom",
+          "Cleverness"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "腕",
+      "onYomi": [
+        "ワン"
+      ],
+      "kunYomi": [
+        "うで"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Arm",
+          "Ability",
+          "Talent"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "兆",
+      "onYomi": [
+        "チョウ"
+      ],
+      "kunYomi": [
+        "きざ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Portent",
+          "10**12",
+          "Trillion",
+          "Sign",
+          "Omen",
+          "Symptoms"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "床",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "とこ",
+        "ゆか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bed",
+          "Counter For Beds",
+          "Floor",
+          "Padding",
+          "Tatami"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "毛",
+      "onYomi": [
+        "モウ"
+      ],
+      "kunYomi": [
+        "け"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fur",
+          "Hair",
+          "Feather",
+          "Down"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "緑",
+      "onYomi": [
+        "リョク",
+        "ロク"
+      ],
+      "kunYomi": [
+        "みどり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Green"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "尊",
+      "onYomi": [
+        "ソン"
+      ],
+      "kunYomi": [
+        "たっと",
+        "とうと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Revered",
+          "Valuable",
+          "Precious",
+          "Noble",
+          "Exalted"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "祝",
+      "onYomi": [
+        "シュク",
+        "シュウ"
+      ],
+      "kunYomi": [
+        "いわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Celebrate",
+          "Congratulate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "柔",
+      "onYomi": [
+        "ジュウ",
+        "ニュウ"
+      ],
+      "kunYomi": [
+        "やわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tender",
+          "Weakness",
+          "Gentleness",
+          "Softness"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "殿",
+      "onYomi": [
+        "デン",
+        "テン"
+      ],
+      "kunYomi": [
+        "との",
+        "どの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mr.",
+          "Hall",
+          "Mansion",
+          "Palace",
+          "Temple",
+          "Lord"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "濃",
+      "onYomi": [
+        "ノウ"
+      ],
+      "kunYomi": [
+        "こ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Concentrated",
+          "Thick",
+          "Dark",
+          "Undiluted"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "液",
+      "onYomi": [
+        "エキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fluid",
+          "Liquid",
+          "Juice",
+          "Sap",
+          "Secretion"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "衣",
+      "onYomi": [
+        "イ",
+        "エ"
+      ],
+      "kunYomi": [
+        "ころも",
+        "きぬ",
+        "ぎ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Garment",
+          "Clothes",
+          "Dressing"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "肩",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [
+        "かた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shoulder"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "零",
+      "onYomi": [
+        "レイ"
+      ],
+      "kunYomi": [
+        "ぜろ",
+        "こぼ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Zero",
+          "Spill",
+          "Overflow",
+          "Nothing",
+          "Cipher"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "幼",
+      "onYomi": [
+        "ヨウ"
+      ],
+      "kunYomi": [
+        "おさな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Infancy",
+          "Childhood"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "荷",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [
+        "に"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Baggage",
+          "Shoulder-pole Load",
+          "Bear (a Burden)",
+          "Shoulder (a Gun)",
+          "Load",
+          "Cargo",
+          "Freight"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "泊",
+      "onYomi": [
+        "ハク"
+      ],
+      "kunYomi": [
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Overnight Stay",
+          "Put Up At",
+          "Ride At Anchor"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "黄",
+      "onYomi": [
+        "コウ",
+        "オウ"
+      ],
+      "kunYomi": [
+        "き",
+        "こ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Yellow"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "甘",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "あま",
+        "うま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sweet",
+          "Coax",
+          "Pamper",
+          "Be Content",
+          "Sugary"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "臣",
+      "onYomi": [
+        "シン",
+        "ジン"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Retainer",
+          "Subject"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "浅",
+      "onYomi": [
+        "セン"
+      ],
+      "kunYomi": [
+        "あさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shallow",
+          "Superficial",
+          "Frivolous",
+          "Wretched",
+          "Shameful"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "掃",
+      "onYomi": [
+        "ソウ",
+        "シュ"
+      ],
+      "kunYomi": [
+        "は"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sweep",
+          "Brush"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "雲",
+      "onYomi": [
+        "ウン"
+      ],
+      "kunYomi": [
+        "くも",
+        "ぐも"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cloud"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "掘",
+      "onYomi": [
+        "クツ"
+      ],
+      "kunYomi": [
+        "ほ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dig",
+          "Delve",
+          "Excavate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "捨",
+      "onYomi": [
+        "シャ"
+      ],
+      "kunYomi": [
+        "す"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Discard",
+          "Throw Away",
+          "Abandon",
+          "Resign",
+          "Reject",
+          "Sacrifice"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "軟",
+      "onYomi": [
+        "ナン"
+      ],
+      "kunYomi": [
+        "やわ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Soft"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "沈",
+      "onYomi": [
+        "チン",
+        "ジン"
+      ],
+      "kunYomi": [
+        "しず"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sink",
+          "Be Submerged",
+          "Subside",
+          "Be Depressed",
+          "Aloes"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "凍",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "こお",
+        "こご",
+        "い",
+        "し"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Frozen",
+          "Congeal",
+          "Refrigerate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "乳",
+      "onYomi": [
+        "ニュウ"
+      ],
+      "kunYomi": [
+        "ちち",
+        "ち"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Milk",
+          "Breasts"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "恋",
+      "onYomi": [
+        "レン"
+      ],
+      "kunYomi": [
+        "こ",
+        "こい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Romance",
+          "In Love",
+          "Yearn For",
+          "Miss",
+          "Darling"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "紅",
+      "onYomi": [
+        "コウ",
+        "ク"
+      ],
+      "kunYomi": [
+        "べに",
+        "くれない",
+        "あか"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Crimson",
+          "Deep Red"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "郊",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Outskirts",
+          "Suburbs",
+          "Rural Area"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "腰",
+      "onYomi": [
+        "ヨウ"
+      ],
+      "kunYomi": [
+        "こし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Loins",
+          "Hips",
+          "Waist",
+          "Low Wainscoting"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "炭",
+      "onYomi": [
+        "タン"
+      ],
+      "kunYomi": [
+        "すみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Charcoal",
+          "Coal"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "踊",
+      "onYomi": [
+        "ヨウ"
+      ],
+      "kunYomi": [
+        "おど"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Jump",
+          "Dance",
+          "Leap",
+          "Skip"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "冊",
+      "onYomi": [
+        "サツ",
+        "サク"
+      ],
+      "kunYomi": [
+        "ふみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tome",
+          "Counter For Books",
+          "Volume"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "勇",
+      "onYomi": [
+        "ユウ"
+      ],
+      "kunYomi": [
+        "いさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Courage",
+          "Cheer Up",
+          "Be In High Spirits",
+          "Bravery",
+          "Heroism"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "械",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "かせ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Contraption",
+          "Fetter",
+          "Machine",
+          "Instrument"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "菜",
+      "onYomi": [
+        "サイ"
+      ],
+      "kunYomi": [
+        "な"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Vegetable",
+          "Side Dish",
+          "Greens"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "珍",
+      "onYomi": [
+        "チン"
+      ],
+      "kunYomi": [
+        "めずら",
+        "たから"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Rare",
+          "Curious",
+          "Strange"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "卵",
+      "onYomi": [
+        "ラン"
+      ],
+      "kunYomi": [
+        "たまご"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Egg",
+          "Ovum",
+          "Spawn",
+          "Roe"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "湖",
+      "onYomi": [
+        "コ"
+      ],
+      "kunYomi": [
+        "みずうみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lake"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "喫",
+      "onYomi": [
+        "キツ"
+      ],
+      "kunYomi": [
+        "の"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Consume",
+          "Eat",
+          "Drink",
+          "Smoke",
+          "Receive (a Blow)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "干",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "ほ",
+        "ぼ",
+        "ひ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dry",
+          "Parch",
+          "Ebb",
+          "Recede",
+          "Interfere",
+          "Intercede"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 3
+    },
+    {
+      "ideogramma": "虫",
+      "onYomi": [
+        "チュウ",
+        "キ"
+      ],
+      "kunYomi": [
+        "むし"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Insect",
+          "Bug",
+          "Temper"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "刷",
+      "onYomi": [
+        "サツ"
+      ],
+      "kunYomi": [
+        "す",
+        "ず",
+        "ずり",
+        "は"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Printing",
+          "Print",
+          "Brush"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "湯",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "ゆ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Hot Water",
+          "Bath",
+          "Hot Spring"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "溶",
+      "onYomi": [
+        "ヨウ"
+      ],
+      "kunYomi": [
+        "と"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Melt",
+          "Dissolve",
+          "Thaw"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "鉱",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "あらがね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mineral",
+          "Ore"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "涙",
+      "onYomi": [
+        "ルイ",
+        "レイ"
+      ],
+      "kunYomi": [
+        "なみだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tears",
+          "Sympathy"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "匹",
+      "onYomi": [
+        "ヒツ"
+      ],
+      "kunYomi": [
+        "ひき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Equal",
+          "Head",
+          "Counter For Small Animals",
+          "Roll Of Cloth"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 4
+    },
+    {
+      "ideogramma": "孫",
+      "onYomi": [
+        "ソン"
+      ],
+      "kunYomi": [
+        "まご"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Grandchild",
+          "Descendants"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "鋭",
+      "onYomi": [
+        "エイ"
+      ],
+      "kunYomi": [
+        "するど"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pointed",
+          "Sharpness",
+          "Edge",
+          "Weapon",
+          "Sharp",
+          "Violent"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "枝",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "えだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bough",
+          "Branch",
+          "Twig",
+          "Limb",
+          "Counter For Branches"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "塗",
+      "onYomi": [
+        "ト"
+      ],
+      "kunYomi": [
+        "ぬ",
+        "まみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Paint",
+          "Plaster",
+          "Daub",
+          "Smear",
+          "Coating"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "軒",
+      "onYomi": [
+        "ケン"
+      ],
+      "kunYomi": [
+        "のき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Flats",
+          "Counter For Houses",
+          "Eaves"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "毒",
+      "onYomi": [
+        "ドク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Poison",
+          "Virus",
+          "Venom",
+          "Germ",
+          "Harm",
+          "Injury",
+          "Spite"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "叫",
+      "onYomi": [
+        "キョウ"
+      ],
+      "kunYomi": [
+        "さけ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shout",
+          "Exclaim",
+          "Yell"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "拝",
+      "onYomi": [
+        "ハイ"
+      ],
+      "kunYomi": [
+        "おが",
+        "おろが"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Worship",
+          "Adore",
+          "Pray To"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "氷",
+      "onYomi": [
+        "ヒョウ"
+      ],
+      "kunYomi": [
+        "こおり",
+        "ひ",
+        "こお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Icicle",
+          "Ice",
+          "Hail",
+          "Freeze",
+          "Congeal"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "乾",
+      "onYomi": [
+        "カン",
+        "ケン"
+      ],
+      "kunYomi": [
+        "かわ",
+        "ほ",
+        "ひ",
+        "いぬい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Drought",
+          "Dry",
+          "Dessicate",
+          "Drink Up",
+          "Heaven",
+          "Emperor"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "棒",
+      "onYomi": [
+        "ボウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Rod",
+          "Stick",
+          "Cane",
+          "Pole",
+          "Club",
+          "Line"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "祈",
+      "onYomi": [
+        "キ"
+      ],
+      "kunYomi": [
+        "いの"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pray",
+          "Wish"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "拾",
+      "onYomi": [
+        "シュウ",
+        "ジュウ"
+      ],
+      "kunYomi": [
+        "ひろ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pick Up",
+          "Gather",
+          "Find",
+          "Go On Foot",
+          "Ten"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "粉",
+      "onYomi": [
+        "フン"
+      ],
+      "kunYomi": [
+        "デシメートル",
+        "こ",
+        "こな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Flour",
+          "Powder",
+          "Dust"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "糸",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "いと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Thread"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "綿",
+      "onYomi": [
+        "メン"
+      ],
+      "kunYomi": [
+        "わた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cotton"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "汗",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "あせ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Sweat",
+          "Perspire"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "銅",
+      "onYomi": [
+        "ドウ"
+      ],
+      "kunYomi": [
+        "あかがね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Copper"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "湿",
+      "onYomi": [
+        "シツ",
+        "シュウ"
+      ],
+      "kunYomi": [
+        "しめ",
+        "うるお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Damp",
+          "Wet",
+          "Moist"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "瓶",
+      "onYomi": [
+        "ビン"
+      ],
+      "kunYomi": [
+        "かめ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Bottle",
+          "Vial",
+          "Jar",
+          "Jug",
+          "Vat",
+          "Urn"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "咲",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "さ",
+        "ざき"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Blossom",
+          "Bloom"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "召",
+      "onYomi": [
+        "ショウ"
+      ],
+      "kunYomi": [
+        "め"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Seduce",
+          "Call",
+          "Send For",
+          "Wear",
+          "Put On",
+          "Ride In",
+          "Buy",
+          "Eat",
+          "Drink",
+          "Catch (cold)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "缶",
+      "onYomi": [
+        "カン"
+      ],
+      "kunYomi": [
+        "かま"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tin Can",
+          "Container"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "隻",
+      "onYomi": [
+        "セキ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Vessels",
+          "Counter For Ships",
+          "Fish",
+          "Birds",
+          "Arrows",
+          "One Of A Pair"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "脂",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "あぶら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Fat",
+          "Grease",
+          "Tallow",
+          "Lard",
+          "Rosin",
+          "Gum",
+          "Tar"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "蒸",
+      "onYomi": [
+        "ジョウ",
+        "セイ"
+      ],
+      "kunYomi": [
+        "む"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Steam",
+          "Heat",
+          "Sultry",
+          "Foment",
+          "Get Musty"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 13
+    },
+    {
+      "ideogramma": "肌",
+      "onYomi": [
+        "キ"
+      ],
+      "kunYomi": [
+        "はだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Texture",
+          "Skin",
+          "Body",
+          "Grain"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "耕",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "たがや"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Till",
+          "Plow",
+          "Cultivate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "鈍",
+      "onYomi": [
+        "ドン"
+      ],
+      "kunYomi": [
+        "にぶ",
+        "なま",
+        "なまく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dull",
+          "Slow",
+          "Foolish",
+          "Blunt"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "泥",
+      "onYomi": [
+        "デイ",
+        "ナイ",
+        "デ",
+        "ニ"
+      ],
+      "kunYomi": [
+        "どろ",
+        "なず"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Mud",
+          "Mire",
+          "Adhere To",
+          "Be Attached To"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "隅",
+      "onYomi": [
+        "グウ"
+      ],
+      "kunYomi": [
+        "すみ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Corner",
+          "Nook"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "灯",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "ひ",
+        "ほ",
+        "ともしび",
+        "とも",
+        "あかり"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Lamp",
+          "A Light",
+          "Light",
+          "Counter For Lights"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "辛",
+      "onYomi": [
+        "シン"
+      ],
+      "kunYomi": [
+        "から",
+        "つら",
+        "づら",
+        "かのと"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Spicy",
+          "Bitter",
+          "Hot",
+          "Acrid"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "磨",
+      "onYomi": [
+        "マ"
+      ],
+      "kunYomi": [
+        "みが",
+        "す"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Grind",
+          "Polish",
+          "Scour",
+          "Improve",
+          "Brush (teeth)"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "麦",
+      "onYomi": [
+        "バク"
+      ],
+      "kunYomi": [
+        "むぎ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Barley",
+          "Wheat"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "姓",
+      "onYomi": [
+        "セイ",
+        "ショウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Surname"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "筒",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [
+        "つつ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cylinder",
+          "Pipe",
+          "Tube",
+          "Gun Barrel",
+          "Sleeve"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "鼻",
+      "onYomi": [
+        "ビ"
+      ],
+      "kunYomi": [
+        "はな"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Nose",
+          "Snout"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "粒",
+      "onYomi": [
+        "リュウ"
+      ],
+      "kunYomi": [
+        "つぶ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Grains",
+          "Drop",
+          "Counter For Tiny Particles"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "詞",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "ことば"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Part Of Speech",
+          "Words",
+          "Poetry"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "胃",
+      "onYomi": [
+        "イ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Stomach",
+          "Paunch",
+          "Crop",
+          "Craw"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "畳",
+      "onYomi": [
+        "ジョウ",
+        "チョウ"
+      ],
+      "kunYomi": [
+        "たた",
+        "たたみ",
+        "かさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Tatami Mat",
+          "Counter For Tatami Mats",
+          "Fold",
+          "Shut Up",
+          "Do Away With"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "机",
+      "onYomi": [
+        "キ"
+      ],
+      "kunYomi": [
+        "つくえ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Desk",
+          "Table"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "膚",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [
+        "はだ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Skin",
+          "Body",
+          "Grain",
+          "Texture",
+          "Disposition"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 15
+    },
+    {
+      "ideogramma": "濯",
+      "onYomi": [
+        "タク"
+      ],
+      "kunYomi": [
+        "すす",
+        "ゆす"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Laundry",
+          "Wash",
+          "Pour On",
+          "Rinse"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "塔",
+      "onYomi": [
+        "トウ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pagoda",
+          "Tower",
+          "Steeple"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "沸",
+      "onYomi": [
+        "フツ"
+      ],
+      "kunYomi": [
+        "わ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Seethe",
+          "Boil",
+          "Ferment",
+          "Uproar",
+          "Breed"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "灰",
+      "onYomi": [
+        "カイ"
+      ],
+      "kunYomi": [
+        "はい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Ashes",
+          "Puckery Juice",
+          "Cremate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "菓",
+      "onYomi": [
+        "カ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Candy",
+          "Cakes",
+          "Fruit"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "帽",
+      "onYomi": [
+        "ボウ",
+        "モウ"
+      ],
+      "kunYomi": [
+        "ずきん",
+        "おお"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cap",
+          "Headgear"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 12
+    },
+    {
+      "ideogramma": "枯",
+      "onYomi": [
+        "コ"
+      ],
+      "kunYomi": [
+        "か"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Wither",
+          "Die",
+          "Dry Up",
+          "Be Seasoned"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "涼",
+      "onYomi": [
+        "リョウ"
+      ],
+      "kunYomi": [
+        "すず",
+        "うす",
+        "ひや",
+        "まことに"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Refreshing",
+          "Nice And Cool"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "舟",
+      "onYomi": [
+        "シュウ"
+      ],
+      "kunYomi": [
+        "ふね",
+        "ふな",
+        "ぶね"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Boat",
+          "Ship"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 6
+    },
+    {
+      "ideogramma": "貝",
+      "onYomi": [
+        "バイ"
+      ],
+      "kunYomi": [
+        "かい"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Shellfish"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    },
+    {
+      "ideogramma": "符",
+      "onYomi": [
+        "フ"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Token",
+          "Sign",
+          "Mark",
+          "Tally",
+          "Charm"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 11
+    },
+    {
+      "ideogramma": "憎",
+      "onYomi": [
+        "ゾウ"
+      ],
+      "kunYomi": [
+        "にく"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Hate",
+          "Detest"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "皿",
+      "onYomi": [
+        "ベイ"
+      ],
+      "kunYomi": [
+        "さら"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Dish",
+          "A Helping",
+          "Plate"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 5
+    },
+    {
+      "ideogramma": "肯",
+      "onYomi": [
+        "コウ"
+      ],
+      "kunYomi": [
+        "がえんじ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Agreement",
+          "Consent",
+          "Comply With"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 8
+    },
+    {
+      "ideogramma": "燥",
+      "onYomi": [
+        "ソウ"
+      ],
+      "kunYomi": [
+        "はしゃ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Parch",
+          "Dry Up"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 17
+    },
+    {
+      "ideogramma": "畜",
+      "onYomi": [
+        "チク"
+      ],
+      "kunYomi": [],
+      "significati": {
+        "it": [],
+        "en": [
+          "Livestock",
+          "Domestic Fowl And Animals"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 10
+    },
+    {
+      "ideogramma": "挟",
+      "onYomi": [
+        "キョウ",
+        "ショウ"
+      ],
+      "kunYomi": [
+        "はさ",
+        "わきばさ",
+        "さしはさ"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pinch",
+          "Between"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 9
+    },
+    {
+      "ideogramma": "曇",
+      "onYomi": [
+        "ドン"
+      ],
+      "kunYomi": [
+        "くも"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Cloudy Weather",
+          "Cloud Up"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 16
+    },
+    {
+      "ideogramma": "滴",
+      "onYomi": [
+        "テキ"
+      ],
+      "kunYomi": [
+        "しずく",
+        "したた"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Drip",
+          "Drop"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 14
+    },
+    {
+      "ideogramma": "伺",
+      "onYomi": [
+        "シ"
+      ],
+      "kunYomi": [
+        "うかが"
+      ],
+      "significati": {
+        "it": [],
+        "en": [
+          "Pay Respects",
+          "Visit",
+          "Ask",
+          "Inquire",
+          "Question",
+          "Implore"
+        ]
+      },
+      "livello_jlpt": "N2",
+      "tratti": 7
+    }
+  ]
+}

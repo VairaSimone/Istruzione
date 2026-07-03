@@ -1,22 +1,42 @@
 'use strict';
 
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 const { ALFABETI, GRUPPI_VALIDI } = require('../constants/kanaData');
+const { LIVELLI_DISPONIBILI } = require('../constants/kanjiData');
+const { DOMINI, TIPI_QUIZ_KANJI } = require('../services/quizService');
 
 /**
- * Validator del Quiz Kana (express-validator), usati prima del middleware
- * `validate`. Coerenti con lo stile degli altri validator del progetto.
+ * Validator del Quiz (express-validator), usati prima del middleware `validate`.
+ * Coerenti con lo stile degli altri validator del progetto.
+ *
+ * Il Quiz supporta due domini sullo STESSO endpoint:
+ *   - 'kana'  (default, retrocompatibile): filtri alfabeto/gruppi/dakuon/yoon;
+ *   - 'kanji':                              filtri livello (JLPT)/tipoQuiz/lingua.
+ * La validazione è condizionale su `dominio`: quando il campo è assente si
+ * applicano le regole kana, così le richieste esistenti restano valide.
  */
 
 // Tetto al numero di risposte per round: protegge da payload abnormi.
 // (la partita standard è di 20 round; margine di sicurezza incluso)
 const MAX_RISPOSTE = 50;
 
+// Lingue ammesse per i significati dei kanji.
+const LINGUE_QUIZ = ['it', 'en'];
+
+// Predicati condizionali riusabili sul campo `dominio`.
+const seKanji = (chain) => chain.if(body('dominio').equals('kanji'));
+const seKana = (chain) => chain.if(body('dominio').not().equals('kanji'));
+
 // ─────────────────────────────────────────────
 // POST /api/quiz/generate
 // ─────────────────────────────────────────────
 const validateGenerateQuiz = [
-  body('alfabeto')
+  body('dominio')
+    .optional()
+    .isIn(DOMINI).withMessage(`Il dominio deve essere uno di: ${DOMINI.join(', ')}`),
+
+  // — Dominio kana (default) —
+  seKana(body('alfabeto'))
     .trim()
     .notEmpty().withMessage("L'alfabeto è obbligatorio")
     .isIn(ALFABETI).withMessage(`L'alfabeto deve essere uno di: ${ALFABETI.join(', ')}`),
@@ -33,28 +53,62 @@ const validateGenerateQuiz = [
 
   body('includiDakuon').optional().isBoolean().withMessage('includiDakuon deve essere booleano').toBoolean(),
   body('includiYoon').optional().isBoolean().withMessage('includiYoon deve essere booleano').toBoolean(),
+
+  // — Dominio kanji —
+  seKanji(body('livello'))
+    .trim()
+    .notEmpty().withMessage('Il livello JLPT è obbligatorio')
+    .isIn(LIVELLI_DISPONIBILI)
+    .withMessage(`Il livello deve essere uno di: ${LIVELLI_DISPONIBILI.join(', ')}`),
+
+  seKanji(body('tipoQuiz'))
+    .optional()
+    .isIn(TIPI_QUIZ_KANJI)
+    .withMessage(`Il tipo di quiz deve essere uno di: ${TIPI_QUIZ_KANJI.join(', ')}`),
+
+  body('lingua')
+    .optional()
+    .isIn(LINGUE_QUIZ).withMessage(`La lingua deve essere una di: ${LINGUE_QUIZ.join(', ')}`),
 ];
 
 // ─────────────────────────────────────────────
 // POST /api/quiz/submit
 // ─────────────────────────────────────────────
 const validateSubmitQuiz = [
+  body('dominio')
+    .optional()
+    .isIn(DOMINI).withMessage(`Il dominio deve essere uno di: ${DOMINI.join(', ')}`),
+
   body('risposte')
     .isArray({ min: 1, max: MAX_RISPOSTE })
     .withMessage(`Le risposte devono essere un array (1-${MAX_RISPOSTE} elementi)`),
 
-  body('risposte.*.kana')
+  // Campo comune a entrambi i domini.
+  body('risposte.*.corretto')
+    .isBoolean().withMessage('Il campo corretto deve essere booleano').toBoolean(),
+
+  // — Dominio kana (default) —
+  seKana(body('risposte.*.kana'))
     .isString().withMessage('Il kana deve essere una stringa')
     .bail()
     .trim()
     .notEmpty().withMessage('Il kana non può essere vuoto')
     .isLength({ max: 8 }).withMessage('Kana non valido'),
 
-  body('risposte.*.tipo')
+  seKana(body('risposte.*.tipo'))
     .isIn(ALFABETI).withMessage(`Il tipo deve essere uno di: ${ALFABETI.join(', ')}`),
 
-  body('risposte.*.corretto')
-    .isBoolean().withMessage('Il campo corretto deve essere booleano').toBoolean(),
+  // — Dominio kanji —
+  seKanji(body('risposte.*.kanji'))
+    .isString().withMessage('Il kanji deve essere una stringa')
+    .bail()
+    .trim()
+    .notEmpty().withMessage('Il kanji non può essere vuoto')
+    .isLength({ max: 8 }).withMessage('Kanji non valido'),
+
+  seKanji(body('risposte.*.livelloJLPT'))
+    .isIn(LIVELLI_DISPONIBILI)
+    .withMessage(`Il livello deve essere uno di: ${LIVELLI_DISPONIBILI.join(', ')}`),
 
   body('datiBonus').optional().isObject().withMessage('datiBonus deve essere un oggetto'),
   body('datiBonus.maxCombo')
@@ -66,13 +120,28 @@ const validateSubmitQuiz = [
 ];
 
 // ─────────────────────────────────────────────
-// GET /api/quiz/stroke/:alfabeto
+// GET /api/quiz/stroke/:alfabeto  (kana)
 // ─────────────────────────────────────────────
 const validateStrokeOrder = [
   param('alfabeto')
     .trim()
     .notEmpty().withMessage("L'alfabeto è obbligatorio")
     .isIn(ALFABETI).withMessage(`L'alfabeto deve essere uno di: ${ALFABETI.join(', ')}`),
+];
+
+// ─────────────────────────────────────────────
+// GET /api/quiz/stroke/kanji/:livello  (kanji)
+// ─────────────────────────────────────────────
+const validateStrokeOrderKanji = [
+  param('livello')
+    .trim()
+    .notEmpty().withMessage('Il livello JLPT è obbligatorio')
+    .isIn(LIVELLI_DISPONIBILI)
+    .withMessage(`Il livello deve essere uno di: ${LIVELLI_DISPONIBILI.join(', ')}`),
+
+  query('lingua')
+    .optional()
+    .isIn(LINGUE_QUIZ).withMessage(`La lingua deve essere una di: ${LINGUE_QUIZ.join(', ')}`),
 ];
 
 // ─────────────────────────────────────────────
@@ -114,5 +183,6 @@ module.exports = {
   validateGenerateQuiz,
   validateSubmitQuiz,
   validateStrokeOrder,
+  validateStrokeOrderKanji,
   validateRegistraScrittura,
 };
