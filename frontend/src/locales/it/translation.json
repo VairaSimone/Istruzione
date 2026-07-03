@@ -343,7 +343,11 @@
       "modeLegend": "Modalità",
       "timerMode": "Modalità a tempo",
       "timerModeHint": "Hai pochi secondi per ogni carattere, ma guadagni più XP.",
-      "start": "Inizia"
+      "start": "Inizia",
+      "domainLegend": "Cosa vuoi studiare?",
+      "levelLegend": "Livello JLPT",
+      "levelHint": "Da N5 (base) a N1 (avanzato).",
+      "kanjiTypeLegend": "Tipo di esercizio"
     },
     "play": {
       "progress": "{{current}} di {{total}}",
@@ -401,7 +405,9 @@
       "prev": "Precedente",
       "next": "Successivo",
       "counter": "{{current}} di {{total}}",
-      "pickerTitle": "Scegli un carattere"
+      "pickerTitle": "Scegli un carattere",
+      "kanjiEmptyTitle": "Tratti non ancora disponibili",
+      "kanjiEmptyDescription": "L'ordine dei tratti per il livello {{level}} non è ancora incluso. Al momento è disponibile per N5."
     },
     "gamification": {
       "title": "I tuoi progressi",
@@ -522,6 +528,41 @@
     },
     "intensive": {
       "starting": "Preparazione…"
+    },
+    "domains": {
+      "kana": "Kana",
+      "kanji": "Kanji"
+    },
+    "kanjiTypes": {
+      "production": {
+        "label": "Produzione",
+        "hint": "Richiama il kanji a memoria dal significato."
+      },
+      "recognition": {
+        "label": "Riconoscimento",
+        "hint": "Scegli il significato del kanji."
+      },
+      "reading": {
+        "label": "Lettura",
+        "hint": "Scegli la lettura corretta."
+      }
+    },
+    "kanjiPlay": {
+      "recognitionPrompt": "Qual è il significato?",
+      "readingPrompt": {
+        "onYomi": "Leggi in on'yomi",
+        "kunYomi": "Leggi in kun'yomi"
+      },
+      "productionPrompt": "Quale kanji corrisponde?",
+      "onYomi": "on'yomi",
+      "kunYomi": "kun'yomi",
+      "reveal": "Mostra il kanji",
+      "strokes_one": "{{count}} tratto",
+      "strokes_other": "{{count}} tratti",
+      "selfAssessHint": "Lo avevi in mente?",
+      "knew": "Lo sapevo",
+      "didNotKnow": "Non lo sapevo",
+      "wrong": "Continua ad allenarti"
     }
   }
 }

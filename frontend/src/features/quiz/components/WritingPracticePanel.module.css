@@ -196,3 +196,42 @@
     transition: none;
   }
 }
+
+/* ── Sotto-selettore (alfabeto kana | livello kanji) ─────── */
+.subSelectorRow {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Metadati kanji (significati + letture) ──────────────── */
+.kanjiMeta {
+  margin-top: var(--space-1);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-seal);
+  text-align: center;
+}
+
+.letture {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+}
+
+.letturaGruppo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.letturaEtichetta {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}

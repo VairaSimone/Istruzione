@@ -25,6 +25,7 @@ export const queryKeys = Object.freeze({
     dashboard: ['quiz', 'dashboard'],
     badge: ['quiz', 'badge'],
     strokeOrder: (alfabeto) => ['quiz', 'strokeOrder', alfabeto],
+    strokeOrderKanji: (livello, lingua) => ['quiz', 'strokeOrderKanji', livello, lingua ?? 'it'],
   },
   statistiche: {
     all: ['statistiche'],

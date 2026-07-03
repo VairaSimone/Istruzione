@@ -143,3 +143,54 @@
 .error {
   margin: 0;
 }
+
+/* ── Griglia tipologie Quiz Kanji ────────────────────────── */
+.typeGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+@media (min-width: 30rem) {
+  .typeGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.typeCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-align: left;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  background-color: transparent;
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.typeCard:hover {
+  background-color: var(--color-paper-dim);
+}
+
+.typeCardActive {
+  background-color: color-mix(in srgb, var(--color-seal) 10%, transparent);
+  border-color: var(--color-seal);
+}
+
+.typeName {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-seal);
+}
+
+.typeDesc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}

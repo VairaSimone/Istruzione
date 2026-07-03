@@ -435,7 +435,11 @@
       "modeLegend": "Mode",
       "timerMode": "Timed mode",
       "timerModeHint": "You have a few seconds per character, but earn more XP.",
-      "start": "Start"
+      "start": "Start",
+      "domainLegend": "What do you want to study?",
+      "levelLegend": "JLPT level",
+      "levelHint": "From N5 (beginner) to N1 (advanced).",
+      "kanjiTypeLegend": "Exercise type"
     },
     "play": {
       "progress": "{{current}} of {{total}}",
@@ -493,7 +497,9 @@
       "prev": "Previous",
       "next": "Next",
       "counter": "{{current}} of {{total}}",
-      "pickerTitle": "Choose a character"
+      "pickerTitle": "Choose a character",
+      "kanjiEmptyTitle": "Stroke data not available yet",
+      "kanjiEmptyDescription": "Stroke order for level {{level}} isn't included yet. It's currently available for N5."
     },
     "gamification": {
       "title": "Your progress",
@@ -614,6 +620,41 @@
     },
     "intensive": {
       "starting": "Preparing…"
+    },
+    "domains": {
+      "kana": "Kana",
+      "kanji": "Kanji"
+    },
+    "kanjiTypes": {
+      "production": {
+        "label": "Production",
+        "hint": "Recall the kanji from its meaning."
+      },
+      "recognition": {
+        "label": "Recognition",
+        "hint": "Pick the kanji's meaning."
+      },
+      "reading": {
+        "label": "Reading",
+        "hint": "Pick the correct reading."
+      }
+    },
+    "kanjiPlay": {
+      "recognitionPrompt": "What does it mean?",
+      "readingPrompt": {
+        "onYomi": "Read in on'yomi",
+        "kunYomi": "Read in kun'yomi"
+      },
+      "productionPrompt": "Which kanji is it?",
+      "onYomi": "on'yomi",
+      "kunYomi": "kun'yomi",
+      "reveal": "Reveal the kanji",
+      "strokes_one": "{{count}} stroke",
+      "strokes_other": "{{count}} strokes",
+      "selfAssessHint": "Did you have it in mind?",
+      "knew": "I knew it",
+      "didNotKnow": "I didn't know",
+      "wrong": "Keep practising"
     }
   },
   "admin": {

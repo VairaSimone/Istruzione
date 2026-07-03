@@ -1,0 +1,293 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 1.5rem;
+}
+
+.counter {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.levelTag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  color: var(--color-seal);
+  background-color: color-mix(in srgb, var(--color-seal) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-seal) 28%, transparent);
+}
+
+.combo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+.comboHot {
+  color: var(--color-seal);
+}
+
+.comboBoost {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0 var(--space-2);
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--color-seal) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-seal) 30%, transparent);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-paper-dim);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-matcha);
+  transition: width 0.3s ease;
+}
+
+/* ── Palco ───────────────────────────────────────────────── */
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-7) var(--space-6);
+}
+
+.timer {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-paper-dim);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.timerFill {
+  height: 100%;
+  background-color: var(--color-gold);
+  transition: width 1s linear;
+}
+
+.timerLow {
+  background-color: var(--color-seal);
+}
+
+.prompt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.kanji {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: 6.5rem;
+  line-height: 1;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.kanjiOk {
+  color: var(--color-matcha);
+}
+
+.kanjiWrong {
+  color: var(--color-seal);
+}
+
+.strokeCount {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Opzioni a scelta multipla ───────────────────────────── */
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.option {
+  padding: var(--space-4) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.option:hover:not(:disabled) {
+  background-color: var(--color-paper-dim);
+  border-color: var(--color-seal);
+}
+
+.option:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+/* Lettura (kana): glifo più grande e font display. */
+.optionReading {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+.optionCorrect {
+  background-color: var(--color-success-bg);
+  border-color: var(--color-matcha);
+  color: var(--color-matcha-dark);
+}
+
+.optionWrong {
+  background-color: var(--color-danger-bg);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.optionDim {
+  opacity: 0.55;
+}
+
+/* ── Produzione: indizio + autovalutazione ───────────────── */
+.cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper-dim);
+}
+
+.cueMeanings {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.cueReadings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+.cueReadingGroup {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.cueReadingLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.selfAssess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.selfAssessHint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.selfAssessButtons {
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Feedback ────────────────────────────────────────────── */
+.feedback {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.feedbackOk {
+  background-color: var(--color-success-bg);
+  color: var(--color-matcha-dark);
+}
+
+.feedbackWrong {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+@media (max-width: 30rem) {
+  .kanji {
+    font-size: 5rem;
+  }
+
+  .options {
+    grid-template-columns: 1fr;
+  }
+
+  .selfAssessButtons {
+    flex-direction: column;
+  }
+}

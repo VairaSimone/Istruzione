@@ -5,7 +5,6 @@ const { INDICE_KANA, ALFABETI } = require('../constants/kanaData');
 const {
   LIVELLI_JLPT,
   INDICE_KANJI,
-  LICENZA_KANJI,
   livelloValido,
   significatiPerLingua,
 } = require('../constants/kanjiData');
@@ -138,7 +137,9 @@ const getStrokeOrderKanji = (livello, lingua = 'it') => {
     dominio: 'kanji',
     livello,
     viewBox: STROKE_VIEWBOX,
-    licenza: LICENZA_KANJI || STROKE_LICENZA,
+    // I dati grafici dei tratti provengono da KanjiVG (come per i kana): è la
+    // fonte da attribuire nel visualizzatore, non il dataset testuale KANJIDIC2.
+    licenza: STROKE_LICENZA,
     totale: caratteri.length,
     caratteri,
   };

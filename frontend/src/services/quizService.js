@@ -21,21 +21,44 @@ export const getQuizDashboard = async () => {
 
 /**
  * POST /quiz/generate (sola lettura: nessuna mutazione ⇒ niente CSRF lato server)
- * Riceve i filtri di gioco e restituisce la sessione generata (max 20 kana,
+ * Riceve i filtri di gioco e restituisce la sessione generata (max 20 caratteri,
  * selezione SRS ibrida).
  *
+ * Supporta due domini con lo stesso endpoint:
+ *   - kana  (default): usa alfabeto/gruppi/includiDakuon/includiYoon;
+ *   - kanji:           usa livello (JLPT), tipoQuiz, lingua.
+ * I campi non pertinenti al dominio scelto vengono semplicemente ignorati dal
+ * backend; l'assenza di `dominio` mantiene il comportamento kana storico.
+ *
  * @param {Object}   filtri
- * @param {string}   filtri.alfabeto        'hiragana' | 'katakana'
- * @param {string[]} [filtri.gruppi]        righe selezionate; vuoto ⇒ tutte
- * @param {boolean}  [filtri.includiDakuon]
- * @param {boolean}  [filtri.includiYoon]
+ * @param {string}   [filtri.dominio]       'kana' | 'kanji' (default 'kana')
+ * @param {string}   [filtri.alfabeto]      'hiragana' | 'katakana'   (kana)
+ * @param {string[]} [filtri.gruppi]        righe selezionate; vuoto ⇒ tutte (kana)
+ * @param {boolean}  [filtri.includiDakuon]                            (kana)
+ * @param {boolean}  [filtri.includiYoon]                              (kana)
+ * @param {string}   [filtri.livello]       'N5'…'N1'                 (kanji)
+ * @param {string}   [filtri.tipoQuiz]      'production'|'recognition'|'reading' (kanji)
+ * @param {string}   [filtri.lingua]        'it' | 'en' (significati)  (kanji)
  */
-export const generateQuiz = async ({ alfabeto, gruppi, includiDakuon, includiYoon }) => {
+export const generateQuiz = async ({
+  dominio,
+  alfabeto,
+  gruppi,
+  includiDakuon,
+  includiYoon,
+  livello,
+  tipoQuiz,
+  lingua,
+}) => {
   const { data } = await apiClient.post('/quiz/generate', {
+    dominio,
     alfabeto,
     gruppi,
     includiDakuon,
     includiYoon,
+    livello,
+    tipoQuiz,
+    lingua,
   });
   return data;
 };
@@ -45,12 +68,18 @@ export const generateQuiz = async ({ alfabeto, gruppi, includiDakuon, includiYoo
  * Invia l'esito della partita; il backend aggiorna SRS/XP/streak/record in
  * transazione e restituisce il risultato del round + le statistiche aggiornate.
  *
+ * `dominio` instrada l'aggiornamento SRS sul modello corretto
+ * (ProgressoKana | ProgressoKanji); la parte utente (XP/streak/record) è
+ * condivisa. L'assenza del campo equivale a 'kana'.
+ *
  * @param {Object}   payload
- * @param {Array<{kana:string, tipo:string, corretto:boolean}>} payload.risposte
+ * @param {string}   [payload.dominio]  'kana' | 'kanji' (default 'kana')
+ * @param {Array}    payload.risposte
+ *        kana:  {kana, tipo, corretto}[] · kanji: {kanji, livelloJLPT, corretto}[]
  * @param {{maxCombo:number, timerMode:boolean}} [payload.datiBonus]
  */
-export const submitQuizResults = async ({ risposte, datiBonus }) => {
-  const { data } = await apiClient.post('/quiz/submit', { risposte, datiBonus });
+export const submitQuizResults = async ({ dominio, risposte, datiBonus }) => {
+  const { data } = await apiClient.post('/quiz/submit', { dominio, risposte, datiBonus });
   return data;
 };
 
@@ -95,5 +124,21 @@ export const registraScrittura = async ({ trattiValidati, caratteriErrati }) => 
  */
 export const getStrokeOrder = async (alfabeto) => {
   const { data } = await apiClient.get(`/quiz/stroke/${alfabeto}`);
+  return data;
+};
+
+/**
+ * GET /quiz/stroke/kanji/:livello (sola lettura: nessuna mutazione ⇒ niente CSRF)
+ * Restituisce l'ordine dei tratti di tutti i kanji di un livello JLPT (dati
+ * statici KanjiVG), con letture e significati. Speculare a `getStrokeOrder` ma
+ * per i kanji. I livelli senza dati grafici restituiscono `caratteri: []`.
+ *
+ * @param {string} livello 'N5'…'N1'
+ * @param {string} [lingua] 'it' | 'en' (per i significati; fallback backend EN)
+ */
+export const getStrokeOrderKanji = async (livello, lingua) => {
+  const { data } = await apiClient.get(`/quiz/stroke/kanji/${livello}`, {
+    params: lingua ? { lingua } : undefined,
+  });
   return data;
 };

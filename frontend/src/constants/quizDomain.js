@@ -13,6 +13,35 @@
 
 export const ALFABETI_QUIZ = Object.freeze(['hiragana', 'katakana']);
 
+// ── Domini del Quiz (allineati a DOMINI del backend quizService) ─────
+// Il Quiz supporta due domini sullo stesso flusso: sillabari (kana) e
+// ideogrammi (kanji). Il valore viaggia nel body di /generate e /submit;
+// la sua assenza equivale a 'kana' (retrocompatibilità).
+export const DOMINI_QUIZ = Object.freeze(['kana', 'kanji']);
+
+// ── Livelli JLPT (allineati a LIVELLI_JLPT del backend kanjiData) ────
+// Dal più facile (N5) al più difficile (N1). L'ordine è quello mostrato
+// nel selettore di livello del Quiz Kanji e della pratica di scrittura.
+export const LIVELLI_JLPT = Object.freeze(['N5', 'N4', 'N3', 'N2', 'N1']);
+
+// ── Tipologie del Quiz Kanji (allineate a TIPI_QUIZ_KANJI del backend) ─
+//   - production : kanji da richiamare a memoria (autovalutazione);
+//   - recognition: kanji → scelta del significato (4 opzioni);
+//   - reading    : kanji + tipo di lettura → scelta della lettura (4 opzioni).
+export const TIPI_QUIZ_KANJI = Object.freeze(['production', 'recognition', 'reading']);
+
+// Tipo di quiz Kanji predefinito (coincide col default del backend).
+export const TIPO_QUIZ_KANJI_DEFAULT = 'recognition';
+
+/**
+ * Livelli JLPT per cui il backend fornisce già i DATI DEI TRATTI dei kanji
+ * (endpoint /quiz/stroke/kanji/:livello). Gli altri livelli restituiscono un
+ * elenco vuoto in modo controllato: la pratica di scrittura mostra allora uno
+ * stato "non ancora disponibile". Tenuto qui solo per l'esperienza d'uso: la
+ * verità resta il backend, che omette con eleganza i kanji senza tratti.
+ */
+export const LIVELLI_TRATTI_KANJI = Object.freeze(['N5']);
+
 /**
  * Righe del gojūon, nello stesso ordine logico del sillabario.
  * Coincidono con GRUPPI_VALIDI del backend (un array vuoto ⇒ "tutte le righe").

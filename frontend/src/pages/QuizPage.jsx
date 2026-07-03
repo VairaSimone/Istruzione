@@ -11,6 +11,7 @@ import ErrorState from '../components/shared/ErrorState';
 import QuizStatsPanel from '../features/quiz/components/QuizStatsPanel';
 import QuizSetup from '../features/quiz/components/QuizSetup';
 import QuizPlay from '../features/quiz/components/QuizPlay';
+import KanjiQuizPlay from '../features/quiz/components/KanjiQuizPlay';
 import QuizResults from '../features/quiz/components/QuizResults';
 import WritingPracticePanel from '../features/quiz/components/WritingPracticePanel';
 import StreakCard from '../features/quiz/components/StreakCard';
@@ -82,7 +83,7 @@ const QuizPage = () => {
   const handleComplete = (risposte, datiBonus) => {
     setFase(FASI.SUBMITTING);
     submitMutation.mutate(
-      { risposte, datiBonus },
+      { dominio: sessione?.dominio || 'kana', risposte, datiBonus },
       {
         onSuccess: (data) => {
           setEsito(data.data); // { risultatoRound, statistiche }
@@ -176,9 +177,13 @@ const QuizPage = () => {
         />
       )}
 
-      {/* ── PLAYING: partita in corso ─────────────────────────── */}
+      {/* ── PLAYING: partita in corso (kana o kanji) ──────────── */}
       {fase === FASI.PLAYING && sessione && (
-        <QuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
+        sessione.dominio === 'kanji' ? (
+          <KanjiQuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
+        ) : (
+          <QuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
+        )
       )}
 
       {/* ── SUBMITTING: salvataggio risultati ─────────────────── */}
