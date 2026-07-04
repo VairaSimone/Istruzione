@@ -7,6 +7,13 @@ const sequelize = require('./config/database');
 const logger = require('./utils/logger');
 
 require('./models/Utente');
+require('./models/Classe');
+require('./models/ClasseUtente');
+require('./models/Compito');
+require('./models/CompitoAssegnazione');
+require('./models/CompitoConsegna');
+require('./models/Messaggio');
+require('./models/MessaggioDestinatario');
 require('./models/Invito');
 require('./models/ProgressoKana');
 require('./models/ProgressoKanji');

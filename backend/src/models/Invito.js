@@ -3,6 +3,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('./Utente');
+const Classe = require('./Classe');
 
 // Stati del ciclo di vita di un invito.
 const STATI_INVITO = ['pendente', 'completato', 'revocato'];
@@ -34,6 +35,7 @@ class Invito extends Model {
       email: this.email,
       ruolo: this.ruolo,
       classe: this.classe,
+      classe_id: this.classe_id,
       stato: this.stato,
       scadenza: this.scadenza,
       invitato_da: this.invitato_da,
@@ -78,6 +80,15 @@ Invito.init(
     classe: {
       type: DataTypes.ENUM(...Utente.CLASSI_VALIDE),
       allowNull: true,
+    },
+
+    // Aula virtuale (facoltativa) a cui l'invito è legato: se valorizzata, al
+    // completamento della registrazione lo studente vi viene iscritto.
+    classe_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'classe_id',
     },
 
     // Hash SHA-256 (hex, 64 char) del token inviato via email.
@@ -132,6 +143,7 @@ Invito.init(
       { fields: ['email'] },
       { fields: ['stato'] },
       { fields: ['invitato_da'] },
+      { fields: ['classe_id'] },
     ],
   }
 );
@@ -142,6 +154,11 @@ Invito.init(
 Invito.belongsTo(Utente, { as: 'invitante', foreignKey: 'invitato_da' });
 Invito.belongsTo(Utente, { as: 'utenteCreato', foreignKey: 'utente_creato_id' });
 Utente.hasMany(Invito, { as: 'invitiInviati', foreignKey: 'invitato_da' });
+
+// Invito legato (facoltativamente) a un'aula: se l'aula viene eliminata il
+// riferimento sull'invito viene azzerato (SET NULL), senza perdere l'invito.
+Invito.belongsTo(Classe, { as: 'aula', foreignKey: 'classe_id', onDelete: 'SET NULL' });
+Classe.hasMany(Invito, { as: 'inviti', foreignKey: 'classe_id', onDelete: 'SET NULL' });
 
 Invito.STATI_INVITO = STATI_INVITO;
 Invito.RUOLI_INVITABILI = RUOLI_INVITABILI;

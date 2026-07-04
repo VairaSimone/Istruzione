@@ -6,6 +6,7 @@ const { Op } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('../models/Utente');
 const Invito = require('../models/Invito');
+const ClasseUtente = require('../models/ClasseUtente');
 const AppError = require('../utils/AppError');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwtHelpers');
 const { hashToken } = require('../utils/tokenHash');
@@ -95,6 +96,25 @@ const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password })
       { stato: 'completato', utente_creato_id: nuovoUtente.id },
       { transaction: t }
     );
+
+    // Se l'invito è legato a un'aula, iscrivi lo studente come membro.
+    // findOrCreate garantisce l'idempotenza rispetto al vincolo di unicità
+    // (classe_id + utente_id), anche se lo stesso studente fosse già presente.
+    if (invito.classe_id) {
+      await ClasseUtente.findOrCreate({
+        where: { classe_id: invito.classe_id, utente_id: nuovoUtente.id },
+        defaults: {
+          classe_id: invito.classe_id,
+          utente_id: nuovoUtente.id,
+          ruolo_nella_classe: 'studente',
+          aggiunto_da: invito.invitato_da,
+        },
+        transaction: t,
+      });
+      logger.info(
+        `[INVITO] Studente ${nuovoUtente.id} iscritto all'aula ${invito.classe_id} da invito`
+      );
+    }
 
     logger.info(`[INVITO] Studente registrato da invito: ${nuovoUtente.email} (classe ${invito.classe})`);
     return nuovoUtente;

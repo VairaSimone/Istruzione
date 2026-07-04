@@ -9,6 +9,13 @@ const logger = require('../utils/logger');
 
 // Registra i modelli (e quindi le associazioni) prima di applicare le migrazioni.
 require('../models/Utente');
+require('../models/Classe');
+require('../models/ClasseUtente');
+require('../models/Compito');
+require('../models/CompitoAssegnazione');
+require('../models/CompitoConsegna');
+require('../models/Messaggio');
+require('../models/MessaggioDestinatario');
 require('../models/Invito');
 require('../models/ProgressoKana');
 require('../models/ProgressoKanji');

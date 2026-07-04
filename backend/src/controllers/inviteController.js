@@ -18,7 +18,6 @@ exports.creaInvitoStudente = catchAsync(async (req, res) => {
   const { invito, tokenDebug } = await inviteService.creaInvitoStudente({
     email,
     classe,
-    scuolaId: req.user.scuolaId, 
     invitatoDa: req.user.id,
     lingua: req.user.lingua,
   });
@@ -35,12 +34,11 @@ exports.creaInvitoStudente = catchAsync(async (req, res) => {
 // POST /api/invites/teacher  (solo admin — onboarding diretto)
 // ─────────────────────────────────────────────
 exports.creaInvitoInsegnante = catchAsync(async (req, res) => {
-  const { email, scuolaId } = req.body;
+  const { email } = req.body;
 
   const { invito, tokenDebug } = await inviteService.creaInvitoInsegnante({
     email,
     invitatoDa: req.user.id,
-    scuolaId,
     lingua: req.user.lingua,
   });
 

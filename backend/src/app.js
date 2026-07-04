@@ -14,6 +14,10 @@ const inviteRoutes = require('./routes/inviteRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const quizRoutes = require('./routes/quizRoutes');
 const statisticheRoutes = require('./routes/statisticheRoutes');
+const auleRoutes = require('./routes/auleRoutes');
+const compitiRoutes = require('./routes/compitiRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const messaggiRoutes = require('./routes/messaggiRoutes');
 const { passport } = require('./config/passport');
 const cookieParser = require('cookie-parser');
 const app = express();
@@ -110,6 +114,10 @@ app.use('/api/invites', inviteRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/statistiche', statisticheRoutes);
+app.use('/api/aule', auleRoutes);
+app.use('/api/compiti', compitiRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/messaggi', messaggiRoutes);
 
 // ─────────────────────────────────────────────
 // GESTIONE ROUTE NON TROVATE (404)

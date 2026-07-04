@@ -40,7 +40,7 @@ const generaTokenInvito = () => {
  * preesistenti per la stessa coppia (un solo token valido alla volta).
  * Eseguito in transazione per atomicità.
  */
-const creaInvito = async ({ email, ruolo, classe, invitatoDa, lingua = 'it' }) => {
+const creaInvito = async ({ email, ruolo, classe, classeId = null, invitatoDa, lingua = 'it', nomeClasse = null }) => {
   const emailNorm = email.toLowerCase().trim();
 
   // Un utente già registrato non può essere re-invitato.
@@ -68,6 +68,7 @@ const creaInvito = async ({ email, ruolo, classe, invitatoDa, lingua = 'it' }) =
         email: emailNorm,
         ruolo,
         classe: ruolo === 'studente' ? classe : null,
+        classe_id: ruolo === 'studente' ? classeId : null,
         token_hash: tokenHash,
         stato: 'pendente',
         scadenza,
@@ -78,10 +79,11 @@ const creaInvito = async ({ email, ruolo, classe, invitatoDa, lingua = 'it' }) =
   });
 
   // Invio email best-effort: un errore SMTP non deve invalidare l'invito
-  // (l'admin/insegnante può rigenerarlo).
+  // (l'admin/insegnante può rigenerarlo). Per gli inviti in aula si mostra il
+  // nome dell'aula come etichetta di contesto.
   try {
     if (ruolo === 'studente') {
-      await emailService.sendStudentInviteEmail(emailNorm, tokenInChiaro, classe, lingua);
+      await emailService.sendStudentInviteEmail(emailNorm, tokenInChiaro, nomeClasse || classe, lingua);
     } else {
       await emailService.sendTeacherInviteEmail(emailNorm, tokenInChiaro, lingua);
     }
@@ -110,6 +112,24 @@ const creaInvitoStudente = async ({ email, classe, invitatoDa, lingua }) => {
     );
   }
   return creaInvito({ email, ruolo: 'studente', classe, invitatoDa, lingua });
+};
+
+// ─────────────────────────────────────────────
+// CREA INVITO STUDENTE IN AULA (insegnante / admin)
+// Legato a una classe: al completamento della registrazione lo studente vi
+// verrà iscritto automaticamente (cfr. authService.registraStudenteDaInvito).
+// La verifica di accesso all'aula è a monte, in auleService.
+// ─────────────────────────────────────────────
+const creaInvitoStudenteInClasse = async ({ email, classeId, nomeClasse, invitatoDa, lingua }) => {
+  return creaInvito({
+    email,
+    ruolo: 'studente',
+    classe: null,
+    classeId,
+    nomeClasse,
+    invitatoDa,
+    lingua,
+  });
 };
 
 // ─────────────────────────────────────────────
@@ -220,6 +240,7 @@ const revocaInvito = async (richiedente, invitoId) => {
 
 module.exports = {
   creaInvitoStudente,
+  creaInvitoStudenteInClasse,
   creaInvitoInsegnante,
   validaTokenInvito,
   elencoInviti,

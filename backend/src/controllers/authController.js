@@ -9,7 +9,6 @@ const {
   REFRESH_TOKEN_MAX_AGE,
 } = require('../config/cookies');
 const { setCsrfCookie } = require('../middleware/csrf');
-const Invito = require('../models/Invito');
 
 /**
  * AuthController — livello sottile tra route e AuthService.
@@ -44,10 +43,12 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
 // ─────────────────────────────────────────────
 exports.registerStudent = catchAsync(async (req, res) => {
   const { token, nome, cognome, eta, password } = req.body;
-const invito = await Invito.findOne({ where: { token } });
-  if (!invito) throw new AppError('Invito non valido', 400);
+
+  // La validazione dell'invito (token_hash, stato, scadenza, ruolo) è gestita
+  // in modo transazionale e atomico dentro il service, che eredita email e
+  // classe dall'invito e — se l'invito è legato a un'aula — vi iscrive lo studente.
   const utente = await authService.registraStudenteDaInvito({
-    token, nome, cognome, eta, password, scuolaId: invito.scuolaId
+    token, nome, cognome, eta, password,
   });
 
   res.status(201).json({
