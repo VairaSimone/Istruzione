@@ -60,6 +60,7 @@ const authenticateJWT = catchAsync(async (req, res, next) => {
     stato: utente.stato,
     lingua: utente.lingua,
     email_verificata: utente.email_verificata,
+    profilo_completo: utente.profilo_completo
   };
 
   next();
