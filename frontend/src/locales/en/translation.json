@@ -152,11 +152,7 @@
       "backToProfile": "Back to profile"
     },
     "orSeparator": "or",
-    "google": {
-      "button": "Continue with Google",
-      "buttonRegister": "Sign up with Google",
-      "error": "Google sign-in failed. Try again or use your email and password."
-    },
+
     "resend": {
       "prompt": "Didn't receive the verification email?",
       "cta": "Resend verification email",
@@ -319,13 +315,9 @@
       "SELF_DELETE_FORBIDDEN": "You cannot delete your account from this section. Use the profile settings.",
       "PAYLOAD_TOO_LARGE": "The request is too large.",
       "CORS_ORIGIN_FORBIDDEN": "Origin not allowed.",
-      "GOOGLE_OAUTH_DISABLED": "Google sign-in is currently unavailable.",
-      "USE_GOOGLE_LOGIN": "This account uses Google sign-in. Use the “Continue with Google” button.",
-      "GOOGLE_NO_EMAIL": "The Google profile doesn't expose an email: sign-in cannot be completed.",
       "INVALID_LANGUAGE": "Unsupported language.",
       "ACCOUNT_PENDING": "Your account is pending approval by an administrator.",
       "ACCOUNT_NOT_ACTIVE": "This account is not allowed to sign in. Please contact an administrator.",
-      "GOOGLE_NO_ACCOUNT": "No account is associated with this Google address. Access is reserved for invited users.",
       "INVALID_INVITE": "Invalid or revoked invitation.",
       "INVITE_EXPIRED": "Invitation expired. Please request a new one.",
       "INVITE_ALREADY_USED": "This invitation has already been used.",

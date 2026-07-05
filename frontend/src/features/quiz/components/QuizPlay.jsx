@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
 import PronunciationButton from '../../../components/ui/PronunciationButton';
-import { ROMAJI_ALTERNATIVI, TIMER_SECONDI, COMBO_SOGLIA } from '../../../constants/quizDomain';
+import {
+  ROMAJI_ALTERNATIVI,
+  TIMER_SECONDI,
+  COMBO_SOGLIA,
+} from '../../../constants/quizDomain';
 import styles from './QuizPlay.module.css';
 
 /**
@@ -127,12 +131,17 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
         {combo > 0 && (
           <span className={[styles.combo, comboAttiva ? styles.comboHot : ''].join(' ')}>
             {t('quiz.play.combo', { count: combo })}
-            {comboAttiva && <span className={styles.comboBoost}>{t('quiz.play.comboBoost')}</span>}
+            {comboAttiva && (
+              <span className={styles.comboBoost}>{t('quiz.play.comboBoost')}</span>
+            )}
           </span>
         )}
       </div>
       <div className={styles.progressTrack} aria-hidden="true">
-        <div className={styles.progressFill} style={{ width: `${percentualeAvanzamento}%` }} />
+        <div
+          className={styles.progressFill}
+          style={{ width: `${percentualeAvanzamento}%` }}
+        />
       </div>
 
       <Card className={styles.stage}>
@@ -140,7 +149,10 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
         {timerMode && (
           <div className={styles.timer} aria-hidden="true">
             <div
-              className={[styles.timerFill, secondiRimasti <= 3 ? styles.timerLow : ''].join(' ')}
+              className={[
+                styles.timerFill,
+                secondiRimasti <= 3 ? styles.timerLow : '',
+              ].join(' ')}
               style={{ width: `${(secondiRimasti / TIMER_SECONDI) * 100}%` }}
             />
           </div>
@@ -148,6 +160,7 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
 
         <span className={styles.prompt}>{t('quiz.play.prompt')}</span>
         <div
+          key={indice}
           className={[
             styles.kana,
             feedback ? (feedback.corretto ? styles.kanaOk : styles.kanaWrong) : '',
@@ -159,9 +172,10 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
         {/* Feedback dopo la risposta */}
         {feedback ? (
           <div
-            className={[styles.feedback, feedback.corretto ? styles.feedbackOk : styles.feedbackWrong].join(
-              ' '
-            )}
+            className={[
+              styles.feedback,
+              feedback.corretto ? styles.feedbackOk : styles.feedbackWrong,
+            ].join(' ')}
             role="status"
           >
             {feedback.corretto ? (
@@ -169,11 +183,7 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
             ) : (
               <span>{t('quiz.play.wrong', { answer: feedback.atteso })}</span>
             )}
-            <PronunciationButton
-              testo={corrente.kana}
-              label={corrente.kana}
-              size="sm"
-            />
+            <PronunciationButton testo={corrente.kana} label={corrente.kana} size="sm" />
           </div>
         ) : (
           <div className={styles.inputRow}>
@@ -193,7 +203,9 @@ const QuizPlay = ({ sessione, timerMode = false, onComplete }) => {
               disabled={valutando}
             />
             <Button
-              onClick={() => !valutando && registra(verificaRisposta(input, corrente.romaji))}
+              onClick={() =>
+                !valutando && registra(verificaRisposta(input, corrente.romaji))
+              }
               disabled={valutando}
             >
               {t('quiz.play.check')}

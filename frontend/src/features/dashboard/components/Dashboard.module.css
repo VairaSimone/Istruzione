@@ -9,7 +9,7 @@
 
 .pageTitle {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: var(--text-2xl);
   color: var(--color-ink);
   margin: 0 0 var(--space-1);
 }
@@ -29,12 +29,12 @@
 
 .sectionTitle {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: var(--text-xl);
   color: var(--color-ink);
   margin: var(--space-6) 0 var(--space-3);
 }
 
-/* ── Stat cards ── */
+/* ── Stat cards (stile metrica) ────────────────────────────────────────── */
 .statGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
@@ -47,21 +47,31 @@
   gap: var(--space-1);
   text-align: center;
   align-items: center;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.statCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .statValue {
   font-family: var(--font-display);
-  font-size: 1.9rem;
+  font-size: var(--text-2xl);
+  font-weight: 700;
   color: var(--color-ink);
   line-height: 1.1;
+  font-variant-numeric: tabular-nums;
 }
 
 .statLabel {
   color: var(--color-text-muted);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
-/* ── Griglie di pannelli ── */
+/* ── Griglie di pannelli ───────────────────────────────────────────────── */
 .panelGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -70,19 +80,18 @@
 
 .panelTitle {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: var(--text-lg);
   color: var(--color-ink);
   margin: 0 0 var(--space-3);
 }
 
-/* ── Liste ranking ── */
+/* ── Liste ranking ─────────────────────────────────────────────────────── */
 .rankList {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
   counter-reset: rank;
 }
 
@@ -90,22 +99,53 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2) 0;
+  padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.rankRow:last-child {
+  border-bottom: none;
+}
+
+.rankRow:hover {
+  background-color: var(--color-paper-dim);
 }
 
 .rankNum {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 1.6rem;
+  height: 1.6rem;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: var(--color-paper-dim);
+  border: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Medaglie per i primi tre posti (oro / argento / bronzo su tinte brand) */
+.rankRow:nth-child(1) .rankNum {
+  background: color-mix(in srgb, var(--color-gold) 22%, transparent);
+  border-color: var(--color-gold);
+  color: var(--color-gold-text);
+}
+
+.rankRow:nth-child(2) .rankNum {
+  background: color-mix(in srgb, var(--color-border-strong) 40%, transparent);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.rankRow:nth-child(3) .rankNum {
+  background: color-mix(in srgb, var(--color-seal) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-seal) 40%, transparent);
+  color: var(--color-seal);
 }
 
 .rankLabel {
@@ -114,17 +154,20 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  font-weight: 500;
 }
 
 .rankChar {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: var(--text-xl);
   color: var(--color-seal-dark);
 }
 
 .rankRight {
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -136,6 +179,6 @@
 
 .note {
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   margin: var(--space-2) 0 0;
 }

@@ -142,11 +142,6 @@
       "backToProfile": "Torna al Profilo"
     },
     "orSeparator": "oppure",
-    "google": {
-      "button": "Continua con Google",
-      "buttonRegister": "Registrati con Google",
-      "error": "Accesso con Google non riuscito. Riprova o usa email e password."
-    },
     "resend": {
       "prompt": "Non hai ricevuto l'email di verifica?",
       "cta": "Re-invia email di verifica",
@@ -280,9 +275,6 @@
       "SELF_DELETE_FORBIDDEN": "Non puoi eliminare il tuo account da questa sezione. Usa le impostazioni del profilo.",
       "PAYLOAD_TOO_LARGE": "La richiesta è troppo grande.",
       "CORS_ORIGIN_FORBIDDEN": "Origine non consentita.",
-      "GOOGLE_OAUTH_DISABLED": "Il login con Google non è al momento disponibile.",
-      "USE_GOOGLE_LOGIN": "Questo account usa l'accesso con Google. Usa il pulsante “Continua con Google”.",
-      "GOOGLE_NO_EMAIL": "Il profilo Google non espone un'email: impossibile completare l'accesso.",
       "INVALID_LANGUAGE": "Lingua non supportata.",
       "EMPTY_TRAINING_POOL": "Nessun carattere problematico: completa prima qualche quiz.",
       "INVALID_ALPHABET": "Alfabeto non valido.",

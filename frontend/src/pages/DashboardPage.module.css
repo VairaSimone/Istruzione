@@ -10,13 +10,23 @@
   gap: var(--space-2);
 }
 
+/* Eyebrow decorativa in tinta hanko */
+.intro::before {
+  content: '日本語';
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  letter-spacing: 0.3em;
+  color: var(--color-seal);
+  margin-bottom: var(--space-1);
+}
+
 .title {
-  font-size: 1.875rem;
+  font-size: clamp(1.75rem, 4vw, var(--text-3xl));
 }
 
 .subtitle {
   color: var(--color-text-muted);
-  font-size: 0.9375rem;
+  font-size: var(--text-md);
 }
 
 .grid {
@@ -29,16 +39,40 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.summaryCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-strong);
 }
 
 .cardTitle {
-  font-size: 1.125rem;
+  position: relative;
+  font-size: var(--text-lg);
+  padding-left: var(--space-3);
+}
+
+/* Accento a "pennellata" hanko a sinistra del titolo */
+.cardTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 3px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-seal);
 }
 
 .cardText {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
-  line-height: 1.6;
+  line-height: var(--leading-normal);
 }
 
 .summaryList {
@@ -54,7 +88,12 @@
   align-items: center;
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border);
-  font-size: 0.875rem;
+  font-size: var(--text-base);
+}
+
+.summaryRow:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .summaryRow dt {
@@ -70,4 +109,5 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-top: auto;
 }

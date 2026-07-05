@@ -14,7 +14,12 @@ const AulaCard = ({ aula }) => {
   const { insegnanti = 0, studenti = 0 } = aula.conteggio || {};
 
   return (
-    <Card as={Link} to={aulaDetailPath(aula.id)} className={styles.card}>
+    <Card
+      as={Link}
+      to={aulaDetailPath(aula.id)}
+      className={styles.card}
+      style={{ '--aula-color': aula.colore || 'var(--color-border-strong)' }}
+    >
       <div className={styles.cardHead}>
         <span
           className={styles.colorDot}

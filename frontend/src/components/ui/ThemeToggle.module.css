@@ -2,26 +2,31 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
   appearance: none;
   background-color: transparent;
   color: var(--color-text-muted);
   border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   flex-shrink: 0;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 .toggle:hover {
   background-color: var(--color-paper-dim);
   color: var(--color-ink);
-  border-color: var(--color-border-strong);
+  border-color: var(--color-text-muted);
+}
+
+.toggle:active {
+  transform: scale(0.94);
 }
 
 .icon {

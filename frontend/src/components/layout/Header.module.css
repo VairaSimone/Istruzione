@@ -1,18 +1,20 @@
 .header {
-  background-color: var(--color-paper);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 50;
+  background-color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .inner {
-  max-width: 72rem;
+  max-width: var(--layout-max);
   margin: 0 auto;
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-6);
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 .brand {
@@ -36,14 +38,20 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   background-color: var(--color-seal);
-  color: var(--color-paper);
-  border-radius: var(--radius-sm);
+  color: #fdfcf9;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+
+.brand:hover .brandMark {
+  transform: rotate(-4deg) scale(1.04);
 }
 
 .brandName {
   font-family: var(--font-display);
-  font-size: 1.0625rem;
+  font-size: var(--text-lg);
   font-weight: 600;
   white-space: nowrap;
 }
@@ -51,50 +59,212 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--space-6);
+  gap: var(--space-2);
   flex: 1;
 }
 
 .navLink {
-  font-size: 0.875rem;
+  position: relative;
+  font-size: var(--text-base);
   font-weight: 500;
   color: var(--color-text-muted);
   text-decoration: none;
   white-space: nowrap;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
 }
 
 .navLink:hover {
   color: var(--color-ink);
+  background-color: var(--color-paper-dim);
   text-decoration: none;
+}
+
+.navLinkActive {
+  color: var(--color-seal);
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 2px;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-seal);
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   margin-left: auto;
 }
 
 .userName {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
+/* ── Hamburger + drawer (solo mobile) ──────────────────────────────────── */
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-ink);
+  background: transparent;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.menuButton:hover {
+  background-color: var(--color-paper-dim);
+}
+
+.menuIcon,
+.menuIcon::before,
+.menuIcon::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+}
+
+.menuIcon {
+  position: relative;
+}
+
+.menuIcon::before,
+.menuIcon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.menuIcon::before {
+  top: -6px;
+}
+
+.menuIcon::after {
+  top: 6px;
+}
+
+.navClose {
+  display: none;
+  align-self: flex-end;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.navClose:hover {
+  color: var(--color-ink);
+  background-color: var(--color-paper-dim);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 55;
+  animation: overlay-fade var(--dur-base) var(--ease-out);
+}
+
+@keyframes overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 720px) {
   .inner {
-    flex-wrap: wrap;
-    gap: var(--space-3);
-  }
-
-  .nav {
-    order: 3;
-    flex-basis: 100%;
-    justify-content: space-between;
     gap: var(--space-3);
   }
 
   .brandName {
+    display: none;
+  }
+
+  .menuButton {
+    display: inline-flex;
+  }
+
+  /* La nav diventa un pannello a scomparsa da destra */
+  .nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(82vw, 20rem);
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+    padding: var(--space-5) var(--space-4) var(--space-8);
+    background-color: var(--color-surface);
+    border-left: 1px solid var(--color-border);
+    box-shadow: var(--shadow-xl);
+    transform: translateX(100%);
+    transition: transform var(--dur-base) var(--ease-out);
+    overflow-y: auto;
+    z-index: 60;
+  }
+
+  .navOpen {
+    transform: translateX(0);
+  }
+
+  .navClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-2);
+  }
+
+  .navLink {
+    font-size: var(--text-md);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .navLink:hover {
+    background-color: var(--color-paper-dim);
+  }
+
+  /* Nel drawer, lo stato attivo usa uno sfondo pieno invece della sottolineatura */
+  .navLinkActive {
+    background-color: var(--color-seal-soft);
+  }
+
+  .navLinkActive::after {
+    display: none;
+  }
+
+  .userName {
     display: none;
   }
 }

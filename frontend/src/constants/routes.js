@@ -6,7 +6,6 @@ export const ROUTES = Object.freeze({
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
-  TEACHER_REQUEST: '/candidatura-insegnante',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
   VERIFY_EMAIL: '/verify-email',

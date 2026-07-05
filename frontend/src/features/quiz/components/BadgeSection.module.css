@@ -7,12 +7,12 @@
 }
 
 .sectionTitle {
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   margin-bottom: var(--space-1);
 }
 
 .summary {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   font-weight: 700;
   color: var(--color-seal);
   font-variant-numeric: tabular-nums;
@@ -21,10 +21,10 @@
 
 .sectionDescription {
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   margin-top: var(--space-1);
   margin-bottom: var(--space-5);
-  line-height: 1.6;
+  line-height: var(--leading-normal);
 }
 
 .center {
@@ -33,7 +33,7 @@
   padding: var(--space-6) 0;
 }
 
-/* ── Barre di progresso ──────────────────────────────────── */
+/* ── Barre di progresso ────────────────────────────────────────────────── */
 .progressGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
@@ -55,13 +55,13 @@
 }
 
 .progressLabel {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   font-weight: 600;
 }
 
 .progressValue {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
 }
@@ -71,18 +71,18 @@
   height: 8px;
   background-color: var(--color-paper-dim);
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
   background-color: var(--color-matcha);
-  border-radius: 999px;
-  transition: width 0.4s ease;
+  border-radius: var(--radius-full);
+  transition: width var(--dur-slow) var(--ease-out);
 }
 
-/* ── Categorie + griglia badge ───────────────────────────── */
+/* ── Categorie + griglia badge ─────────────────────────────────────────── */
 .categories {
   display: flex;
   flex-direction: column;
@@ -96,7 +96,7 @@
 }
 
 .categoryTitle {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-text-muted);
@@ -118,25 +118,31 @@
   align-items: center;
   text-align: center;
   gap: var(--space-1);
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-5) var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background-color: var(--color-paper-dim);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
 }
 
+/* Badge sbloccato: anello dorato + rilievo all'hover */
 .badgeOn {
   border-color: color-mix(in srgb, var(--color-gold) 45%, transparent);
   background-color: color-mix(in srgb, var(--color-gold) 10%, transparent);
 }
 
 .badgeOn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-gold);
 }
 
 /* Badge non ancora sbloccato: smorzato, ma con testo leggibile. */
 .badgeOff {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .badgeOff .badgeIcon {
@@ -144,24 +150,28 @@
 }
 
 .badgeIcon {
-  font-size: 2rem;
+  font-size: 2.1rem;
   line-height: 1;
+}
+
+.badgeOn .badgeIcon {
+  filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--color-gold) 45%, transparent));
 }
 
 .badgeName {
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .badgeDesc {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
   line-height: 1.4;
 }
 
 .badgeStatus {
   margin-top: var(--space-1);
-  font-size: 0.6875rem;
+  font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 700;

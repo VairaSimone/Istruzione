@@ -16,7 +16,6 @@ import TextField from '../components/ui/TextField';
 import Button from '../components/ui/Button';
 import FormError from '../components/shared/FormError';
 import LockoutNotice from '../features/auth/components/LockoutNotice';
-import GoogleAuthButton from '../features/auth/components/GoogleAuthButton';
 import styles from './AuthPage.module.css';
 
 const LoginPage = () => {
@@ -44,14 +43,6 @@ const LoginPage = () => {
   } = useForm({
     resolver: zodResolver(schema),
   });
-
-  // Errore proveniente dal redirect di fallimento OAuth Google
-  // (?error=google), gestito una sola volta al mount.
-  useEffect(() => {
-    if (searchParams.get('error') === 'google') {
-      setFormError(t('auth.google.error'));
-    }
-  }, [searchParams, t]);
 
   const redirectTo = location.state?.from?.pathname || ROUTES.DASHBOARD;
 
@@ -146,9 +137,6 @@ const LoginPage = () => {
           </div>
         )}
 
-        <GoogleAuthButton />
-
-        <div className={styles.separator}>{t('auth.orSeparator')}</div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
@@ -177,10 +165,6 @@ const LoginPage = () => {
           </Button>
         </form>
 
-        <p className={styles.switchAuth}>
-          {t('auth.login.teacherPrompt')}{' '}
-          <Link to={ROUTES.TEACHER_REQUEST}>{t('auth.login.teacherCta')}</Link>
-        </p>
         <p className={styles.switchAuth}>{t('auth.login.studentInviteNote')}</p>
       </Card>
     </div>

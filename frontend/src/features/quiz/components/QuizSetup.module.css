@@ -4,14 +4,15 @@
   gap: var(--space-5);
   max-width: 36rem;
   margin: 0 auto;
+  animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
 .title {
-  font-size: 1.375rem;
+  font-size: var(--text-xl);
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
   margin-top: calc(-1 * var(--space-3));
 }
@@ -26,23 +27,23 @@
 }
 
 .legend {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--color-text-muted);
   padding: 0;
 }
 
 .hint {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
-/* ── Segmented (alfabeto) ────────────────────────────────── */
+/* ── Segmented (alfabeto) ──────────────────────────────────────────────── */
 .segmented {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-1);
   background-color: var(--color-paper-dim);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -56,12 +57,13 @@
   background-color: transparent;
   color: var(--color-text-muted);
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: var(--text-base);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .segment:hover {
@@ -69,12 +71,12 @@
 }
 
 .segmentActive {
-  background-color: var(--color-paper);
+  background-color: var(--color-surface);
   color: var(--color-seal);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-sm);
 }
 
-/* ── Chips (righe) ───────────────────────────────────────── */
+/* ── Chips (righe) ─────────────────────────────────────────────────────── */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -87,19 +89,25 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border-strong);
-  background-color: transparent;
+  background-color: var(--color-surface);
   color: var(--color-ink);
   border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 .chip:hover {
   background-color: var(--color-paper-dim);
+  transform: translateY(-1px);
+}
+
+.chip:active {
+  transform: translateY(0);
 }
 
 .chipActive {
@@ -110,7 +118,7 @@
 
 .chipKana {
   font-family: var(--font-display);
-  font-size: 1.125rem;
+  font-size: var(--text-lg);
   line-height: 1;
 }
 
@@ -118,7 +126,7 @@
   font-weight: 600;
 }
 
-/* ── Toggle (varianti / modalità) ────────────────────────── */
+/* ── Toggle (varianti / modalità) ──────────────────────────────────────── */
 .toggles {
   display: flex;
   flex-direction: column;
@@ -129,13 +137,21 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: 0.9375rem;
+  font-size: var(--text-base);
   cursor: pointer;
+  padding: var(--space-2);
+  margin: calc(-1 * var(--space-2));
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.toggle:hover {
+  background-color: var(--color-paper-dim);
 }
 
 .toggle input {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.15rem;
+  height: 1.15rem;
   accent-color: var(--color-seal);
   cursor: pointer;
 }
@@ -144,7 +160,7 @@
   margin: 0;
 }
 
-/* ── Griglia tipologie Quiz Kanji ────────────────────────── */
+/* ── Griglia tipologie Quiz Kanji ──────────────────────────────────────── */
 .typeGrid {
   display: grid;
   grid-template-columns: 1fr;
@@ -162,20 +178,24 @@
   flex-direction: column;
   gap: var(--space-1);
   text-align: left;
-  padding: var(--space-3);
+  padding: var(--space-4);
   border: 1px solid var(--color-border-strong);
-  background-color: transparent;
+  background-color: var(--color-surface);
   color: var(--color-ink);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 .typeCard:hover {
   background-color: var(--color-paper-dim);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .typeCardActive {
@@ -185,12 +205,12 @@
 
 .typeName {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: var(--text-base);
   color: var(--color-seal);
 }
 
 .typeDesc {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
-  line-height: 1.35;
+  line-height: 1.4;
 }

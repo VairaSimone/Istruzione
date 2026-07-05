@@ -4,23 +4,28 @@
   align-items: center;
   text-align: center;
   padding: var(--space-10) var(--space-4);
+  animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
 .code {
   font-family: var(--font-display);
-  font-size: 4rem;
+  font-size: clamp(3.5rem, 12vw, 5.5rem);
+  font-weight: 700;
   color: var(--color-border-strong);
   line-height: 1;
   margin-bottom: var(--space-4);
+  letter-spacing: 0.02em;
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   margin-bottom: var(--space-3);
 }
 
 .text {
   color: var(--color-text-muted);
-  font-size: 0.9375rem;
+  font-size: var(--text-md);
+  max-width: 30rem;
+  line-height: var(--leading-normal);
   margin-bottom: var(--space-6);
 }

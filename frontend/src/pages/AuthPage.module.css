@@ -7,11 +7,13 @@
 .card {
   width: 100%;
   max-width: 26rem;
+  animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
 .cardWide {
   width: 100%;
   max-width: 34rem;
+  animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
 .header {
@@ -19,28 +21,29 @@
   margin-bottom: var(--space-6);
 }
 
+/* Mark a medaglione in tinta hanko */
 .mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 3.25rem;
+  height: 3.25rem;
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  background-color: var(--color-paper-dim);
+  font-size: 1.6rem;
+  background-color: var(--color-seal-soft);
   color: var(--color-seal);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-seal) 18%, transparent);
+  border-radius: var(--radius-full);
   margin-bottom: var(--space-4);
 }
 
 .title {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   margin-bottom: var(--space-2);
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
 }
 
@@ -48,12 +51,12 @@
   text-align: right;
   margin-top: calc(var(--space-4) * -1);
   margin-bottom: var(--space-5);
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
 }
 
 .switchAuth {
   text-align: center;
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
   margin-top: var(--space-6);
 }
@@ -76,29 +79,38 @@
 }
 
 .successIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
   font-family: var(--font-display);
   font-size: 2rem;
   color: var(--color-matcha);
+  background-color: var(--color-success-bg);
+  border: 1px solid color-mix(in srgb, var(--color-matcha) 22%, transparent);
+  border-radius: var(--radius-full);
   margin-bottom: var(--space-4);
+  animation: score-in var(--dur-slow) var(--ease-spring);
 }
 
 .successText {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
   margin-bottom: var(--space-6);
-  line-height: 1.6;
+  line-height: var(--leading-normal);
 }
 
-/* ── Separatore "oppure" tra login social e form classico ── */
+/* ── Separatore "oppure" tra login social e form classico ──────────────── */
 .separator {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   margin: var(--space-5) 0;
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .separator::before,
@@ -109,18 +121,30 @@
   background-color: var(--color-border);
 }
 
-/* ── Blocco "re-invia email di verifica" mostrato sul login ── */
+/* ── Blocco "re-invia email di verifica" mostrato sul login ────────────── */
 .resendBox {
   margin-top: var(--space-4);
   padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  background-color: var(--color-paper-dim);
   text-align: center;
 }
 
 .resendText {
-  font-size: 0.85rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
-  line-height: 1.5;
+  line-height: var(--leading-snug);
+}
+
+@keyframes score-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

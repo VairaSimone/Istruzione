@@ -1,94 +1,152 @@
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /*
  * ──────────────────────────────────────────────────────────────────────────
- *  Sistema di temi (Chiaro / Scuro)
+ *  DESIGN SYSTEM — "Washi & Sumi"
  *  --------------------------------------------------------------------------
- *  - I token NON cromatici (tipografia, spaziatura, raggi) vivono in :root e
- *    sono condivisi da entrambi i temi.
+ *  Identità giapponese sobria: carta washi, inchiostro sumi, sigillo hanko,
+ *  matcha, oro tenue. Nessuno stereotipo, nessun kitsch.
+ *
+ *  Regole:
+ *  - I token NON cromatici (tipografia, spaziatura, raggi, ombre strutturali,
+ *    movimento) vivono in :root e sono condivisi da entrambi i temi.
  *  - I token CROMATICI sono definiti per il tema chiaro in :root (default) e
  *    ridefiniti nel blocco [data-theme='dark'].
- *  - Il tema attivo è pilotato dall'attributo `data-theme` su <html>, impostato
- *    in modo sincrono PRIMA del primo paint dallo script inline in index.html
- *    (anti-FOUC) e mantenuto allineato a runtime dallo store Zustand
- *    (store/themeStore.js) — quindi il cambio avviene senza refresh di pagina.
+ *  - Il tema attivo è pilotato da `data-theme` su <html>, impostato in modo
+ *    sincrono PRIMA del primo paint dallo script inline in index.html
+ *    (anti-FOUC) e mantenuto a runtime dallo store Zustand (themeStore.js).
+ *  - FONTE DI VERITÀ UNICA: i componenti consumano SOLO questi token, mai
+ *    valori cromatici hard-coded. Così cambiare il brand = cambiare :root.
  * ──────────────────────────────────────────────────────────────────────────
  */
 
 :root {
-  /* ── Palette — TEMA CHIARO (default) ──────────────────── */
-  --color-ink: #1a1a1a; /* sumi — testo principale, quasi nero */
+  /* ── Palette — TEMA CHIARO (default) ──────────────────────────────────── */
+  --color-ink: #1c1b18; /* sumi — testo principale, quasi nero caldo */
+  --color-ink-soft: #45423b; /* testo secondario ad alto contrasto */
   --color-paper: #fdfcf9; /* washi — sfondo carta */
-  --color-paper-dim: #f4f1ea; /* sfondo sezioni secondarie */
+  --color-paper-dim: #f4f1ea; /* superfici secondarie / hover tenui */
+  --color-surface: #ffffff; /* superficie elevata (card, popover, modale) */
+  --color-surface-sunken: #f0ece2; /* incassi (input riempiti, code) */
+
   --color-seal: #c9402a; /* rosso hanko — accento primario, azioni */
-  --color-seal-dark: #a32f1d;
+  --color-seal-dark: #a32f1d; /* hover/active dell'accento primario */
+  --color-seal-soft: #f7e9e5; /* velatura hanko per sfondi tenui */
   --color-matcha: #3d5a4c; /* verde matcha — successo, conferme */
-  --color-matcha-dark: #2c4337;
-  --color-gold: #b89b5e; /* oro tenue — focus, dettagli */
-  --color-gold-text: #7a652f; /* oro leggibile su sfondo chiaro (badge) */
-  --color-border: #e3ded2;
-  --color-border-strong: #c9c2af;
-  --color-text-muted: #6b6558;
+  --color-matcha-dark: #2c4337; /* testo matcha su success-bg */
+  --color-gold: #b89b5e; /* oro tenue — focus, dettagli, ring */
+  --color-gold-text: #7a652f; /* oro leggibile su chiaro (badge) */
+
+  --color-border: #e6e1d5; /* hairline standard */
+  --color-border-strong: #cdc6b3; /* bordi input, divisori marcati */
+  --color-text-muted: #6b6558; /* testo terziario / didascalie */
+
   --color-danger: #b3261e;
   --color-danger-bg: #fbeae8;
   --color-success-bg: #eaf1ec;
   --color-warning: #9a6a1c;
   --color-warning-bg: #faf1e0;
-  --color-skeleton-highlight: #ece7da; /* riflesso shimmer dello skeleton */
+  --color-skeleton-highlight: #ece7da; /* riflesso shimmer skeleton */
 
-  /* ── Ombre (uso minimo, deliberato) ──────────────────────*/
-  --shadow-card: 0 1px 3px rgba(26, 26, 26, 0.06), 0 1px 2px rgba(26, 26, 26, 0.04);
-  --shadow-elevated: 0 8px 24px rgba(26, 26, 26, 0.12);
+  --color-overlay: rgba(28, 27, 24, 0.42); /* velo modale */
+  --color-ring: color-mix(in srgb, var(--color-gold) 55%, transparent);
 
-  /* ── Tipografia ───────────────────────────────────────── */
+  /* Trame di sfondo (washi): gradienti sottilissimi, mai invadenti.
+     Usate come background-image su body — additive, disattivabili. */
+  --texture-a: rgba(201, 64, 42, 0.025); /* alone hanko in alto */
+  --texture-b: rgba(61, 90, 76, 0.022); /* alone matcha in basso */
+
+  /* ── Ombre — stratificate, morbide, premium ──────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(28, 27, 24, 0.05);
+  --shadow-md: 0 1px 2px rgba(28, 27, 24, 0.04), 0 4px 12px -2px rgba(28, 27, 24, 0.06);
+  --shadow-lg: 0 2px 4px rgba(28, 27, 24, 0.05), 0 12px 28px -6px rgba(28, 27, 24, 0.12);
+  --shadow-xl: 0 4px 8px rgba(28, 27, 24, 0.06), 0 24px 48px -12px rgba(28, 27, 24, 0.18);
+  /* Alias retro-compatibili: ogni consumatore esistente si aggiorna gratis */
+  --shadow-card: var(--shadow-md);
+  --shadow-elevated: var(--shadow-xl);
+  --shadow-focus: 0 0 0 3px var(--color-ring);
+
+  /* ── Tipografia ──────────────────────────────────────────────────────── */
   --font-display: 'Shippori Mincho', 'Noto Serif JP', serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --font-body: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: var(--font-body); /* alias (correzione bug: era indefinito) */
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
 
-  /* ── Spaziatura ───────────────────────────────────────── */
+  /* Scala tipografica modulare (~1.2) — gerarchia coerente e prevedibile */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-normal: 1.6;
+
+  /* ── Spaziatura (scala 4px) ──────────────────────────────────────────── */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
+  --space-7: 2.5rem; /* correzione bug: era indefinito */
   --space-8: 3rem;
   --space-10: 4rem;
 
-  /* ── Bordi/Radius ─────────────────────────────────────── */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
+  /* ── Raggi ───────────────────────────────────────────────────────────── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  /* ── Movimento — easing + durate condivise ───────────────────────────── */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  --layout-max: 72rem;
 
   color-scheme: light;
 }
 
-/*
- * Ridondante con :root ma esplicito: garantisce i token del tema chiaro anche
- * quando data-theme è impostato esplicitamente a 'light' dall'utente.
- */
 [data-theme='light'] {
   color-scheme: light;
 }
 
-/* ── Palette — TEMA SCURO ──────────────────────────────────
- * Reinterpretazione "sumi notturno": fondo inchiostro caldo, testo washi
- * tenue, accenti (hanko/matcha/oro) schiariti per garantire contrasto e
- * leggibilità (WCAG) su superfici scure. I token strutturali restano invariati.
+/* ── Palette — TEMA SCURO ────────────────────────────────────────────────
+ * "Sumi notturno": fondo inchiostro caldo, testo washi tenue, accenti
+ * (hanko/matcha/oro) schiariti per contrasto e leggibilità (WCAG) su scuro.
+ * I token strutturali restano invariati.
  */
 [data-theme='dark'] {
-  --color-ink: #ece7da; /* testo: washi tenue */
-  --color-paper: #16140f; /* sfondo: sumi caldo, quasi nero */
-  --color-paper-dim: #211f18; /* sezioni secondarie */
-  --color-seal: #df6a52; /* hanko schiarito per contrasto su scuro */
-  --color-seal-dark: #ec8068; /* hover/active: più chiaro = più enfasi su scuro */
+  --color-ink: #ece7da;
+  --color-ink-soft: #c4bfb1;
+  --color-paper: #16140f; /* sumi caldo, quasi nero */
+  --color-paper-dim: #211f18;
+  --color-surface: #1f1d16; /* superficie elevata leggermente più chiara */
+  --color-surface-sunken: #100e0a;
+
+  --color-seal: #df6a52;
+  --color-seal-dark: #ec8068;
+  --color-seal-soft: #2f1c17;
   --color-matcha: #6f9a85;
-  --color-matcha-dark: #a7c7b6; /* testo matcha leggibile su success-bg scuro */
+  --color-matcha-dark: #a7c7b6;
   --color-gold: #cbab6a;
   --color-gold-text: #d8bd84;
+
   --color-border: #2e2b22;
   --color-border-strong: #463f33;
   --color-text-muted: #a09a8a;
+
   --color-danger: #f08a82;
   --color-danger-bg: #3a1e1c;
   --color-success-bg: #1c2a23;
@@ -96,13 +154,22 @@
   --color-warning-bg: #2e2417;
   --color-skeleton-highlight: #2c2a22;
 
-  /* Ombre più marcate: su fondo scuro la profondità si percepisce col nero */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.55);
+  --color-overlay: rgba(0, 0, 0, 0.62);
+  --color-ring: color-mix(in srgb, var(--color-gold) 60%, transparent);
+
+  --texture-a: rgba(223, 106, 82, 0.05);
+  --texture-b: rgba(111, 154, 133, 0.045);
+
+  /* Su fondo scuro la profondità si percepisce col nero: ombre più marcate */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4), 0 6px 16px -4px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.45), 0 16px 36px -8px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 6px 12px rgba(0, 0, 0, 0.5), 0 28px 56px -14px rgba(0, 0, 0, 0.7);
 
   color-scheme: dark;
 }
 
+/* ── Reset & base ───────────────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
 }
@@ -113,17 +180,30 @@ body {
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--color-paper);
+  /* Trama washi: due aloni radiali agli angoli, impercettibili. */
+  background-image:
+    radial-gradient(60rem 60rem at 100% -10%, var(--texture-a), transparent 60%),
+    radial-gradient(50rem 50rem at -10% 110%, var(--texture-b), transparent 60%);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-size: 15px;
-  line-height: 1.55;
+  line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
-  /* Transizione morbida al cambio tema (disattivata da prefers-reduced-motion) */
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings:
+    'cv05' 1,
+    'ss01' 1;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
 #root {
@@ -138,22 +218,26 @@ h3,
 h4 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: var(--leading-tight);
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
 }
 
 p {
   margin: 0;
+  text-wrap: pretty;
 }
 
 a {
   color: var(--color-seal);
   text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
 a:hover {
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 button,
@@ -164,10 +248,39 @@ textarea {
   font-size: inherit;
 }
 
+/* Selezione testo in tinta brand */
+::selection {
+  background: color-mix(in srgb, var(--color-gold) 32%, transparent);
+  color: var(--color-ink);
+}
+
 /* Focus visibile e coerente in tutta l'app (accessibilità) */
 :focus-visible {
   outline: 2px solid var(--color-gold);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Scrollbar discreta e coerente col tema (WebKit + Firefox) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
 }
 
 /* Rispetta le preferenze utente su movimento ridotto */
@@ -178,9 +291,11 @@ textarea {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
+/* ── Utilità ────────────────────────────────────────────────────────────── */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -191,4 +306,16 @@ textarea {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Entrata standard riutilizzabile per superfici (pagine, card, modali) */
+@keyframes surface-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

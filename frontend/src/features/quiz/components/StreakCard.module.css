@@ -4,11 +4,14 @@
   gap: var(--space-3);
 }
 
-/* Sfumatura calda quando la streak è accesa. */
+/* Aura calda quando la streak è accesa. */
 .acceso {
-  border-color: var(--color-seal);
-  background:
-    linear-gradient(180deg, var(--color-warning-bg) 0%, var(--color-paper) 70%);
+  border-color: color-mix(in srgb, var(--color-seal) 45%, var(--color-border));
+  background: linear-gradient(
+    180deg,
+    var(--color-warning-bg) 0%,
+    var(--color-surface) 72%
+  );
 }
 
 .intestazione {
@@ -20,6 +23,8 @@
 .fiamma {
   font-size: 2.6rem;
   line-height: 1;
+  filter: drop-shadow(0 2px 4px color-mix(in srgb, var(--color-seal) 40%, transparent));
+  animation: flame-flicker 2.2s var(--ease-in-out) infinite;
 }
 
 .numeri {
@@ -30,19 +35,20 @@
 
 .valore {
   font-family: var(--font-display);
-  font-size: 2.4rem;
+  font-size: var(--text-3xl);
   font-weight: 700;
   color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .unita {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
 }
 
 .messaggio {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--text-md);
   color: var(--color-ink);
 }
 
@@ -55,23 +61,35 @@
 }
 
 .record {
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   color: var(--color-text-muted);
 }
 
 .stato {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   padding: 2px 10px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
 }
 
 .statoOk {
   color: var(--color-matcha-dark);
   background: var(--color-success-bg);
+  border: 1px solid color-mix(in srgb, var(--color-matcha) 22%, transparent);
 }
 
 .statoRischio {
   color: var(--color-warning);
   background: var(--color-warning-bg);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 28%, transparent);
+}
+
+@keyframes flame-flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1.08) rotate(1deg);
+  }
 }

@@ -1,4 +1,4 @@
-/* ── Form (modal) ── */
+/* ── Form (modal) ──────────────────────────────────────────────────────── */
 .form {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   gap: var(--space-4);
 }
 
-/* ── Lista aule ── */
+/* ── Lista aule ────────────────────────────────────────────────────────── */
 .pageHeader {
   display: flex;
   align-items: flex-start;
@@ -23,7 +23,7 @@
 
 .pageTitle {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: var(--text-2xl);
   color: var(--color-ink);
   margin: 0 0 var(--space-1);
 }
@@ -48,23 +48,44 @@
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  overflow: hidden;
+  transition:
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+/* Filetto colorato dell'aula sul bordo superiore (impostato inline via --aula-color) */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background-color: var(--aula-color, var(--color-seal));
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
 }
 
 .card:hover {
-  box-shadow: var(--shadow-elevated);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+  border-color: var(--color-border-strong);
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .cardHead {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .colorDot {
@@ -72,11 +93,13 @@
   height: 0.9rem;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--aula-color, var(--color-seal)) 18%, transparent);
 }
 
 .cardTitle {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--color-ink);
   margin: 0;
   flex: 1;
@@ -84,10 +107,12 @@
 
 .cardText {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -102,11 +127,14 @@
   display: flex;
   gap: var(--space-4);
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
   margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
 }
 
-/* ── Dettaglio ── */
+/* ── Dettaglio ─────────────────────────────────────────────────────────── */
 .detailHeader {
   display: flex;
   align-items: flex-start;
@@ -122,15 +150,28 @@
 }
 
 .backLink {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   color: var(--color-text-muted);
   text-decoration: none;
   margin-bottom: var(--space-4);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    gap var(--dur-fast) var(--ease-out);
+}
+
+.backLink::before {
+  content: '←';
+  font-size: 1.1em;
+  line-height: 1;
 }
 
 .backLink:hover {
   color: var(--color-ink);
+  gap: var(--space-2);
+  text-decoration: none;
 }
 
 .panels {
@@ -142,7 +183,7 @@
 
 .panelTitle {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
   color: var(--color-ink);
   margin: 0 0 var(--space-3);
 }
@@ -153,7 +194,6 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
 }
 
 .memberRow {
@@ -161,8 +201,18 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-2) 0;
+  padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.memberRow:last-child {
+  border-bottom: none;
+}
+
+.memberRow:hover {
+  background-color: var(--color-paper-dim);
 }
 
 .memberName {
@@ -174,7 +224,7 @@
 .memberEmail {
   display: block;
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
 }
 
 .emptyText {
@@ -204,7 +254,8 @@
 
 .pageInfo {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 720px) {

@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   useAuthStore,
@@ -21,6 +22,26 @@ const Header = () => {
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
   const isTeacher = useAuthStore(selectIsTeacher);
   const logoutMutation = useLogout();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Con il drawer aperto: chiusura con Esc e blocco dello scroll di fondo.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
+  // Classi del NavLink con stato attivo (UX + a11y).
+  const navLinkClass = ({ isActive }) =>
+    [styles.navLink, isActive ? styles.navLinkActive : ''].filter(Boolean).join(' ');
 
   const handleLogout = async () => {
     try {
@@ -46,41 +67,56 @@ const Header = () => {
         </Link>
 
         {isAuthenticated && (
-          <nav className={styles.nav} aria-label={t('nav.mainNavAria')}>
-            <Link to={ROUTES.DASHBOARD} className={styles.navLink}>
+          <nav
+            id="main-nav"
+            className={[styles.nav, menuOpen ? styles.navOpen : '']
+              .filter(Boolean)
+              .join(' ')}
+            aria-label={t('nav.mainNavAria')}
+            onClick={() => setMenuOpen(false)}
+          >
+            <button
+              type="button"
+              className={styles.navClose}
+              onClick={() => setMenuOpen(false)}
+              aria-label={t('nav.closeMenu', 'Chiudi menu')}
+            >
+              ×
+            </button>
+            <NavLink to={ROUTES.DASHBOARD} className={navLinkClass}>
               {t('nav.dashboard')}
-            </Link>
-            <Link to={ROUTES.QUIZ} className={styles.navLink}>
+            </NavLink>
+            <NavLink to={ROUTES.QUIZ} className={navLinkClass}>
               {t('nav.quiz')}
-            </Link>
+            </NavLink>
             {user?.ruolo === 'studente' && (
-              <Link to={ROUTES.COMPITI_STUDENTE} className={styles.navLink}>
+              <NavLink to={ROUTES.COMPITI_STUDENTE} className={navLinkClass}>
                 {t('nav.compitiStudente')}
-              </Link>
+              </NavLink>
             )}
-            <Link to={ROUTES.PROFILE} className={styles.navLink}>
+            <NavLink to={ROUTES.PROFILE} className={navLinkClass}>
               {t('nav.profile')}
-            </Link>
+            </NavLink>
             <MessaggiNavLink className={styles.navLink} />
             {isTeacher && (
-              <Link to={ROUTES.AULE} className={styles.navLink}>
+              <NavLink to={ROUTES.AULE} className={navLinkClass}>
                 {t('nav.aule')}
-              </Link>
+              </NavLink>
             )}
             {isTeacher && (
-              <Link to={ROUTES.COMPITI} className={styles.navLink}>
+              <NavLink to={ROUTES.COMPITI} className={navLinkClass}>
                 {t('nav.compiti')}
-              </Link>
+              </NavLink>
             )}
             {isTeacher && (
-              <Link to={ROUTES.TEACHER_DASHBOARD} className={styles.navLink}>
+              <NavLink to={ROUTES.TEACHER_DASHBOARD} className={navLinkClass}>
                 {t('nav.statistiche')}
-              </Link>
+              </NavLink>
             )}
             {isTeacher && (
-              <Link to={ROUTES.USERS_MANAGEMENT} className={styles.navLink}>
+              <NavLink to={ROUTES.USERS_MANAGEMENT} className={navLinkClass}>
                 {t('nav.usersManagement')}
-              </Link>
+              </NavLink>
             )}
           </nav>
         )}
@@ -103,15 +139,33 @@ const Header = () => {
               </Button>
             </>
           ) : (
-            <>
-              <Link to={ROUTES.LOGIN} className={styles.navLink}>
-                {t('nav.login')}
-              </Link>
-  
-            </>
+            <Link to={ROUTES.LOGIN} className={styles.navLink}>
+              {t('nav.login')}
+            </Link>
           )}
         </div>
+
+        {isAuthenticated && (
+          <button
+            type="button"
+            className={styles.menuButton}
+            aria-label={t('nav.mainNavAria')}
+            aria-controls="main-nav"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className={styles.menuIcon} aria-hidden="true" />
+          </button>
+        )}
       </div>
+
+      {menuOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
     </header>
   );
 };

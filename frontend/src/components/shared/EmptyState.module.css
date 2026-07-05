@@ -5,25 +5,36 @@
   text-align: center;
   padding: var(--space-10) var(--space-6);
   color: var(--color-text-muted);
+  animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
+/* Mark a medaglione: kanji/segno dentro un cerchio di carta */
 .mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
   font-family: var(--font-display);
-  font-size: 2.5rem;
-  color: var(--color-border-strong);
-  margin-bottom: var(--space-4);
+  font-size: 2.25rem;
+  color: var(--color-seal);
+  background: var(--color-seal-soft);
+  border: 1px solid color-mix(in srgb, var(--color-seal) 18%, transparent);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-5);
   line-height: 1;
 }
 
 .title {
-  font-size: 1.0625rem;
+  font-size: var(--text-lg);
   color: var(--color-ink);
   margin-bottom: var(--space-2);
 }
 
 .description {
-  font-size: 0.875rem;
+  font-size: var(--text-base);
   max-width: 32rem;
+  line-height: var(--leading-normal);
   margin-bottom: var(--space-5);
 }
 
