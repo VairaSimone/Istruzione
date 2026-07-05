@@ -52,6 +52,49 @@ export const INVITE_ROLES = Object.freeze({
 
 export const CLASSI = Object.freeze(['Prima', 'Seconda', 'Terza', 'Quarta', 'Quinta']);
 
+/**
+ * Livelli JLPT usati dalle aule virtuali (modello `Classe.LIVELLI_JLPT`) e dai
+ * compiti. Ordinati dal più elementare (N5) al più avanzato (N1).
+ */
+export const LIVELLI_JLPT = Object.freeze(['N5', 'N4', 'N3', 'N2', 'N1']);
+
+/** Tipi di attività assegnabili in un compito (modello `Compito.TIPI_ATTIVITA`). */
+export const TIPI_ATTIVITA_COMPITO = Object.freeze([
+  'quiz_kana',
+  'quiz_kanji',
+  'tracciamento',
+  'vocabolario',
+]);
+
+/** Stato di pubblicazione del compito (modello `Compito.STATI_COMPITO`). */
+export const STATI_COMPITO = Object.freeze(['bozza', 'pubblicato', 'archiviato']);
+
+/** Stato del compito PER STUDENTE (derivato lato backend). */
+export const STATI_COMPITO_STUDENTE = Object.freeze([
+  'assegnato',
+  'in_scadenza',
+  'scaduto',
+  'completato',
+]);
+
+/** Alfabeti kana (per la configurazione dei quiz kana). */
+export const ALFABETI_KANA = Object.freeze(['hiragana', 'katakana']);
+
+/** Tipi di messaggio (modello `Messaggio.TIPI_MESSAGGIO`). */
+export const TIPI_MESSAGGIO = Object.freeze([
+  'messaggio',
+  'incoraggiamento',
+  'feedback',
+  'nota_privata',
+]);
+
+/** Tipi selezionabili in composizione (il feedback si crea dai compiti). */
+export const TIPI_MESSAGGIO_COMPONIBILI = Object.freeze([
+  'messaggio',
+  'incoraggiamento',
+  'nota_privata',
+]);
+
 export const LINGUE = Object.freeze({
   IT: 'it',
   EN: 'en',

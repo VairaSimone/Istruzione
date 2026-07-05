@@ -15,6 +15,15 @@ import VerifyEmailChangePage from '../pages/VerifyEmailChangePage';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import QuizPage from '../pages/QuizPage';
+import AuleListPage from '../pages/AuleListPage';
+import AulaDetailPage from '../pages/AulaDetailPage';
+import CompitiListPage from '../pages/CompitiListPage';
+import CompitoDetailPage from '../pages/CompitoDetailPage';
+import CompitiStudentePage from '../pages/CompitiStudentePage';
+import CompitoStudenteDetailPage from '../pages/CompitoStudenteDetailPage';
+import TeacherDashboardPage from '../pages/TeacherDashboardPage';
+import MessaggiPage from '../pages/MessaggiPage';
+import MessaggioDetailPage from '../pages/MessaggioDetailPage';
 import UsersManagementPage from '../pages/UsersManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ForbiddenPage from '../pages/ForbiddenPage';
@@ -51,12 +60,21 @@ export const router = createBrowserRouter([
           { path: ROUTES.DASHBOARD, element: <DashboardPage /> },
           { path: ROUTES.PROFILE, element: <ProfilePage /> },
           { path: ROUTES.QUIZ, element: <QuizPage /> },
+          { path: ROUTES.COMPITI_STUDENTE, element: <CompitiStudentePage /> },
+          { path: ROUTES.COMPITO_STUDENTE_DETAIL, element: <CompitoStudenteDetailPage /> },
+          { path: ROUTES.MESSAGGI, element: <MessaggiPage /> },
+          { path: ROUTES.MESSAGGIO_DETAIL, element: <MessaggioDetailPage /> },
         ],
       },
       // ── Route protette, insegnante o admin ───────────────
       {
         element: <ProtectedRoute allowedRoles={[ROLES.INSEGNANTE, ROLES.ADMIN]} />,
         children: [
+          { path: ROUTES.AULE, element: <AuleListPage /> },
+          { path: ROUTES.AULA_DETAIL, element: <AulaDetailPage /> },
+          { path: ROUTES.COMPITI, element: <CompitiListPage /> },
+          { path: ROUTES.COMPITO_DETAIL, element: <CompitoDetailPage /> },
+          { path: ROUTES.TEACHER_DASHBOARD, element: <TeacherDashboardPage /> },
           { path: ROUTES.USERS_MANAGEMENT, element: <UsersManagementPage /> },
           { path: ROUTES.INVITES_MANAGEMENT, element: <InvitesManagementPage /> },
         ],

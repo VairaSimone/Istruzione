@@ -6,7 +6,14 @@
     "retry": "Riprova",
     "delete": "Elimina",
     "loading": "Caricamento in corso",
-    "selectPlaceholder": "Seleziona…"
+    "selectPlaceholder": "Seleziona…",
+    "close": "Chiudi",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "edit": "Modifica",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "pageOf": "Pagina {{page}} di {{total}}"
   },
   "language": {
     "label": "Lingua",
@@ -45,7 +52,12 @@
     "register": "Registrati",
     "logout": "Esci",
     "mainNavAria": "Navigazione principale",
-    "quiz": "Quiz"
+    "quiz": "Quiz",
+    "aule": "Aule",
+    "compiti": "Compiti",
+    "compitiStudente": "I miei compiti",
+    "statistiche": "Statistiche",
+    "messaggi": "Messaggi"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -273,7 +285,21 @@
       "GOOGLE_NO_EMAIL": "Il profilo Google non espone un'email: impossibile completare l'accesso.",
       "INVALID_LANGUAGE": "Lingua non supportata.",
       "EMPTY_TRAINING_POOL": "Nessun carattere problematico: completa prima qualche quiz.",
-      "INVALID_ALPHABET": "Alfabeto non valido."
+      "INVALID_ALPHABET": "Alfabeto non valido.",
+      "CLASSE_NOT_FOUND": "Aula non trovata.",
+      "ALREADY_MEMBER": "L'utente fa già parte di questa aula.",
+      "INVALID_MEMBER_ROLE": "L'utente indicato non ha il ruolo richiesto.",
+      "USER_NOT_ACTIVE": "L'utente indicato non è attivo.",
+      "COMPITO_NOT_FOUND": "Compito non trovato.",
+      "ASSIGNMENT_NOT_FOUND": "Assegnazione non trovata.",
+      "ALREADY_ASSIGNED": "Questo destinatario è già assegnato al compito.",
+      "INVALID_ASSIGNMENT_TARGET": "Specificare esattamente uno tra aula e studente.",
+      "DELIVERY_NOT_FOUND": "Lo studente non ha ancora consegnato questo compito.",
+      "SCORE_OUT_OF_RANGE": "Il punteggio non può superare il massimo del compito.",
+      "MESSAGE_NOT_FOUND": "Messaggio non trovato.",
+      "REPLIES_DISABLED": "Le risposte non sono consentite per questo messaggio.",
+      "NO_RECIPIENT": "Il destinatario della risposta non è più disponibile.",
+      "INVALID_MESSAGE_TARGET": "Specificare esattamente uno tra aula e studente."
     }
   },
   "validation": {
@@ -563,6 +589,300 @@
       "knew": "Lo sapevo",
       "didNotKnow": "Non lo sapevo",
       "wrong": "Continua ad allenarti"
+    }
+  },
+  "aule": {
+    "archived": "Archiviata",
+    "validation": {
+      "nomeLength": "Il nome dell'aula deve avere tra 2 e 120 caratteri",
+      "descrizioneMax": "La descrizione non può superare i 5000 caratteri",
+      "annoFormato": "L'anno scolastico deve essere nel formato AAAA/AAAA (es. 2025/2026)",
+      "livello": "Livello JLPT non valido",
+      "colore": "Il colore deve essere esadecimale (es. #4F46E5)"
+    },
+    "form": {
+      "createTitle": "Nuova aula",
+      "editTitle": "Modifica aula",
+      "createSubmit": "Crea aula",
+      "nome": "Nome",
+      "descrizione": "Descrizione",
+      "annoScolastico": "Anno scolastico",
+      "livelloJLPT": "Livello JLPT",
+      "livelloNessuno": "Nessun livello",
+      "colore": "Colore",
+      "coloreHint": "Colore identificativo esadecimale (facoltativo)"
+    },
+    "toast": {
+      "created": "Aula creata con successo.",
+      "updated": "Aula aggiornata con successo.",
+      "deleted": "Aula eliminata con successo.",
+      "studentAdded": "Studente {{email}} aggiunto.",
+      "studentRemoved": "Studente rimosso.",
+      "teacherAdded": "Insegnante {{email}} aggiunto.",
+      "teacherRemoved": "Insegnante rimosso.",
+      "studentInvited": "Invito inviato a {{email}}."
+    },
+    "card": {
+      "studenti": "{{n}} studenti",
+      "insegnanti": "{{n}} insegnanti"
+    },
+    "list": {
+      "title": "Le mie aule",
+      "subtitle": "Crea e gestisci le classi virtuali dei tuoi studenti.",
+      "create": "Nuova aula",
+      "search": "Cerca",
+      "searchPlaceholder": "Nome dell'aula…",
+      "allLevels": "Tutti i livelli",
+      "statusFilter": "Stato",
+      "statusAll": "Tutte",
+      "statusActive": "Attive",
+      "statusArchived": "Archiviate",
+      "empty": "Nessuna aula trovata. Creane una per iniziare.",
+      "loadError": "Impossibile caricare le aule."
+    },
+    "detail": {
+      "back": "Torna alle aule",
+      "teachers": "Insegnanti",
+      "students": "Studenti",
+      "noTeachers": "Nessun insegnante.",
+      "noStudents": "Nessuno studente in questa aula.",
+      "addTitle": "Aggiungi o invita membri",
+      "addStudent": "Aggiungi studente registrato (email)",
+      "addTeacher": "Aggiungi co-insegnante (email)",
+      "inviteStudent": "Invita nuovo studente (email)",
+      "invite": "Invita",
+      "emailPlaceholder": "email@esempio.it",
+      "deleteConfirm": "Eliminare definitivamente questa aula? L'operazione non è reversibile.",
+      "loadError": "Impossibile caricare l'aula.",
+      "statistics": "Statistiche"
+    }
+  },
+  "compiti": {
+    "tipi": {
+      "quiz_kana": "Quiz Kana",
+      "quiz_kanji": "Quiz Kanji",
+      "tracciamento": "Tracciamento",
+      "vocabolario": "Vocabolario"
+    },
+    "stati": {
+      "bozza": "Bozza",
+      "pubblicato": "Pubblicato",
+      "archiviato": "Archiviato"
+    },
+    "statiStudente": {
+      "assegnato": "Assegnato",
+      "in_scadenza": "In scadenza",
+      "scaduto": "Scaduto",
+      "completato": "Completato"
+    },
+    "alfabeti": {
+      "hiragana": "Hiragana",
+      "katakana": "Katakana"
+    },
+    "validation": {
+      "titoloLength": "Il titolo deve avere tra 2 e 160 caratteri",
+      "tipo": "Tipo di attività non valido",
+      "scadenzaRequired": "La data di scadenza è obbligatoria",
+      "tempoLimite": "Il tempo limite deve essere tra 1 e 1440 minuti",
+      "punteggioMassimo": "Il punteggio massimo deve essere tra 1 e 1000",
+      "stato": "Stato non valido",
+      "numeroDomande": "Il numero di domande deve essere tra 1 e 200",
+      "punteggio": "Il punteggio deve essere tra 0 e 1000",
+      "tempoImpiegato": "Il tempo impiegato deve essere tra 0 e 86400 secondi"
+    },
+    "form": {
+      "createTitle": "Nuovo compito",
+      "editTitle": "Modifica compito",
+      "createSubmit": "Crea compito",
+      "titolo": "Titolo",
+      "descrizione": "Descrizione",
+      "tipoAttivita": "Tipo di attività",
+      "tipoPlaceholder": "Seleziona un tipo",
+      "stato": "Stato",
+      "dataScadenza": "Data di scadenza",
+      "punteggioMassimo": "Punteggio massimo",
+      "tempoLimite": "Tempo limite (minuti)",
+      "tempoLimiteHint": "Facoltativo",
+      "configTitle": "Configurazione attività",
+      "alfabeto": "Alfabeto",
+      "livelloJLPT": "Livello JLPT",
+      "numeroDomande": "Numero di domande",
+      "qualsiasi": "Qualsiasi"
+    },
+    "toast": {
+      "created": "Compito creato con successo.",
+      "updated": "Compito aggiornato con successo.",
+      "deleted": "Compito eliminato con successo.",
+      "assigned": "Compito assegnato con successo.",
+      "unassigned": "Assegnazione rimossa.",
+      "graded": "Consegna valutata con successo."
+    },
+    "card": {
+      "scadenza": "Scadenza: {{data}}",
+      "assegnazioni": "{{classi}} aule · {{studenti}} studenti",
+      "completati": "{{n}} completati"
+    },
+    "list": {
+      "title": "Compiti",
+      "subtitle": "Crea e assegna attività ai tuoi studenti.",
+      "create": "Nuovo compito",
+      "search": "Cerca",
+      "searchPlaceholder": "Titolo del compito…",
+      "allStates": "Tutti gli stati",
+      "allTypes": "Tutti i tipi",
+      "empty": "Nessun compito trovato. Creane uno per iniziare.",
+      "loadError": "Impossibile caricare i compiti."
+    },
+    "assegna": {
+      "title": "Assegna compito",
+      "submit": "Assegna",
+      "toClass": "A un’aula",
+      "toStudent": "A uno studente",
+      "aula": "Aula",
+      "selectAula": "Seleziona un’aula",
+      "studente": "Studente",
+      "selectStudente": "Seleziona uno studente"
+    },
+    "detail": {
+      "back": "Torna ai compiti",
+      "assignmentsTitle": "Destinatari",
+      "assign": "Assegna",
+      "noAssignments": "Nessun destinatario. Assegna il compito a un’aula o a uno studente.",
+      "type_classe": "Aula",
+      "type_studente": "Studente",
+      "submissionsTitle": "Consegne",
+      "submissionsError": "Impossibile caricare le consegne.",
+      "noSubmissions": "Nessun destinatario per questo compito.",
+      "notSubmittedYet": "Lo studente non ha ancora consegnato.",
+      "grade": "Valuta",
+      "score": "Punteggio: {{punteggio}}/{{max}}",
+      "deleteConfirm": "Eliminare definitivamente questo compito?",
+      "loadError": "Impossibile caricare il compito.",
+      "statDestinatari": "Destinatari",
+      "statCompletati": "Completati",
+      "statPercentuale": "Completamento",
+      "statPunteggio": "Punteggio max"
+    },
+    "valuta": {
+      "title": "Valuta: {{nome}}",
+      "submit": "Salva valutazione",
+      "punteggio": "Punteggio (max {{max}})",
+      "feedback": "Feedback"
+    },
+    "studente": {
+      "title": "I miei compiti",
+      "subtitle": "Compiti assegnati, in scadenza, scaduti e completati.",
+      "all": "Tutti",
+      "empty": "Nessun compito in questa categoria.",
+      "loadError": "Impossibile caricare i compiti.",
+      "back": "Torna ai miei compiti",
+      "submitTitle": "Consegna il compito",
+      "resubmitTitle": "Aggiorna la consegna",
+      "submitHint": "Segna il compito come completato indicando, se vuoi, punteggio e tempo impiegato.",
+      "punteggio": "Punteggio ottenuto (max {{max}})",
+      "tempo": "Tempo impiegato (secondi)",
+      "submit": "Consegna",
+      "resubmit": "Aggiorna consegna",
+      "submitSuccess": "Compito consegnato con successo.",
+      "tempoLimite": "Tempo limite: {{minuti}} minuti",
+      "feedbackTitle": "Feedback dell’insegnante"
+    }
+  },
+  "teacherDashboard": {
+    "title": "Statistiche",
+    "subtitle": "Andamento aggregato dei tuoi studenti.",
+    "aulaLabel": "Aula",
+    "allClassrooms": "Tutte le mie aule",
+    "periodLabel": "Periodo",
+    "lastDays": "Ultimi {{n}} giorni",
+    "loadError": "Impossibile caricare le statistiche.",
+    "noData": "Nessun dato disponibile.",
+    "studentiTotali": "Studenti totali",
+    "studentiAttivi": "Studenti attivi",
+    "studentiInattivi": "Studenti inattivi",
+    "progressoMedio": "Progresso medio",
+    "successoMedio": "Successo medio",
+    "eserciziCompletati": "Esercizi completati",
+    "giorniStudioMedi": "Giorni di studio medi",
+    "quizSection": "Quiz",
+    "quizCompletati": "Quiz completati",
+    "mediaVoti": "Media voti",
+    "mediaErrori": "Media errori",
+    "successoQuiz": "Successo quiz",
+    "tempoNota": "Il tempo effettivo di studio non è tracciato: \"Giorni di studio medi\" ne è la stima disponibile.",
+    "kanjiSection": "Kanji",
+    "kanjiPiuSbagliati": "Kanji più sbagliati",
+    "kanjiPiuStudiati": "Kanji più studiati",
+    "kanjiMaiCompletati": "Kanji mai completati",
+    "kanaSection": "Kana",
+    "hiraganaProblematici": "Hiragana problematici",
+    "katakanaProblematici": "Katakana problematici",
+    "classificaSection": "Classifiche",
+    "migliori": "Migliori risultati",
+    "inDifficolta": "Studenti in difficoltà",
+    "inattivi": "Studenti inattivi",
+    "errori": "{{n}} errori",
+    "tentativi": "{{n}} tentativi",
+    "xpProgresso": "{{xp}} XP · {{prog}}%",
+    "erroriPercento": "{{n}}% errori",
+    "mai": "Mai"
+  },
+  "messaggi": {
+    "title": "Messaggi",
+    "subtitle": "Comunicazioni, feedback e note.",
+    "unreadAria": "{{n}} messaggi non letti",
+    "from": "Da: {{nome}}",
+    "about": "Su: {{nome}}",
+    "readCount": "Letti {{letti}}/{{tot}}",
+    "noSubject": "(senza oggetto)",
+    "onlyUnread": "Solo non letti",
+    "loadError": "Impossibile caricare i messaggi.",
+    "empty": "Nessun messaggio.",
+    "tabs": {
+      "ricevuti": "Ricevuti",
+      "inviati": "Inviati",
+      "note": "Note"
+    },
+    "tipi": {
+      "messaggio": "Messaggio",
+      "incoraggiamento": "Incoraggiamento",
+      "feedback": "Feedback",
+      "nota_privata": "Nota privata"
+    },
+    "validation": {
+      "oggettoMax": "L'oggetto non può superare i 160 caratteri",
+      "corpoRequired": "Il messaggio non può essere vuoto",
+      "corpoMax": "Il messaggio non può superare i 5000 caratteri"
+    },
+    "compose": {
+      "new": "Nuovo messaggio",
+      "title": "Nuovo messaggio",
+      "submit": "Invia",
+      "tipo": "Tipo",
+      "toClass": "A un'aula",
+      "toStudent": "A uno studente",
+      "aula": "Aula",
+      "aulaNota": "Aula (per scegliere lo studente)",
+      "selectAula": "Seleziona un'aula",
+      "studente": "Studente",
+      "studenteNota": "Studente di riferimento (facoltativo)",
+      "selectStudente": "Seleziona uno studente",
+      "oggetto": "Oggetto",
+      "corpo": "Messaggio",
+      "consentiRisposte": "Consenti risposte",
+      "selectTargetError": "Seleziona un destinatario.",
+      "success": "Messaggio inviato con successo."
+    },
+    "detail": {
+      "back": "Torna ai messaggi",
+      "replyLabel": "La tua risposta",
+      "reply": "Rispondi",
+      "replySuccess": "Risposta inviata con successo.",
+      "thread": "Risposte ({{n}})",
+      "deleteConfirm": "Eliminare definitivamente questo messaggio?",
+      "deleted": "Messaggio eliminato.",
+      "unknownSender": "Mittente sconosciuto",
+      "loadError": "Impossibile caricare il messaggio."
     }
   }
 }

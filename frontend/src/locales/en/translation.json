@@ -6,7 +6,14 @@
     "retry": "Retry",
     "delete": "Delete",
     "loading": "Loading",
-    "selectPlaceholder": "Select…"
+    "selectPlaceholder": "Select…",
+    "close": "Close",
+    "add": "Add",
+    "remove": "Remove",
+    "edit": "Edit",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}"
   },
   "language": {
     "label": "Language",
@@ -49,7 +56,12 @@
     "quiz": "Quiz",
     "invitesManagement": "Invites",
     "teacherRequests": "Applications",
-    "teacherRequest": "Apply"
+    "teacherRequest": "Apply",
+    "aule": "Classrooms",
+    "compiti": "Assignments",
+    "compitiStudente": "My assignments",
+    "statistiche": "Statistics",
+    "messaggi": "Messages"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -327,7 +339,21 @@
       "ADMIN_ROLE_FORBIDDEN": "This operation is reserved for administrators.",
       "LAST_ADMIN": "You cannot delete or demote the last administrator.",
       "EMPTY_TRAINING_POOL": "No problem characters yet — play a few quizzes first.",
-      "INVALID_ALPHABET": "Invalid alphabet."
+      "INVALID_ALPHABET": "Invalid alphabet.",
+      "CLASSE_NOT_FOUND": "Classroom not found.",
+      "ALREADY_MEMBER": "The user is already a member of this classroom.",
+      "INVALID_MEMBER_ROLE": "The specified user does not have the required role.",
+      "USER_NOT_ACTIVE": "The specified user is not active.",
+      "COMPITO_NOT_FOUND": "Assignment not found.",
+      "ASSIGNMENT_NOT_FOUND": "Assignment target not found.",
+      "ALREADY_ASSIGNED": "This recipient is already assigned to the task.",
+      "INVALID_ASSIGNMENT_TARGET": "Specify exactly one between classroom and student.",
+      "DELIVERY_NOT_FOUND": "The student has not submitted this assignment yet.",
+      "SCORE_OUT_OF_RANGE": "The score cannot exceed the assignment maximum.",
+      "MESSAGE_NOT_FOUND": "Message not found.",
+      "REPLIES_DISABLED": "Replies are not allowed for this message.",
+      "NO_RECIPIENT": "The reply recipient is no longer available.",
+      "INVALID_MESSAGE_TARGET": "Specify exactly one between classroom and student."
     }
   },
   "validation": {
@@ -672,6 +698,300 @@
       "confirmRejectDescription": "{{name}}'s application will be rejected and access will remain denied.",
       "emptyTitle": "No applications",
       "emptyDescription": "There are no teacher applications for the selected filter."
+    }
+  },
+  "aule": {
+    "archived": "Archived",
+    "validation": {
+      "nomeLength": "The classroom name must be between 2 and 120 characters",
+      "descrizioneMax": "The description cannot exceed 5000 characters",
+      "annoFormato": "The school year must be in the format YYYY/YYYY (e.g. 2025/2026)",
+      "livello": "Invalid JLPT level",
+      "colore": "The colour must be a hex value (e.g. #4F46E5)"
+    },
+    "form": {
+      "createTitle": "New classroom",
+      "editTitle": "Edit classroom",
+      "createSubmit": "Create classroom",
+      "nome": "Name",
+      "descrizione": "Description",
+      "annoScolastico": "School year",
+      "livelloJLPT": "JLPT level",
+      "livelloNessuno": "No level",
+      "colore": "Colour",
+      "coloreHint": "Optional hex identifier colour"
+    },
+    "toast": {
+      "created": "Classroom created successfully.",
+      "updated": "Classroom updated successfully.",
+      "deleted": "Classroom deleted successfully.",
+      "studentAdded": "Student {{email}} added.",
+      "studentRemoved": "Student removed.",
+      "teacherAdded": "Teacher {{email}} added.",
+      "teacherRemoved": "Teacher removed.",
+      "studentInvited": "Invitation sent to {{email}}."
+    },
+    "card": {
+      "studenti": "{{n}} students",
+      "insegnanti": "{{n}} teachers"
+    },
+    "list": {
+      "title": "My classrooms",
+      "subtitle": "Create and manage your students’ virtual classrooms.",
+      "create": "New classroom",
+      "search": "Search",
+      "searchPlaceholder": "Classroom name…",
+      "allLevels": "All levels",
+      "statusFilter": "Status",
+      "statusAll": "All",
+      "statusActive": "Active",
+      "statusArchived": "Archived",
+      "empty": "No classrooms found. Create one to get started.",
+      "loadError": "Unable to load classrooms."
+    },
+    "detail": {
+      "back": "Back to classrooms",
+      "teachers": "Teachers",
+      "students": "Students",
+      "noTeachers": "No teachers.",
+      "noStudents": "No students in this classroom.",
+      "addTitle": "Add or invite members",
+      "addStudent": "Add registered student (email)",
+      "addTeacher": "Add co-teacher (email)",
+      "inviteStudent": "Invite new student (email)",
+      "invite": "Invite",
+      "emailPlaceholder": "email@example.com",
+      "deleteConfirm": "Permanently delete this classroom? This action cannot be undone.",
+      "loadError": "Unable to load the classroom.",
+      "statistics": "Statistics"
+    }
+  },
+  "compiti": {
+    "tipi": {
+      "quiz_kana": "Kana quiz",
+      "quiz_kanji": "Kanji quiz",
+      "tracciamento": "Tracing",
+      "vocabolario": "Vocabulary"
+    },
+    "stati": {
+      "bozza": "Draft",
+      "pubblicato": "Published",
+      "archiviato": "Archived"
+    },
+    "statiStudente": {
+      "assegnato": "Assigned",
+      "in_scadenza": "Due soon",
+      "scaduto": "Overdue",
+      "completato": "Completed"
+    },
+    "alfabeti": {
+      "hiragana": "Hiragana",
+      "katakana": "Katakana"
+    },
+    "validation": {
+      "titoloLength": "The title must be between 2 and 160 characters",
+      "tipo": "Invalid activity type",
+      "scadenzaRequired": "The due date is required",
+      "tempoLimite": "The time limit must be between 1 and 1440 minutes",
+      "punteggioMassimo": "The maximum score must be between 1 and 1000",
+      "stato": "Invalid status",
+      "numeroDomande": "The number of questions must be between 1 and 200",
+      "punteggio": "The score must be between 0 and 1000",
+      "tempoImpiegato": "The time spent must be between 0 and 86400 seconds"
+    },
+    "form": {
+      "createTitle": "New assignment",
+      "editTitle": "Edit assignment",
+      "createSubmit": "Create assignment",
+      "titolo": "Title",
+      "descrizione": "Description",
+      "tipoAttivita": "Activity type",
+      "tipoPlaceholder": "Select a type",
+      "stato": "Status",
+      "dataScadenza": "Due date",
+      "punteggioMassimo": "Maximum score",
+      "tempoLimite": "Time limit (minutes)",
+      "tempoLimiteHint": "Optional",
+      "configTitle": "Activity configuration",
+      "alfabeto": "Alphabet",
+      "livelloJLPT": "JLPT level",
+      "numeroDomande": "Number of questions",
+      "qualsiasi": "Any"
+    },
+    "toast": {
+      "created": "Assignment created successfully.",
+      "updated": "Assignment updated successfully.",
+      "deleted": "Assignment deleted successfully.",
+      "assigned": "Assignment assigned successfully.",
+      "unassigned": "Assignment target removed.",
+      "graded": "Submission graded successfully."
+    },
+    "card": {
+      "scadenza": "Due: {{data}}",
+      "assegnazioni": "{{classi}} classrooms · {{studenti}} students",
+      "completati": "{{n}} completed"
+    },
+    "list": {
+      "title": "Assignments",
+      "subtitle": "Create and assign activities to your students.",
+      "create": "New assignment",
+      "search": "Search",
+      "searchPlaceholder": "Assignment title…",
+      "allStates": "All statuses",
+      "allTypes": "All types",
+      "empty": "No assignments found. Create one to get started.",
+      "loadError": "Unable to load assignments."
+    },
+    "assegna": {
+      "title": "Assign task",
+      "submit": "Assign",
+      "toClass": "To a classroom",
+      "toStudent": "To a student",
+      "aula": "Classroom",
+      "selectAula": "Select a classroom",
+      "studente": "Student",
+      "selectStudente": "Select a student"
+    },
+    "detail": {
+      "back": "Back to assignments",
+      "assignmentsTitle": "Recipients",
+      "assign": "Assign",
+      "noAssignments": "No recipients. Assign the task to a classroom or a student.",
+      "type_classe": "Classroom",
+      "type_studente": "Student",
+      "submissionsTitle": "Submissions",
+      "submissionsError": "Unable to load submissions.",
+      "noSubmissions": "No recipients for this assignment.",
+      "notSubmittedYet": "The student has not submitted yet.",
+      "grade": "Grade",
+      "score": "Score: {{punteggio}}/{{max}}",
+      "deleteConfirm": "Permanently delete this assignment?",
+      "loadError": "Unable to load the assignment.",
+      "statDestinatari": "Recipients",
+      "statCompletati": "Completed",
+      "statPercentuale": "Completion",
+      "statPunteggio": "Max score"
+    },
+    "valuta": {
+      "title": "Grade: {{nome}}",
+      "submit": "Save grade",
+      "punteggio": "Score (max {{max}})",
+      "feedback": "Feedback"
+    },
+    "studente": {
+      "title": "My assignments",
+      "subtitle": "Assigned, due soon, overdue and completed assignments.",
+      "all": "All",
+      "empty": "No assignments in this category.",
+      "loadError": "Unable to load assignments.",
+      "back": "Back to my assignments",
+      "submitTitle": "Submit assignment",
+      "resubmitTitle": "Update submission",
+      "submitHint": "Mark the assignment as completed, optionally providing a score and time spent.",
+      "punteggio": "Score obtained (max {{max}})",
+      "tempo": "Time spent (seconds)",
+      "submit": "Submit",
+      "resubmit": "Update submission",
+      "submitSuccess": "Assignment submitted successfully.",
+      "tempoLimite": "Time limit: {{minuti}} minutes",
+      "feedbackTitle": "Teacher feedback"
+    }
+  },
+  "teacherDashboard": {
+    "title": "Statistics",
+    "subtitle": "Aggregate progress of your students.",
+    "aulaLabel": "Classroom",
+    "allClassrooms": "All my classrooms",
+    "periodLabel": "Period",
+    "lastDays": "Last {{n}} days",
+    "loadError": "Unable to load statistics.",
+    "noData": "No data available.",
+    "studentiTotali": "Total students",
+    "studentiAttivi": "Active students",
+    "studentiInattivi": "Inactive students",
+    "progressoMedio": "Average progress",
+    "successoMedio": "Average success",
+    "eserciziCompletati": "Exercises completed",
+    "giorniStudioMedi": "Avg. study days",
+    "quizSection": "Quiz",
+    "quizCompletati": "Quizzes completed",
+    "mediaVoti": "Average score",
+    "mediaErrori": "Average errors",
+    "successoQuiz": "Quiz success",
+    "tempoNota": "Actual study time is not tracked: \"Avg. study days\" is the available estimate.",
+    "kanjiSection": "Kanji",
+    "kanjiPiuSbagliati": "Most missed kanji",
+    "kanjiPiuStudiati": "Most studied kanji",
+    "kanjiMaiCompletati": "Never mastered kanji",
+    "kanaSection": "Kana",
+    "hiraganaProblematici": "Problematic hiragana",
+    "katakanaProblematici": "Problematic katakana",
+    "classificaSection": "Leaderboards",
+    "migliori": "Top performers",
+    "inDifficolta": "Struggling students",
+    "inattivi": "Inactive students",
+    "errori": "{{n}} errors",
+    "tentativi": "{{n}} attempts",
+    "xpProgresso": "{{xp}} XP · {{prog}}%",
+    "erroriPercento": "{{n}}% errors",
+    "mai": "Never"
+  },
+  "messaggi": {
+    "title": "Messages",
+    "subtitle": "Communications, feedback and notes.",
+    "unreadAria": "{{n}} unread messages",
+    "from": "From: {{nome}}",
+    "about": "About: {{nome}}",
+    "readCount": "Read {{letti}}/{{tot}}",
+    "noSubject": "(no subject)",
+    "onlyUnread": "Unread only",
+    "loadError": "Unable to load messages.",
+    "empty": "No messages.",
+    "tabs": {
+      "ricevuti": "Inbox",
+      "inviati": "Sent",
+      "note": "Notes"
+    },
+    "tipi": {
+      "messaggio": "Message",
+      "incoraggiamento": "Encouragement",
+      "feedback": "Feedback",
+      "nota_privata": "Private note"
+    },
+    "validation": {
+      "oggettoMax": "The subject cannot exceed 160 characters",
+      "corpoRequired": "The message cannot be empty",
+      "corpoMax": "The message cannot exceed 5000 characters"
+    },
+    "compose": {
+      "new": "New message",
+      "title": "New message",
+      "submit": "Send",
+      "tipo": "Type",
+      "toClass": "To a classroom",
+      "toStudent": "To a student",
+      "aula": "Classroom",
+      "aulaNota": "Classroom (to pick the student)",
+      "selectAula": "Select a classroom",
+      "studente": "Student",
+      "studenteNota": "Referenced student (optional)",
+      "selectStudente": "Select a student",
+      "oggetto": "Subject",
+      "corpo": "Message",
+      "consentiRisposte": "Allow replies",
+      "selectTargetError": "Select a recipient.",
+      "success": "Message sent successfully."
+    },
+    "detail": {
+      "back": "Back to messages",
+      "replyLabel": "Your reply",
+      "reply": "Reply",
+      "replySuccess": "Reply sent successfully.",
+      "thread": "Replies ({{n}})",
+      "deleteConfirm": "Permanently delete this message?",
+      "deleted": "Message deleted.",
+      "unknownSender": "Unknown sender",
+      "loadError": "Unable to load the message."
     }
   }
 }

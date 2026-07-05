@@ -33,4 +33,29 @@ export const queryKeys = Object.freeze({
     streak: ['statistiche', 'streak'],
     caratteriProblematici: (filtri) => ['statistiche', 'caratteriProblematici', filtri ?? {}],
   },
+  aule: {
+    all: ['aule'],
+    list: (filters) => ['aule', 'list', filters ?? {}],
+    detail: (id) => ['aule', 'detail', id],
+  },
+  compiti: {
+    all: ['compiti'],
+    list: (filters) => ['compiti', 'list', filters ?? {}],
+    detail: (id) => ['compiti', 'detail', id],
+    consegne: (id) => ['compiti', 'consegne', id],
+    studente: (filters) => ['compiti', 'studente', filters ?? {}],
+    studenteDetail: (id) => ['compiti', 'studente', 'detail', id],
+  },
+  dashboard: {
+    globale: (opzioni) => ['dashboard', 'globale', opzioni ?? {}],
+    aula: (classeId, opzioni) => ['dashboard', 'aula', classeId, opzioni ?? {}],
+  },
+  messaggi: {
+    all: ['messaggi'],
+    ricevuti: (filters) => ['messaggi', 'ricevuti', filters ?? {}],
+    inviati: (filters) => ['messaggi', 'inviati', filters ?? {}],
+    note: (filters) => ['messaggi', 'note', filters ?? {}],
+    notifiche: ['messaggi', 'notifiche'],
+    detail: (id) => ['messaggi', 'detail', id],
+  },
 });

@@ -7,6 +7,7 @@ import {
 } from '../../store/authStore';
 import { useLogout } from '../../hooks/useLogout';
 import { ROUTES } from '../../constants/routes';
+import MessaggiNavLink from '../../features/messaggi/components/MessaggiNavLink';
 import Button from '../ui/Button';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import ThemeToggle from '../ui/ThemeToggle';
@@ -52,9 +53,30 @@ const Header = () => {
             <Link to={ROUTES.QUIZ} className={styles.navLink}>
               {t('nav.quiz')}
             </Link>
+            {user?.ruolo === 'studente' && (
+              <Link to={ROUTES.COMPITI_STUDENTE} className={styles.navLink}>
+                {t('nav.compitiStudente')}
+              </Link>
+            )}
             <Link to={ROUTES.PROFILE} className={styles.navLink}>
               {t('nav.profile')}
             </Link>
+            <MessaggiNavLink className={styles.navLink} />
+            {isTeacher && (
+              <Link to={ROUTES.AULE} className={styles.navLink}>
+                {t('nav.aule')}
+              </Link>
+            )}
+            {isTeacher && (
+              <Link to={ROUTES.COMPITI} className={styles.navLink}>
+                {t('nav.compiti')}
+              </Link>
+            )}
+            {isTeacher && (
+              <Link to={ROUTES.TEACHER_DASHBOARD} className={styles.navLink}>
+                {t('nav.statistiche')}
+              </Link>
+            )}
             {isTeacher && (
               <Link to={ROUTES.USERS_MANAGEMENT} className={styles.navLink}>
                 {t('nav.usersManagement')}

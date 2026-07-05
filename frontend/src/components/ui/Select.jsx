@@ -11,6 +11,11 @@ const Select = forwardRef(
     const { t } = useTranslation();
     const id = useId();
     const errorId = `${id}-error`;
+    // In modalità controllata (value fornito) NON impostare defaultValue, per
+    // evitare l'avviso React "controlled/uncontrolled". Con react-hook-form
+    // (uncontrolled, via ref) si mantiene defaultValue="" per mostrare il
+    // placeholder finché il campo non è valorizzato.
+    const isControlled = rest.value !== undefined;
 
     return (
       <div className={styles.field}>
@@ -29,7 +34,7 @@ const Select = forwardRef(
           className={[styles.input, error ? styles.inputError : ''].join(' ')}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}
-          defaultValue=""
+          {...(isControlled ? {} : { defaultValue: '' })}
           {...rest}
         >
           <option value="" disabled>
