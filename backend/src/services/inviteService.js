@@ -5,9 +5,11 @@ const { Op } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('../models/Utente');
 const Invito = require('../models/Invito');
+const Scuola = require('../models/Scuola');
 const AppError = require('../utils/AppError');
 const { hashToken } = require('../utils/tokenHash');
 const { escapeLike } = require('../utils/escapeLike');
+const { risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
 
@@ -40,8 +42,23 @@ const generaTokenInvito = () => {
  * preesistenti per la stessa coppia (un solo token valido alla volta).
  * Eseguito in transazione per atomicità.
  */
-const creaInvito = async ({ email, ruolo, classe, classeId = null, invitatoDa, lingua = 'it', nomeClasse = null }) => {
+const creaInvito = async ({ email, ruolo, classe, classeId = null, scuolaId = null, invitatoDa, lingua = 'it', nomeClasse = null }) => {
   const emailNorm = email.toLowerCase().trim();
+
+  // Ogni invitato deve finire in una scuola (tenant): senza scuola l'account
+  // creato resterebbe fuori dal modello multi-tenant. Fail-closed.
+  if (!scuolaId) {
+    throw new AppError(
+      "Impossibile creare l'invito: scuola di destinazione mancante.",
+      422,
+      'SCUOLA_REQUIRED'
+    );
+  }
+  // La scuola indicata deve esistere.
+  const scuola = await Scuola.findByPk(scuolaId);
+  if (!scuola) {
+    throw new AppError('Scuola di destinazione non trovata.', 404, 'SCUOLA_NOT_FOUND');
+  }
 
   // Un utente già registrato non può essere re-invitato.
   const utenteEsistente = await Utente.findOne({ where: { email: emailNorm } });
@@ -69,6 +86,7 @@ const creaInvito = async ({ email, ruolo, classe, classeId = null, invitatoDa, l
         ruolo,
         classe: ruolo === 'studente' ? classe : null,
         classe_id: ruolo === 'studente' ? classeId : null,
+        scuola_id: scuolaId,
         token_hash: tokenHash,
         stato: 'pendente',
         scadenza,
@@ -103,7 +121,7 @@ const creaInvito = async ({ email, ruolo, classe, classeId = null, invitatoDa, l
 // ─────────────────────────────────────────────
 // CREA INVITO STUDENTE (insegnante / admin)
 // ─────────────────────────────────────────────
-const creaInvitoStudente = async ({ email, classe, invitatoDa, lingua }) => {
+const creaInvitoStudente = async ({ email, classe, scuolaId, richiedente, lingua }) => {
   if (!Utente.CLASSI_VALIDE.includes(classe)) {
     throw new AppError(
       `La classe deve essere una di: ${Utente.CLASSI_VALIDE.join(', ')}`,
@@ -111,22 +129,35 @@ const creaInvitoStudente = async ({ email, classe, invitatoDa, lingua }) => {
       'INVALID_CLASS'
     );
   }
-  return creaInvito({ email, ruolo: 'studente', classe, invitatoDa, lingua });
+  // Tenant: insegnante → propria scuola; admin → scuolaId indicata (obbligatoria).
+  const scuolaFinale = risolviScuolaCreazione(richiedente, scuolaId, {
+    scuolaObbligatoriaPerAdmin: true,
+  });
+  return creaInvito({
+    email,
+    ruolo: 'studente',
+    classe,
+    scuolaId: scuolaFinale,
+    invitatoDa: richiedente.id,
+    lingua,
+  });
 };
 
 // ─────────────────────────────────────────────
 // CREA INVITO STUDENTE IN AULA (insegnante / admin)
 // Legato a una classe: al completamento della registrazione lo studente vi
 // verrà iscritto automaticamente (cfr. authService.registraStudenteDaInvito).
-// La verifica di accesso all'aula è a monte, in auleService.
+// La verifica di accesso all'aula e la scuola (dell'aula) sono a monte, in
+// auleService.
 // ─────────────────────────────────────────────
-const creaInvitoStudenteInClasse = async ({ email, classeId, nomeClasse, invitatoDa, lingua }) => {
+const creaInvitoStudenteInClasse = async ({ email, classeId, nomeClasse, scuolaId, invitatoDa, lingua }) => {
   return creaInvito({
     email,
     ruolo: 'studente',
     classe: null,
     classeId,
     nomeClasse,
+    scuolaId,
     invitatoDa,
     lingua,
   });
@@ -134,9 +165,20 @@ const creaInvitoStudenteInClasse = async ({ email, classeId, nomeClasse, invitat
 
 // ─────────────────────────────────────────────
 // CREA INVITO INSEGNANTE (solo admin — onboarding diretto)
+// L'admin sceglie la scuola a cui l'insegnante verrà iscritto (obbligatoria).
 // ─────────────────────────────────────────────
-const creaInvitoInsegnante = async ({ email, invitatoDa, lingua }) => {
-  return creaInvito({ email, ruolo: 'insegnante', classe: null, invitatoDa, lingua });
+const creaInvitoInsegnante = async ({ email, scuolaId, richiedente, lingua }) => {
+  const scuolaFinale = risolviScuolaCreazione(richiedente, scuolaId, {
+    scuolaObbligatoriaPerAdmin: true,
+  });
+  return creaInvito({
+    email,
+    ruolo: 'insegnante',
+    classe: null,
+    scuolaId: scuolaFinale,
+    invitatoDa: richiedente.id,
+    lingua,
+  });
 };
 
 // ─────────────────────────────────────────────
@@ -160,6 +202,7 @@ const validaTokenInvito = async (tokenInChiaro) => {
     email: invito.email,
     ruolo: invito.ruolo,
     classe: invito.classe,
+    scuola_id: invito.scuola_id,
     scadenza: invito.scadenza,
   };
 };

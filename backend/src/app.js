@@ -11,7 +11,7 @@ const AppError = require('./utils/AppError');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const inviteRoutes = require('./routes/inviteRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+const scuolaRoutes = require('./routes/scuolaRoutes');
 const quizRoutes = require('./routes/quizRoutes');
 const statisticheRoutes = require('./routes/statisticheRoutes');
 const auleRoutes = require('./routes/auleRoutes');
@@ -111,7 +111,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/invites', inviteRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/scuole', scuolaRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/statistiche', statisticheRoutes);
 app.use('/api/aule', auleRoutes);

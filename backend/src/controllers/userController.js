@@ -75,9 +75,12 @@ exports.deleteMe = catchAsync(async (req, res) => {
 // GET /api/auth/gestione/utenti (Solo Insegnanti)
 // ─────────────────────────────────────────────
 exports.getAllUsers = catchAsync(async (req, res) => {
-  const { ruolo, classe, nome, page, limit } = req.query;
+  const { ruolo, classe, nome, scuola, page, limit } = req.query;
 
-  const { utenti, paginazione } = await userService.getUtentiPerInsegnante({ ruolo, classe, nome, page, limit });
+  const { utenti, paginazione } = await userService.getUtentiPerInsegnante(
+    req.user,
+    { ruolo, classe, nome, scuola, page, limit }
+  );
 
   res.status(200).json({
     status: 'success',
@@ -94,7 +97,7 @@ exports.updateUserRole = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { ruolo } = req.body;
 
-  const utenteAggiornato = await userService.aggiornaRuoloUtente(req.user.id, req.user.ruolo, id, ruolo);
+  const utenteAggiornato = await userService.aggiornaRuoloUtente(req.user, id, ruolo);
 
   res.status(200).json({
     status: 'success',
@@ -109,7 +112,7 @@ exports.updateUserRole = catchAsync(async (req, res) => {
 exports.deleteUserByTeacher = catchAsync(async (req, res) => {
   const { id } = req.params;
 
-  await userService.eliminaUtenteComeInsegnante(req.user.id, req.user.ruolo, id);
+  await userService.eliminaUtenteComeInsegnante(req.user, id);
 
   res.status(200).json({
     status: 'success',

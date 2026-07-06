@@ -5,8 +5,10 @@ const sequelize = require('../config/database');
 const Classe = require('../models/Classe');
 const ClasseUtente = require('../models/ClasseUtente');
 const Utente = require('../models/Utente');
+const Scuola = require('../models/Scuola');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const inviteService = require('./inviteService');
 
@@ -71,6 +73,7 @@ const assicuraAccessoInsegnante = async (classeId, richiedente, transaction) => 
 const risolviUtenteRegistrato = async (
   { utenteId, email },
   ruoloAtteso,
+  richiedente,
   transaction
 ) => {
   let utente = null;
@@ -94,6 +97,14 @@ const risolviUtenteRegistrato = async (
   if (utente.stato !== 'attivo') {
     throw new AppError("L'utente indicato non è attivo.", 422, 'USER_NOT_ACTIVE');
   }
+  // Confine di tenant: un insegnante può aggiungere all'aula solo utenti della
+  // PROPRIA scuola (l'admin è trasversale). Impedisce di importare utenti di
+  // altre scuole per email/id.
+  assicuraStessaScuola(
+    richiedente,
+    utente.scuola_id,
+    "L'utente indicato non appartiene alla tua scuola."
+  );
 
   return utente;
 };
@@ -135,11 +146,24 @@ const conteggiMembri = async (classeIds) => {
 // Il creatore diventa automaticamente membro-insegnante dell'aula.
 // ─────────────────────────────────────────────
 const creaClasse = async ({ dati, creatore }) => {
+  // Scuola dell'aula: per l'insegnante è SEMPRE la propria; l'admin deve
+  // indicarla esplicitamente (scuolaId), perché non appartiene ad alcuna scuola.
+  const scuolaId = risolviScuolaCreazione(creatore, dati.scuolaId, {
+    scuolaObbligatoriaPerAdmin: true,
+  });
+
+  // Verifica che la scuola indicata esista (rilevante per l'admin).
+  const scuola = await Scuola.findByPk(scuolaId);
+  if (!scuola) {
+    throw new AppError('Scuola di destinazione non trovata.', 404, 'SCUOLA_NOT_FOUND');
+  }
+
   const classe = await sequelize.transaction(async (t) => {
     const nuova = await Classe.create(
       {
         nome: dati.nome.trim(),
         descrizione: dati.descrizione ?? null,
+        scuola_id: scuolaId,
         anno_scolastico: dati.annoScolastico ?? null,
         livello_jlpt: dati.livelloJLPT ?? null,
         colore: dati.colore ?? null,
@@ -176,10 +200,10 @@ const creaClasse = async ({ dati, creatore }) => {
 // Insegnante: solo le proprie aule. Admin: tutte. Filtri + paginazione.
 // ─────────────────────────────────────────────
 const elencoClassi = async ({ richiedente, filtri }) => {
-  const { livello, anno, archiviata, q, page, limit } = filtri;
+  const { livello, anno, archiviata, q, page, limit, scuola } = filtri;
   const where = {};
 
-  // Scope insegnante: limita alle aule di cui è membro-insegnante.
+  // Scope insegnante: limita alle aule di cui è membro-insegnante...
   if (richiedente.ruolo !== 'admin') {
     const iscrizioni = await ClasseUtente.findAll({
       where: { utente_id: richiedente.id, ruolo_nella_classe: 'insegnante' },
@@ -192,6 +216,11 @@ const elencoClassi = async ({ richiedente, filtri }) => {
       return { classi: [], paginazione: null };
     }
     where.id = { [Op.in]: idAule };
+    // ...e comunque solo entro la propria scuola (difesa in profondità sul tenant).
+    if (richiedente.scuola_id) where.scuola_id = richiedente.scuola_id;
+  } else if (scuola) {
+    // Admin: filtro facoltativo per scuola.
+    where.scuola_id = scuola;
   }
 
   if (livello) where.livello_jlpt = livello;
@@ -334,7 +363,7 @@ const aggiungiMembro = async ({ classeId, riferimento, ruoloNellaClasse, richied
     await assicuraAccessoInsegnante(classeId, richiedente, t);
 
     const ruoloGlobaleAtteso = ruoloNellaClasse === 'insegnante' ? 'insegnante' : 'studente';
-    const utente = await risolviUtenteRegistrato(riferimento, ruoloGlobaleAtteso, t);
+    const utente = await risolviUtenteRegistrato(riferimento, ruoloGlobaleAtteso, richiedente, t);
 
     const esistente = await ClasseUtente.findOne({
       where: { classe_id: classeId, utente_id: utente.id },
@@ -424,6 +453,7 @@ const invitaStudente = async ({ classeId, email, richiedente, lingua }) => {
     email,
     classeId,
     nomeClasse: classe.nome,
+    scuolaId: classe.scuola_id,
     invitatoDa: richiedente.id,
     lingua,
   });

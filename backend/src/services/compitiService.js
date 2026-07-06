@@ -10,6 +10,7 @@ const Classe = require('../models/Classe');
 const Utente = require('../models/Utente');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 
 /**
@@ -153,6 +154,9 @@ const applicaAssegnazione = async ({ compitoId, bersaglio, richiedente, transact
   if (classeId) {
     const classe = await Classe.findByPk(classeId, { transaction });
     if (!classe) throw new AppError('Aula non trovata.', 404, 'CLASSE_NOT_FOUND');
+    // Confine di tenant: l'aula deve appartenere alla scuola del richiedente
+    // (l'admin è trasversale). Difesa in profondità oltre al controllo di membership.
+    assicuraStessaScuola(richiedente, classe.scuola_id, 'Questa aula non appartiene alla tua scuola.');
     if (!(await insegnaNellaClasse(classeId, richiedente, transaction))) {
       throw new AppError('Non insegni in questa aula.', 403, 'FORBIDDEN');
     }
@@ -161,6 +165,8 @@ const applicaAssegnazione = async ({ compitoId, bersaglio, richiedente, transact
     if (!studente || studente.ruolo !== 'studente') {
       throw new AppError('Studente non trovato.', 404, 'USER_NOT_FOUND');
     }
+    // Confine di tenant: lo studente deve essere della scuola del richiedente.
+    assicuraStessaScuola(richiedente, studente.scuola_id, 'Questo studente non appartiene alla tua scuola.');
     if (!(await condivideClasseConStudente(utenteId, richiedente, transaction))) {
       throw new AppError(
         'Puoi assegnare solo a studenti delle tue aule.',
@@ -196,6 +202,12 @@ const applicaAssegnazione = async ({ compitoId, bersaglio, richiedente, transact
 // INSEGNANTE — CREA COMPITO (con assegnazioni facoltative inline)
 // ─────────────────────────────────────────────
 const creaCompito = async ({ dati, assegnazioni, richiedente }) => {
+  // Scuola del compito: timbrata dalla scuola dell'insegnante (null per l'admin,
+  // trasversale). Rende esplicito il tenant di appartenenza del compito.
+  const scuolaId = risolviScuolaCreazione(richiedente, null, {
+    scuolaObbligatoriaPerAdmin: false,
+  });
+
   return sequelize.transaction(async (t) => {
     const compito = await Compito.create(
       {
@@ -207,6 +219,7 @@ const creaCompito = async ({ dati, assegnazioni, richiedente }) => {
         tempo_limite_minuti: dati.tempoLimiteMinuti ?? null,
         punteggio_massimo: dati.punteggioMassimo ?? 100,
         stato: dati.stato ?? 'bozza',
+        scuola_id: scuolaId,
         creato_da: richiedente.id,
       },
       { transaction: t }

@@ -71,7 +71,17 @@ const campiOpzionaliAula = [
     .withMessage("Il nome dell'icona non può superare i 50 caratteri"),
 ];
 
-const validateCreaClasse = [campoNome(true), ...campiOpzionaliAula];
+const validateCreaClasse = [
+  campoNome(true),
+  ...campiOpzionaliAula,
+  // Facoltativo: ignorato per l'insegnante (usa la propria scuola), usato
+  // dall'admin per indicare la scuola dell'aula (obbligatorio per l'admin,
+  // vincolo applicato nel service in base al ruolo).
+  body('scuolaId')
+    .optional({ nullable: true })
+    .isUUID(4)
+    .withMessage("L'identificativo della scuola non è valido"),
+];
 
 const validateAggiornaClasse = [
   ...validateClasseIdParam,
@@ -147,6 +157,12 @@ const validateElencoClassi = [
     .trim()
     .isLength({ max: 120 })
     .withMessage('Il termine di ricerca non può superare i 120 caratteri'),
+
+  // Filtro per scuola: usato dall'admin per restringere l'elenco a una scuola.
+  query('scuola')
+    .optional()
+    .isUUID(4)
+    .withMessage("L'identificativo della scuola non è valido"),
 
   query('page')
     .optional()

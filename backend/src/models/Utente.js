@@ -32,6 +32,7 @@ class Utente extends Model {
       ruolo: this.ruolo,
       classe: this.classe,
       stato: this.stato,
+      scuola_id: this.scuola_id,
       lingua: this.lingua,
       email_verificata: this.email_verificata,
       profilo_completo: this.profilo_completo,
@@ -151,6 +152,19 @@ Utente.init(
           msg: `La classe deve essere una di: ${CLASSI_VALIDE.join(', ')}`,
         },
       },
+    },
+
+    // Tenant di appartenenza (scuola). Regole:
+    //   - studenti e insegnanti appartengono SEMPRE a una scuola;
+    //   - l'admin è trasversale alla piattaforma e ha `scuola_id = null`.
+    // È il perno del multi-tenant: gli insegnanti vedono/operano solo entro la
+    // propria scuola, l'admin su tutte. Nullable a livello DB per ospitare
+    // l'admin (null) e gli eventuali account legacy pre-migrazione.
+    scuola_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'scuola_id',
     },
 
     email_verificata: {
@@ -359,6 +373,8 @@ Utente.init(
       { fields: ['email_verification_token'] },
       { fields: ['ruolo'] },
       { fields: ['stato'] },
+      // Indice sul tenant: filtro frequente per scuola (scope insegnante).
+      { fields: ['scuola_id'] },
       // Indice sul refresh token: elimina il full table scan durante il
       // lookup eseguito ad ogni refresh della sessione.
       { fields: ['refresh_token'] },
@@ -382,6 +398,15 @@ Utente.init(
 
   }
 );
+
+// ─────────────────────────────────────────────
+// Associazione tenant (scuola)
+// RESTRICT: una scuola non può essere eliminata finché ha utenti collegati
+// (protegge l'integrità del tenant).
+// ─────────────────────────────────────────────
+const Scuola = require('./Scuola');
+Utente.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'RESTRICT' });
+Scuola.hasMany(Utente, { as: 'utenti', foreignKey: 'scuola_id', onDelete: 'RESTRICT' });
 
 Utente.CLASSI_VALIDE = CLASSI_VALIDE;
 Utente.RUOLI_VALIDI = RUOLI_VALIDI;

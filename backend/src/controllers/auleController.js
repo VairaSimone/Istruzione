@@ -14,10 +14,10 @@ const auleService = require('../services/auleService');
 // POST /api/aule
 // ─────────────────────────────────────────────
 exports.creaClasse = catchAsync(async (req, res) => {
-  const { nome, descrizione, annoScolastico, livelloJLPT, colore, icona } = req.body;
+  const { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, scuolaId } = req.body;
 
   const classe = await auleService.creaClasse({
-    dati: { nome, descrizione, annoScolastico, livelloJLPT, colore, icona },
+    dati: { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, scuolaId },
     creatore: req.user,
   });
 
@@ -32,11 +32,11 @@ exports.creaClasse = catchAsync(async (req, res) => {
 // GET /api/aule
 // ─────────────────────────────────────────────
 exports.elencoClassi = catchAsync(async (req, res) => {
-  const { livello, anno, archiviata, q, page, limit } = req.query;
+  const { livello, anno, archiviata, q, scuola, page, limit } = req.query;
 
   const { classi, paginazione } = await auleService.elencoClassi({
     richiedente: req.user,
-    filtri: { livello, anno, archiviata, q, page, limit },
+    filtri: { livello, anno, archiviata, q, scuola, page, limit },
   });
 
   res.status(200).json({

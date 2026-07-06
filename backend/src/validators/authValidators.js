@@ -48,6 +48,9 @@ const tokenRules = (fieldName = 'token', message = 'Token non valido') =>
 
 // ─────────────────────────────────────────────
 // POST /api/invites/student  (insegnante / admin)
+// `scuolaId` è facoltativo: ignorato per l'insegnante (usa la propria scuola),
+// OBBLIGATORIO per l'admin (indica la scuola di destinazione). Il vincolo
+// "obbligatorio per admin" è applicato nel service (dipende dal ruolo).
 // ─────────────────────────────────────────────
 const validateInvitoStudente = [
   emailRules('email'),
@@ -56,13 +59,22 @@ const validateInvitoStudente = [
     .notEmpty().withMessage('La classe è obbligatoria')
     .isIn(Utente.CLASSI_VALIDE)
     .withMessage(`La classe deve essere una di: ${Utente.CLASSI_VALIDE.join(', ')}`),
+  body('scuolaId')
+    .optional({ nullable: true })
+    .isUUID(4).withMessage("L'identificativo della scuola non è valido"),
 ];
 
 // ─────────────────────────────────────────────
 // POST /api/invites/teacher  (admin)
+// `scuolaId` OBBLIGATORIO: l'insegnante invitato viene iscritto a quella scuola.
 // ─────────────────────────────────────────────
 const validateInvitoInsegnante = [
   emailRules('email'),
+  body('scuolaId')
+    .trim()
+    .notEmpty().withMessage('La scuola di destinazione è obbligatoria')
+    .bail()
+    .isUUID(4).withMessage("L'identificativo della scuola non è valido"),
 ];
 
 // ─────────────────────────────────────────────
@@ -97,31 +109,6 @@ const validateRegisterTeacher = [
   nomeRules('nome', 'Il nome'),
   nomeRules('cognome', 'Il cognome'),
   passwordRules('password'),
-];
-
-// ─────────────────────────────────────────────
-// POST /api/auth/teacher-request  (candidatura insegnante)
-// ─────────────────────────────────────────────
-const validateTeacherRequest = [
-  nomeRules('nome', 'Il nome'),
-  nomeRules('cognome', 'Il cognome'),
-  emailRules('email'),
-  passwordRules('password'),
-  body('motivazione')
-    .optional({ checkFalsy: true })
-    .trim()
-    .isLength({ max: 1000 }).withMessage('La motivazione non può superare i 1000 caratteri'),
-];
-
-// ─────────────────────────────────────────────
-// POST /api/admin/teacher-requests/:id/reject
-// ─────────────────────────────────────────────
-const validateRifiutaCandidatura = [
-  param('id').isUUID().withMessage('ID non valido'),
-  body('motivazione')
-    .optional({ checkFalsy: true })
-    .trim()
-    .isLength({ max: 1000 }).withMessage('La motivazione non può superare i 1000 caratteri'),
 ];
 
 // ─────────────────────────────────────────────
@@ -200,8 +187,6 @@ module.exports = {
   validateInviteTokenParam,
   validateRegisterStudent,
   validateRegisterTeacher,
-  validateTeacherRequest,
-  validateRifiutaCandidatura,
   validateIdParam,
   validateLogin,
   validateForgotPassword,

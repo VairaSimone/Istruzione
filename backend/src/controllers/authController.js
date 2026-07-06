@@ -78,22 +78,6 @@ exports.registerTeacher = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// POST /api/auth/teacher-request
-// Candidatura insegnante (self-service). L'account resta 'in_attesa'
-// finché un admin non lo approva: NON può effettuare il login.
-// ─────────────────────────────────────────────
-exports.teacherRequest = catchAsync(async (req, res) => {
-  const { nome, cognome, email, password, motivazione } = req.body;
-
-  await authService.richiestaInsegnante({ nome, cognome, email, password, motivazione });
-
-  res.status(201).json({
-    status: 'success',
-    message: 'Candidatura inviata. Riceverai una notifica via email una volta approvata da un amministratore.',
-  });
-});
-
-// ─────────────────────────────────────────────
 // POST /api/auth/login
 // ─────────────────────────────────────────────
 exports.login = catchAsync(async (req, res) => {

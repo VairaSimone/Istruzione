@@ -9,6 +9,7 @@ const Classe = require('../models/Classe');
 const Compito = require('../models/Compito');
 const Utente = require('../models/Utente');
 const AppError = require('../utils/AppError');
+const { assicuraStessaScuola } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const compitiService = require('./compitiService');
 
@@ -116,6 +117,7 @@ const inviaMessaggio = async ({ dati, richiedente }) => {
         if (!studente || studente.ruolo !== 'studente') {
           throw new AppError('Studente non trovato.', 404, 'USER_NOT_FOUND');
         }
+        assicuraStessaScuola(richiedente, studente.scuola_id, 'Questo studente non appartiene alla tua scuola.');
         if (!(await condivideClasseConStudente(studenteId, richiedente, t))) {
           throw new AppError('Puoi scrivere solo a studenti delle tue aule.', 403, 'FORBIDDEN');
         }
@@ -123,6 +125,7 @@ const inviaMessaggio = async ({ dati, richiedente }) => {
       } else {
         const classe = await Classe.findByPk(classeId, { transaction: t });
         if (!classe) throw new AppError('Aula non trovata.', 404, 'CLASSE_NOT_FOUND');
+        assicuraStessaScuola(richiedente, classe.scuola_id, 'Questa aula non appartiene alla tua scuola.');
         if (!(await insegnaNellaClasse(classeId, richiedente, t))) {
           throw new AppError('Non insegni in questa aula.', 403, 'FORBIDDEN');
         }
@@ -143,6 +146,7 @@ const inviaMessaggio = async ({ dati, richiedente }) => {
         tipo,
         oggetto: oggetto ?? null,
         corpo: corpo.trim(),
+        scuola_id: richiedente.scuola_id ?? null,
         classe_id: classeContesto,
         compito_id: compitoId ?? null,
         nota_su_utente_id: notaSu,
@@ -194,6 +198,7 @@ const inviaFeedbackCompito = async ({ compitoId, studenteId, corpo, punteggio, r
         oggetto: 'Feedback sul compito',
         corpo: corpo.trim(),
         compito_id: compitoId,
+        scuola_id: richiedente.scuola_id ?? null,
         consenti_risposte: true,
       },
       { transaction: t }
@@ -488,6 +493,7 @@ const rispondi = async ({ messaggioId, corpo, utente }) => {
         oggetto: padre.oggetto ? `Re: ${padre.oggetto}`.slice(0, 160) : null,
         corpo: corpo.trim(),
         messaggio_padre_id: padre.id,
+        scuola_id: utente.scuola_id ?? null,
         consenti_risposte: true,
       },
       { transaction: t }

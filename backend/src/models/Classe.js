@@ -36,6 +36,7 @@ class Classe extends Model {
       id: this.id,
       nome: this.nome,
       descrizione: this.descrizione,
+      scuolaId: this.scuola_id,
       annoScolastico: this.anno_scolastico,
       livelloJLPT: this.livello_jlpt,
       colore: this.colore,
@@ -69,6 +70,18 @@ Classe.init(
       type: DataTypes.TEXT,
       allowNull: true,
       defaultValue: null,
+    },
+
+    // Scuola (tenant) a cui l'aula appartiene. Ogni aula nasce nella scuola del
+    // suo creatore (per l'insegnante è forzata alla propria; l'admin la indica
+    // esplicitamente). Nullable a livello DB solo per compatibilità con gli
+    // eventuali record legacy pre-migrazione: l'applicazione la valorizza SEMPRE
+    // per le aule di nuova creazione.
+    scuola_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'scuola_id',
     },
 
     // Anno scolastico in formato libero ma vincolato (es. "2025/2026").
@@ -150,6 +163,8 @@ Classe.init(
     indexes: [
       // Elenco delle aule create da un insegnante.
       { fields: ['creata_da'], name: 'classi_creata_da' },
+      // Scope per tenant (scuola): elenco aule di una scuola.
+      { fields: ['scuola_id'], name: 'classi_scuola_id' },
       // Filtri comuni della lista aule.
       { fields: ['livello_jlpt'], name: 'classi_livello_jlpt' },
       { fields: ['anno_scolastico'], name: 'classi_anno_scolastico' },
@@ -162,6 +177,13 @@ Classe.init(
 // (insegnanti + studenti) è gestita da ClasseUtente per non duplicare dati.
 Classe.belongsTo(Utente, { as: 'creatore', foreignKey: 'creata_da', onDelete: 'SET NULL' });
 Utente.hasMany(Classe, { as: 'classiCreate', foreignKey: 'creata_da', onDelete: 'SET NULL' });
+
+// Tenant: l'aula appartiene a una scuola. CASCADE — eliminando una scuola
+// spariscono le sue aule (l'eliminazione della scuola è comunque bloccata
+// finché esistono utenti collegati, cfr. Utente↔Scuola RESTRICT).
+const Scuola = require('./Scuola');
+Classe.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
+Scuola.hasMany(Classe, { as: 'aule', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 
 Classe.LIVELLI_JLPT = LIVELLI_JLPT;
 Classe.COLORE_REGEX = COLORE_REGEX;

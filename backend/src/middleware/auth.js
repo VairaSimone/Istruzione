@@ -58,6 +58,7 @@ const authenticateJWT = catchAsync(async (req, res, next) => {
     ruolo: utente.ruolo,
     classe: utente.classe,
     stato: utente.stato,
+    scuola_id: utente.scuola_id,
     lingua: utente.lingua,
     email_verificata: utente.email_verificata,
     profilo_completo: utente.profilo_completo

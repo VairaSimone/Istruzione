@@ -36,6 +36,7 @@ class Invito extends Model {
       ruolo: this.ruolo,
       classe: this.classe,
       classe_id: this.classe_id,
+      scuola_id: this.scuola_id,
       stato: this.stato,
       scadenza: this.scadenza,
       invitato_da: this.invitato_da,
@@ -91,6 +92,20 @@ Invito.init(
       field: 'classe_id',
     },
 
+    // Scuola (tenant) a cui l'invitato verrà iscritto al completamento della
+    // registrazione. Ereditata:
+    //   - inviti studente creati da un insegnante → scuola dell'insegnante;
+    //   - inviti studente/insegnante creati da un admin → scuola indicata;
+    //   - inviti studente in aula → scuola dell'aula.
+    // Nullable a livello DB per compatibilità con gli inviti legacy; per i
+    // nuovi inviti l'applicazione la valorizza sempre.
+    scuola_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'scuola_id',
+    },
+
     // Hash SHA-256 (hex, 64 char) del token inviato via email.
     token_hash: {
       type: DataTypes.STRING(64),
@@ -144,6 +159,7 @@ Invito.init(
       { fields: ['stato'] },
       { fields: ['invitato_da'] },
       { fields: ['classe_id'] },
+      { fields: ['scuola_id'] },
     ],
   }
 );
@@ -159,6 +175,11 @@ Utente.hasMany(Invito, { as: 'invitiInviati', foreignKey: 'invitato_da' });
 // riferimento sull'invito viene azzerato (SET NULL), senza perdere l'invito.
 Invito.belongsTo(Classe, { as: 'aula', foreignKey: 'classe_id', onDelete: 'SET NULL' });
 Classe.hasMany(Invito, { as: 'inviti', foreignKey: 'classe_id', onDelete: 'SET NULL' });
+
+// Tenant di destinazione dell'invito. CASCADE con la scuola.
+const Scuola = require('./Scuola');
+Invito.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
+Scuola.hasMany(Invito, { as: 'inviti', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 
 Invito.STATI_INVITO = STATI_INVITO;
 Invito.RUOLI_INVITABILI = RUOLI_INVITABILI;

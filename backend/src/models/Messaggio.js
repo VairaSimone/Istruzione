@@ -36,6 +36,7 @@ class Messaggio extends Model {
       oggetto: this.oggetto,
       corpo: this.corpo,
       mittenteId: this.mittente_id,
+      scuolaId: this.scuola_id,
       classeId: this.classe_id,
       compitoId: this.compito_id,
       notaSuUtenteId: this.nota_su_utente_id,
@@ -59,6 +60,17 @@ Messaggio.init(
       allowNull: true, // SET NULL se l'autore viene rimosso
       defaultValue: null,
       field: 'mittente_id',
+    },
+
+    // Scuola (tenant) del messaggio: timbrata dalla scuola del mittente. Null
+    // per i messaggi inviati da un admin (trasversale). L'autorizzazione dei
+    // destinatari resta garantita dai controlli di membership; questa colonna
+    // rende esplicito il confine di tenant e ne abilita il filtro lato admin.
+    scuola_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'scuola_id',
     },
 
     tipo: {
@@ -141,6 +153,7 @@ Messaggio.init(
 
     indexes: [
       { fields: ['mittente_id'], name: 'messaggi_mittente' },
+      { fields: ['scuola_id'], name: 'messaggi_scuola_id' },
       { fields: ['classe_id'], name: 'messaggi_classe' },
       { fields: ['compito_id'], name: 'messaggi_compito' },
       { fields: ['messaggio_padre_id'], name: 'messaggi_padre' },
@@ -154,6 +167,11 @@ Messaggio.init(
 // ─────────────────────────────────────────────
 Messaggio.belongsTo(Utente, { as: 'mittente', foreignKey: 'mittente_id', onDelete: 'SET NULL' });
 Utente.hasMany(Messaggio, { as: 'messaggiInviati', foreignKey: 'mittente_id', onDelete: 'SET NULL' });
+
+// Tenant del messaggio. CASCADE con la scuola.
+const Scuola = require('./Scuola');
+Messaggio.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
+Scuola.hasMany(Messaggio, { as: 'messaggi', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 
 Messaggio.belongsTo(Classe, { as: 'classe', foreignKey: 'classe_id', onDelete: 'SET NULL' });
 Messaggio.belongsTo(Compito, { as: 'compito', foreignKey: 'compito_id', onDelete: 'SET NULL' });

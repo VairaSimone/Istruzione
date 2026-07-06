@@ -84,6 +84,7 @@ const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password })
         password,
         ruolo: 'studente',
         classe: invito.classe, // ereditata dall'invito, non sovrascrivibile
+        scuola_id: invito.scuola_id, // tenant ereditato dall'invito
         stato: 'attivo',
         lingua: 'it',
         email_verificata: true,
@@ -139,6 +140,7 @@ const registraInsegnanteDaInvito = async ({ token, nome, cognome, password }) =>
         password,
         ruolo: 'insegnante',
         classe: null,
+        scuola_id: invito.scuola_id, // tenant ereditato dall'invito
         stato: 'attivo',
         lingua: 'it',
         email_verificata: true,
@@ -155,54 +157,6 @@ const registraInsegnanteDaInvito = async ({ token, nome, cognome, password }) =>
     logger.info(`[INVITO] Insegnante registrato da invito: ${nuovoUtente.email}`);
     return nuovoUtente;
   });
-};
-
-// ─────────────────────────────────────────────
-// CANDIDATURA INSEGNANTE (self-service, soggetta ad approvazione admin)
-// Crea un account insegnante in stato 'in_attesa': NON può autenticarsi
-// finché un admin non lo approva. L'insegnante non inserisce alcuna classe.
-// ─────────────────────────────────────────────
-const richiestaInsegnante = async ({ nome, cognome, email, password, motivazione }) => {
-  const emailNorm = email.toLowerCase().trim();
-
-  const esistente = await Utente.findOne({ where: { email: emailNorm } });
-  if (esistente) {
-    throw new AppError('Esiste già un account con questa email.', 409, 'EMAIL_ALREADY_REGISTERED');
-  }
-
-  const nuovoUtente = await Utente.create({
-    nome: nome.trim(),
-    cognome: cognome.trim(),
-    eta: null,
-    email: emailNorm,
-    password,
-    ruolo: 'insegnante',
-    classe: null,
-    stato: 'in_attesa',
-    lingua: 'it',
-    email_verificata: false,
-    profilo_completo: true,
-    nota_candidatura: motivazione ? String(motivazione).trim() : null,
-  });
-
-  // Notifica agli admin (best-effort).
-  try {
-    const admin = await Utente.findAll({ where: { ruolo: 'admin', stato: 'attivo' }, attributes: ['email', 'lingua'] });
-    await Promise.all(
-      admin.map((a) =>
-        emailService.sendNuovaCandidaturaAdminEmail(a.email, {
-          nome: nuovoUtente.nome,
-          cognome: nuovoUtente.cognome,
-          email: nuovoUtente.email,
-        }, a.lingua)
-      )
-    );
-  } catch (err) {
-    logger.error(`Errore notifica admin nuova candidatura insegnante: ${err.message}`);
-  }
-
-  logger.info(`[CANDIDATURA] Nuova candidatura insegnante in attesa: ${nuovoUtente.email}`);
-  return nuovoUtente;
 };
 
 // ─────────────────────────────────────────────
@@ -568,7 +522,6 @@ const loginOrLinkGoogle = async ({ googleId, email, emailVerificata }) => {
 module.exports = {
   registraStudenteDaInvito,
   registraInsegnanteDaInvito,
-  richiestaInsegnante,
   loginUtente,
   logoutUtente,
   refreshAccessToken,

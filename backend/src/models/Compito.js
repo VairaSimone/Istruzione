@@ -40,6 +40,7 @@ class Compito extends Model {
       tempoLimiteMinuti: this.tempo_limite_minuti,
       punteggioMassimo: this.punteggio_massimo,
       stato: this.stato,
+      scuolaId: this.scuola_id,
       creatoDa: this.creato_da,
       // "data di creazione" richiesta dalla specifica = created_at.
       created_at: this.created_at,
@@ -138,6 +139,18 @@ Compito.init(
       defaultValue: null,
       field: 'creato_da',
     },
+
+    // Scuola (tenant) del compito: timbrata alla creazione dalla scuola
+    // dell'autore. Null solo per i compiti creati da un admin (trasversale).
+    // Rende esplicito e verificabile il confine di tenant e abilita il filtro
+    // per scuola lato admin; l'autorizzazione effettiva resta comunque garantita
+    // dai controlli di membership sulle assegnazioni.
+    scuola_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'scuola_id',
+    },
   },
   {
     sequelize,
@@ -150,6 +163,7 @@ Compito.init(
 
     indexes: [
       { fields: ['creato_da'], name: 'compiti_creato_da' },
+      { fields: ['scuola_id'], name: 'compiti_scuola_id' },
       { fields: ['stato'], name: 'compiti_stato' },
       { fields: ['tipo_attivita'], name: 'compiti_tipo_attivita' },
       { fields: ['data_scadenza'], name: 'compiti_data_scadenza' },
@@ -159,6 +173,11 @@ Compito.init(
 
 Compito.belongsTo(Utente, { as: 'autore', foreignKey: 'creato_da', onDelete: 'SET NULL' });
 Utente.hasMany(Compito, { as: 'compitiCreati', foreignKey: 'creato_da', onDelete: 'SET NULL' });
+
+// Tenant del compito. CASCADE con la scuola (coerente con le aule).
+const Scuola = require('./Scuola');
+Compito.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
+Scuola.hasMany(Compito, { as: 'compiti', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 
 Compito.TIPI_ATTIVITA = TIPI_ATTIVITA;
 Compito.STATI_COMPITO = STATI_COMPITO;

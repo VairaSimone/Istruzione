@@ -7,6 +7,7 @@ const Utente = require('../models/Utente');
 const AppError = require('../utils/AppError');
 const { hashToken } = require('../utils/tokenHash');
 const { escapeLike } = require('../utils/escapeLike');
+const { assicuraStessaScuola } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
 
@@ -126,10 +127,23 @@ const eliminaAccount = async (userId) => {
 
 // ─────────────────────────────────────────────
 // VISTA GESTIONALE UTENTI (Per Insegnanti)
+// SCOPE TENANT: un insegnante vede SOLO gli utenti della propria scuola;
+// l'admin vede tutti (con filtro facoltativo per scuola).
 // ─────────────────────────────────────────────
-const getUtentiPerInsegnante = async (filtri) => {
-  const { ruolo, classe, nome, page, limit } = filtri;
+const getUtentiPerInsegnante = async (richiedente, filtri) => {
+  const { ruolo, classe, nome, scuola, page, limit } = filtri;
   const where = {};
+
+  // Confine di tenant.
+  if (richiedente.ruolo !== 'admin') {
+    // Un insegnante senza scuola non deve vedere alcun utente (fail-closed).
+    if (!richiedente.scuola_id) {
+      return { utenti: [], paginazione: null };
+    }
+    where.scuola_id = richiedente.scuola_id;
+  } else if (scuola) {
+    where.scuola_id = scuola;
+  }
 
   if (ruolo) {
     where.ruolo = ruolo;
@@ -195,7 +209,10 @@ const getUtentiPerInsegnante = async (filtri) => {
 // Incrementa inoltre token_version del bersaglio (revoca sessioni) così che
 // il nuovo ruolo abbia effetto immediato.
 // ─────────────────────────────────────────────
-const aggiornaRuoloUtente = async (actingUserId, actingRole, userId, nuovoRuolo) => {
+const aggiornaRuoloUtente = async (richiedente, userId, nuovoRuolo) => {
+  const actingUserId = richiedente.id;
+  const actingRole = richiedente.ruolo;
+
   if (!Utente.RUOLI_VALIDI.includes(nuovoRuolo)) {
     throw new AppError('Ruolo non valido.', 422, 'INVALID_ROLE');
   }
@@ -215,6 +232,10 @@ const aggiornaRuoloUtente = async (actingUserId, actingRole, userId, nuovoRuolo)
     if (!utente) {
       throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
     }
+
+    // Confine di tenant: un insegnante può modificare solo utenti della propria
+    // scuola (l'admin è trasversale).
+    assicuraStessaScuola(richiedente, utente.scuola_id, "L'utente non appartiene alla tua scuola.");
 
     // Solo un admin può declassare un altro admin.
     if (utente.ruolo === 'admin' && actingRole !== 'admin') {
@@ -273,7 +294,10 @@ const aggiornaRuoloUtente = async (actingUserId, actingRole, userId, nuovoRuolo)
 // Eseguito in TRANSAZIONE con lock di riga per garantire l'atomicità del
 // controllo "ultimo insegnante".
 // ─────────────────────────────────────────────
-const eliminaUtenteComeInsegnante = async (actingUserId, actingRole, targetUserId) => {
+const eliminaUtenteComeInsegnante = async (richiedente, targetUserId) => {
+  const actingUserId = richiedente.id;
+  const actingRole = richiedente.ruolo;
+
   if (String(actingUserId) === String(targetUserId)) {
     throw new AppError(
       'Non puoi eliminare il tuo account da questa sezione. Usa le impostazioni del profilo.',
@@ -287,6 +311,10 @@ const eliminaUtenteComeInsegnante = async (actingUserId, actingRole, targetUserI
     if (!utente) {
       throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
     }
+
+    // Confine di tenant: un insegnante può eliminare solo utenti della propria
+    // scuola (l'admin è trasversale).
+    assicuraStessaScuola(richiedente, utente.scuola_id, "L'utente non appartiene alla tua scuola.");
 
     // Solo un admin può eliminare un altro admin.
     if (utente.ruolo === 'admin' && actingRole !== 'admin') {
