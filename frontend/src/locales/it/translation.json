@@ -204,7 +204,8 @@
     "quizCardCta": "Vai al quiz",
     "scuoleCardTitle": "Gestione scuole",
     "scuoleCardText": "Crea e configura le scuole della piattaforma e le loro impostazioni personali.",
-    "scuoleCardCta": "Gestisci scuole"
+    "scuoleCardCta": "Gestisci scuole",
+    "invitesCardCta": "Sezione inviti"
   },
   "profile": {
     "title": "Il tuo profilo",
