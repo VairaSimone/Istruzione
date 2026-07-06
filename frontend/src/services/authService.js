@@ -28,16 +28,6 @@ export const registerTeacher = async (payload) => {
 };
 
 /**
- * Candidatura insegnante (self-service). Crea un account `in_attesa` che NON
- * può effettuare il login finché un admin non lo approva. La risposta non
- * restituisce dati utente.
- */
-export const teacherRequest = async (payload) => {
-  const { data } = await apiClient.post('/auth/teacher-request', payload);
-  return data;
-};
-
-/**
  * Richiede il re-invio dell'email di verifica per un account registrato
  * ma non ancora verificato. Il backend risponde sempre con 200 e messaggio
  * generico (anti user-enumeration).

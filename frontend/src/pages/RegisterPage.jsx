@@ -85,10 +85,6 @@ const RegisterPage = () => {
           <Button fullWidth onClick={() => navigate(ROUTES.LOGIN)}>
             {t('auth.invite.goToLogin')}
           </Button>
-          <p className={styles.switchAuth}>
-            {t('auth.invite.teacherPrompt')}{' '}
-            <Link to={ROUTES.TEACHER_REQUEST}>{t('auth.invite.teacherCta')}</Link>
-          </p>
         </Card>
       </div>
     );

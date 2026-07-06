@@ -10,13 +10,13 @@ import { parseApiError } from '../../../utils/parseApiError';
 import Card from '../../../components/ui/Card';
 import TextField from '../../../components/ui/TextField';
 import Button from '../../../components/ui/Button';
+import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Invites.module.css';
-import { useState, useEffect } from 'react';
-import { getSchools } from '../../../services/adminService';
-import Select from '../../../components/ui/Select';
+
 /**
  * Form di creazione invito INSEGNANTE (solo admin — onboarding diretto).
- * Nessuna classe: l'admin inserisce solo l'email.
+ * L'admin inserisce email e sceglie la SCUOLA a cui l'insegnante sarà iscritto
+ * (obbligatoria: l'admin è trasversale e non ha una scuola propria).
  */
 const TeacherInviteForm = () => {
   const { t } = useTranslation();
@@ -35,11 +35,14 @@ const TeacherInviteForm = () => {
     try {
       await createInvite.mutateAsync(values);
       toast.success(t('invites.create.teacherSuccess', { email: values.email }));
-      reset({ email: '' });
+      reset({ email: '', scuolaId: '' });
     } catch (err) {
       const parsed = parseApiError(err);
       if (parsed.fieldErrors?.email) {
         setError('email', { type: 'server', message: parsed.fieldErrors.email });
+      }
+      if (parsed.fieldErrors?.scuolaId) {
+        setError('scuolaId', { type: 'server', message: parsed.fieldErrors.scuolaId });
       }
       toast.error(getApiErrorMessage(t, err));
     }
@@ -58,6 +61,7 @@ const TeacherInviteForm = () => {
           error={errors.email?.message}
           {...register('email')}
         />
+        <ScuolaSelect required error={errors.scuolaId?.message} {...register('scuolaId')} />
         <div className={styles.formActions}>
           <Button type="submit" isLoading={createInvite.isPending}>
             {t('invites.create.submit')}

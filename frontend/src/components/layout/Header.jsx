@@ -5,6 +5,7 @@ import {
   useAuthStore,
   selectIsAuthenticated,
   selectIsTeacher,
+  selectIsAdmin,
 } from '../../store/authStore';
 import { useLogout } from '../../hooks/useLogout';
 import { ROUTES } from '../../constants/routes';
@@ -21,6 +22,7 @@ const Header = () => {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
   const isTeacher = useAuthStore(selectIsTeacher);
+  const isAdmin = useAuthStore(selectIsAdmin);
   const logoutMutation = useLogout();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -116,6 +118,11 @@ const Header = () => {
             {isTeacher && (
               <NavLink to={ROUTES.USERS_MANAGEMENT} className={navLinkClass}>
                 {t('nav.usersManagement')}
+              </NavLink>
+            )}
+            {isAdmin && (
+              <NavLink to={ROUTES.SCUOLE_MANAGEMENT} className={navLinkClass}>
+                {t('nav.scuole')}
               </NavLink>
             )}
           </nav>

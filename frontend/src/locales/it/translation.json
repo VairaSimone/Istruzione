@@ -34,7 +34,8 @@
   },
   "roles": {
     "studente": "Studente",
-    "insegnante": "Insegnante"
+    "insegnante": "Insegnante",
+    "admin": "Amministratore"
   },
   "classi": {
     "Prima": "Prima",
@@ -57,7 +58,11 @@
     "compiti": "Compiti",
     "compitiStudente": "I miei compiti",
     "statistiche": "Statistiche",
-    "messaggi": "Messaggi"
+    "messaggi": "Messaggi",
+    "scuole": "Scuole",
+    "invitesManagement": "Inviti",
+    "teacherRequest": "Candidati",
+    "teacherRequests": "Candidature"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -65,7 +70,10 @@
   "home": {
     "subtitle": "La piattaforma per studenti e insegnanti per seguire il percorso di apprendimento della lingua giapponese, classe per classe.",
     "start": "Inizia ora",
-    "haveAccount": "Ho già un account"
+    "haveAccount": "Ho già un account",
+    "login": "Accedi",
+    "studentInviteNote": "Gli studenti possono entrare nella piattaforma solo tramite invito del proprio insegnante.",
+    "teacherCta": "Candidati come insegnante"
   },
   "auth": {
     "fields": {
@@ -87,7 +95,10 @@
       "forgot": "Password dimenticata?",
       "submit": "Accedi",
       "noAccount": "Non hai un account?",
-      "success": "Accesso effettuato."
+      "success": "Accesso effettuato.",
+      "studentInviteNote": "Gli studenti ricevono un invito via email dal proprio insegnante.",
+      "teacherCta": "Invia una candidatura",
+      "teacherPrompt": "Sei un insegnante?"
     },
     "register": {
       "title": "Crea il tuo account",
@@ -146,6 +157,35 @@
       "prompt": "Non hai ricevuto l'email di verifica?",
       "cta": "Re-invia email di verifica",
       "done": "Se l'indirizzo è registrato e non ancora verificato, riceverai a breve una nuova email di verifica."
+    },
+    "invite": {
+      "checking": "Verifica dell'invito in corso",
+      "goToLogin": "Vai al login",
+      "haveAccount": "Hai già un account?",
+      "invalidTitle": "Invito non valido",
+      "noTokenText": "Per registrarti serve un link di invito valido. Gli studenti ricevono l'invito dal proprio insegnante.",
+      "noTokenTitle": "È necessario un invito",
+      "studentSubtitle": "Inserisci i tuoi dati per attivare il tuo account studente.",
+      "studentTitle": "Completa la registrazione",
+      "submit": "Completa la registrazione",
+      "successCta": "Vai al login",
+      "successText": "Il tuo account è stato creato. Ora puoi accedere.",
+      "successTitle": "Registrazione completata",
+      "teacherCta": "Invia una candidatura",
+      "teacherPrompt": "Sei un insegnante?",
+      "teacherSubtitle": "Inserisci i tuoi dati per attivare il tuo account insegnante.",
+      "teacherTitle": "Completa la registrazione"
+    },
+    "teacherRequest": {
+      "haveAccount": "Hai già un account?",
+      "motivazioneHint": "Aggiungi una breve presentazione per l'amministratore.",
+      "motivazioneLabel": "Messaggio (facoltativo)",
+      "submit": "Invia candidatura",
+      "subtitle": "Invia la tua candidatura: un amministratore la esaminerà prima di abilitare l'accesso.",
+      "successCta": "Torna al login",
+      "successText": "La tua candidatura è in attesa di approvazione. Riceverai un'email non appena un amministratore l'avrà esaminata.",
+      "successTitle": "Candidatura inviata",
+      "title": "Candidatura insegnante"
     }
   },
   "dashboard": {
@@ -161,7 +201,10 @@
     "teacherCardCta": "Vai alla gestione utenti",
     "quizCardTitle": "Quiz Kana",
     "quizCardText": "Allenati su hiragana e katakana con un quiz a ripetizione spaziata: i caratteri che sbagli tornano più spesso. Accumula XP, livelli e streak.",
-    "quizCardCta": "Vai al quiz"
+    "quizCardCta": "Vai al quiz",
+    "scuoleCardTitle": "Gestione scuole",
+    "scuoleCardText": "Crea e configura le scuole della piattaforma e le loro impostazioni personali.",
+    "scuoleCardCta": "Gestisci scuole"
   },
   "profile": {
     "title": "Il tuo profilo",
@@ -291,7 +334,28 @@
       "MESSAGE_NOT_FOUND": "Messaggio non trovato.",
       "REPLIES_DISABLED": "Le risposte non sono consentite per questo messaggio.",
       "NO_RECIPIENT": "Il destinatario della risposta non è più disponibile.",
-      "INVALID_MESSAGE_TARGET": "Specificare esattamente uno tra aula e studente."
+      "INVALID_MESSAGE_TARGET": "Specificare esattamente uno tra aula e studente.",
+      "CROSS_SCUOLA_FORBIDDEN": "Questa risorsa non appartiene alla tua scuola.",
+      "SCUOLA_REQUIRED": "Seleziona la scuola di destinazione.",
+      "SCUOLA_NOT_FOUND": "Scuola non trovata.",
+      "SCUOLA_NAME_TAKEN": "Esiste già una scuola con questo nome.",
+      "SCUOLA_HAS_USERS": "Impossibile eliminare la scuola: ha ancora utenti collegati.",
+      "NO_SCUOLA": "Il tuo account non è associato ad alcuna scuola.",
+      "INVALID_SETTINGS": "Le impostazioni devono essere un oggetto JSON valido.",
+      "ACCOUNT_NOT_ACTIVE": "Questo account non è abilitato all'accesso. Contatta un amministratore.",
+      "ACCOUNT_PENDING": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
+      "ADMIN_ROLE_FORBIDDEN": "Questa operazione è riservata agli amministratori.",
+      "ALREADY_ACTIVE": "Questo insegnante è già attivo.",
+      "EMAIL_ALREADY_REGISTERED": "Esiste già un account registrato con questa email.",
+      "INVALID_CLASS": "Classe non valida.",
+      "INVALID_INVITE": "Invito non valido o revocato.",
+      "INVITE_ALREADY_USED": "Questo invito è già stato utilizzato.",
+      "INVITE_EXPIRED": "Invito scaduto. Richiedine uno nuovo.",
+      "INVITE_NOT_FOUND": "Invito non trovato.",
+      "INVITE_NOT_PENDING": "Solo gli inviti pendenti possono essere revocati.",
+      "INVITE_ROLE_MISMATCH": "Questo invito non è valido per questo tipo di registrazione.",
+      "LAST_ADMIN": "Non puoi eliminare o declassare l'ultimo amministratore.",
+      "REQUEST_NOT_FOUND": "Candidatura insegnante non trovata."
     }
   },
   "validation": {
@@ -313,7 +377,10 @@
     "confirmRequired": "Conferma la password",
     "passwordMismatch": "Le password non coincidono",
     "classeInvalid": "La classe deve essere una di: {{values}}",
-    "roleInvalid": "Ruolo non valido"
+    "roleInvalid": "Ruolo non valido",
+    "scuolaRequired": "La scuola è obbligatoria",
+    "scuolaInvalid": "L'identificativo della scuola non è valido",
+    "motivazioneMax": "Il messaggio non può superare i {{max}} caratteri"
   },
   "quiz": {
     "pageTitle": "Quiz Kana",
@@ -602,7 +669,8 @@
       "livelloJLPT": "Livello JLPT",
       "livelloNessuno": "Nessun livello",
       "colore": "Colore",
-      "coloreHint": "Colore identificativo esadecimale (facoltativo)"
+      "coloreHint": "Colore identificativo esadecimale (facoltativo)",
+      "scuola": "Scuola"
     },
     "toast": {
       "created": "Aula creata con successo.",
@@ -876,5 +944,102 @@
       "unknownSender": "Mittente sconosciuto",
       "loadError": "Impossibile caricare il messaggio."
     }
+  },
+  "scuole": {
+    "managementTitle": "Gestione scuole",
+    "managementSubtitle": "Crea le scuole, gestiscine le impostazioni personali ed elimina quelle non più necessarie.",
+    "create": {
+      "cta": "Nuova scuola"
+    },
+    "list": {
+      "title": "Scuole",
+      "emptyTitle": "Nessuna scuola",
+      "emptyDescription": "Non è ancora stata creata alcuna scuola. Creane una per iniziare.",
+      "utentiCount": "{{count}} utenti",
+      "auleCount": "{{count}} aule",
+      "deleteBlocked": "La scuola ha utenti collegati e non può essere eliminata."
+    },
+    "form": {
+      "createTitle": "Nuova scuola",
+      "editTitle": "Modifica scuola",
+      "nome": "Nome della scuola",
+      "impostazioni": "Impostazioni (JSON)",
+      "impostazioniHint": "Oggetto JSON con le impostazioni personali della scuola. Lascia vuoto per nessuna impostazione.",
+      "createSubmit": "Crea scuola"
+    },
+    "toast": {
+      "created": "Scuola creata con successo.",
+      "updated": "Scuola aggiornata con successo.",
+      "deleted": "Scuola eliminata con successo."
+    },
+    "delete": {
+      "title": "Elimina scuola",
+      "description": "Vuoi eliminare la scuola \"{{nome}}\"? L'operazione non è reversibile."
+    },
+    "select": {
+      "label": "Scuola",
+      "placeholder": "Seleziona una scuola",
+      "empty": "Nessuna scuola disponibile — creane una prima"
+    },
+    "validation": {
+      "nomeLength": "Il nome deve avere tra 2 e 160 caratteri",
+      "impostazioniJson": "Le impostazioni devono essere in formato JSON valido",
+      "impostazioniObject": "Le impostazioni devono essere un oggetto JSON (coppie chiave/valore)",
+      "impostazioniMax": "Le impostazioni superano la dimensione massima consentita"
+    }
+  },
+  "admin": {
+    "requests": {
+      "approve": "Approva",
+      "approved": "Candidatura di {{name}} approvata.",
+      "confirmRejectDescription": "La candidatura di {{name}} verrà rifiutata e l'accesso resterà negato.",
+      "confirmRejectTitle": "Rifiutare questa candidatura?",
+      "emptyDescription": "Non ci sono candidature insegnante per il filtro selezionato.",
+      "emptyTitle": "Nessuna candidatura",
+      "filterAll": "Tutte",
+      "filterLabel": "Stato",
+      "reject": "Rifiuta",
+      "rejected": "Candidatura di {{name}} rifiutata.",
+      "submittedOn": "Inviata il {{date}}",
+      "subtitle": "Approva o rifiuta le richieste di accesso degli insegnanti.",
+      "title": "Candidature insegnante"
+    }
+  },
+  "invites": {
+    "create": {
+      "studentSuccess": "Invito inviato a {{email}}.",
+      "studentText": "Inserisci l'email dello studente e assegna una classe: riceverà un link per completare la registrazione.",
+      "studentTitle": "Invita uno studente",
+      "submit": "Invia invito",
+      "teacherSuccess": "Invito insegnante inviato a {{email}}.",
+      "teacherText": "Inserisci l'email dell'insegnante: riceverà un link per completare la registrazione, senza bisogno di approvazione.",
+      "teacherTitle": "Invita un insegnante"
+    },
+    "filters": {
+      "statoAll": "Tutti",
+      "statoLabel": "Stato"
+    },
+    "list": {
+      "confirmDescription": "Il link inviato a {{email}} non sarà più utilizzabile.",
+      "confirmTitle": "Revocare questo invito?",
+      "emptyDescription": "Gli inviti che invii compariranno qui.",
+      "emptyTitle": "Nessun invito",
+      "expires": "Scade il {{date}}",
+      "revoke": "Revoca",
+      "revoked": "Invito per {{email}} revocato.",
+      "title": "Inviti inviati"
+    },
+    "managementSubtitle": "Invita nuovi studenti e tieni traccia degli inviti che hai inviato.",
+    "managementTitle": "Gestione inviti",
+    "status": {
+      "completato": "Completato",
+      "pendente": "In attesa",
+      "revocato": "Revocato"
+    }
+  },
+  "stati": {
+    "attivo": "Attivo",
+    "in_attesa": "In attesa",
+    "rifiutato": "Rifiutato"
   }
 }

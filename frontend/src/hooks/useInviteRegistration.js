@@ -11,10 +11,3 @@ export const useRegisterStudent = () =>
 /** Completamento registrazione insegnante da invito (onboarding admin). */
 export const useRegisterTeacher = () =>
   useMutation({ mutationFn: authService.registerTeacher });
-
-/**
- * Candidatura insegnante (self-service). Al successo l'account resta
- * 'in_attesa': l'utente NON può ancora effettuare il login (lo comunica la UI).
- */
-export const useTeacherRequest = () =>
-  useMutation({ mutationFn: authService.teacherRequest });

@@ -10,15 +10,16 @@ import apiClient from '../api/axiosClient';
  *   - validazione token → pubblica.
  */
 
-/** POST /api/invites/student — { email, classe } */
-export const createStudentInvite = async ({ email, classe }) => {
-  const { data } = await apiClient.post('/invites/student', { email, classe });
+/** POST /api/invites/student — { email, classe, scuolaId? } */
+export const createStudentInvite = async ({ email, classe, scuolaId }) => {
+  const body = { email, classe, ...(scuolaId ? { scuolaId } : {}) };
+  const { data } = await apiClient.post('/invites/student', body);
   return data;
 };
 
-/** POST /api/invites/teacher — { email } (solo admin) */
-export const createTeacherInvite = async ({ email }) => {
-  const { data } = await apiClient.post('/invites/teacher', { email });
+/** POST /api/invites/teacher — { email, scuolaId } (solo admin) */
+export const createTeacherInvite = async ({ email, scuolaId }) => {
+  const { data } = await apiClient.post('/invites/teacher', { email, scuolaId });
   return data;
 };
 

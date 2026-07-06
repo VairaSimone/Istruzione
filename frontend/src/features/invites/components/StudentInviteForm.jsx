@@ -8,21 +8,29 @@ import { useCreateStudentInvite } from '../../../hooks/useInvites';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
 import { CLASSI } from '../../../constants/domain';
+import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import Card from '../../../components/ui/Card';
 import TextField from '../../../components/ui/TextField';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
+import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Invites.module.css';
 
 /**
  * Form di creazione invito STUDENTE (insegnante/admin).
- * L'insegnante inserisce email + classe; il backend invia il link di invito.
+ * L'insegnante inserisce email + classe (la scuola è la propria, gestita dal
+ * backend). L'admin, essendo trasversale, sceglie anche la SCUOLA di
+ * destinazione (campo obbligatorio, mostrato solo per admin).
  */
 const StudentInviteForm = () => {
   const { t } = useTranslation();
   const createInvite = useCreateStudentInvite();
+  const isAdmin = useAuthStore(selectIsAdmin);
 
-  const schema = useMemo(() => buildStudentInviteSchema(t), [t]);
+  const schema = useMemo(
+    () => buildStudentInviteSchema(t, { requireScuola: isAdmin }),
+    [t, isAdmin]
+  );
   const {
     register,
     handleSubmit,
@@ -35,12 +43,12 @@ const StudentInviteForm = () => {
     try {
       await createInvite.mutateAsync(values);
       toast.success(t('invites.create.studentSuccess', { email: values.email }));
-      reset({ email: '', classe: '' });
+      reset({ email: '', classe: '', scuolaId: '' });
     } catch (err) {
       const parsed = parseApiError(err);
       if (parsed.fieldErrors) {
         Object.entries(parsed.fieldErrors).forEach(([field, message]) => {
-          if (field === 'email' || field === 'classe') {
+          if (['email', 'classe', 'scuolaId'].includes(field)) {
             setError(field, { type: 'server', message });
           }
         });
@@ -74,6 +82,9 @@ const StudentInviteForm = () => {
             </option>
           ))}
         </Select>
+        {isAdmin && (
+          <ScuolaSelect required error={errors.scuolaId?.message} {...register('scuolaId')} />
+        )}
         <div className={styles.formActions}>
           <Button type="submit" isLoading={createInvite.isPending}>
             {t('invites.create.submit')}

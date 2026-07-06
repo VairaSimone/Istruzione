@@ -16,6 +16,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * `supportato`/`voceGiapponeseDisponibile` lo segnalano e il chiamante può
  * disabilitare il pulsante con un messaggio adeguato.
  *
+ * NOTA implementativa: la voce selezionata vive in `useState` (non in un ref),
+ * così `voceGiapponeseDisponibile` è derivato in modo affidabile senza leggere
+ * ref durante il render. Lo stato iniziale è calcolato in modo pigro da
+ * `getVoices()`; l'aggiornamento asincrono avviene SOLO dal listener
+ * `voiceschanged` (callback di un sistema esterno), evitando `setState`
+ * sincrono nel corpo dell'effect.
+ *
  * @returns {{
  *   supportato: boolean,
  *   voceGiapponeseDisponibile: boolean,
@@ -24,46 +31,51 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  *   ferma: () => void
  * }}
  */
+
+const isSupportato = () =>
+  typeof window !== 'undefined' &&
+  'speechSynthesis' in window &&
+  typeof window.SpeechSynthesisUtterance !== 'undefined';
+
+/** Seleziona una voce giapponese ('ja-JP' o 'ja*') tra quelle disponibili. */
+const selezionaVoceGiapponese = () => {
+  if (!isSupportato()) return null;
+  const voci = window.speechSynthesis.getVoices();
+  if (!voci || voci.length === 0) return null;
+  return (
+    voci.find((v) => v.lang === 'ja-JP') ||
+    voci.find((v) => v.lang && v.lang.toLowerCase().startsWith('ja')) ||
+    null
+  );
+};
+
 export const useSpeech = () => {
-  const supportato =
-    typeof window !== 'undefined' &&
-    'speechSynthesis' in window &&
-    typeof window.SpeechSynthesisUtterance !== 'undefined';
+  const supportato = isSupportato();
 
-  const [vociPronte, setVociPronte] = useState(false);
+  // Voce giapponese in STATO (non ref): inizializzazione pigra da getVoices().
+  const [voceGiapponese, setVoceGiapponese] = useState(selezionaVoceGiapponese);
   const [parlando, setParlando] = useState(false);
-
-  // Voce giapponese selezionata (ref: non deve causare re-render quando cambia).
-  const voceRef = useRef(null);
   const utterRef = useRef(null);
-
-  // Risoluzione della voce giapponese tra quelle disponibili.
-  const risolviVoce = useCallback(() => {
-    if (!supportato) return;
-    const voci = window.speechSynthesis.getVoices();
-    if (!voci || voci.length === 0) return;
-
-    const giapponese =
-      voci.find((v) => v.lang === 'ja-JP') ||
-      voci.find((v) => v.lang && v.lang.toLowerCase().startsWith('ja'));
-
-    voceRef.current = giapponese || null;
-    setVociPronte(true);
-  }, [supportato]);
 
   useEffect(() => {
     if (!supportato) return undefined;
 
-    risolviVoce();
-    // Su molti browser le voci arrivano dopo il primo getVoices().
-    window.speechSynthesis.addEventListener('voiceschanged', risolviVoce);
+    // Aggiorna la voce quando il browser segnala il cambio dell'elenco voci.
+    const aggiornaVoce = () => setVoceGiapponese(selezionaVoceGiapponese());
+    window.speechSynthesis.addEventListener('voiceschanged', aggiornaVoce);
+
+    // Sollecita il caricamento delle voci: su alcuni browser (es. Chrome)
+    // l'elenco è vuoto finché non lo si richiede, e in seguito emette
+    // 'voiceschanged'. Nessun setState sincrono qui: l'aggiornamento arriva
+    // dal listener.
+    window.speechSynthesis.getVoices();
 
     return () => {
-      window.speechSynthesis.removeEventListener('voiceschanged', risolviVoce);
+      window.speechSynthesis.removeEventListener('voiceschanged', aggiornaVoce);
       // Interrompe eventuali pronunce ancora in coda allo smontaggio.
       window.speechSynthesis.cancel();
     };
-  }, [supportato, risolviVoce]);
+  }, [supportato]);
 
   const ferma = useCallback(() => {
     if (!supportato) return;
@@ -82,7 +94,7 @@ export const useSpeech = () => {
       utter.lang = 'ja-JP';
       utter.rate = 0.85; // un filo più lento: aiuta lo studio della pronuncia
       utter.pitch = 1;
-      if (voceRef.current) utter.voice = voceRef.current;
+      if (voceGiapponese) utter.voice = voceGiapponese;
 
       utter.onstart = () => setParlando(true);
       utter.onend = () => setParlando(false);
@@ -91,14 +103,12 @@ export const useSpeech = () => {
       utterRef.current = utter;
       window.speechSynthesis.speak(utter);
     },
-    [supportato]
+    [supportato, voceGiapponese]
   );
 
   return {
     supportato,
-    voceGiapponeseDisponibile: Boolean(voceRef.current),
-    // Esposto perché la disponibilità voci può cambiare dopo il primo render.
-    vociPronte,
+    voceGiapponeseDisponibile: Boolean(voceGiapponese),
     parlando,
     parla,
     ferma,

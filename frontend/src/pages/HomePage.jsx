@@ -18,11 +18,6 @@ const HomePage = () => {
         <Link to={ROUTES.LOGIN}>
           <Button size="lg">{t('home.login')}</Button>
         </Link>
-        <Link to={ROUTES.TEACHER_REQUEST}>
-          <Button size="lg" variant="secondary">
-            {t('home.teacherCta')}
-          </Button>
-        </Link>
       </div>
       <p className={styles.note}>{t('home.studentInviteNote')}</p>
     </div>

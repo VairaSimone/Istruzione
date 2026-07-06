@@ -89,40 +89,36 @@ export const buildRegisterTeacherSchema = (t) =>
       path: ['confermaPassword'],
     });
 
-/** Candidatura insegnante (self-service). */
-export const buildTeacherRequestSchema = (t) =>
-  z
-    .object({
-      nome: buildNomeSchema(t, 'nome'),
-      cognome: buildNomeSchema(t, 'cognome'),
-      email: buildEmailSchema(t),
-      password: buildPasswordSchema(t),
-      confermaPassword: z.string().trim().min(1, t('validation.confirmRequired')),
-      motivazione: z
-        .string()
-        .trim()
-        .max(1000, t('validation.motivazioneMax', { max: 1000 }))
-        .optional()
-        .or(z.literal('')),
-    })
-    .refine((data) => data.password === data.confermaPassword, {
-      message: t('validation.passwordMismatch'),
-      path: ['confermaPassword'],
-    });
+/**
+ * Campo scuola per gli inviti/aule lato ADMIN. Obbligatorio quando l'utente è
+ * admin (deve scegliere la scuola di destinazione); assente/ignorato per gli
+ * insegnanti (il backend usa la loro scuola).
+ */
+const buildScuolaIdSchema = (t, required) => {
+  const base = z.string().trim().uuid(t('validation.scuolaInvalid'));
+  return required
+    ? z.string().trim().min(1, t('validation.scuolaRequired')).uuid(t('validation.scuolaInvalid'))
+    : base.optional().or(z.literal(''));
+};
 
-/** Creazione invito STUDENTE (email + classe). */
-export const buildStudentInviteSchema = (t) =>
+/**
+ * Creazione invito STUDENTE (email + classe [+ scuola per admin]).
+ * `requireScuola` = true quando il form è compilato da un admin.
+ */
+export const buildStudentInviteSchema = (t, { requireScuola = false } = {}) =>
   z.object({
     email: buildEmailSchema(t),
     classe: z.enum(CLASSI, {
       message: t('validation.classeInvalid', { values: CLASSI.join(', ') }),
     }),
+    scuolaId: buildScuolaIdSchema(t, requireScuola),
   });
 
-/** Creazione invito INSEGNANTE (solo email). */
+/** Creazione invito INSEGNANTE (email + scuola). Solo admin: scuola obbligatoria. */
 export const buildTeacherInviteSchema = (t) =>
   z.object({
     email: buildEmailSchema(t),
+    scuolaId: buildScuolaIdSchema(t, true),
   });
 
 export const buildLoginSchema = (t) =>

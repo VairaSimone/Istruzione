@@ -18,6 +18,7 @@ export const getAule = async (filters = {}) => {
     params.archiviata = filters.archiviata;
   }
   if (filters.q) params.q = filters.q;
+  if (filters.scuola) params.scuola = filters.scuola;
   if (filters.page) params.page = filters.page;
   if (filters.limit) params.limit = filters.limit;
 

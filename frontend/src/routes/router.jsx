@@ -27,9 +27,8 @@ import MessaggioDetailPage from '../pages/MessaggioDetailPage';
 import UsersManagementPage from '../pages/UsersManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ForbiddenPage from '../pages/ForbiddenPage';
-import TeacherRequestPage from '../pages/TeacherRequestPage';
 import InvitesManagementPage from '../pages/InvitesManagementPage';
-import AdminTeacherRequestsPage from '../pages/AdminTeacherRequestsPage';
+import ScuoleManagementPage from '../pages/ScuoleManagementPage';
 export const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -47,7 +46,6 @@ export const router = createBrowserRouter([
         children: [
           { path: ROUTES.LOGIN, element: <LoginPage /> },
           { path: ROUTES.REGISTER, element: <RegisterPage /> },
-           { path: ROUTES.TEACHER_REQUEST, element: <TeacherRequestPage /> },
           { path: ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
           { path: ROUTES.RESET_PASSWORD, element: <ResetPasswordPage /> },
         ],
@@ -80,11 +78,11 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // ── Route protette, solo ruolo insegnante ────────────
+      // ── Route protette, solo ruolo admin ────────────
       {
         element: <ProtectedRoute allowedRoles={[ROLES.ADMIN]} />,
         children: [
-          { path: ROUTES.ADMIN_TEACHER_REQUESTS, element: <AdminTeacherRequestsPage /> },
+          { path: ROUTES.SCUOLE_MANAGEMENT, element: <ScuoleManagementPage /> },
         ],
       },
 

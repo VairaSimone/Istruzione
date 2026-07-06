@@ -8,14 +8,16 @@ import { useCreateAula, useUpdateAula } from '../../../hooks/useAule';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
 import { LIVELLI_JLPT } from '../../../constants/domain';
+import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
+import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Aule.module.css';
 
-const CAMPI = ['nome', 'descrizione', 'annoScolastico', 'livelloJLPT', 'colore'];
+const CAMPI = ['nome', 'descrizione', 'annoScolastico', 'livelloJLPT', 'colore', 'scuolaId'];
 
 /**
  * Modal per creare (aula = null) o modificare un'aula esistente.
@@ -27,8 +29,15 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
   const createAula = useCreateAula();
   const updateAula = useUpdateAula();
   const isEdit = Boolean(aula);
+  const isAdmin = useAuthStore(selectIsAdmin);
+  // La scuola si sceglie solo in creazione da parte dell'admin: in modifica
+  // resta immutata; per l'insegnante è la propria (gestita dal backend).
+  const mostraScuola = isAdmin && !isEdit;
 
-  const schema = useMemo(() => buildAulaSchema(t), [t]);
+  const schema = useMemo(
+    () => buildAulaSchema(t, { requireScuola: mostraScuola }),
+    [t, mostraScuola]
+  );
   const {
     register,
     handleSubmit,
@@ -46,6 +55,7 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
       annoScolastico: aula?.annoScolastico ?? '',
       livelloJLPT: aula?.livelloJLPT ?? '',
       colore: aula?.colore ?? '',
+      scuolaId: '',
     });
   }, [isOpen, aula, reset]);
 
@@ -58,6 +68,10 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
       livelloJLPT: values.livelloJLPT ?? null,
       colore: values.colore ?? null,
     };
+    // In creazione da admin includiamo la scuola scelta.
+    if (mostraScuola && values.scuolaId) {
+      payload.scuolaId = values.scuolaId;
+    }
 
     try {
       if (isEdit) {
@@ -137,6 +151,14 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
           error={errors.colore?.message}
           {...register('colore')}
         />
+        {mostraScuola && (
+          <ScuolaSelect
+            label={t('aule.form.scuola')}
+            required
+            error={errors.scuolaId?.message}
+            {...register('scuolaId')}
+          />
+        )}
       </form>
     </Modal>
   );

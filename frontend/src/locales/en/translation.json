@@ -61,7 +61,8 @@
     "compiti": "Assignments",
     "compitiStudente": "My assignments",
     "statistiche": "Statistics",
-    "messaggi": "Messages"
+    "messaggi": "Messages",
+    "scuole": "Schools"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -152,7 +153,6 @@
       "backToProfile": "Back to profile"
     },
     "orSeparator": "or",
-
     "resend": {
       "prompt": "Didn't receive the verification email?",
       "cta": "Resend verification email",
@@ -201,7 +201,10 @@
     "teacherCardCta": "Go to user management",
     "quizCardTitle": "Kana quiz",
     "quizCardText": "Practise hiragana and katakana with a spaced-repetition quiz: the characters you miss come back more often. Earn XP, levels and streaks.",
-    "quizCardCta": "Go to the quiz"
+    "quizCardCta": "Go to the quiz",
+    "scuoleCardTitle": "School management",
+    "scuoleCardText": "Create and configure the platform schools and their personal settings.",
+    "scuoleCardCta": "Manage schools"
   },
   "profile": {
     "title": "Your profile",
@@ -345,7 +348,14 @@
       "MESSAGE_NOT_FOUND": "Message not found.",
       "REPLIES_DISABLED": "Replies are not allowed for this message.",
       "NO_RECIPIENT": "The reply recipient is no longer available.",
-      "INVALID_MESSAGE_TARGET": "Specify exactly one between classroom and student."
+      "INVALID_MESSAGE_TARGET": "Specify exactly one between classroom and student.",
+      "CROSS_SCUOLA_FORBIDDEN": "This resource does not belong to your school.",
+      "SCUOLA_REQUIRED": "Select the destination school.",
+      "SCUOLA_NOT_FOUND": "School not found.",
+      "SCUOLA_NAME_TAKEN": "A school with this name already exists.",
+      "SCUOLA_HAS_USERS": "Cannot delete the school: it still has linked users.",
+      "NO_SCUOLA": "Your account is not associated with any school.",
+      "INVALID_SETTINGS": "Settings must be a valid JSON object."
     }
   },
   "validation": {
@@ -368,7 +378,9 @@
     "passwordMismatch": "Passwords do not match",
     "classeInvalid": "Class must be one of: {{values}}",
     "roleInvalid": "Invalid role",
-    "motivazioneMax": "The message cannot exceed {{max}} characters"
+    "motivazioneMax": "The message cannot exceed {{max}} characters",
+    "scuolaRequired": "The school is required",
+    "scuolaInvalid": "The school identifier is not valid"
   },
   "stati": {
     "attivo": "Active",
@@ -711,7 +723,8 @@
       "livelloJLPT": "JLPT level",
       "livelloNessuno": "No level",
       "colore": "Colour",
-      "coloreHint": "Optional hex identifier colour"
+      "coloreHint": "Optional hex identifier colour",
+      "scuola": "School"
     },
     "toast": {
       "created": "Classroom created successfully.",
@@ -984,6 +997,49 @@
       "deleted": "Message deleted.",
       "unknownSender": "Unknown sender",
       "loadError": "Unable to load the message."
+    }
+  },
+  "scuole": {
+    "managementTitle": "School management",
+    "managementSubtitle": "Create schools, manage their personal settings and remove the ones no longer needed.",
+    "create": {
+      "cta": "New school"
+    },
+    "list": {
+      "title": "Schools",
+      "emptyTitle": "No schools",
+      "emptyDescription": "No school has been created yet. Create one to get started.",
+      "utentiCount": "{{count}} users",
+      "auleCount": "{{count}} classrooms",
+      "deleteBlocked": "The school has linked users and cannot be deleted."
+    },
+    "form": {
+      "createTitle": "New school",
+      "editTitle": "Edit school",
+      "nome": "School name",
+      "impostazioni": "Settings (JSON)",
+      "impostazioniHint": "JSON object with the school's personal settings. Leave empty for no settings.",
+      "createSubmit": "Create school"
+    },
+    "toast": {
+      "created": "School created successfully.",
+      "updated": "School updated successfully.",
+      "deleted": "School deleted successfully."
+    },
+    "delete": {
+      "title": "Delete school",
+      "description": "Do you want to delete the school \"{{nome}}\"? This action cannot be undone."
+    },
+    "select": {
+      "label": "School",
+      "placeholder": "Select a school",
+      "empty": "No schools available — create one first"
+    },
+    "validation": {
+      "nomeLength": "The name must be between 2 and 160 characters",
+      "impostazioniJson": "Settings must be valid JSON",
+      "impostazioniObject": "Settings must be a JSON object (key/value pairs)",
+      "impostazioniMax": "Settings exceed the maximum allowed size"
     }
   }
 }

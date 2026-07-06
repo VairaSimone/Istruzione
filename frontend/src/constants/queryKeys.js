@@ -17,9 +17,11 @@ export const queryKeys = Object.freeze({
     list: (filters) => ['invites', 'list', filters ?? {}],
     validate: (token) => ['invites', 'validate', token],
   },
-  teacherRequests: {
-    all: ['teacherRequests'],
-    list: (filters) => ['teacherRequests', 'list', filters ?? {}],
+  scuole: {
+    all: ['scuole'],
+    list: (filters) => ['scuole', 'list', filters ?? {}],
+    detail: (id) => ['scuole', 'detail', id],
+    mia: ['scuole', 'mia'],
   },
   quiz: {
     dashboard: ['quiz', 'dashboard'],

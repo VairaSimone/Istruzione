@@ -91,13 +91,13 @@ const DashboardPage = () => {
           </Card>
         )}
 
-        {/* AMMINISTRAZIONE CARD */}
+        {/* AMMINISTRAZIONE — GESTIONE SCUOLE (admin) */}
         {isAdmin && (
           <Card className={styles.summaryCard}>
-            <h2 className={styles.cardTitle}>{t('dashboard.adminCardTitle')}</h2>
-            <p className={styles.cardText}>{t('dashboard.adminCardText')}</p>
-            <Link to={ROUTES.ADMIN_TEACHER_REQUESTS}>
-              <Button size="sm">{t('dashboard.adminCardCta')}</Button>
+            <h2 className={styles.cardTitle}>{t('dashboard.scuoleCardTitle')}</h2>
+            <p className={styles.cardText}>{t('dashboard.scuoleCardText')}</p>
+            <Link to={ROUTES.SCUOLE_MANAGEMENT}>
+              <Button size="sm">{t('dashboard.scuoleCardCta')}</Button>
             </Link>
           </Card>
         )}

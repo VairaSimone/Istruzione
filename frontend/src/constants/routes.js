@@ -24,7 +24,7 @@ export const ROUTES = Object.freeze({
   MESSAGGIO_DETAIL: '/messaggi/:id',
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
-  ADMIN_TEACHER_REQUESTS: '/admin/candidature',
+  SCUOLE_MANAGEMENT: '/gestione/scuole',
   NOT_FOUND: '/404',
   FORBIDDEN: '/403',
 });

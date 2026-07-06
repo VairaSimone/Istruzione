@@ -17,7 +17,7 @@ const optionalString = () =>
     .optional()
     .transform((v) => (v === '' ? undefined : v));
 
-export const buildAulaSchema = (t) =>
+export const buildAulaSchema = (t, { requireScuola = false } = {}) =>
   z.object({
     nome: z
       .string()
@@ -39,6 +39,11 @@ export const buildAulaSchema = (t) =>
     colore: optionalString().pipe(
       z.string().regex(COLORE_REGEX, t('aule.validation.colore')).optional()
     ),
+    // Scuola dell'aula: obbligatoria solo quando il form è compilato da un admin
+    // (in creazione). Per l'insegnante è la propria scuola, gestita dal backend.
+    scuolaId: requireScuola
+      ? z.string().trim().min(1, t('validation.scuolaRequired')).uuid(t('validation.scuolaInvalid'))
+      : z.string().trim().uuid(t('validation.scuolaInvalid')).optional().or(z.literal('')),
   });
 
 export const buildAddByEmailSchema = (t) =>
