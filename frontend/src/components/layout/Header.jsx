@@ -96,6 +96,11 @@ const Header = () => {
                 {t('nav.compitiStudente')}
               </NavLink>
             )}
+            {user?.ruolo === 'studente' && (
+              <NavLink to={ROUTES.CORSI_STUDENTE} className={navLinkClass}>
+                {t('nav.corsiStudente')}
+              </NavLink>
+            )}
             <NavLink to={ROUTES.PROFILE} className={navLinkClass}>
               {t('nav.profile')}
             </NavLink>
@@ -108,6 +113,11 @@ const Header = () => {
             {isTeacher && (
               <NavLink to={ROUTES.COMPITI} className={navLinkClass}>
                 {t('nav.compiti')}
+              </NavLink>
+            )}
+            {isTeacher && (
+              <NavLink to={ROUTES.CORSI} className={navLinkClass}>
+                {t('nav.corsi')}
               </NavLink>
             )}
             {isTeacher && (

@@ -27,13 +27,22 @@ export const queryKeys = Object.freeze({
     dashboard: ['quiz', 'dashboard'],
     badge: ['quiz', 'badge'],
     strokeOrder: (alfabeto) => ['quiz', 'strokeOrder', alfabeto],
-    strokeOrderKanji: (livello, lingua) => ['quiz', 'strokeOrderKanji', livello, lingua ?? 'it'],
+    strokeOrderKanji: (livello, lingua) => [
+      'quiz',
+      'strokeOrderKanji',
+      livello,
+      lingua ?? 'it',
+    ],
   },
   statistiche: {
     all: ['statistiche'],
     heatmap: (giorni) => ['statistiche', 'heatmap', giorni ?? 365],
     streak: ['statistiche', 'streak'],
-    caratteriProblematici: (filtri) => ['statistiche', 'caratteriProblematici', filtri ?? {}],
+    caratteriProblematici: (filtri) => [
+      'statistiche',
+      'caratteriProblematici',
+      filtri ?? {},
+    ],
   },
   aule: {
     all: ['aule'],
@@ -47,6 +56,13 @@ export const queryKeys = Object.freeze({
     consegne: (id) => ['compiti', 'consegne', id],
     studente: (filters) => ['compiti', 'studente', filters ?? {}],
     studenteDetail: (id) => ['compiti', 'studente', 'detail', id],
+  },
+  corsi: {
+    all: ['corsi'],
+    list: (filters) => ['corsi', 'list', filters ?? {}],
+    detail: (id) => ['corsi', 'detail', id],
+    studente: (filters) => ['corsi', 'studente', filters ?? {}],
+    studenteDetail: (id) => ['corsi', 'studente', 'detail', id],
   },
   dashboard: {
     globale: (opzioni) => ['dashboard', 'globale', opzioni ?? {}],

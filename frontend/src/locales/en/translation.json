@@ -59,7 +59,9 @@
     "teacherRequest": "Apply",
     "aule": "Classrooms",
     "compiti": "Assignments",
+    "corsi": "Courses",
     "compitiStudente": "My assignments",
+    "corsiStudente": "My courses",
     "statistiche": "Statistics",
     "messaggi": "Messages",
     "scuole": "Schools"
@@ -356,7 +358,13 @@
       "SCUOLA_NAME_TAKEN": "A school with this name already exists.",
       "SCUOLA_HAS_USERS": "Cannot delete the school: it still has linked users.",
       "NO_SCUOLA": "Your account is not associated with any school.",
-      "INVALID_SETTINGS": "Settings must be a valid JSON object."
+      "INVALID_SETTINGS": "Settings must be a valid JSON object.",
+      "CORSO_NOT_FOUND": "Course not found.",
+      "CAPITOLO_NOT_FOUND": "Chapter not found.",
+      "DOCUMENTO_NOT_FOUND": "Document not found.",
+      "ALREADY_AVAILABLE": "The course is already available for this classroom.",
+      "AVAILABILITY_NOT_FOUND": "The course is not available for this classroom.",
+      "TOO_MANY_CAPITOLI": "Too many chapters at creation: add the remaining ones individually."
     }
   },
   "validation": {
@@ -901,6 +909,136 @@
       "submitSuccess": "Assignment submitted successfully.",
       "tempoLimite": "Time limit: {{minuti}} minutes",
       "feedbackTitle": "Teacher feedback"
+    }
+  },
+  "corsi": {
+    "stati": {
+      "bozza": "Draft",
+      "pubblicato": "Published",
+      "archiviato": "Archived"
+    },
+    "validation": {
+      "titoloLength": "The title must be between 2 and 160 characters",
+      "capitoloTitoloLength": "The chapter title must be between 2 and 160 characters",
+      "documentoTitoloLength": "The document title must be between 1 and 200 characters",
+      "descrizioneMax": "The description cannot exceed 10000 characters",
+      "url": "The URL must be a valid http(s) address",
+      "urlMax": "The URL cannot exceed 2048 characters",
+      "urlRequired": "The URL is required",
+      "livello": "Invalid JLPT level",
+      "stato": "Invalid status",
+      "durata": "The duration must be between 0 and 86400 seconds",
+      "ordine": "The order must be an integer greater than or equal to 0"
+    },
+    "card": {
+      "scaricabile": "Downloadable videos",
+      "capitoli": "{{n}} chapters"
+    },
+    "list": {
+      "title": "Courses",
+      "subtitle": "Create video-lesson courses and make them available to your classrooms.",
+      "create": "New course",
+      "search": "Search",
+      "searchPlaceholder": "Course title…",
+      "allStates": "All statuses",
+      "allLevels": "All levels",
+      "empty": "No courses found. Create one to get started.",
+      "loadError": "Unable to load courses."
+    },
+    "form": {
+      "createTitle": "New course",
+      "editTitle": "Edit course",
+      "createSubmit": "Create course",
+      "titolo": "Title",
+      "descrizione": "Description",
+      "copertinaUrl": "Cover URL",
+      "copertinaHint": "Optional · http(s) address of an image",
+      "livelloJLPT": "JLPT level",
+      "livelloQualsiasi": "None",
+      "stato": "Status",
+      "videoScaricabile": "Allow video downloads",
+      "videoScaricabileHint": "Default course policy. Each chapter can override it individually."
+    },
+    "detail": {
+      "back": "Back to courses",
+      "loadError": "Unable to load the course.",
+      "deleteConfirm": "Permanently delete this course and all its chapters?",
+      "downloadDefaultOn": "Video download: allowed",
+      "downloadDefaultOff": "Video download: not allowed",
+      "statCapitoli": "Chapters",
+      "statAule": "Classrooms with access"
+    },
+    "capitolo": {
+      "panelTitle": "Chapters",
+      "add": "Add chapter",
+      "empty": "No chapters yet. Add one to get started.",
+      "deleteConfirm": "Delete this chapter and its documents?",
+      "hasVideo": "Video",
+      "noVideo": "No video",
+      "downloadOn": "Downloadable",
+      "downloadOff": "Not downloadable",
+      "inherited": "inherited"
+    },
+    "capitoloForm": {
+      "createTitle": "New chapter",
+      "editTitle": "Edit chapter",
+      "createSubmit": "Add chapter",
+      "titolo": "Title",
+      "descrizione": "Description",
+      "videoUrl": "Video URL",
+      "videoUrlHint": "YouTube, Vimeo or a direct link to a video file (http/https)",
+      "videoDurata": "Duration (seconds)",
+      "videoDurataHint": "Optional",
+      "ordine": "Order",
+      "ordineHint": "Optional · if empty, the chapter goes to the end",
+      "scaricabile": "Video download",
+      "scaricabileEredita": "Inherit from course",
+      "scaricabileSi": "Allow",
+      "scaricabileNo": "Do not allow"
+    },
+    "documento": {
+      "title": "Attached documents",
+      "titolo": "Document title",
+      "url": "Document URL",
+      "empty": "No attached documents.",
+      "deleteConfirm": "Remove this document?"
+    },
+    "disponibilita": {
+      "title": "Availability",
+      "empty": "The course is not available to any classroom yet.",
+      "aula": "Classroom",
+      "selectAula": "Select a classroom",
+      "noAule": "No classrooms available",
+      "add": "Make available",
+      "revoke": "Revoke",
+      "added": "Course made available to the classroom.",
+      "removed": "Availability revoked.",
+      "removeConfirm": "Revoke the course availability for this classroom?"
+    },
+    "toast": {
+      "created": "Course created successfully.",
+      "updated": "Course updated successfully.",
+      "deleted": "Course deleted successfully.",
+      "capitoloAdded": "Chapter added successfully.",
+      "capitoloUpdated": "Chapter updated successfully.",
+      "capitoloDeleted": "Chapter deleted successfully.",
+      "documentoAdded": "Document added successfully.",
+      "documentoDeleted": "Document removed successfully."
+    },
+    "studente": {
+      "title": "My courses",
+      "subtitle": "On-demand video lessons available for your classrooms.",
+      "empty": "No courses available right now.",
+      "loadError": "Unable to load courses.",
+      "back": "Back to my courses",
+      "noCapitoli": "This course has no chapters yet."
+    },
+    "player": {
+      "capitoloNum": "Chapter {{num}}",
+      "videoTitle": "Lesson video",
+      "noVideo": "No video for this chapter.",
+      "noDownload": "Downloading this video is not allowed.",
+      "download": "Download video"
     }
   },
   "teacherDashboard": {

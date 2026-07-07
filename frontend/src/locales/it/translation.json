@@ -56,7 +56,9 @@
     "quiz": "Quiz",
     "aule": "Aule",
     "compiti": "Compiti",
+    "corsi": "Corsi",
     "compitiStudente": "I miei compiti",
+    "corsiStudente": "I miei corsi",
     "statistiche": "Statistiche",
     "messaggi": "Messaggi",
     "scuole": "Scuole",
@@ -356,7 +358,13 @@
       "INVITE_NOT_PENDING": "Solo gli inviti pendenti possono essere revocati.",
       "INVITE_ROLE_MISMATCH": "Questo invito non è valido per questo tipo di registrazione.",
       "LAST_ADMIN": "Non puoi eliminare o declassare l'ultimo amministratore.",
-      "REQUEST_NOT_FOUND": "Candidatura insegnante non trovata."
+      "REQUEST_NOT_FOUND": "Candidatura insegnante non trovata.",
+      "CORSO_NOT_FOUND": "Corso non trovato.",
+      "CAPITOLO_NOT_FOUND": "Capitolo non trovato.",
+      "DOCUMENTO_NOT_FOUND": "Documento non trovato.",
+      "ALREADY_AVAILABLE": "Il corso è già disponibile per questa aula.",
+      "AVAILABILITY_NOT_FOUND": "Il corso non è disponibile per questa aula.",
+      "TOO_MANY_CAPITOLI": "Troppi capitoli in fase di creazione: aggiungi gli altri singolarmente."
     }
   },
   "validation": {
@@ -847,6 +855,136 @@
       "submitSuccess": "Compito consegnato con successo.",
       "tempoLimite": "Tempo limite: {{minuti}} minuti",
       "feedbackTitle": "Feedback dell’insegnante"
+    }
+  },
+  "corsi": {
+    "stati": {
+      "bozza": "Bozza",
+      "pubblicato": "Pubblicato",
+      "archiviato": "Archiviato"
+    },
+    "validation": {
+      "titoloLength": "Il titolo deve avere tra 2 e 160 caratteri",
+      "capitoloTitoloLength": "Il titolo del capitolo deve avere tra 2 e 160 caratteri",
+      "documentoTitoloLength": "Il titolo del documento deve avere tra 1 e 200 caratteri",
+      "descrizioneMax": "La descrizione non può superare i 10000 caratteri",
+      "url": "L'URL deve essere un indirizzo http(s) valido",
+      "urlMax": "L'URL non può superare i 2048 caratteri",
+      "urlRequired": "L'URL è obbligatorio",
+      "livello": "Livello JLPT non valido",
+      "stato": "Stato non valido",
+      "durata": "La durata deve essere tra 0 e 86400 secondi",
+      "ordine": "L'ordine deve essere un intero maggiore o uguale a 0"
+    },
+    "card": {
+      "scaricabile": "Video scaricabili",
+      "capitoli": "{{n}} capitoli"
+    },
+    "list": {
+      "title": "Corsi",
+      "subtitle": "Crea corsi di videolezioni e rendili disponibili alle tue aule.",
+      "create": "Nuovo corso",
+      "search": "Cerca",
+      "searchPlaceholder": "Titolo del corso…",
+      "allStates": "Tutti gli stati",
+      "allLevels": "Tutti i livelli",
+      "empty": "Nessun corso trovato. Creane uno per iniziare.",
+      "loadError": "Impossibile caricare i corsi."
+    },
+    "form": {
+      "createTitle": "Nuovo corso",
+      "editTitle": "Modifica corso",
+      "createSubmit": "Crea corso",
+      "titolo": "Titolo",
+      "descrizione": "Descrizione",
+      "copertinaUrl": "URL copertina",
+      "copertinaHint": "Facoltativo · indirizzo http(s) di un’immagine",
+      "livelloJLPT": "Livello JLPT",
+      "livelloQualsiasi": "Nessuno",
+      "stato": "Stato",
+      "videoScaricabile": "Consenti il download dei video",
+      "videoScaricabileHint": "Policy predefinita del corso. Ogni capitolo può sovrascriverla singolarmente."
+    },
+    "detail": {
+      "back": "Torna ai corsi",
+      "loadError": "Impossibile caricare il corso.",
+      "deleteConfirm": "Eliminare definitivamente questo corso e tutti i suoi capitoli?",
+      "downloadDefaultOn": "Download video: consentito",
+      "downloadDefaultOff": "Download video: non consentito",
+      "statCapitoli": "Capitoli",
+      "statAule": "Aule con accesso"
+    },
+    "capitolo": {
+      "panelTitle": "Capitoli",
+      "add": "Aggiungi capitolo",
+      "empty": "Nessun capitolo. Aggiungine uno per iniziare.",
+      "deleteConfirm": "Eliminare questo capitolo e i suoi documenti?",
+      "hasVideo": "Video",
+      "noVideo": "Senza video",
+      "downloadOn": "Scaricabile",
+      "downloadOff": "Non scaricabile",
+      "inherited": "ereditato"
+    },
+    "capitoloForm": {
+      "createTitle": "Nuovo capitolo",
+      "editTitle": "Modifica capitolo",
+      "createSubmit": "Aggiungi capitolo",
+      "titolo": "Titolo",
+      "descrizione": "Descrizione",
+      "videoUrl": "URL video",
+      "videoUrlHint": "YouTube, Vimeo o link diretto a un file video (http/https)",
+      "videoDurata": "Durata (secondi)",
+      "videoDurataHint": "Facoltativo",
+      "ordine": "Ordine",
+      "ordineHint": "Facoltativo · se vuoto, il capitolo va in fondo",
+      "scaricabile": "Download del video",
+      "scaricabileEredita": "Eredita dal corso",
+      "scaricabileSi": "Consenti",
+      "scaricabileNo": "Non consentire"
+    },
+    "documento": {
+      "title": "Documenti allegati",
+      "titolo": "Titolo documento",
+      "url": "URL documento",
+      "empty": "Nessun documento allegato.",
+      "deleteConfirm": "Rimuovere questo documento?"
+    },
+    "disponibilita": {
+      "title": "Disponibilità",
+      "empty": "Il corso non è ancora disponibile per nessuna aula.",
+      "aula": "Aula",
+      "selectAula": "Seleziona un’aula",
+      "noAule": "Nessuna aula disponibile",
+      "add": "Rendi disponibile",
+      "revoke": "Revoca",
+      "added": "Corso reso disponibile all’aula.",
+      "removed": "Disponibilità revocata.",
+      "removeConfirm": "Revocare la disponibilità del corso per questa aula?"
+    },
+    "toast": {
+      "created": "Corso creato con successo.",
+      "updated": "Corso aggiornato con successo.",
+      "deleted": "Corso eliminato con successo.",
+      "capitoloAdded": "Capitolo aggiunto con successo.",
+      "capitoloUpdated": "Capitolo aggiornato con successo.",
+      "capitoloDeleted": "Capitolo eliminato con successo.",
+      "documentoAdded": "Documento aggiunto con successo.",
+      "documentoDeleted": "Documento rimosso con successo."
+    },
+    "studente": {
+      "title": "I miei corsi",
+      "subtitle": "Videolezioni on-demand disponibili per le tue aule.",
+      "empty": "Nessun corso disponibile al momento.",
+      "loadError": "Impossibile caricare i corsi.",
+      "back": "Torna ai miei corsi",
+      "noCapitoli": "Questo corso non ha ancora capitoli."
+    },
+    "player": {
+      "capitoloNum": "Capitolo {{num}}",
+      "videoTitle": "Video della lezione",
+      "noVideo": "Nessun video per questo capitolo.",
+      "noDownload": "Il download di questo video non è consentito.",
+      "download": "Scarica video"
     }
   },
   "teacherDashboard": {

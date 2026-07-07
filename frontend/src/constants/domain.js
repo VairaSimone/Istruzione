@@ -69,6 +69,14 @@ export const TIPI_ATTIVITA_COMPITO = Object.freeze([
 /** Stato di pubblicazione del compito (modello `Compito.STATI_COMPITO`). */
 export const STATI_COMPITO = Object.freeze(['bozza', 'pubblicato', 'archiviato']);
 
+/**
+ * Stato di pubblicazione del corso di videolezioni (modello `Corso.STATI_CORSO`).
+ *   - 'bozza'      → visibile solo allo staff della scuola;
+ *   - 'pubblicato' → guardabile dagli studenti delle aule a cui è reso disponibile;
+ *   - 'archiviato' → concluso/nascosto, resta nello storico.
+ */
+export const STATI_CORSO = Object.freeze(['bozza', 'pubblicato', 'archiviato']);
+
 /** Stato del compito PER STUDENTE (derivato lato backend). */
 export const STATI_COMPITO_STUDENTE = Object.freeze([
   'assegnato',
@@ -164,6 +172,13 @@ export const API_ERROR_CODES = Object.freeze({
   SCUOLA_HAS_USERS: 'SCUOLA_HAS_USERS',
   NO_SCUOLA: 'NO_SCUOLA',
   INVALID_SETTINGS: 'INVALID_SETTINGS',
+  // Videolezioni on-demand (corsi)
+  CORSO_NOT_FOUND: 'CORSO_NOT_FOUND',
+  CAPITOLO_NOT_FOUND: 'CAPITOLO_NOT_FOUND',
+  DOCUMENTO_NOT_FOUND: 'DOCUMENTO_NOT_FOUND',
+  ALREADY_AVAILABLE: 'ALREADY_AVAILABLE',
+  AVAILABILITY_NOT_FOUND: 'AVAILABILITY_NOT_FOUND',
+  TOO_MANY_CAPITOLI: 'TOO_MANY_CAPITOLI',
 });
 
 /** Età minima/massima ammesse in registrazione (vedi modello Utente) */

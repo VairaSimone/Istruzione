@@ -21,6 +21,10 @@ import CompitiListPage from '../pages/CompitiListPage';
 import CompitoDetailPage from '../pages/CompitoDetailPage';
 import CompitiStudentePage from '../pages/CompitiStudentePage';
 import CompitoStudenteDetailPage from '../pages/CompitoStudenteDetailPage';
+import CorsiListPage from '../pages/CorsiListPage';
+import CorsoDetailPage from '../pages/CorsoDetailPage';
+import CorsiStudentePage from '../pages/CorsiStudentePage';
+import CorsoStudenteDetailPage from '../pages/CorsoStudenteDetailPage';
 import TeacherDashboardPage from '../pages/TeacherDashboardPage';
 import MessaggiPage from '../pages/MessaggiPage';
 import MessaggioDetailPage from '../pages/MessaggioDetailPage';
@@ -59,7 +63,12 @@ export const router = createBrowserRouter([
           { path: ROUTES.PROFILE, element: <ProfilePage /> },
           { path: ROUTES.QUIZ, element: <QuizPage /> },
           { path: ROUTES.COMPITI_STUDENTE, element: <CompitiStudentePage /> },
-          { path: ROUTES.COMPITO_STUDENTE_DETAIL, element: <CompitoStudenteDetailPage /> },
+          {
+            path: ROUTES.COMPITO_STUDENTE_DETAIL,
+            element: <CompitoStudenteDetailPage />,
+          },
+          { path: ROUTES.CORSI_STUDENTE, element: <CorsiStudentePage /> },
+          { path: ROUTES.CORSO_STUDENTE_DETAIL, element: <CorsoStudenteDetailPage /> },
           { path: ROUTES.MESSAGGI, element: <MessaggiPage /> },
           { path: ROUTES.MESSAGGIO_DETAIL, element: <MessaggioDetailPage /> },
         ],
@@ -72,6 +81,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.AULA_DETAIL, element: <AulaDetailPage /> },
           { path: ROUTES.COMPITI, element: <CompitiListPage /> },
           { path: ROUTES.COMPITO_DETAIL, element: <CompitoDetailPage /> },
+          { path: ROUTES.CORSI, element: <CorsiListPage /> },
+          { path: ROUTES.CORSO_DETAIL, element: <CorsoDetailPage /> },
           { path: ROUTES.TEACHER_DASHBOARD, element: <TeacherDashboardPage /> },
           { path: ROUTES.USERS_MANAGEMENT, element: <UsersManagementPage /> },
           { path: ROUTES.INVITES_MANAGEMENT, element: <InvitesManagementPage /> },
@@ -81,9 +92,7 @@ export const router = createBrowserRouter([
       // ── Route protette, solo ruolo admin ────────────
       {
         element: <ProtectedRoute allowedRoles={[ROLES.ADMIN]} />,
-        children: [
-          { path: ROUTES.SCUOLE_MANAGEMENT, element: <ScuoleManagementPage /> },
-        ],
+        children: [{ path: ROUTES.SCUOLE_MANAGEMENT, element: <ScuoleManagementPage /> }],
       },
 
       // ── Catch-all ─────────────────────────────────────────

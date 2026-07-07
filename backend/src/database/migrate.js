@@ -7,6 +7,10 @@ const logger = require('../utils/logger');
 
 require('../models/Utente');
 require('../models/Invito');
+require('../models/Corso');
+require('../models/Capitolo');
+require('../models/DocumentoCapitolo');
+require('../models/CorsoAula');
 require('../models/ProgressoKana');
 require('../models/ProgressoKanji');
 require('../models/AttivitaGiornaliera');
