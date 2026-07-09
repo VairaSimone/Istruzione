@@ -3,17 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { corsoStudenteDetailPath } from '../../../constants/routes';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
+import { fileUrl } from '../../../utils/fileUrl';
 import styles from './Corsi.module.css';
 
 /** Card di un corso nel catalogo dello studente. */
 const CorsoStudenteCard = ({ corso }) => {
   const { t } = useTranslation();
+  // Precedenza al file caricato; in mancanza, l'eventuale URL esterno.
+  const copertina = fileUrl(corso.copertinaFileId) || corso.copertinaUrl || null;
 
   return (
     <Card as={Link} to={corsoStudenteDetailPath(corso.id)} className={styles.card}>
       <div className={styles.cover}>
-        {corso.copertinaUrl ? (
-          <img src={corso.copertinaUrl} alt="" loading="lazy" />
+        {copertina ? (
+          <img src={copertina} alt="" loading="lazy" />
         ) : (
           <span className={styles.coverFallback} aria-hidden="true">
             日

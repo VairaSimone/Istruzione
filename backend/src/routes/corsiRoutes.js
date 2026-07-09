@@ -7,6 +7,7 @@ const corsiController = require('../controllers/corsiController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
+const { uploadVideo, uploadImmagine, uploadDocumento } = require('../middleware/upload');
 const validate = require('../middleware/validate');
 
 const {
@@ -14,11 +15,15 @@ const {
   validateCapitoloParams,
   validateDocumentoParams,
   validateDisponibilitaParams,
+  validateFileIdParam,
   validateCreaCorso,
   validateAggiornaCorso,
   validateCreaCapitolo,
   validateAggiornaCapitolo,
   validateCreaDocumento,
+  validateUploadCopertina,
+  validateUploadVideo,
+  validateUploadDocumento,
   validateRendiDisponibile,
   validateElencoCorsi,
   validateElencoCorsiStudente,
@@ -80,6 +85,19 @@ router.get(
 );
 
 // ═════════════════════════════════════════════
+// SERVIZIO FILE PROTETTO (studente | staff)
+// ═════════════════════════════════════════════
+// Dichiarata PRIMA di `/:id` per non farla combaciare con il parametro corso.
+// Nessun authorizeRoles: l'accesso (studente iscritto o staff della scuola) è
+// deciso in corsiService.risolviAccessoFile. Solo autenticazione a monte.
+router.get(
+  '/files/:fileId',
+  validateFileIdParam,
+  validate,
+  corsiController.serviFile
+);
+
+// ═════════════════════════════════════════════
 // STAFF (insegnante | admin)
 // ═════════════════════════════════════════════
 
@@ -128,6 +146,26 @@ router.delete(
   corsiController.eliminaCorso
 );
 
+// ── Copertina del corso (upload file dal PC) ──
+router.post(
+  '/:id/copertina',
+  authorizeRoles('insegnante', 'admin'),
+  csrfProtection,
+  uploadImmagine,
+  validateUploadCopertina,
+  validate,
+  corsiController.impostaCopertina
+);
+
+router.delete(
+  '/:id/copertina',
+  authorizeRoles('insegnante', 'admin'),
+  csrfProtection,
+  validateCorsoIdParam,
+  validate,
+  corsiController.rimuoviCopertina
+);
+
 // ── Capitoli ──
 router.post(
   '/:id/capitoli',
@@ -156,6 +194,26 @@ router.delete(
   corsiController.eliminaCapitolo
 );
 
+// ── Video del capitolo (upload file dal PC) ──
+router.post(
+  '/:id/capitoli/:capitoloId/video',
+  authorizeRoles('insegnante', 'admin'),
+  csrfProtection,
+  uploadVideo,
+  validateUploadVideo,
+  validate,
+  corsiController.impostaVideoCapitolo
+);
+
+router.delete(
+  '/:id/capitoli/:capitoloId/video',
+  authorizeRoles('insegnante', 'admin'),
+  csrfProtection,
+  validateCapitoloParams,
+  validate,
+  corsiController.rimuoviVideoCapitolo
+);
+
 // ── Documenti del capitolo ──
 router.post(
   '/:id/capitoli/:capitoloId/documenti',
@@ -164,6 +222,17 @@ router.post(
   validateCreaDocumento,
   validate,
   corsiController.aggiungiDocumento
+);
+
+// ── Documento del capitolo via file (allegato dal PC) ──
+router.post(
+  '/:id/capitoli/:capitoloId/documenti/upload',
+  authorizeRoles('insegnante', 'admin'),
+  csrfProtection,
+  uploadDocumento,
+  validateUploadDocumento,
+  validate,
+  corsiController.aggiungiDocumentoFile
 );
 
 router.delete(

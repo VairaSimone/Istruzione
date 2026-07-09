@@ -8,17 +8,26 @@ const URL_MAX = Corso.URL_MAX;
 const URL_REGEX = Corso.URL_REGEX;
 
 /**
- * Capitolo — unità di un corso (una "lezione").
+ * Capitolo — unità di un corso. Struttura a DUE LIVELLI in stile Udemy:
  *
- * Un capitolo appartiene a un `corso` e raccoglie:
- *   - un VIDEO (facoltativo, `video_url`): la videolezione vera e propria,
- *     referenziata via URL (streaming/CDN). Facoltativo perché un capitolo può
- *     essere di soli documenti/descrizione;
+ *   - un capitolo di PRIMO livello (`capitolo_padre_id` null) funge da SEZIONE
+ *     (es. "Unità 1 — Hiragana"): può avere un proprio video/documenti e/o
+ *     raggruppare più sotto-capitoli;
+ *   - un SOTTO-CAPITOLO (`capitolo_padre_id` valorizzato) è la singola lezione
+ *     dentro una sezione.
+ *
+ * La profondità è limitata a un livello: un sotto-capitolo non può a sua volta
+ * avere sotto-capitoli (vincolo applicato nel service).
+ *
+ * Ogni capitolo raccoglie:
+ *   - un VIDEO (facoltativo): può essere CARICATO come file dal PC
+ *     (`video_file_id` → file_caricati) OPPURE referenziato via URL esterno
+ *     (`video_url`, es. YouTube/Vimeo). Le due strade sono alternative;
  *   - una DESCRIZIONE (facoltativa);
  *   - più DOCUMENTI allegati (cfr. DocumentoCapitolo).
  *
- * `ordine` definisce la sequenza dei capitoli all'interno del corso (gli
- * studenti li vedono ordinati per `ordine` crescente, poi per `created_at`).
+ * `ordine` definisce la sequenza DEI PARI GRADO: le sezioni sono ordinate tra
+ * loro, e i sotto-capitoli sono ordinati all'interno della propria sezione.
  *
  * `scaricabile` è l'OVERRIDE della policy di download del video per QUESTO
  * capitolo:
@@ -45,8 +54,12 @@ class Capitolo extends Model {
     return {
       id: this.id,
       corsoId: this.corso_id,
+      capitoloPadreId: this.capitolo_padre_id,
       titolo: this.titolo,
       descrizione: this.descrizione,
+      // Video: se caricato come file, il client lo riproduce da
+      // `/api/corsi/files/<videoFileId>`; in alternativa resta l'URL esterno.
+      videoFileId: this.video_file_id,
       videoUrl: this.video_url,
       videoDurataSecondi: this.video_durata_secondi,
       scaricabile: this.scaricabile,
@@ -71,6 +84,16 @@ Capitolo.init(
       field: 'corso_id',
     },
 
+    // Sotto-capitoli (stile Udemy): riferimento al capitolo-sezione padre.
+    // null → capitolo di primo livello (sezione). Valorizzato → sotto-capitolo.
+    // CASCADE: eliminando la sezione spariscono i suoi sotto-capitoli.
+    capitolo_padre_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'capitolo_padre_id',
+    },
+
     titolo: {
       type: DataTypes.STRING(160),
       allowNull: false,
@@ -86,7 +109,7 @@ Capitolo.init(
       defaultValue: null,
     },
 
-    // URL della videolezione (facoltativo). Solo riferimento, non file.
+    // URL della videolezione esterna (facoltativo, alternativa al file).
     video_url: {
       type: DataTypes.STRING(URL_MAX),
       allowNull: true,
@@ -98,6 +121,15 @@ Capitolo.init(
           msg: "L'URL del video deve iniziare con http:// o https://",
         },
       },
+    },
+
+    // Videolezione CARICATA come file (facoltativa, alternativa all'URL).
+    // Riferimento a file_caricati; SET NULL se il file viene rimosso.
+    video_file_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'video_file_id',
     },
 
     // Durata del video in secondi (facoltativa, metadato per la UI).
@@ -141,6 +173,9 @@ Capitolo.init(
     indexes: [
       // Elenco ordinato dei capitoli di un corso.
       { fields: ['corso_id', 'ordine'], name: 'capitoli_corso_ordine' },
+      // Elenco ordinato dei sotto-capitoli di una sezione.
+      { fields: ['capitolo_padre_id', 'ordine'], name: 'capitoli_padre_ordine' },
+      { fields: ['video_file_id'], name: 'capitoli_video_file_id' },
     ],
   }
 );
@@ -149,5 +184,26 @@ Capitolo.init(
 // suoi capitoli (e, a cascata, i documenti allegati).
 Capitolo.belongsTo(Corso, { as: 'corso', foreignKey: 'corso_id', onDelete: 'CASCADE' });
 Corso.hasMany(Capitolo, { as: 'capitoli', foreignKey: 'corso_id', onDelete: 'CASCADE' });
+
+// Auto-relazione per i sotto-capitoli (una sezione → più sotto-capitoli).
+// CASCADE: eliminando la sezione spariscono i suoi sotto-capitoli.
+Capitolo.belongsTo(Capitolo, {
+  as: 'padre',
+  foreignKey: 'capitolo_padre_id',
+  onDelete: 'CASCADE',
+});
+Capitolo.hasMany(Capitolo, {
+  as: 'sottoCapitoli',
+  foreignKey: 'capitolo_padre_id',
+  onDelete: 'CASCADE',
+});
+
+// Video caricato come file. SET NULL: rimuovere il file non elimina il capitolo.
+const FileCaricato = require('./FileCaricato');
+Capitolo.belongsTo(FileCaricato, {
+  as: 'videoFile',
+  foreignKey: 'video_file_id',
+  onDelete: 'SET NULL',
+});
 
 module.exports = Capitolo;

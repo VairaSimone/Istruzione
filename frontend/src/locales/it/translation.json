@@ -364,7 +364,20 @@
       "DOCUMENTO_NOT_FOUND": "Documento non trovato.",
       "ALREADY_AVAILABLE": "Il corso è già disponibile per questa aula.",
       "AVAILABILITY_NOT_FOUND": "Il corso non è disponibile per questa aula.",
-      "TOO_MANY_CAPITOLI": "Troppi capitoli in fase di creazione: aggiungi gli altri singolarmente."
+      "TOO_MANY_CAPITOLI": "Troppi capitoli in fase di creazione: aggiungi gli altri singolarmente.",
+      "NO_FILE": "Nessun file caricato. Seleziona un file e riprova.",
+      "UNSUPPORTED_FILE_TYPE": "Formato del file non supportato.",
+      "FILE_TOO_LARGE": "Il file supera la dimensione massima consentita.",
+      "UNEXPECTED_FILE_FIELD": "Campo file inatteso nella richiesta.",
+      "UPLOAD_ERROR": "Errore durante il caricamento del file. Riprova.",
+      "INVALID_FILE_PATH": "Percorso del file non valido.",
+      "FILE_NOT_FOUND": "File non trovato.",
+      "VIDEO_NOT_FOUND": "Questo capitolo non ha un video caricato.",
+      "COPERTINA_NOT_FOUND": "Questo corso non ha una copertina caricata.",
+      "CAPITOLO_PADRE_NOT_FOUND": "Sezione padre non trovata.",
+      "SOTTOCAPITOLO_DEPTH_EXCEEDED": "Un sotto-capitolo non può contenere altri sotto-capitoli.",
+      "CAPITOLO_PADRE_INVALID": "Un capitolo non può essere padre di se stesso.",
+      "CAPITOLO_HAS_CHILDREN": "Questo capitolo ha dei sotto-capitoli e non può diventare a sua volta un sotto-capitolo."
     }
   },
   "validation": {
@@ -874,7 +887,8 @@
       "livello": "Livello JLPT non valido",
       "stato": "Stato non valido",
       "durata": "La durata deve essere tra 0 e 86400 secondi",
-      "ordine": "L'ordine deve essere un intero maggiore o uguale a 0"
+      "ordine": "L'ordine deve essere un intero maggiore o uguale a 0",
+      "capitoloPadre": "Sezione padre non valida"
     },
     "card": {
       "scaricabile": "Video scaricabili",
@@ -923,7 +937,14 @@
       "noVideo": "Senza video",
       "downloadOn": "Scaricabile",
       "downloadOff": "Non scaricabile",
-      "inherited": "ereditato"
+      "inherited": "ereditato",
+      "addSezione": "Aggiungi sezione",
+      "addSotto": "Aggiungi sotto-capitolo",
+      "sezione": "Sezione · {{n}} lezioni",
+      "videoCaricato": "Video caricato",
+      "videoEsterno": "Video esterno",
+      "toggleContenuti": "Mostra o nascondi i contenuti del capitolo",
+      "deleteSezioneConfirm": "Eliminare questa sezione, i suoi sotto-capitoli e i relativi documenti?"
     },
     "capitoloForm": {
       "createTitle": "Nuovo capitolo",
@@ -940,14 +961,26 @@
       "scaricabile": "Download del video",
       "scaricabileEredita": "Eredita dal corso",
       "scaricabileSi": "Consenti",
-      "scaricabileNo": "Non consentire"
+      "scaricabileNo": "Non consentire",
+      "createSottoTitle": "Nuovo sotto-capitolo",
+      "editSottoTitle": "Modifica sotto-capitolo",
+      "capitoloPadre": "Sezione padre",
+      "nessunPadre": "Nessuna · sezione principale",
+      "haSottoCapitoli": "Questo capitolo ha dei sotto-capitoli e non può diventare a sua volta un sotto-capitolo."
     },
     "documento": {
       "title": "Documenti allegati",
       "titolo": "Titolo documento",
       "url": "URL documento",
       "empty": "Nessun documento allegato.",
-      "deleteConfirm": "Rimuovere questo documento?"
+      "deleteConfirm": "Rimuovere questo documento?",
+      "file": "File da allegare",
+      "fileHint": "PDF, Office, TXT, CSV o ZIP · massimo 100 MB",
+      "titoloFacoltativo": "Titolo (facoltativo)",
+      "upload": "Carica documento",
+      "modo": "Modalità di aggiunta del documento",
+      "modoFile": "Carica file",
+      "modoUrl": "Usa un URL"
     },
     "disponibilita": {
       "title": "Disponibilità",
@@ -969,7 +1002,12 @@
       "capitoloUpdated": "Capitolo aggiornato con successo.",
       "capitoloDeleted": "Capitolo eliminato con successo.",
       "documentoAdded": "Documento aggiunto con successo.",
-      "documentoDeleted": "Documento rimosso con successo."
+      "documentoDeleted": "Documento rimosso con successo.",
+      "sottoCapitoloAdded": "Sotto-capitolo aggiunto con successo.",
+      "copertinaUploaded": "Copertina caricata con successo.",
+      "copertinaDeleted": "Copertina rimossa con successo.",
+      "videoUploaded": "Video caricato con successo.",
+      "videoDeleted": "Video rimosso con successo."
     },
     "studente": {
       "title": "I miei corsi",
@@ -977,14 +1015,37 @@
       "empty": "Nessun corso disponibile al momento.",
       "loadError": "Impossibile caricare i corsi.",
       "back": "Torna ai miei corsi",
-      "noCapitoli": "Questo corso non ha ancora capitoli."
+      "noCapitoli": "Questo corso non ha ancora capitoli.",
+      "sezioneVuota": "Questa sezione non ha ancora contenuti.",
+      "lezioneVuota": "Questa lezione non ha ancora contenuti."
     },
     "player": {
       "capitoloNum": "Capitolo {{num}}",
       "videoTitle": "Video della lezione",
       "noVideo": "Nessun video per questo capitolo.",
       "noDownload": "Il download di questo video non è consentito.",
-      "download": "Scarica video"
+      "download": "Scarica video",
+      "sezioneNum": "Sezione {{num}}",
+      "lezioniCount": "{{n}} lezioni"
+    },
+    "copertina": {
+      "title": "Copertina",
+      "alt": "Copertina del corso",
+      "upload": "Carica una copertina",
+      "hint": "JPG, PNG, WebP o GIF · massimo 10 MB",
+      "submit": "Carica copertina",
+      "remove": "Rimuovi",
+      "deleteConfirm": "Rimuovere la copertina caricata?"
+    },
+    "video": {
+      "title": "Video della lezione",
+      "upload": "Carica un video",
+      "replace": "Sostituisci il video",
+      "remove": "Rimuovi",
+      "hint": "MP4, WebM, MOV, AVI o MKV · massimo 1 GB",
+      "submit": "Carica video",
+      "deleteConfirm": "Rimuovere il video caricato per questo capitolo?",
+      "usaUrlEsterno": "Questo capitolo usa un URL video esterno. Caricando un file, il file avrà la precedenza."
     }
   },
   "teacherDashboard": {
@@ -1180,5 +1241,17 @@
     "attivo": "Attivo",
     "in_attesa": "In attesa",
     "rifiutato": "Rifiutato"
+  },
+  "upload": {
+    "dropzone": "Trascina qui il file oppure fai clic per sceglierlo",
+    "browse": "Sfoglia dal computer",
+    "remove": "Rimuovi il file selezionato",
+    "uploading": "Caricamento in corso",
+    "progress": "Caricamento… {{percent}}%",
+    "errors": {
+      "tipo": "Formato del file non supportato.",
+      "dimensione": "Il file supera la dimensione massima di {{max}} MB.",
+      "nessunFile": "Seleziona prima un file da caricare."
+    }
   }
 }

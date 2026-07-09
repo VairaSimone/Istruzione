@@ -7,6 +7,7 @@ const logger = require('../utils/logger');
 
 require('../models/Utente');
 require('../models/Invito');
+require('../models/FileCaricato');
 require('../models/Corso');
 require('../models/Capitolo');
 require('../models/DocumentoCapitolo');

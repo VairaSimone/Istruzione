@@ -15,10 +15,10 @@ const LIVELLI_JLPT = ['N5', 'N4', 'N3', 'N2', 'N1'];
 //   - 'archiviato' → concluso/nascosto, resta nello storico.
 const STATI_CORSO = ['bozza', 'pubblicato', 'archiviato'];
 
-// Lunghezza massima per gli URL (copertina/video/documenti). Volutamente ampia:
-// il progetto NON memorizza i file binari, ma solo riferimenti (URL) a risorse
-// ospitate esternamente (CDN/streaming), coerentemente con come i compiti
-// gestiscono gli allegati.
+// Lunghezza massima per gli URL (copertina/video/documenti) esterni. Volutamente
+// ampia. Da questa versione i contenuti possono essere CARICATI come file dal PC
+// (cfr. FileCaricato) OPPURE, in alternativa, referenziati via URL esterno: le
+// due strade convivono e i campi `*_url` restano supportati come fallback.
 const URL_MAX = 2048;
 
 // Riferimento HTTP(S) valido. La validazione fine (con express-validator) vive
@@ -55,6 +55,9 @@ class Corso extends Model {
       id: this.id,
       titolo: this.titolo,
       descrizione: this.descrizione,
+      // Copertina: se caricata come file, il client la carica da
+      // `/api/corsi/files/<copertinaFileId>`; in alternativa resta l'URL esterno.
+      copertinaFileId: this.copertina_file_id,
       copertinaUrl: this.copertina_url,
       livelloJLPT: this.livello_jlpt,
       stato: this.stato,
@@ -90,7 +93,7 @@ Corso.init(
       defaultValue: null,
     },
 
-    // URL dell'immagine di copertina (facoltativo). Solo riferimento, non file.
+    // URL dell'immagine di copertina esterna (facoltativo, alternativa al file).
     copertina_url: {
       type: DataTypes.STRING(URL_MAX),
       allowNull: true,
@@ -102,6 +105,15 @@ Corso.init(
           msg: "L'URL della copertina deve iniziare con http:// o https://",
         },
       },
+    },
+
+    // Immagine di copertina CARICATA come file (facoltativa, alternativa all'URL).
+    // Riferimento a file_caricati; SET NULL se il file viene rimosso.
+    copertina_file_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'copertina_file_id',
     },
 
     // Livello JLPT prevalente del corso (facoltativo).
@@ -173,6 +185,7 @@ Corso.init(
       { fields: ['creato_da'], name: 'corsi_creato_da' },
       { fields: ['stato'], name: 'corsi_stato' },
       { fields: ['livello_jlpt'], name: 'corsi_livello_jlpt' },
+      { fields: ['copertina_file_id'], name: 'corsi_copertina_file_id' },
     ],
   }
 );
@@ -184,6 +197,14 @@ Utente.hasMany(Corso, { as: 'corsiCreati', foreignKey: 'creato_da', onDelete: 'S
 const Scuola = require('./Scuola');
 Corso.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 Scuola.hasMany(Corso, { as: 'corsi', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
+
+// Copertina caricata come file. SET NULL: rimuovere il file non elimina il corso.
+const FileCaricato = require('./FileCaricato');
+Corso.belongsTo(FileCaricato, {
+  as: 'copertinaFile',
+  foreignKey: 'copertina_file_id',
+  onDelete: 'SET NULL',
+});
 
 Corso.LIVELLI_JLPT = LIVELLI_JLPT;
 Corso.STATI_CORSO = STATI_CORSO;

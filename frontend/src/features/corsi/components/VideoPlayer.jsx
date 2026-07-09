@@ -1,15 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { fileUrl } from '../../../utils/fileUrl';
 import styles from './Corsi.module.css';
 
 /**
  * Riconosce i provider di streaming più comuni (YouTube/Vimeo) e restituisce
  * l'URL di embed; per qualunque altro URL lo tratta come file video diretto.
- *
- * I video sono URL esterni (il progetto non ospita file): per gli embed la
- * possibilità di scaricare è governata dal provider, mentre per i file diretti
- * la applichiamo lato player (attributo `controlsList="nodownload"` e blocco del
- * menu contestuale). Si tratta di un enforcement "di prodotto", coerente con la
- * scelta del backend; un blocco tecnico forte richiederebbe URL firmati/DRM.
  */
 const analizzaVideoUrl = (url) => {
   if (!url) return { tipo: 'assente' };
@@ -45,21 +40,39 @@ const analizzaVideoUrl = (url) => {
       return { tipo: 'embed', embedUrl: url };
     }
 
-    return { tipo: 'file', fileUrl: url };
+    return { tipo: 'file', fileUrl: url, protetto: false };
   } catch {
-    return { tipo: 'file', fileUrl: url };
+    return { tipo: 'file', fileUrl: url, protetto: false };
   }
 };
 
 /**
  * Player di un capitolo.
- * @param {string}  videoUrl
+ *
+ * PRECEDENZA (coerente con il backend): se il capitolo ha un video CARICATO
+ * (`videoFileId`) lo si riproduce dall'endpoint protetto
+ * `GET /api/corsi/files/:fileId`, che autentica il richiedente e supporta le
+ * richieste Range (seek). Altrimenti si ricade sull'eventuale `videoUrl`
+ * esterno (YouTube/Vimeo in iframe, altri URL come file diretto).
+ *
+ * DOWNLOAD: per i file protetti è il backend a decidere il `Content-Disposition`
+ * (`attachment` solo se la policy lo consente); per questo il link NON usa
+ * l'attributo `download`, che i browser ignorano comunque cross-origin. Per i
+ * file esterni resta l'enforcement "di prodotto" (`controlsList="nodownload"` e
+ * blocco del menu contestuale): un blocco tecnico forte richiederebbe DRM.
+ *
+ * @param {string}  videoFileId  id del file video caricato (ha la precedenza)
+ * @param {string}  videoUrl     URL esterno alternativo
  * @param {boolean} scaricabile  policy di download EFFETTIVA (risolta lato backend)
  * @param {string}  titolo       usato come nome file suggerito per il download
  */
-const VideoPlayer = ({ videoUrl, scaricabile, titolo }) => {
+const VideoPlayer = ({ videoFileId, videoUrl, scaricabile, titolo }) => {
   const { t } = useTranslation();
-  const info = analizzaVideoUrl(videoUrl);
+
+  const urlProtetto = fileUrl(videoFileId);
+  const info = urlProtetto
+    ? { tipo: 'file', fileUrl: urlProtetto, protetto: true }
+    : analizzaVideoUrl(videoUrl);
 
   if (info.tipo === 'assente') {
     return <div className={styles.videoPlaceholder}>{t('corsi.player.noVideo')}</div>;
@@ -86,13 +99,14 @@ const VideoPlayer = ({ videoUrl, scaricabile, titolo }) => {
     );
   }
 
-  // File video diretto.
+  // File video diretto (caricato dal PC oppure URL esterno).
   return (
     <>
       <div className={styles.videoWrap}>
         <video
           src={info.fileUrl}
           controls
+          preload="metadata"
           controlsList={scaricabile ? undefined : 'nodownload'}
           onContextMenu={scaricabile ? undefined : (e) => e.preventDefault()}
         />
@@ -102,7 +116,7 @@ const VideoPlayer = ({ videoUrl, scaricabile, titolo }) => {
           <a
             className={styles.downloadLink}
             href={info.fileUrl}
-            download={titolo || undefined}
+            download={info.protetto ? undefined : titolo || undefined}
             target="_blank"
             rel="noopener noreferrer"
           >

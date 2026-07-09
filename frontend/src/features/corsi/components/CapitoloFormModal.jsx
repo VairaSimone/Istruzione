@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { buildCapitoloSchema } from '../../../validators/corsiSchemas';
+import { buildCapitoloSchema, PADRE_NESSUNO } from '../../../validators/corsiSchemas';
 import { useAddCapitolo, useUpdateCapitolo } from '../../../hooks/useCorsi';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
@@ -21,6 +21,7 @@ const CAMPI = [
   'videoDurataSecondi',
   'scaricabile',
   'ordine',
+  'capitoloPadreId',
 ];
 
 // Override tri-stato → valore inviato al backend:
@@ -28,12 +29,46 @@ const CAMPI = [
 const overrideToBackend = (v) => (v === 'si' ? true : v === 'no' ? false : null);
 const overrideFromBackend = (v) => (v === true ? 'si' : v === false ? 'no' : 'eredita');
 
-/** Crea o modifica un capitolo del corso indicato (`corsoId`). */
-const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
+/**
+ * Crea o modifica un capitolo del corso indicato (`corsoId`).
+ *
+ * SOTTO-CAPITOLI (stile Udemy): un capitolo con `capitoloPadreId` valorizzato è
+ * una lezione dentro una sezione. La profondità massima è 1, quindi:
+ *   - in CREAZIONE, `capitoloPadreId` arriva come prop (bottone "aggiungi
+ *     sotto-capitolo" della sezione) e non è modificabile dal form;
+ *   - in MODIFICA si può ri-parentare tramite la select, ma solo se il capitolo
+ *     non ha già dei sotto-capitoli (il backend risponde CAPITOLO_HAS_CHILDREN).
+ *
+ * @param {Array} sezioni  capitoli di primo livello del corso (per la select)
+ * @param {string} capitoloPadreId  sezione padre pre-impostata in creazione
+ */
+const CapitoloFormModal = ({
+  isOpen,
+  onClose,
+  corsoId,
+  capitolo = null,
+  capitoloPadreId = null,
+  sezioni = [],
+}) => {
   const { t } = useTranslation();
   const addCapitolo = useAddCapitolo();
   const updateCapitolo = useUpdateCapitolo();
   const isEdit = Boolean(capitolo);
+
+  // In creazione il padre è deciso dal bottone premuto; in modifica dal dato.
+  const padreCorrente = isEdit
+    ? (capitolo?.capitoloPadreId ?? '')
+    : (capitoloPadreId ?? '');
+  const isSottoCapitolo = Boolean(padreCorrente);
+
+  // Un capitolo che ha già dei figli non può diventare sotto-capitolo.
+  const haFigli = Boolean(capitolo?.sottoCapitoli?.length);
+
+  // Sezioni selezionabili come padre: primo livello, escluso se stesso.
+  const sezioniDisponibili = useMemo(
+    () => sezioni.filter((s) => s.id !== capitolo?.id),
+    [sezioni, capitolo?.id]
+  );
 
   const schema = useMemo(() => buildCapitoloSchema(t), [t]);
   const {
@@ -53,8 +88,9 @@ const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
       videoDurataSecondi: capitolo?.videoDurataSecondi ?? '',
       scaricabile: overrideFromBackend(capitolo?.scaricabile),
       ordine: capitolo?.ordine ?? '',
+      capitoloPadreId: padreCorrente || PADRE_NESSUNO,
     });
-  }, [isOpen, capitolo, reset]);
+  }, [isOpen, capitolo, padreCorrente, reset]);
 
   const onSubmit = async (values) => {
     const payload = {
@@ -68,6 +104,11 @@ const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
 
     try {
       if (isEdit) {
+        // La ri-parentela è possibile solo se il capitolo non ha figli.
+        if (!haFigli) {
+          const scelto = values.capitoloPadreId;
+          payload.capitoloPadreId = !scelto || scelto === PADRE_NESSUNO ? null : scelto;
+        }
         await updateCapitolo.mutateAsync({
           id: corsoId,
           capitoloId: capitolo.id,
@@ -75,8 +116,13 @@ const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
         });
         toast.success(t('corsi.toast.capitoloUpdated'));
       } else {
+        if (padreCorrente) payload.capitoloPadreId = padreCorrente;
         await addCapitolo.mutateAsync({ id: corsoId, ...payload });
-        toast.success(t('corsi.toast.capitoloAdded'));
+        toast.success(
+          padreCorrente
+            ? t('corsi.toast.sottoCapitoloAdded')
+            : t('corsi.toast.capitoloAdded')
+        );
       }
       onClose();
     } catch (err) {
@@ -92,14 +138,20 @@ const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
 
   const isPending = addCapitolo.isPending || updateCapitolo.isPending;
 
+  const titolo = isEdit
+    ? isSottoCapitolo
+      ? t('corsi.capitoloForm.editSottoTitle')
+      : t('corsi.capitoloForm.editTitle')
+    : isSottoCapitolo
+      ? t('corsi.capitoloForm.createSottoTitle')
+      : t('corsi.capitoloForm.createTitle');
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      title={
-        isEdit ? t('corsi.capitoloForm.editTitle') : t('corsi.capitoloForm.createTitle')
-      }
+      title={titolo}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={isPending}>
@@ -129,6 +181,27 @@ const CapitoloFormModal = ({ isOpen, onClose, corsoId, capitolo = null }) => {
           error={errors.descrizione?.message}
           {...register('descrizione')}
         />
+
+        {/* Ri-parentela: solo in modifica e solo se il capitolo non ha figli. */}
+        {isEdit && !haFigli && (
+          <Select
+            label={t('corsi.capitoloForm.capitoloPadre')}
+            placeholder={t('corsi.capitoloForm.capitoloPadre')}
+            error={errors.capitoloPadreId?.message}
+            {...register('capitoloPadreId')}
+          >
+            <option value={PADRE_NESSUNO}>{t('corsi.capitoloForm.nessunPadre')}</option>
+            {sezioniDisponibili.map((sezione) => (
+              <option key={sezione.id} value={sezione.id}>
+                {sezione.titolo}
+              </option>
+            ))}
+          </Select>
+        )}
+        {isEdit && haFigli && (
+          <p className={styles.mutedSmall}>{t('corsi.capitoloForm.haSottoCapitoli')}</p>
+        )}
+
         <TextField
           label={t('corsi.capitoloForm.videoUrl')}
           hint={t('corsi.capitoloForm.videoUrlHint')}

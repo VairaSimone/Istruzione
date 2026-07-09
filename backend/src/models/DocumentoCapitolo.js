@@ -11,11 +11,11 @@ const URL_REGEX = Corso.URL_REGEX;
 /**
  * DocumentoCapitolo — allegato di un capitolo (PDF, slide, dispensa, ecc.).
  *
- * Ogni documento appartiene a un `capitolo` ed è referenziato via URL (il
- * progetto non memorizza i file binari). I documenti allegati sono materiale di
- * studio pensato per il download: NON sono soggetti alla policy di download dei
- * video (`Corso.video_scaricabile` / `Capitolo.scaricabile`), che regola
- * esclusivamente la videolezione.
+ * Ogni documento appartiene a un `capitolo` e può essere CARICATO come file dal
+ * PC (`file_id` → file_caricati) OPPURE referenziato via URL esterno (`url`). Le
+ * due strade sono alternative: un documento deve avere ESATTAMENTE uno dei due
+ * (vincolo applicato nel service). I documenti allegati sono materiale di studio
+ * pensato per il download e NON sono soggetti alla policy di download dei video.
  *
  * `ordine` definisce la sequenza dei documenti nel capitolo.
  */
@@ -25,6 +25,9 @@ class DocumentoCapitolo extends Model {
       id: this.id,
       capitoloId: this.capitolo_id,
       titolo: this.titolo,
+      // Se caricato come file, il client lo scarica da
+      // `/api/corsi/files/<fileId>`; in alternativa resta l'URL esterno.
+      fileId: this.file_id,
       url: this.url,
       ordine: this.ordine,
       created_at: this.created_at,
@@ -56,17 +59,27 @@ DocumentoCapitolo.init(
       },
     },
 
-    // URL del documento (obbligatorio). Solo riferimento, non file.
+    // URL esterno del documento (facoltativo: alternativa al file caricato).
+    // La regola "uno tra file e url è obbligatorio" è applicata nel service.
     url: {
       type: DataTypes.STRING(URL_MAX),
-      allowNull: false,
+      allowNull: true,
+      defaultValue: null,
       validate: {
-        notEmpty: { msg: "L'URL del documento è obbligatorio" },
         is: {
           args: URL_REGEX,
           msg: "L'URL del documento deve iniziare con http:// o https://",
         },
       },
+    },
+
+    // Documento CARICATO come file (alternativa all'URL). Riferimento a
+    // file_caricati; SET NULL se il file viene rimosso.
+    file_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'file_id',
     },
 
     // Posizione del documento nel capitolo (ordinamento crescente).
@@ -91,6 +104,7 @@ DocumentoCapitolo.init(
     indexes: [
       // Elenco ordinato dei documenti di un capitolo.
       { fields: ['capitolo_id', 'ordine'], name: 'documenti_capitolo_capitolo_ordine' },
+      { fields: ['file_id'], name: 'documenti_capitolo_file_id' },
     ],
   }
 );
@@ -99,5 +113,13 @@ DocumentoCapitolo.init(
 // corso) spariscono i suoi documenti.
 DocumentoCapitolo.belongsTo(Capitolo, { as: 'capitolo', foreignKey: 'capitolo_id', onDelete: 'CASCADE' });
 Capitolo.hasMany(DocumentoCapitolo, { as: 'documenti', foreignKey: 'capitolo_id', onDelete: 'CASCADE' });
+
+// File caricato. SET NULL: rimuovere il file non elimina la riga documento.
+const FileCaricato = require('./FileCaricato');
+DocumentoCapitolo.belongsTo(FileCaricato, {
+  as: 'file',
+  foreignKey: 'file_id',
+  onDelete: 'SET NULL',
+});
 
 module.exports = DocumentoCapitolo;

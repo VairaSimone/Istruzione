@@ -4,17 +4,20 @@ import { corsoDetailPath } from '../../../constants/routes';
 import { STATO_CORSO_TONE } from '../statoTone';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
+import { fileUrl } from '../../../utils/fileUrl';
 import styles from './Corsi.module.css';
 
 /** Card di riepilogo di un corso nella lista dello staff. */
 const CorsoCard = ({ corso }) => {
   const { t } = useTranslation();
+  // Precedenza al file caricato; in mancanza, l'eventuale URL esterno.
+  const copertina = fileUrl(corso.copertinaFileId) || corso.copertinaUrl || null;
 
   return (
     <Card as={Link} to={corsoDetailPath(corso.id)} className={styles.card}>
       <div className={styles.cover}>
-        {corso.copertinaUrl ? (
-          <img src={corso.copertinaUrl} alt="" loading="lazy" />
+        {copertina ? (
+          <img src={copertina} alt="" loading="lazy" />
         ) : (
           <span className={styles.coverFallback} aria-hidden="true">
             日

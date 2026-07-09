@@ -18,6 +18,7 @@ require('../models/CompitoConsegna');
 require('../models/Messaggio');
 require('../models/MessaggioDestinatario');
 require('../models/Invito');
+require('../models/FileCaricato');
 require('../models/Corso');
 require('../models/Capitolo');
 require('../models/DocumentoCapitolo');

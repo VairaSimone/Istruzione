@@ -8,7 +8,42 @@ import apiClient from '../api/axiosClient';
  * documenti allegati e gestione della disponibilità presso le aule — e vista
  * dello STUDENTE (catalogo dei corsi disponibili e player con policy di
  * download effettiva).
+ *
+ * UPLOAD: video, copertine e documenti si caricano come FILE dal PC
+ * (`multipart/form-data`, campo `file`). L'URL esterno resta un'alternativa
+ * facoltativa: caricando un file, il backend azzera il rispettivo campo URL.
  */
+
+/**
+ * Costruisce la configurazione Axios per una richiesta multipart.
+ *
+ * NON impostiamo `Content-Type` a mano: Axios lo azzera quando il body è un
+ * FormData, lasciando che sia il browser a scriverlo con il `boundary`
+ * corretto. Forzarlo produrrebbe un boundary mancante e un 400 lato server.
+ *
+ * @param {Function} [onProgress] callback (0-100) per la barra di avanzamento
+ */
+const configUpload = (onProgress) => ({
+  onUploadProgress: (evento) => {
+    if (!onProgress) return;
+    const totale = evento.total ?? 0;
+    if (totale > 0) {
+      onProgress(Math.round((evento.loaded * 100) / totale));
+    }
+  },
+});
+
+/** FormData con il file nel campo `file` e i campi testo facoltativi. */
+const buildFormData = (file, campi = {}) => {
+  const form = new FormData();
+  form.append('file', file);
+  Object.entries(campi).forEach(([chiave, valore]) => {
+    if (valore !== undefined && valore !== null && valore !== '') {
+      form.append(chiave, valore);
+    }
+  });
+  return form;
+};
 
 // ── Staff (insegnante | admin) ──
 
@@ -50,6 +85,24 @@ export const deleteCorso = async (id) => {
   return data;
 };
 
+// ── Copertina del corso (file dal PC) ──
+
+/** POST /api/corsi/:id/copertina — carica/sostituisce la copertina. */
+export const uploadCopertina = async ({ id, file, onProgress }) => {
+  const { data } = await apiClient.post(
+    `/corsi/${id}/copertina`,
+    buildFormData(file),
+    configUpload(onProgress)
+  );
+  return data.data.corso;
+};
+
+/** DELETE /api/corsi/:id/copertina — rimuove la copertina caricata. */
+export const deleteCopertina = async (id) => {
+  const { data } = await apiClient.delete(`/corsi/${id}/copertina`);
+  return data;
+};
+
 // ── Capitoli ──
 
 /** POST /api/corsi/:id/capitoli — aggiunge un capitolo al corso. */
@@ -70,6 +123,30 @@ export const deleteCapitolo = async ({ id, capitoloId }) => {
   return data;
 };
 
+// ── Video del capitolo (file dal PC) ──
+
+/** POST /api/corsi/:id/capitoli/:capitoloId/video — carica/sostituisce il video. */
+export const uploadVideoCapitolo = async ({
+  id,
+  capitoloId,
+  file,
+  videoDurataSecondi,
+  onProgress,
+}) => {
+  const { data } = await apiClient.post(
+    `/corsi/${id}/capitoli/${capitoloId}/video`,
+    buildFormData(file, { videoDurataSecondi }),
+    configUpload(onProgress)
+  );
+  return data.data.capitolo;
+};
+
+/** DELETE /api/corsi/:id/capitoli/:capitoloId/video — rimuove il video caricato. */
+export const deleteVideoCapitolo = async ({ id, capitoloId }) => {
+  const { data } = await apiClient.delete(`/corsi/${id}/capitoli/${capitoloId}/video`);
+  return data;
+};
+
 // ── Documenti allegati al capitolo ──
 
 /** POST /api/corsi/:id/capitoli/:capitoloId/documenti — aggiunge un documento. */
@@ -77,6 +154,26 @@ export const addDocumento = async ({ id, capitoloId, ...payload }) => {
   const { data } = await apiClient.post(
     `/corsi/${id}/capitoli/${capitoloId}/documenti`,
     payload
+  );
+  return data.data.documento;
+};
+
+/**
+ * POST /api/corsi/:id/capitoli/:capitoloId/documenti/upload — allega un
+ * documento caricandolo dal PC. Il titolo è facoltativo: in mancanza il backend
+ * usa il nome originale del file.
+ */
+export const uploadDocumentoFile = async ({
+  id,
+  capitoloId,
+  file,
+  titolo,
+  onProgress,
+}) => {
+  const { data } = await apiClient.post(
+    `/corsi/${id}/capitoli/${capitoloId}/documenti/upload`,
+    buildFormData(file, { titolo }),
+    configUpload(onProgress)
   );
   return data.data.documento;
 };

@@ -596,3 +596,144 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Copertina (upload dal PC) ─────────────────────────────────────────── */
+.copertinaPreview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 240px;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface-sunken);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copertinaPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Copertina in testa al dettaglio corso (studente). */
+.detailCover {
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  margin-bottom: var(--space-5);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--color-surface-sunken);
+}
+
+.detailCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Video del capitolo (upload dal PC) ────────────────────────────────── */
+.videoBox {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--color-border);
+}
+
+.videoCorrente {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+/* ── Sotto-capitoli (albero a due livelli) ─────────────────────────────── */
+.sottoCapitoloList {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0 0 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-left: 2px solid var(--color-border);
+}
+
+.sottoCapitoloItem {
+  background-color: var(--color-paper-dim);
+}
+
+/* ── Selettore modalità (file | url) ───────────────────────────────────── */
+.modoSwitch {
+  display: inline-flex;
+  gap: 0;
+  margin: var(--space-3) 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.modoBtn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.modoBtn:hover {
+  color: var(--color-ink);
+}
+
+.modoBtnActive {
+  background-color: var(--color-seal);
+  color: var(--color-paper);
+}
+
+.modoBtnActive:hover {
+  color: var(--color-paper);
+}
+
+/* ── Vista studente: sezioni e lezioni ─────────────────────────────────── */
+.sezioneHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+
+.sezioneTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.lezione {
+  padding-top: var(--space-4);
+  margin-top: var(--space-4);
+  border-top: 1px dashed var(--color-border);
+}
+
+.lezione:first-of-type {
+  border-top: none;
+  margin-top: var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modoBtn {
+    transition: none;
+  }
+}

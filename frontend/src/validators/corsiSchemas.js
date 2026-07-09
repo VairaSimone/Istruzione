@@ -5,7 +5,12 @@ import { LIVELLI_JLPT, STATI_CORSO } from '../constants/domain';
  * Schemi Zod per i CORSI (videolezioni on-demand), localizzati (funzioni che
  * ricevono `t`). Rispecchiano `backend/src/validators/corsiValidators.js`:
  * stessi limiti di lunghezza, stessi enum e URL http(s) con protocollo
- * obbligatorio (il progetto memorizza SOLO riferimenti esterni, non file).
+ * obbligatorio.
+ *
+ * Video, copertine e documenti si caricano come FILE dal PC (multipart, fuori
+ * da questi schemi: la validazione dei file vive in `constants/upload.js`).
+ * Gli URL esterni restano un'alternativa facoltativa e sono ancora validati
+ * qui.
  */
 
 // Regex URL http/https con protocollo obbligatorio (coerente con OPZIONI_URL
@@ -46,6 +51,13 @@ const optionalHttpUrl = (t) =>
 // Si usano valori sentinella (non stringa vuota) per non collidere con il
 // placeholder disabilitato che il componente <Select> inietta di default.
 const scaricabileOverride = () => z.enum(['eredita', 'si', 'no']).optional();
+
+/**
+ * Valore sentinella della select "sezione padre": indica un capitolo di primo
+ * livello (nessun padre). Stessa ragione dei sentinella di `scaricabile`: la
+ * stringa vuota è già occupata dal placeholder disabilitato di <Select>.
+ */
+export const PADRE_NESSUNO = 'nessuno';
 
 export const buildCorsoSchema = (t, { requireScuola = false } = {}) =>
   z.object({
@@ -100,6 +112,20 @@ export const buildCapitoloSchema = (t) =>
     }),
     scaricabile: scaricabileOverride(),
     ordine: optionalInt(t, { min: 0, max: 100000, msg: 'corsi.validation.ordine' }),
+    // Sezione padre del capitolo. Si usa il valore sentinella 'nessuno' (e non
+    // la stringa vuota) perché il componente <Select> inietta di default una
+    // option disabilitata con value="", che collidere­bbe con essa.
+    //   'nessuno' → null lato backend (sezione di primo livello)
+    //   UUID      → il capitolo diventa un sotto-capitolo di quella sezione
+    // La profondità massima (1 livello) è applicata dal backend.
+    capitoloPadreId: optionalTrimmed().pipe(
+      z
+        .union([
+          z.literal(PADRE_NESSUNO),
+          z.string().uuid(t('corsi.validation.capitoloPadre')),
+        ])
+        .optional()
+    ),
   });
 
 export const buildDocumentoSchema = (t) =>
@@ -115,4 +141,16 @@ export const buildDocumentoSchema = (t) =>
       .min(1, t('corsi.validation.urlRequired'))
       .max(URL_MAX, t('corsi.validation.urlMax'))
       .regex(HTTP_URL_REGEX, t('corsi.validation.url')),
+  });
+
+/**
+ * Documento caricato come FILE: il titolo è FACOLTATIVO (in mancanza il backend
+ * usa il nome originale del file). Il file stesso non passa da Zod: è validato
+ * da `constants/upload.js` (MIME + dimensione) e, in via definitiva, dal server.
+ */
+export const buildDocumentoFileSchema = (t) =>
+  z.object({
+    titolo: optionalTrimmed().pipe(
+      z.string().max(200, t('corsi.validation.documentoTitoloLength')).optional()
+    ),
   });

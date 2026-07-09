@@ -364,7 +364,20 @@
       "DOCUMENTO_NOT_FOUND": "Document not found.",
       "ALREADY_AVAILABLE": "The course is already available for this classroom.",
       "AVAILABILITY_NOT_FOUND": "The course is not available for this classroom.",
-      "TOO_MANY_CAPITOLI": "Too many chapters at creation: add the remaining ones individually."
+      "TOO_MANY_CAPITOLI": "Too many chapters at creation: add the remaining ones individually.",
+      "NO_FILE": "No file uploaded. Select a file and try again.",
+      "UNSUPPORTED_FILE_TYPE": "Unsupported file format.",
+      "FILE_TOO_LARGE": "The file exceeds the maximum allowed size.",
+      "UNEXPECTED_FILE_FIELD": "Unexpected file field in the request.",
+      "UPLOAD_ERROR": "Something went wrong while uploading the file. Please try again.",
+      "INVALID_FILE_PATH": "Invalid file path.",
+      "FILE_NOT_FOUND": "File not found.",
+      "VIDEO_NOT_FOUND": "This chapter has no uploaded video.",
+      "COPERTINA_NOT_FOUND": "This course has no uploaded cover image.",
+      "CAPITOLO_PADRE_NOT_FOUND": "Parent section not found.",
+      "SOTTOCAPITOLO_DEPTH_EXCEEDED": "A sub-chapter cannot contain further sub-chapters.",
+      "CAPITOLO_PADRE_INVALID": "A chapter cannot be its own parent.",
+      "CAPITOLO_HAS_CHILDREN": "This chapter has sub-chapters and cannot itself become a sub-chapter."
     }
   },
   "validation": {
@@ -928,7 +941,8 @@
       "livello": "Invalid JLPT level",
       "stato": "Invalid status",
       "durata": "The duration must be between 0 and 86400 seconds",
-      "ordine": "The order must be an integer greater than or equal to 0"
+      "ordine": "The order must be an integer greater than or equal to 0",
+      "capitoloPadre": "Invalid parent section"
     },
     "card": {
       "scaricabile": "Downloadable videos",
@@ -977,7 +991,14 @@
       "noVideo": "No video",
       "downloadOn": "Downloadable",
       "downloadOff": "Not downloadable",
-      "inherited": "inherited"
+      "inherited": "inherited",
+      "addSezione": "Add section",
+      "addSotto": "Add sub-chapter",
+      "sezione": "Section · {{n}} lessons",
+      "videoCaricato": "Uploaded video",
+      "videoEsterno": "External video",
+      "toggleContenuti": "Show or hide the chapter contents",
+      "deleteSezioneConfirm": "Delete this section, its sub-chapters and their documents?"
     },
     "capitoloForm": {
       "createTitle": "New chapter",
@@ -994,14 +1015,26 @@
       "scaricabile": "Video download",
       "scaricabileEredita": "Inherit from course",
       "scaricabileSi": "Allow",
-      "scaricabileNo": "Do not allow"
+      "scaricabileNo": "Do not allow",
+      "createSottoTitle": "New sub-chapter",
+      "editSottoTitle": "Edit sub-chapter",
+      "capitoloPadre": "Parent section",
+      "nessunPadre": "None · top-level section",
+      "haSottoCapitoli": "This chapter has sub-chapters and cannot itself become a sub-chapter."
     },
     "documento": {
       "title": "Attached documents",
       "titolo": "Document title",
       "url": "Document URL",
       "empty": "No attached documents.",
-      "deleteConfirm": "Remove this document?"
+      "deleteConfirm": "Remove this document?",
+      "file": "File to attach",
+      "fileHint": "PDF, Office, TXT, CSV or ZIP · 100 MB max",
+      "titoloFacoltativo": "Title (optional)",
+      "upload": "Upload document",
+      "modo": "How to add the document",
+      "modoFile": "Upload a file",
+      "modoUrl": "Use a URL"
     },
     "disponibilita": {
       "title": "Availability",
@@ -1023,7 +1056,12 @@
       "capitoloUpdated": "Chapter updated successfully.",
       "capitoloDeleted": "Chapter deleted successfully.",
       "documentoAdded": "Document added successfully.",
-      "documentoDeleted": "Document removed successfully."
+      "documentoDeleted": "Document removed successfully.",
+      "sottoCapitoloAdded": "Sub-chapter added successfully.",
+      "copertinaUploaded": "Cover image uploaded successfully.",
+      "copertinaDeleted": "Cover image removed successfully.",
+      "videoUploaded": "Video uploaded successfully.",
+      "videoDeleted": "Video removed successfully."
     },
     "studente": {
       "title": "My courses",
@@ -1031,14 +1069,37 @@
       "empty": "No courses available right now.",
       "loadError": "Unable to load courses.",
       "back": "Back to my courses",
-      "noCapitoli": "This course has no chapters yet."
+      "noCapitoli": "This course has no chapters yet.",
+      "sezioneVuota": "This section has no content yet.",
+      "lezioneVuota": "This lesson has no content yet."
     },
     "player": {
       "capitoloNum": "Chapter {{num}}",
       "videoTitle": "Lesson video",
       "noVideo": "No video for this chapter.",
       "noDownload": "Downloading this video is not allowed.",
-      "download": "Download video"
+      "download": "Download video",
+      "sezioneNum": "Section {{num}}",
+      "lezioniCount": "{{n}} lessons"
+    },
+    "copertina": {
+      "title": "Cover image",
+      "alt": "Course cover image",
+      "upload": "Upload a cover image",
+      "hint": "JPG, PNG, WebP or GIF · 10 MB max",
+      "submit": "Upload cover",
+      "remove": "Remove",
+      "deleteConfirm": "Remove the uploaded cover image?"
+    },
+    "video": {
+      "title": "Lesson video",
+      "upload": "Upload a video",
+      "replace": "Replace the video",
+      "remove": "Remove",
+      "hint": "MP4, WebM, MOV, AVI or MKV · 1 GB max",
+      "submit": "Upload video",
+      "deleteConfirm": "Remove the uploaded video for this chapter?",
+      "usaUrlEsterno": "This chapter uses an external video URL. Uploading a file will take precedence over it."
     }
   },
   "teacherDashboard": {
@@ -1179,6 +1240,18 @@
       "impostazioniJson": "Settings must be valid JSON",
       "impostazioniObject": "Settings must be a JSON object (key/value pairs)",
       "impostazioniMax": "Settings exceed the maximum allowed size"
+    }
+  },
+  "upload": {
+    "dropzone": "Drag a file here, or click to choose one",
+    "browse": "Browse from your computer",
+    "remove": "Remove the selected file",
+    "uploading": "Uploading",
+    "progress": "Uploading… {{percent}}%",
+    "errors": {
+      "tipo": "Unsupported file format.",
+      "dimensione": "The file exceeds the maximum size of {{max}} MB.",
+      "nessunFile": "Select a file to upload first."
     }
   }
 }

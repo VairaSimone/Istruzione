@@ -66,6 +66,24 @@ export const useDeleteCorso = () => {
   });
 };
 
+// ── Copertina (file dal PC) ──
+
+export const useUploadCopertina = () => {
+  const invalidate = useInvalidateCorsi();
+  return useMutation({
+    mutationFn: corsiService.uploadCopertina,
+    onSuccess: (_data, variables) => invalidate(variables.id),
+  });
+};
+
+export const useDeleteCopertina = () => {
+  const invalidate = useInvalidateCorsi();
+  return useMutation({
+    mutationFn: corsiService.deleteCopertina,
+    onSuccess: (_data, id) => invalidate(id),
+  });
+};
+
 // ── Capitoli ──
 
 export const useAddCapitolo = () => {
@@ -92,12 +110,38 @@ export const useDeleteCapitolo = () => {
   });
 };
 
+// ── Video del capitolo (file dal PC) ──
+
+export const useUploadVideoCapitolo = () => {
+  const invalidate = useInvalidateCorsi();
+  return useMutation({
+    mutationFn: corsiService.uploadVideoCapitolo,
+    onSuccess: (_data, variables) => invalidate(variables.id),
+  });
+};
+
+export const useDeleteVideoCapitolo = () => {
+  const invalidate = useInvalidateCorsi();
+  return useMutation({
+    mutationFn: corsiService.deleteVideoCapitolo,
+    onSuccess: (_data, variables) => invalidate(variables.id),
+  });
+};
+
 // ── Documenti ──
 
 export const useAddDocumento = () => {
   const invalidate = useInvalidateCorsi();
   return useMutation({
     mutationFn: corsiService.addDocumento,
+    onSuccess: (_data, variables) => invalidate(variables.id),
+  });
+};
+
+export const useUploadDocumentoFile = () => {
+  const invalidate = useInvalidateCorsi();
+  return useMutation({
+    mutationFn: corsiService.uploadDocumentoFile,
     onSuccess: (_data, variables) => invalidate(variables.id),
   });
 };

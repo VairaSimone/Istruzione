@@ -8,6 +8,7 @@ import { getApiErrorMessage } from '../utils/getApiErrorMessage';
 import { STATO_CORSO_TONE } from '../features/corsi/statoTone';
 import CorsoFormModal from '../features/corsi/components/CorsoFormModal';
 import CapitoliPanel from '../features/corsi/components/CapitoliPanel';
+import CopertinaPanel from '../features/corsi/components/CopertinaPanel';
 import DisponibilitaPanel from '../features/corsi/components/DisponibilitaPanel';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -92,6 +93,7 @@ const CorsoDetailPage = () => {
 
       <div className={styles.panels}>
         <CapitoliPanel corso={corso} />
+        <CopertinaPanel corso={corso} />
         <DisponibilitaPanel corso={corso} />
       </div>
 

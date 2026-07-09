@@ -8,6 +8,8 @@ const DocumentoCapitolo = require('../models/DocumentoCapitolo');
 const CorsoAula = require('../models/CorsoAula');
 const Classe = require('../models/Classe');
 const ClasseUtente = require('../models/ClasseUtente');
+const FileCaricato = require('../models/FileCaricato');
+const fileService = require('./fileService');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
@@ -16,31 +18,31 @@ const logger = require('../utils/logger');
 /**
  * CorsiService — logica di dominio delle VIDEOLEZIONI ON-DEMAND (corsi).
  *
- *   CRUD corsi · capitoli · documenti allegati · disponibilità presso le aule ·
- *   viste studente (elenco/dettaglio dei corsi disponibili)
+ *   CRUD corsi · capitoli · SOTTO-CAPITOLI (stile Udemy) · documenti allegati ·
+ *   UPLOAD DI FILE (video/copertine/documenti caricati dal PC) · disponibilità
+ *   presso le aule · viste studente (elenco/dettaglio dei corsi disponibili)
+ *
+ * NOVITÀ rispetto alla prima versione:
+ *   - i contenuti multimediali possono essere CARICATI come file dal PC
+ *     (video del capitolo, copertina del corso, documenti allegati) oltre che,
+ *     in alternativa, referenziati via URL esterno. I file risiedono su disco
+ *     (cfr. fileService) e i loro binari vengono ripuliti quando l'entità che
+ *     li usa viene eliminata o il media sostituito;
+ *   - i capitoli sono organizzati su DUE LIVELLI: sezioni (capitolo senza padre)
+ *     e sotto-capitoli (con `capitolo_padre_id`). La profondità è limitata a 1.
  *
  * Regole di accesso applicate qui (difesa a livello service, oltre al gate di
  * ruolo nelle route):
- *   - un insegnante gestisce i corsi della PROPRIA scuola (il corso è un asset
- *     della scuola: qualunque insegnante della scuola può curarne il catalogo);
- *     l'admin è trasversale su tutte le scuole;
- *   - un corso può essere reso disponibile SOLO ad aule della STESSA scuola e,
- *     per l'insegnante, solo ad aule in cui insegna;
+ *   - un insegnante gestisce i corsi della PROPRIA scuola; l'admin è trasversale;
+ *   - un corso è reso disponibile SOLO ad aule della STESSA scuola e, per
+ *     l'insegnante, solo ad aule in cui insegna;
  *   - lo studente vede/guarda solo i corsi PUBBLICATI resi disponibili a
  *     un'aula di cui è membro-studente.
- *
- * ISOLAMENTO TRA SCUOLE: essendo la disponibilità vincolata alla stessa scuola
- * e le viste studente derivate dalle sue aule, un corso non è mai raggiungibile
- * da studenti di scuole diverse dalla propria.
- *
- * Tutte le query evitano N+1: i conteggi capitoli sono ottenuti con un'unica
- * query aggregata e i capitoli/documenti con una sola join, mai in loop.
  */
 
-// Numero massimo di capitoli creabili inline alla creazione del corso. Per
-// cataloghi ampi si usano gli endpoint granulari (aggiunta capitolo per capitolo),
-// così da non superare il limite di dimensione del payload JSON.
-const MAX_CAPITOLI_INLINE = 20;
+// Numero massimo di capitoli (sezioni + sotto-capitoli) creabili inline alla
+// creazione del corso. Per cataloghi ampi si usano gli endpoint granulari.
+const MAX_CAPITOLI_INLINE = 40;
 
 // ─────────────────────────────────────────────
 // Helpers: caricamento e autorizzazione
@@ -112,8 +114,8 @@ const idAuleStudente = async (studenteId, transaction) => {
 };
 
 /**
- * Conta i capitoli per un insieme di corsi con UNA sola query aggregata
- * (niente N+1). Restituisce una mappa corsoId → numeroCapitoli.
+ * Conta i capitoli (sezioni + sotto-capitoli) per un insieme di corsi con UNA
+ * sola query aggregata (niente N+1). Restituisce una mappa corsoId → totale.
  */
 const conteggiCapitoli = async (corsoIds) => {
   const mappa = new Map();
@@ -133,18 +135,58 @@ const conteggiCapitoli = async (corsoIds) => {
 };
 
 /**
- * Carica i capitoli di un corso con i relativi documenti in un'unica query
- * (una join), ordinati per `ordine` e poi per data di creazione.
+ * Trasforma un'istanza Capitolo (con include videoFile + documenti.file) nel
+ * DTO pubblico, aggiungendo la policy di download EFFETTIVA e i descrittori dei
+ * file caricati. Non include ancora i sotto-capitoli (aggiunti dall'albero).
+ */
+const mappaCapitolo = (cap, defaultScaricabile, perStudente) => {
+  const documenti = (cap.documenti || []).map((d) => ({
+    ...d.toPublicJSON(),
+    file: d.file ? d.file.toPublicJSON() : null,
+  }));
+  const videoFile = cap.videoFile ? cap.videoFile.toPublicJSON() : null;
+  const base = cap.toPublicJSON();
+
+  if (perStudente) {
+    // Allo studente esponiamo la policy EFFETTIVA (booleano risolto), non
+    // l'override grezzo (che potrebbe essere null = "eredita").
+    const { scaricabile, ...senzaOverride } = base;
+    return {
+      ...senzaOverride,
+      videoFile,
+      scaricabileEffettivo: cap.scaricabileEffettivo(defaultScaricabile),
+      documenti,
+    };
+  }
+  return {
+    ...base,
+    videoFile,
+    scaricabileEffettivo: cap.scaricabileEffettivo(defaultScaricabile),
+    documenti,
+  };
+};
+
+/**
+ * Carica i capitoli di un corso con video (file), documenti (e relativi file) in
+ * un'unica query, e li restituisce come ALBERO a due livelli: array di sezioni
+ * (capitoli di primo livello) ciascuna con `sottoCapitoli`. Ordinamento per
+ * `ordine` poi `created_at`, sia tra le sezioni sia tra i sotto-capitoli.
  *
  * @param {string} corsoId
  * @param {boolean} defaultScaricabile  policy download predefinita del corso
- * @param {boolean} perStudente  se true, aggiunge `scaricabileEffettivo` e
- *   omette l'override grezzo `scaricabile` (dettaglio interno allo staff).
+ * @param {boolean} perStudente
  */
 const caricaCapitoliConDocumenti = async (corsoId, defaultScaricabile, perStudente) => {
   const capitoli = await Capitolo.findAll({
     where: { corso_id: corsoId },
-    include: [{ model: DocumentoCapitolo, as: 'documenti' }],
+    include: [
+      {
+        model: DocumentoCapitolo,
+        as: 'documenti',
+        include: [{ model: FileCaricato, as: 'file' }],
+      },
+      { model: FileCaricato, as: 'videoFile' },
+    ],
     order: [
       ['ordine', 'ASC'],
       ['created_at', 'ASC'],
@@ -153,41 +195,140 @@ const caricaCapitoliConDocumenti = async (corsoId, defaultScaricabile, perStuden
     ],
   });
 
-  return capitoli.map((cap) => {
-    const documenti = (cap.documenti || []).map((d) => d.toPublicJSON());
-    const base = cap.toPublicJSON();
-    if (perStudente) {
-      // Allo studente esponiamo la policy EFFETTIVA (booleano risolto), non
-      // l'override grezzo (che potrebbe essere null = "eredita").
-      const { scaricabile, ...senzaOverride } = base;
-      return {
-        ...senzaOverride,
-        scaricabileEffettivo: cap.scaricabileEffettivo(defaultScaricabile),
-        documenti,
-      };
+  // Bucket dei figli per padre (l'ordine ASC della query è preservato).
+  const figliPerPadre = new Map();
+  const radici = [];
+  for (const cap of capitoli) {
+    if (cap.capitolo_padre_id) {
+      const chiave = String(cap.capitolo_padre_id);
+      if (!figliPerPadre.has(chiave)) figliPerPadre.set(chiave, []);
+      figliPerPadre.get(chiave).push(cap);
+    } else {
+      radici.push(cap);
     }
-    return {
-      ...base,
-      scaricabileEffettivo: cap.scaricabileEffettivo(defaultScaricabile),
-      documenti,
-    };
+  }
+
+  return radici.map((r) => {
+    const nodo = mappaCapitolo(r, defaultScaricabile, perStudente);
+    const figli = figliPerPadre.get(String(r.id)) || [];
+    nodo.sottoCapitoli = figli.map((f) => mappaCapitolo(f, defaultScaricabile, perStudente));
+    return nodo;
   });
 };
 
 // ─────────────────────────────────────────────
-// STAFF — CREA CORSO (con capitoli inline facoltativi)
+// Helpers: pulizia dei file su disco
+// ─────────────────────────────────────────────
+
+/** Raccoglie gli id di TUTTI i file (copertina + video + documenti) di un corso. */
+const raccogliFileIdsDelCorso = async (corsoId, transaction) => {
+  const ids = new Set();
+
+  const corso = await Corso.findByPk(corsoId, {
+    attributes: ['id', 'copertina_file_id'],
+    transaction,
+  });
+  if (corso && corso.copertina_file_id) ids.add(corso.copertina_file_id);
+
+  const capitoli = await Capitolo.findAll({
+    where: { corso_id: corsoId },
+    attributes: ['id', 'video_file_id'],
+    raw: true,
+    transaction,
+  });
+  const capitoloIds = capitoli.map((c) => c.id);
+  capitoli.forEach((c) => c.video_file_id && ids.add(c.video_file_id));
+
+  if (capitoloIds.length) {
+    const docs = await DocumentoCapitolo.findAll({
+      where: { capitolo_id: { [Op.in]: capitoloIds } },
+      attributes: ['file_id'],
+      raw: true,
+      transaction,
+    });
+    docs.forEach((d) => d.file_id && ids.add(d.file_id));
+  }
+  return [...ids];
+};
+
+/**
+ * Raccoglie gli id dei file di un capitolo E dei suoi sotto-capitoli
+ * (video + documenti). Usato prima di eliminare una sezione (cascade).
+ */
+const raccogliFileIdsDelCapitolo = async (capitoloId, transaction) => {
+  const ids = new Set();
+
+  // Il capitolo stesso + i suoi eventuali sotto-capitoli.
+  const capitoli = await Capitolo.findAll({
+    where: { [Op.or]: [{ id: capitoloId }, { capitolo_padre_id: capitoloId }] },
+    attributes: ['id', 'video_file_id'],
+    raw: true,
+    transaction,
+  });
+  const tuttiIds = capitoli.map((c) => c.id);
+  capitoli.forEach((c) => c.video_file_id && ids.add(c.video_file_id));
+
+  if (tuttiIds.length) {
+    const docs = await DocumentoCapitolo.findAll({
+      where: { capitolo_id: { [Op.in]: tuttiIds } },
+      attributes: ['file_id'],
+      raw: true,
+      transaction,
+    });
+    docs.forEach((d) => d.file_id && ids.add(d.file_id));
+  }
+  return [...ids];
+};
+
+/** Elimina (best-effort) una lista di file: binario su disco + riga DB. */
+const eliminaFilesPerId = async (fileIds) => {
+  for (const id of fileIds) {
+    try {
+      await fileService.eliminaFileCaricato(id);
+    } catch (err) {
+      logger.warn(`[CORSO] Pulizia file ${id} non riuscita: ${err.message}`);
+    }
+  }
+};
+
+// ─────────────────────────────────────────────
+// Helper: valida/risolve il padre di un sotto-capitolo (profondità max 1)
+// ─────────────────────────────────────────────
+const risolviPadre = async (corsoId, capitoloPadreId, transaction) => {
+  if (capitoloPadreId === undefined || capitoloPadreId === null) return null;
+
+  const padre = await Capitolo.findByPk(capitoloPadreId, { transaction });
+  if (!padre || String(padre.corso_id) !== String(corsoId)) {
+    throw new AppError('Il capitolo padre indicato non esiste in questo corso.', 404, 'CAPITOLO_PADRE_NOT_FOUND');
+  }
+  // Profondità massima = 1: il padre deve essere una sezione di primo livello.
+  if (padre.capitolo_padre_id) {
+    throw new AppError(
+      'Un sotto-capitolo non può contenere altri sotto-capitoli.',
+      422,
+      'SOTTOCAPITOLO_DEPTH_EXCEEDED'
+    );
+  }
+  return padre;
+};
+
+// ─────────────────────────────────────────────
+// STAFF — CREA CORSO (con capitoli/sotto-capitoli inline facoltativi)
 // ─────────────────────────────────────────────
 const creaCorso = async ({ dati, capitoli, richiedente }) => {
-  // Scuola del corso: timbrata dalla scuola dell'insegnante; l'admin, che non
-  // appartiene ad alcuna scuola, deve indicarla esplicitamente (scuolaId).
   const scuolaId = risolviScuolaCreazione(richiedente, dati.scuolaId, {
     scuolaObbligatoriaPerAdmin: true,
   });
 
   const capitoliInput = Array.isArray(capitoli) ? capitoli : [];
-  if (capitoliInput.length > MAX_CAPITOLI_INLINE) {
+  // Conteggio totale (sezioni + sotto-capitoli) per limitare il payload.
+  const totaleInline = capitoliInput.reduce(
+    (acc, c) => acc + 1 + (Array.isArray(c.sottoCapitoli) ? c.sottoCapitoli.length : 0),
+    0
+  );
+  if (totaleInline > MAX_CAPITOLI_INLINE) {
     throw new AppError(
-      `Puoi creare al massimo ${MAX_CAPITOLI_INLINE} capitoli in fase di creazione. Aggiungi gli altri singolarmente.`,
+      `Puoi creare al massimo ${MAX_CAPITOLI_INLINE} capitoli (sezioni + sotto-capitoli) in fase di creazione. Aggiungi gli altri singolarmente.`,
       422,
       'TOO_MANY_CAPITOLI'
     );
@@ -208,18 +349,18 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
       { transaction: t }
     );
 
-    // Capitoli inline (con eventuali documenti), preservando l'ordine indicato.
-    for (let i = 0; i < capitoliInput.length; i += 1) {
-      const c = capitoliInput[i];
+    // Crea un capitolo inline (con eventuali documenti url-only).
+    const creaCapitoloInline = async (c, ordineDefault, padreId) => {
       const capitolo = await Capitolo.create(
         {
           corso_id: nuovo.id,
+          capitolo_padre_id: padreId ?? null,
           titolo: c.titolo.trim(),
           descrizione: c.descrizione ?? null,
           video_url: c.videoUrl ?? null,
           video_durata_secondi: c.videoDurataSecondi ?? null,
           scaricabile: c.scaricabile === undefined ? null : c.scaricabile,
-          ordine: c.ordine ?? i,
+          ordine: c.ordine ?? ordineDefault,
         },
         { transaction: t }
       );
@@ -232,10 +373,22 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
             capitolo_id: capitolo.id,
             titolo: d.titolo.trim(),
             url: d.url.trim(),
+            file_id: null,
             ordine: d.ordine ?? j,
           },
           { transaction: t }
         );
+      }
+      return capitolo;
+    };
+
+    for (let i = 0; i < capitoliInput.length; i += 1) {
+      const c = capitoliInput[i];
+      const sezione = await creaCapitoloInline(c, i, null);
+
+      const sotto = Array.isArray(c.sottoCapitoli) ? c.sottoCapitoli : [];
+      for (let k = 0; k < sotto.length; k += 1) {
+        await creaCapitoloInline(sotto[k], k, sezione.id);
       }
     }
 
@@ -244,15 +397,12 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
 
   logger.info(`[CORSO] Creato corso ${corso.id} "${corso.titolo}" da utente ${richiedente.id}`);
 
-  const capitoliCompleti = await caricaCapitoliConDocumenti(
-    corso.id,
-    corso.video_scaricabile,
-    false
-  );
+  const capitoliCompleti = await caricaCapitoliConDocumenti(corso.id, corso.video_scaricabile, false);
+  const conteggi = await conteggiCapitoli([corso.id]);
 
   return {
     ...corso.toPublicJSON(),
-    conteggioCapitoli: capitoliCompleti.length,
+    conteggioCapitoli: conteggi.get(corso.id) || 0,
     capitoli: capitoliCompleti,
     auleDisponibili: [],
   };
@@ -265,15 +415,12 @@ const elencoCorsi = async ({ richiedente, filtri }) => {
   const { stato, livello, q, scuola, page, limit } = filtri;
   const where = {};
 
-  // Scope tenant: l'insegnante vede SOLO i corsi della propria scuola.
   if (richiedente.ruolo !== 'admin') {
     if (!richiedente.scuola_id) {
-      // Account non associato ad alcuna scuola: nessun corso.
       return { corsi: [], paginazione: null };
     }
     where.scuola_id = richiedente.scuola_id;
   } else if (scuola) {
-    // Admin: filtro facoltativo per scuola.
     where.scuola_id = scuola;
   }
 
@@ -288,10 +435,7 @@ const elencoCorsi = async ({ richiedente, filtri }) => {
   const usaPaginazione =
     Number.isInteger(pageNum) && Number.isInteger(limitNum) && pageNum > 0 && limitNum > 0;
 
-  const queryOptions = {
-    where,
-    order: [['created_at', 'DESC']],
-  };
+  const queryOptions = { where, order: [['created_at', 'DESC']] };
   if (usaPaginazione) {
     queryOptions.limit = limitNum;
     queryOptions.offset = (pageNum - 1) * limitNum;
@@ -307,7 +451,6 @@ const elencoCorsi = async ({ richiedente, filtri }) => {
     righe = await Corso.findAll(queryOptions);
   }
 
-  // Conteggio capitoli in un'unica query aggregata (niente N+1).
   const conteggi = await conteggiCapitoli(righe.map((c) => c.id));
 
   const corsi = righe.map((c) => ({
@@ -328,7 +471,7 @@ const elencoCorsi = async ({ richiedente, filtri }) => {
 };
 
 // ─────────────────────────────────────────────
-// STAFF — DETTAGLIO CORSO (capitoli + documenti + aule disponibili)
+// STAFF — DETTAGLIO CORSO (capitoli + sotto-capitoli + documenti + aule)
 // ─────────────────────────────────────────────
 const dettaglioCorso = async ({ corsoId, richiedente }) => {
   const corso = await caricaCorso(corsoId);
@@ -336,7 +479,6 @@ const dettaglioCorso = async ({ corsoId, richiedente }) => {
 
   const capitoli = await caricaCapitoliConDocumenti(corsoId, corso.video_scaricabile, false);
 
-  // Aule a cui il corso è reso disponibile (una join).
   const disponibilita = await CorsoAula.findAll({
     where: { corso_id: corsoId },
     include: [{ model: Classe, as: 'classe', attributes: ['id', 'nome', 'anno_scolastico', 'livello_jlpt'] }],
@@ -353,9 +495,11 @@ const dettaglioCorso = async ({ corsoId, richiedente }) => {
       resaDisponibileIl: d.created_at,
     }));
 
+  const conteggi = await conteggiCapitoli([corsoId]);
+
   return {
     ...corso.toPublicJSON(),
-    conteggioCapitoli: capitoli.length,
+    conteggioCapitoli: conteggi.get(corsoId) || 0,
     capitoli,
     auleDisponibili,
   };
@@ -386,32 +530,43 @@ const aggiornaCorso = async ({ corsoId, dati, richiedente }) => {
 };
 
 // ─────────────────────────────────────────────
-// STAFF — ELIMINA CORSO (cascade: capitoli, documenti, disponibilità)
+// STAFF — ELIMINA CORSO (cascade: capitoli, documenti, disponibilità + file)
 // ─────────────────────────────────────────────
 const eliminaCorso = async ({ corsoId, richiedente }) => {
   const corso = await caricaCorso(corsoId);
   assicuraGestioneCorso(corso, richiedente);
 
+  // Raccogli i file PRIMA della cancellazione (dopo le righe non ci sono più).
+  const fileIds = await raccogliFileIdsDelCorso(corsoId);
+
   await corso.destroy(); // ON DELETE CASCADE su capitoli/corso_aule (e documenti)
+  await eliminaFilesPerId(fileIds);
+
   logger.info(`[CORSO] Eliminato corso ${corsoId} da utente ${richiedente.id}`);
 };
 
 // ─────────────────────────────────────────────
-// STAFF — AGGIUNGI CAPITOLO
+// STAFF — AGGIUNGI CAPITOLO (sezione o sotto-capitolo)
 // ─────────────────────────────────────────────
 const aggiungiCapitolo = async ({ corsoId, dati, richiedente }) => {
   const corso = await caricaCorso(corsoId);
   assicuraGestioneCorso(corso, richiedente);
 
-  // Se l'ordine non è indicato, accoda in fondo (max ordine corrente + 1).
+  const padre = await risolviPadre(corsoId, dati.capitoloPadreId, undefined);
+  const padreId = padre ? padre.id : null;
+
+  // Ordine: accoda in fondo tra i pari grado (stessa sezione, o primo livello).
   let ordine = dati.ordine;
   if (ordine === undefined || ordine === null) {
-    const maxOrdine = await Capitolo.max('ordine', { where: { corso_id: corsoId } });
+    const maxOrdine = await Capitolo.max('ordine', {
+      where: { corso_id: corsoId, capitolo_padre_id: padreId },
+    });
     ordine = Number.isFinite(maxOrdine) ? maxOrdine + 1 : 0;
   }
 
   const capitolo = await Capitolo.create({
     corso_id: corsoId,
+    capitolo_padre_id: padreId,
     titolo: dati.titolo.trim(),
     descrizione: dati.descrizione ?? null,
     video_url: dati.videoUrl ?? null,
@@ -424,13 +579,15 @@ const aggiungiCapitolo = async ({ corsoId, dati, richiedente }) => {
 
   return {
     ...capitolo.toPublicJSON(),
+    videoFile: null,
     scaricabileEffettivo: capitolo.scaricabileEffettivo(corso.video_scaricabile),
     documenti: [],
+    sottoCapitoli: [],
   };
 };
 
 // ─────────────────────────────────────────────
-// STAFF — AGGIORNA CAPITOLO
+// STAFF — AGGIORNA CAPITOLO (inclusa la ri-parentela con guardrail)
 // ─────────────────────────────────────────────
 const aggiornaCapitolo = async ({ corsoId, capitoloId, dati, richiedente }) => {
   const corso = await caricaCorso(corsoId);
@@ -444,35 +601,163 @@ const aggiornaCapitolo = async ({ corsoId, capitoloId, dati, richiedente }) => {
   if (dati.scaricabile !== undefined) capitolo.scaricabile = dati.scaricabile;
   if (dati.ordine !== undefined) capitolo.ordine = dati.ordine;
 
+  // Ri-parentela (spostamento tra sezioni o promozione a sezione).
+  if (dati.capitoloPadreId !== undefined) {
+    const nuovoPadreId = dati.capitoloPadreId;
+    if (nuovoPadreId && String(nuovoPadreId) === String(capitoloId)) {
+      throw new AppError('Un capitolo non può essere padre di se stesso.', 422, 'CAPITOLO_PADRE_INVALID');
+    }
+    if (nuovoPadreId) {
+      // Un capitolo che HA già sotto-capitoli non può diventare sotto-capitolo.
+      const numFigli = await Capitolo.count({ where: { capitolo_padre_id: capitoloId } });
+      if (numFigli > 0) {
+        throw new AppError(
+          'Questo capitolo ha dei sotto-capitoli e non può diventare a sua volta un sotto-capitolo.',
+          422,
+          'CAPITOLO_HAS_CHILDREN'
+        );
+      }
+      const padre = await risolviPadre(corsoId, nuovoPadreId, undefined);
+      capitolo.capitolo_padre_id = padre.id;
+    } else {
+      capitolo.capitolo_padre_id = null;
+    }
+  }
+
   await capitolo.save();
   logger.info(`[CORSO] Aggiornato capitolo ${capitoloId} del corso ${corsoId} da ${richiedente.id}`);
 
-  const documenti = await DocumentoCapitolo.findAll({
-    where: { capitolo_id: capitoloId },
-    order: [['ordine', 'ASC'], ['created_at', 'ASC']],
+  const ricaricato = await Capitolo.findByPk(capitoloId, {
+    include: [
+      { model: DocumentoCapitolo, as: 'documenti', include: [{ model: FileCaricato, as: 'file' }] },
+      { model: FileCaricato, as: 'videoFile' },
+    ],
+    order: [[{ model: DocumentoCapitolo, as: 'documenti' }, 'ordine', 'ASC']],
   });
 
-  return {
-    ...capitolo.toPublicJSON(),
-    scaricabileEffettivo: capitolo.scaricabileEffettivo(corso.video_scaricabile),
-    documenti: documenti.map((d) => d.toPublicJSON()),
-  };
+  return mappaCapitolo(ricaricato, corso.video_scaricabile, false);
 };
 
 // ─────────────────────────────────────────────
-// STAFF — ELIMINA CAPITOLO (cascade: documenti)
+// STAFF — ELIMINA CAPITOLO (cascade: sotto-capitoli, documenti + file)
 // ─────────────────────────────────────────────
 const eliminaCapitolo = async ({ corsoId, capitoloId, richiedente }) => {
   const corso = await caricaCorso(corsoId);
   assicuraGestioneCorso(corso, richiedente);
   const capitolo = await caricaCapitolo(corsoId, capitoloId);
 
-  await capitolo.destroy(); // ON DELETE CASCADE su documenti_capitolo
+  const fileIds = await raccogliFileIdsDelCapitolo(capitoloId);
+
+  await capitolo.destroy(); // ON DELETE CASCADE su sotto-capitoli e documenti
+  await eliminaFilesPerId(fileIds);
+
   logger.info(`[CORSO] Eliminato capitolo ${capitoloId} del corso ${corsoId} da ${richiedente.id}`);
 };
 
 // ─────────────────────────────────────────────
-// STAFF — AGGIUNGI DOCUMENTO A UN CAPITOLO
+// STAFF — CARICA/SOSTITUISCI IL VIDEO DI UN CAPITOLO (file dal PC)
+// ─────────────────────────────────────────────
+const impostaVideoCapitolo = async ({ corsoId, capitoloId, file, dati, richiedente }) => {
+  const corso = await caricaCorso(corsoId);
+  assicuraGestioneCorso(corso, richiedente);
+  const capitolo = await caricaCapitolo(corsoId, capitoloId);
+
+  const vecchioFileId = capitolo.video_file_id;
+
+  const nuovoFile = await fileService.persistiFile({ tipo: 'video', file, richiedente });
+
+  capitolo.video_file_id = nuovoFile.id;
+  // Il file caricato prevale sull'eventuale URL esterno precedente.
+  capitolo.video_url = null;
+  if (dati && dati.videoDurataSecondi !== undefined && dati.videoDurataSecondi !== null) {
+    capitolo.video_durata_secondi = dati.videoDurataSecondi;
+  }
+  await capitolo.save();
+
+  // Rimuovi il vecchio file (ora non più referenziato).
+  if (vecchioFileId && String(vecchioFileId) !== String(nuovoFile.id)) {
+    await eliminaFilesPerId([vecchioFileId]);
+  }
+
+  logger.info(`[CORSO] Video caricato per capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`);
+
+  const ricaricato = await Capitolo.findByPk(capitoloId, {
+    include: [
+      { model: DocumentoCapitolo, as: 'documenti', include: [{ model: FileCaricato, as: 'file' }] },
+      { model: FileCaricato, as: 'videoFile' },
+    ],
+  });
+  return mappaCapitolo(ricaricato, corso.video_scaricabile, false);
+};
+
+// ─────────────────────────────────────────────
+// STAFF — RIMUOVI IL VIDEO (file) DI UN CAPITOLO
+// ─────────────────────────────────────────────
+const rimuoviVideoCapitolo = async ({ corsoId, capitoloId, richiedente }) => {
+  const corso = await caricaCorso(corsoId);
+  assicuraGestioneCorso(corso, richiedente);
+  const capitolo = await caricaCapitolo(corsoId, capitoloId);
+
+  const fileId = capitolo.video_file_id;
+  if (!fileId) {
+    throw new AppError('Questo capitolo non ha un video caricato.', 404, 'VIDEO_NOT_FOUND');
+  }
+
+  capitolo.video_file_id = null;
+  await capitolo.save();
+  await eliminaFilesPerId([fileId]);
+
+  logger.info(`[CORSO] Video rimosso dal capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`);
+};
+
+// ─────────────────────────────────────────────
+// STAFF — CARICA/SOSTITUISCI LA COPERTINA DEL CORSO (file dal PC)
+// ─────────────────────────────────────────────
+const impostaCopertina = async ({ corsoId, file, richiedente }) => {
+  const corso = await caricaCorso(corsoId);
+  assicuraGestioneCorso(corso, richiedente);
+
+  const vecchioFileId = corso.copertina_file_id;
+  const nuovoFile = await fileService.persistiFile({ tipo: 'immagine', file, richiedente });
+
+  corso.copertina_file_id = nuovoFile.id;
+  corso.copertina_url = null; // il file prevale sull'URL esterno
+  await corso.save();
+
+  if (vecchioFileId && String(vecchioFileId) !== String(nuovoFile.id)) {
+    await eliminaFilesPerId([vecchioFileId]);
+  }
+
+  logger.info(`[CORSO] Copertina caricata per corso ${corsoId} da ${richiedente.id}`);
+
+  const conteggi = await conteggiCapitoli([corsoId]);
+  return {
+    ...corso.toPublicJSON(),
+    conteggioCapitoli: conteggi.get(corsoId) || 0,
+  };
+};
+
+// ─────────────────────────────────────────────
+// STAFF — RIMUOVI LA COPERTINA (file) DEL CORSO
+// ─────────────────────────────────────────────
+const rimuoviCopertina = async ({ corsoId, richiedente }) => {
+  const corso = await caricaCorso(corsoId);
+  assicuraGestioneCorso(corso, richiedente);
+
+  const fileId = corso.copertina_file_id;
+  if (!fileId) {
+    throw new AppError('Questo corso non ha una copertina caricata.', 404, 'COPERTINA_NOT_FOUND');
+  }
+
+  corso.copertina_file_id = null;
+  await corso.save();
+  await eliminaFilesPerId([fileId]);
+
+  logger.info(`[CORSO] Copertina rimossa dal corso ${corsoId} da ${richiedente.id}`);
+};
+
+// ─────────────────────────────────────────────
+// STAFF — AGGIUNGI DOCUMENTO A UN CAPITOLO (via URL esterno)
 // ─────────────────────────────────────────────
 const aggiungiDocumento = async ({ corsoId, capitoloId, dati, richiedente }) => {
   const corso = await caricaCorso(corsoId);
@@ -489,18 +774,65 @@ const aggiungiDocumento = async ({ corsoId, capitoloId, dati, richiedente }) => 
     capitolo_id: capitoloId,
     titolo: dati.titolo.trim(),
     url: dati.url.trim(),
+    file_id: null,
     ordine,
   });
 
   logger.info(
-    `[CORSO] Aggiunto documento ${documento.id} al capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`
+    `[CORSO] Aggiunto documento (URL) ${documento.id} al capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`
   );
 
-  return documento.toPublicJSON();
+  return { ...documento.toPublicJSON(), file: null };
 };
 
 // ─────────────────────────────────────────────
-// STAFF — ELIMINA DOCUMENTO
+// STAFF — AGGIUNGI DOCUMENTO A UN CAPITOLO (file caricato dal PC)
+// ─────────────────────────────────────────────
+const aggiungiDocumentoFile = async ({ corsoId, capitoloId, file, dati, richiedente }) => {
+  const corso = await caricaCorso(corsoId);
+  assicuraGestioneCorso(corso, richiedente);
+  await caricaCapitolo(corsoId, capitoloId);
+
+  let ordine = dati.ordine;
+  if (ordine === undefined || ordine === null) {
+    const maxOrdine = await DocumentoCapitolo.max('ordine', { where: { capitolo_id: capitoloId } });
+    ordine = Number.isFinite(maxOrdine) ? maxOrdine + 1 : 0;
+  }
+
+  // Titolo: usa quello indicato o, in mancanza, il nome file originale.
+  const titolo = dati && dati.titolo ? dati.titolo.trim() : file.originalname;
+
+  const risultato = await sequelize.transaction(async (t) => {
+    const fileCaricato = await fileService.persistiFile({
+      tipo: 'documento',
+      file,
+      richiedente,
+      transaction: t,
+    });
+
+    const documento = await DocumentoCapitolo.create(
+      {
+        capitolo_id: capitoloId,
+        titolo,
+        url: null,
+        file_id: fileCaricato.id,
+        ordine,
+      },
+      { transaction: t }
+    );
+
+    return { documento, fileCaricato };
+  });
+
+  logger.info(
+    `[CORSO] Aggiunto documento (file) ${risultato.documento.id} al capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`
+  );
+
+  return { ...risultato.documento.toPublicJSON(), file: risultato.fileCaricato.toPublicJSON() };
+};
+
+// ─────────────────────────────────────────────
+// STAFF — ELIMINA DOCUMENTO (rimuove anche il file caricato, se presente)
 // ─────────────────────────────────────────────
 const eliminaDocumento = async ({ corsoId, capitoloId, documentoId, richiedente }) => {
   const corso = await caricaCorso(corsoId);
@@ -508,7 +840,11 @@ const eliminaDocumento = async ({ corsoId, capitoloId, documentoId, richiedente 
   await caricaCapitolo(corsoId, capitoloId);
   const documento = await caricaDocumento(capitoloId, documentoId);
 
+  const fileId = documento.file_id;
+
   await documento.destroy();
+  if (fileId) await eliminaFilesPerId([fileId]);
+
   logger.info(
     `[CORSO] Eliminato documento ${documentoId} dal capitolo ${capitoloId} (corso ${corsoId}) da ${richiedente.id}`
   );
@@ -516,7 +852,6 @@ const eliminaDocumento = async ({ corsoId, capitoloId, documentoId, richiedente 
 
 // ─────────────────────────────────────────────
 // STAFF — RENDI DISPONIBILE UN CORSO A UN'AULA
-// Vincolo di isolamento: l'aula deve appartenere alla STESSA scuola del corso.
 // ─────────────────────────────────────────────
 const rendiDisponibile = async ({ corsoId, classeId, richiedente }) => {
   return sequelize.transaction(async (t) => {
@@ -528,9 +863,6 @@ const rendiDisponibile = async ({ corsoId, classeId, richiedente }) => {
       throw new AppError('Aula non trovata.', 404, 'CLASSE_NOT_FOUND');
     }
 
-    // ISOLAMENTO TRA SCUOLE: corso e aula devono appartenere alla stessa scuola.
-    // Impedisce di rendere un corso visibile ad aule (e quindi studenti) di
-    // un'altra scuola.
     if (String(corso.scuola_id) !== String(classe.scuola_id)) {
       throw new AppError(
         "Il corso e l'aula devono appartenere alla stessa scuola.",
@@ -539,8 +871,6 @@ const rendiDisponibile = async ({ corsoId, classeId, richiedente }) => {
       );
     }
 
-    // L'insegnante può rendere disponibile un corso solo alle aule in cui insegna
-    // (l'admin è trasversale).
     if (!(await insegnaNellaClasse(classeId, richiedente, t))) {
       throw new AppError('Non insegni in questa aula.', 403, 'FORBIDDEN');
     }
@@ -644,12 +974,11 @@ const elencoCorsiStudente = async ({ studente, filtri }) => {
 
   const conteggi = await conteggiCapitoli(righe.map((c) => c.id));
 
-  // Allo studente non serve la scuola_id/autore; esponiamo i campi utili alla
-  // vista catalogo.
   const corsi = righe.map((c) => ({
     id: c.id,
     titolo: c.titolo,
     descrizione: c.descrizione,
+    copertinaFileId: c.copertina_file_id,
     copertinaUrl: c.copertina_url,
     livelloJLPT: c.livello_jlpt,
     conteggioCapitoli: conteggi.get(c.id) || 0,
@@ -670,7 +999,6 @@ const elencoCorsiStudente = async ({ studente, filtri }) => {
 
 // ─────────────────────────────────────────────
 // STUDENTE — DETTAGLIO CORSO (deve essergli disponibile e pubblicato)
-// Espone i capitoli con video, documenti e policy di download EFFETTIVA.
 // ─────────────────────────────────────────────
 const dettaglioCorsoStudente = async ({ corsoId, studente }) => {
   const corsoIds = await idCorsiDisponibiliStudente(studente.id);
@@ -684,17 +1012,75 @@ const dettaglioCorsoStudente = async ({ corsoId, studente }) => {
   }
 
   const capitoli = await caricaCapitoliConDocumenti(corsoId, corso.video_scaricabile, true);
+  const conteggi = await conteggiCapitoli([corsoId]);
 
   return {
     id: corso.id,
     titolo: corso.titolo,
     descrizione: corso.descrizione,
+    copertinaFileId: corso.copertina_file_id,
     copertinaUrl: corso.copertina_url,
     livelloJLPT: corso.livello_jlpt,
-    conteggioCapitoli: capitoli.length,
+    conteggioCapitoli: conteggi.get(corsoId) || 0,
     capitoli,
     created_at: corso.created_at,
   };
+};
+
+// ─────────────────────────────────────────────
+// DISTRIBUZIONE FILE — risolve l'accesso e la policy di download
+// ─────────────────────────────────────────────
+/**
+ * Determina se il richiedente può accedere a un file caricato e con quale
+ * Content-Disposition servirlo. Centralizza qui la regola di accesso perché
+ * dipende dai corsi/aule/iscrizioni.
+ *
+ * @returns {Promise<{disposition:'inline'|'attachment'}>}
+ */
+const risolviAccessoFile = async ({ file, richiedente }) => {
+  // Trova l'entità che referenzia il file → il corso di appartenenza.
+  let corso = null;
+  let capitolo = null;
+
+  if (file.tipo === 'immagine') {
+    corso = await Corso.findOne({ where: { copertina_file_id: file.id } });
+  } else if (file.tipo === 'video') {
+    capitolo = await Capitolo.findOne({ where: { video_file_id: file.id } });
+    if (capitolo) corso = await Corso.findByPk(capitolo.corso_id);
+  } else if (file.tipo === 'documento') {
+    const doc = await DocumentoCapitolo.findOne({ where: { file_id: file.id } });
+    if (doc) {
+      capitolo = await Capitolo.findByPk(doc.capitolo_id);
+      if (capitolo) corso = await Corso.findByPk(capitolo.corso_id);
+    }
+  }
+
+  const isStaff = richiedente.ruolo === 'insegnante' || richiedente.ruolo === 'admin';
+
+  if (isStaff) {
+    // Lo staff accede ai file della propria scuola (admin trasversale).
+    assicuraStessaScuola(richiedente, file.scuola_id, 'Questo file non appartiene alla tua scuola.');
+  } else {
+    // Lo studente accede solo ai file di un corso disponibile e pubblicato.
+    if (!corso) throw new AppError('File non trovato.', 404, 'FILE_NOT_FOUND');
+    const disponibili = await idCorsiDisponibiliStudente(richiedente.id);
+    if (!disponibili.map(String).includes(String(corso.id)) || corso.stato !== 'pubblicato') {
+      throw new AppError('File non trovato.', 404, 'FILE_NOT_FOUND');
+    }
+  }
+
+  // Content-Disposition / policy di download.
+  let disposition = 'inline';
+  if (file.tipo === 'documento') {
+    disposition = 'attachment';
+  } else if (file.tipo === 'video') {
+    const scaricabile = capitolo
+      ? capitolo.scaricabileEffettivo(corso ? corso.video_scaricabile : false)
+      : false;
+    disposition = scaricabile ? 'attachment' : 'inline';
+  }
+
+  return { disposition };
 };
 
 module.exports = {
@@ -706,10 +1092,16 @@ module.exports = {
   aggiungiCapitolo,
   aggiornaCapitolo,
   eliminaCapitolo,
+  impostaVideoCapitolo,
+  rimuoviVideoCapitolo,
+  impostaCopertina,
+  rimuoviCopertina,
   aggiungiDocumento,
+  aggiungiDocumentoFile,
   eliminaDocumento,
   rendiDisponibile,
   revocaDisponibilita,
   elencoCorsiStudente,
   dettaglioCorsoStudente,
+  risolviAccessoFile,
 };

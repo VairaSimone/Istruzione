@@ -92,7 +92,10 @@ const campiOpzionaliCorso = [
 ];
 
 // Validazione di una singola voce capitolo inline (creazione corso).
-const voceCapitoloValida = (voce) => {
+// `consentiSotto` abilita un livello di sotto-capitoli (stile Udemy): le sezioni
+// di primo livello possono contenere `sottoCapitoli[]`, i sotto-capitoli no
+// (profondità massima 1, coerente col service).
+const voceCapitoloValida = (voce, consentiSotto = true) => {
   if (!isPlainObject(voce)) return false;
   if (typeof voce.titolo !== 'string' || voce.titolo.trim().length < 2 || voce.titolo.trim().length > 160) {
     return false;
@@ -104,6 +107,14 @@ const voceCapitoloValida = (voce) => {
       if (!isPlainObject(d)) return false;
       if (typeof d.titolo !== 'string' || d.titolo.trim().length < 1) return false;
       if (typeof d.url !== 'string' || d.url.trim().length < 1) return false;
+    }
+  }
+  // Sotto-capitoli inline (solo al primo livello).
+  if (voce.sottoCapitoli !== undefined) {
+    if (!consentiSotto) return false;
+    if (!Array.isArray(voce.sottoCapitoli)) return false;
+    for (const sotto of voce.sottoCapitoli) {
+      if (!voceCapitoloValida(sotto, false)) return false;
     }
   }
   return true;
@@ -132,7 +143,7 @@ const validateCreaCorso = [
     .custom((arr) => {
       for (const voce of arr) {
         if (!voceCapitoloValida(voce)) {
-          throw new Error('Ogni capitolo deve avere un titolo valido (2-160 caratteri) ed eventuali documenti con titolo e url');
+          throw new Error('Ogni capitolo deve avere un titolo valido (2-160 caratteri), eventuali documenti con titolo e url, ed eventuali sotto-capitoli validi');
         }
       }
       return true;
@@ -195,6 +206,14 @@ const campiOpzionaliCapitolo = [
     .isInt({ min: 0 })
     .withMessage("L'ordine deve essere un intero maggiore o uguale a 0")
     .toInt(),
+
+  // Padre del capitolo: null/omesso = sezione di primo livello; UUID = il
+  // capitolo diventa un sotto-capitolo (stile Udemy). La profondità massima
+  // (1 livello di annidamento) è applicata nel service.
+  body('capitoloPadreId')
+    .optional({ nullable: true })
+    .isUUID(4)
+    .withMessage("L'identificativo del capitolo padre non è valido"),
 ];
 
 const validateCreaCapitolo = [
@@ -319,16 +338,60 @@ const validateElencoCorsiStudente = [
     .toInt(),
 ];
 
+// ─────────────────────────────────────────────
+// Servizio file protetto + upload multipart
+// ─────────────────────────────────────────────
+
+// GET /api/corsi/files/:fileId
+const validateFileIdParam = [
+  param('fileId').isUUID(4).withMessage("L'identificativo del file non è valido"),
+];
+
+// POST /api/corsi/:id/copertina  (campo file gestito da multer; nessun campo testo)
+const validateUploadCopertina = [...validateCorsoIdParam];
+
+// POST /api/corsi/:id/capitoli/:capitoloId/video
+// Il file è gestito da multer; la durata è un campo testo opzionale del form.
+const validateUploadVideo = [
+  ...validateCapitoloParams,
+  body('videoDurataSecondi')
+    .optional({ nullable: true })
+    .isInt({ min: 0, max: 86400 })
+    .withMessage('La durata del video deve essere un intero tra 0 e 86400 secondi')
+    .toInt(),
+];
+
+// POST /api/corsi/:id/capitoli/:capitoloId/documenti/upload
+// Il file è gestito da multer; titolo/ordine sono campi testo opzionali del form
+// (in mancanza del titolo si usa il nome originale del file).
+const validateUploadDocumento = [
+  ...validateCapitoloParams,
+  body('titolo')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .withMessage('Il titolo del documento deve avere tra 1 e 200 caratteri'),
+  body('ordine')
+    .optional({ nullable: true })
+    .isInt({ min: 0 })
+    .withMessage("L'ordine deve essere un intero maggiore o uguale a 0")
+    .toInt(),
+];
+
 module.exports = {
   validateCorsoIdParam,
   validateCapitoloParams,
   validateDocumentoParams,
   validateDisponibilitaParams,
+  validateFileIdParam,
   validateCreaCorso,
   validateAggiornaCorso,
   validateCreaCapitolo,
   validateAggiornaCapitolo,
   validateCreaDocumento,
+  validateUploadCopertina,
+  validateUploadVideo,
+  validateUploadDocumento,
   validateRendiDisponibile,
   validateElencoCorsi,
   validateElencoCorsiStudente,
