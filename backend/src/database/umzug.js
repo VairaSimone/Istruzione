@@ -25,6 +25,11 @@ require('../models/DocumentoCapitolo');
 require('../models/CorsoAula');
 require('../models/ProgressoKana');
 require('../models/ProgressoKanji');
+require('../models/Quiz');
+require('../models/DomandaQuiz');
+require('../models/OpzioneQuiz');
+require('../models/QuizAula');
+require('../models/ProgressoDomanda');
 require('../models/BadgeUtente');
 require('../models/AttivitaGiornaliera');
 

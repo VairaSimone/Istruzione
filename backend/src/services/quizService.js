@@ -5,6 +5,7 @@ const sequelize = require('../config/database');
 const Utente = require('../models/Utente');
 const ProgressoKana = require('../models/ProgressoKana');
 const ProgressoKanji = require('../models/ProgressoKanji');
+const ProgressoDomanda = require('../models/ProgressoDomanda');
 const AttivitaGiornaliera = require('../models/AttivitaGiornaliera');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
@@ -20,18 +21,37 @@ const {
 const { calcolaLivello, infoLivello, serializzaStatistiche } = require('../utils/gameStats');
 const { mezzanotteOdiernaUTC, formattaDataOnly, differenzaGiorni } = require('../utils/dateUtils');
 const gamificationService = require('./gamificationService');
+const quizGestioneService = require('./quizGestioneService');
+const {
+  risolviFiltri,
+  trovaTemplateObbligatorio,
+  TIPI_QUIZ_KANJI,
+} = require('../constants/quizTemplates');
 
 /**
- * QuizService — logica di business del Quiz (Kana + Kanji).
+ * QuizService — logica di business del MOTORE DI GIOCO dei quiz.
  *
  *   generateQuizPool  → selezione SRS ibrida dei caratteri per una partita
  *   submitQuizResults → elaborazione dell'esito (SRS, XP, streak, record)
  *   getDashboard      → statistiche aggregate per la home
  *
- * Il dominio ('kana' | 'kanji') seleziona la sorgente dei caratteri e la tabella
- * SRS; TUTTA la logica utente (XP, streak, record, badge, heatmap) è condivisa
- * tramite `applicaEsitoRound`, così Kanji è un'ESTENSIONE e non una duplicazione
- * del sistema Kana, che resta invariato (dominio di default = 'kana').
+ * Il dominio — qui chiamato anche MOTORE — seleziona la sorgente delle domande e
+ * la tabella SRS:
+ *   'kana'    → sillabari giapponesi   → ProgressoKana
+ *   'kanji'   → kanji per livello JLPT → ProgressoKanji
+ *   'domande' → quiz personalizzati    → ProgressoDomanda
+ *
+ * TUTTA la logica utente (XP, streak, record, badge, heatmap) è condivisa tramite
+ * `applicaEsitoRound`, così ogni motore è un'ESTENSIONE e non una duplicazione.
+ *
+ * Una partita può essere avviata in due modi:
+ *   - con `quizId`  → il quiz della scuola determina il motore, la configurazione
+ *     e la dimensione del round (cfr. `quizGestioneService`);
+ *   - senza `quizId` → percorso storico kana/kanji (retrocompatibilità), soggetto
+ *     al flag di scuola `quizTemplateLibero`.
+ *
+ * Per i quiz personalizzati la CORREZIONE È LATO SERVER: il client invia solo la
+ * risposta scelta, mai il verdetto.
  */
 
 // ─────────────────────────────────────────────
@@ -62,9 +82,10 @@ const BONUS_PERCENTUALE_ALTO = 50;      // a >= 80%
 // Numero di "caratteri critici" restituiti dalla dashboard.
 const LIMITE_PEGGIORI_KANA = 12;
 
-// Domini e tipologie di quiz supportati.
+// Domini giocabili senza `quizId` (percorso storico, retrocompatibile).
 const DOMINI = ['kana', 'kanji'];
-const TIPI_QUIZ_KANJI = ['production', 'recognition', 'reading'];
+// `TIPI_QUIZ_KANJI` arriva dal registro dei template ed è ri-esportato in fondo
+// per i validator, che continuano a importarlo da questo modulo.
 const OPZIONI_PER_DOMANDA = 4;       // quiz a scelta multipla (recognition/reading)
 
 // ─────────────────────────────────────────────
@@ -110,6 +131,15 @@ const ADATTATORI = {
       return { carattere: kanji, secondaria: { livello_jlpt: livello }, corretto: r.corretto === true };
     },
   },
+  // Quiz personalizzati: il "carattere" è l'id della domanda e non esiste una
+  // colonna secondaria. Le risposte NON vengono normalizzate dal client: le
+  // corregge il server (cfr. `quizGestioneService.correggiRisposte`), perciò
+  // `normalizzaRisposta` non è mai invocata per questo motore.
+  domande: {
+    model: ProgressoDomanda,
+    colonnaCarattere: 'domanda_id',
+    normalizzaRisposta: () => null,
+  },
 };
 
 // ─────────────────────────────────────────────
@@ -118,7 +148,7 @@ const ADATTATORI = {
 // secondaria) e i punteggi SRS esistenti, pesca prima i "difficili"
 // (punteggio < 3) poi riempie con i "facili", fino a DIMENSIONE_QUIZ.
 // ─────────────────────────────────────────────
-const selezionaConSrs = (candidati, punteggioPerCarattere) => {
+const selezionaConSrs = (candidati, punteggioPerCarattere, limite = DIMENSIONE_QUIZ) => {
   const difficili = [];
   const facili = [];
   for (const c of candidati) {
@@ -131,14 +161,14 @@ const selezionaConSrs = (candidati, punteggioPerCarattere) => {
   }
   mescola(difficili);
   mescola(facili);
-  const selezione = [...difficili, ...facili].slice(0, DIMENSIONE_QUIZ);
+  const selezione = [...difficili, ...facili].slice(0, limite > 0 ? limite : DIMENSIONE_QUIZ);
   return mescola(selezione);
 };
 
 // ═════════════════════════════════════════════
 // GENERAZIONE POOL — KANA (comportamento invariato)
 // ═════════════════════════════════════════════
-const generateKanaQuizPool = async (userId, filtri = {}) => {
+const generateKanaQuizPool = async (userId, filtri = {}, limite = DIMENSIONE_QUIZ) => {
   const { alfabeto, gruppi = [], includiDakuon = true, includiYoon = true } = filtri;
 
   if (!ALFABETI.includes(alfabeto)) {
@@ -161,7 +191,7 @@ const generateKanaQuizPool = async (userId, filtri = {}) => {
 
   // 3. Selezione SRS ibrida (normalizza al campo comune `carattere`).
   const candidati = kanaCandidati.map((c) => ({ ...c, carattere: c.kana }));
-  const selezione = selezionaConSrs(candidati, punteggioPerCarattere);
+  const selezione = selezionaConSrs(candidati, punteggioPerCarattere, limite);
 
   return {
     dominio: 'kana',
@@ -248,7 +278,7 @@ const costruisciDomandaKanji = (entry, tipoQuiz, lingua, pool) => {
   };
 };
 
-const generateKanjiQuizPool = async (userId, filtri = {}) => {
+const generateKanjiQuizPool = async (userId, filtri = {}, limite = DIMENSIONE_QUIZ) => {
   const { livello, tipoQuiz = 'recognition', lingua = 'it' } = filtri;
 
   if (!livelloValido(livello)) {
@@ -282,7 +312,7 @@ const generateKanjiQuizPool = async (userId, filtri = {}) => {
 
   // 3. Selezione SRS ibrida (campo comune `carattere` = ideogramma).
   const candidati = kanjiCandidati.map((c) => ({ ...c, carattere: c.ideogramma }));
-  const selezione = selezionaConSrs(candidati, punteggioPerCarattere);
+  const selezione = selezionaConSrs(candidati, punteggioPerCarattere, limite);
 
   // 4. Pool di distrattori derivati dall'INTERO livello (non dalla sola
   //    selezione), per domande a scelta multipla più varie.
@@ -303,17 +333,75 @@ const generateKanjiQuizPool = async (userId, filtri = {}) => {
   };
 };
 
+// ═════════════════════════════════════════════
+// GENERAZIONE POOL — DOMANDE (quiz personalizzati delle scuole)
+// Le domande sono righe di database; la selezione usa lo stesso SRS ibrido dei
+// caratteri, con `domanda_id` al posto del carattere. Il payload restituito allo
+// studente NON contiene mai la soluzione.
+// ═════════════════════════════════════════════
+const generateDomandeQuizPool = async (userId, quiz) => {
+  const domande = await quizGestioneService.caricaDomandeGiocabili(quiz.id);
+
+  const progressi = await ProgressoDomanda.findAll({
+    where: { utente_id: userId, domanda_id: { [Op.in]: domande.map((d) => d.id) } },
+    attributes: ['domanda_id', 'punteggio'],
+  });
+  const punteggioPerCarattere = new Map(progressi.map((p) => [p.domanda_id, p.punteggio]));
+
+  const candidati = domande.map((d) => ({ domanda: d, carattere: d.id }));
+  const selezione = selezionaConSrs(candidati, punteggioPerCarattere, quiz.dimensione_round);
+
+  return {
+    dominio: 'domande',
+    materia: quiz.materia,
+    totale: selezione.length,
+    domande: selezione.map((entry) =>
+      quizGestioneService.mappaDomandaPerStudente(entry.domanda, entry.punteggio, quiz.mescola_domande)
+    ),
+  };
+};
+
 // ─────────────────────────────────────────────
-// GENERAZIONE POOL — dispatcher per dominio
+// GENERAZIONE POOL — dispatcher
+//
+// `richiedente` è `req.user` (serve per il tenant e per i controlli d'accesso).
+// Con `filtri.quizId` la partita nasce da un quiz della scuola; senza, resta il
+// percorso storico kana/kanji.
 // ─────────────────────────────────────────────
-const generateQuizPool = async (userId, filtri = {}) => {
+const generateQuizPool = async (richiedente, filtri = {}) => {
+  if (filtri.quizId) {
+    const quiz = await quizGestioneService.caricaQuizPerGioco(filtri.quizId, richiedente);
+
+    const sessione = quiz.daTemplate
+      ? await (async () => {
+          const template = trovaTemplateObbligatorio(quiz.template_codice);
+          // La configurazione della scuola vince sugli override del client.
+          const risolti = risolviFiltri(template, quiz.configurazione, filtri);
+          return template.motore === 'kanji'
+            ? generateKanjiQuizPool(richiedente.id, risolti, quiz.dimensione_round)
+            : generateKanaQuizPool(richiedente.id, risolti, quiz.dimensione_round);
+        })()
+      : await generateDomandeQuizPool(richiedente.id, quiz);
+
+    return {
+      ...sessione,
+      quizId: quiz.id,
+      titolo: quiz.titolo,
+      templateCodice: quiz.template_codice,
+    };
+  }
+
   const dominio = filtri.dominio || 'kana';
   if (!DOMINI.includes(dominio)) {
     throw new AppError(`Dominio non valido. Usa uno di: ${DOMINI.join(', ')}.`, 422, 'INVALID_DOMAIN');
   }
+
+  // Percorso storico: la scuola può averlo disattivato per i propri studenti.
+  await quizGestioneService.assicuraAccessoDominioLegacy(richiedente);
+
   return dominio === 'kanji'
-    ? generateKanjiQuizPool(userId, filtri)
-    : generateKanaQuizPool(userId, filtri);
+    ? generateKanjiQuizPool(richiedente.id, filtri)
+    : generateKanaQuizPool(richiedente.id, filtri);
 };
 
 // ─────────────────────────────────────────────
@@ -468,27 +556,55 @@ const applicaEsitoRound = async (utente, { totale, corrette, percentuale, xpGuad
 // INVIO RISULTATI PARTITA (dispatcher per dominio)
 // Tutto in transazione: progressi SRS + statistiche utente atomicamente.
 // ─────────────────────────────────────────────
-const submitQuizResults = async (userId, risposte, datiBonus = {}, dominio = 'kana') => {
-  if (!DOMINI.includes(dominio)) {
-    throw new AppError(`Dominio non valido. Usa uno di: ${DOMINI.join(', ')}.`, 422, 'INVALID_DOMAIN');
-  }
+const submitQuizResults = async (richiedente, risposte, datiBonus = {}, dominio = 'kana', quizId = null) => {
   if (!Array.isArray(risposte) || risposte.length === 0) {
     throw new AppError('Nessuna risposta fornita.', 422, 'EMPTY_SUBMISSION');
   }
 
-  const adattatore = ADATTATORI[dominio];
+  const userId = richiedente.id;
 
-  // 1. Normalizzazione + validazione difensiva contro il dizionario canonico.
-  const normalizzate = normalizzaRisposte(risposte, adattatore);
+  // 1. Risoluzione del motore: dal quiz, se indicato; dal dominio altrimenti.
+  let quiz = null;
+  let dominioEffettivo = dominio || 'kana';
+
+  if (quizId) {
+    quiz = await quizGestioneService.caricaQuizPerGioco(quizId, richiedente);
+    dominioEffettivo = quiz.motore;
+  } else {
+    if (!DOMINI.includes(dominioEffettivo)) {
+      throw new AppError(`Dominio non valido. Usa uno di: ${DOMINI.join(', ')}.`, 422, 'INVALID_DOMAIN');
+    }
+    await quizGestioneService.assicuraAccessoDominioLegacy(richiedente);
+  }
+
+  const adattatore = ADATTATORI[dominioEffettivo];
+
+  // 2. Normalizzazione + validazione difensiva.
+  //    - motore `domande` → CORREZIONE LATO SERVER contro le domande del quiz;
+  //    - motori kana/kanji → validazione contro i dizionari canonici.
+  let normalizzate;
+  let correzione = null;
+
+  if (dominioEffettivo === 'domande') {
+    const domande = await quizGestioneService.caricaDomandeGiocabili(quiz.id);
+    const esito = quizGestioneService.correggiRisposte(domande, risposte);
+    normalizzate = esito.normalizzate;
+    correzione = esito.correzione;
+  } else {
+    normalizzate = normalizzaRisposte(risposte, adattatore);
+  }
+
   if (normalizzate.length === 0) {
     throw new AppError(
-      `Le risposte fornite non contengono ${dominio} validi.`,
+      dominioEffettivo === 'domande'
+        ? 'Le risposte fornite non corrispondono ad alcuna domanda di questo quiz.'
+        : `Le risposte fornite non contengono ${dominioEffettivo} validi.`,
       422,
       'INVALID_SUBMISSION'
     );
   }
 
-  // 2. Aggregati del round.
+  // 3. Aggregati del round.
   const totale = normalizzate.length;
   const corrette = normalizzate.filter((r) => r.corretto).length;
   const errate = totale - corrette;
@@ -505,7 +621,7 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}, dominio = 'ka
     timerMode,
   });
 
-  // 3. Transazione atomica: SRS (per dominio) + esito utente (condiviso).
+  // 4. Transazione atomica: SRS (per motore) + esito utente (condiviso).
   const risultatoTx = await sequelize.transaction(async (t) => {
     const utente = await Utente.findByPk(userId, { transaction: t, lock: t.LOCK.UPDATE });
     if (!utente) {
@@ -529,7 +645,7 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}, dominio = 'ka
   const livelloDopo = calcolaLivello(utenteFinale.xp);
 
   logger.info(
-    `[QUIZ:${dominio}] Utente ${userId} ha inviato un round: ${corrette}/${totale} (${percentuale}%), ` +
+    `[QUIZ:${dominioEffettivo}] Utente ${userId} ha inviato un round: ${corrette}/${totale} (${percentuale}%), ` +
       `+${xpGuadagnati} XP` +
       (valutazione.xpRighe ? ` (+${valutazione.xpRighe} XP sblocco righe)` : '') +
       (valutazione.nuoviBadge.length ? `, badge: ${valutazione.nuoviBadge.join(', ')}` : '')
@@ -537,7 +653,8 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}, dominio = 'ka
 
   return {
     risultatoRound: {
-      dominio,
+      dominio: dominioEffettivo,
+      quizId: quiz ? quiz.id : null,
       corrette,
       errate,
       totale,
@@ -551,6 +668,9 @@ const submitQuizResults = async (userId, risposte, datiBonus = {}, dominio = 'ka
       livelloDopo,
       salitoDiLivello: livelloDopo > livelloPrima,
       nuoviBadge: valutazione.nuoviBadge,
+      // Presente solo per i quiz personalizzati: esito per domanda, con la
+      // soluzione, ora che la partita è chiusa.
+      ...(correzione ? { correzione } : {}),
     },
     statistiche: serializzaStatistiche(utenteFinale),
   };

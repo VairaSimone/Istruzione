@@ -1,7 +1,7 @@
 import apiClient from '../api/axiosClient';
 
 /**
- * Service layer del Quiz Kana.
+ * Service layer del MOTORE DI GIOCO del Quiz (kana, kanji, quiz personalizzati).
  * Ogni funzione mappa 1:1 un endpoint reale di `backend/src/routes/quizRoutes.js`
  * (montate sotto `/api/quiz`; il prefisso `/api` è già incluso in
  * VITE_API_BASE_URL, quindi qui i path partono da `/quiz`).
@@ -30,7 +30,14 @@ export const getQuizDashboard = async () => {
  * I campi non pertinenti al dominio scelto vengono semplicemente ignorati dal
  * backend; l'assenza di `dominio` mantiene il comportamento kana storico.
  *
+ * Con `quizId` la partita nasce invece da un QUIZ DELLA SCUOLA: il motore, la
+ * configurazione e la dimensione del round li decide il quiz. I filtri inviati
+ * valgono solo sui campi che la scuola non ha fissato nella configurazione; per
+ * i quiz personalizzati (motore `domande`) sono del tutto ignorati.
+ * La sessione restituita include allora `quizId`, `titolo` e `templateCodice`.
+ *
  * @param {Object}   filtri
+ * @param {string}   [filtri.quizId]        UUID del quiz della scuola
  * @param {string}   [filtri.dominio]       'kana' | 'kanji' (default 'kana')
  * @param {string}   [filtri.alfabeto]      'hiragana' | 'katakana'   (kana)
  * @param {string[]} [filtri.gruppi]        righe selezionate; vuoto ⇒ tutte (kana)
@@ -41,6 +48,7 @@ export const getQuizDashboard = async () => {
  * @param {string}   [filtri.lingua]        'it' | 'en' (significati)  (kanji)
  */
 export const generateQuiz = async ({
+  quizId,
   dominio,
   alfabeto,
   gruppi,
@@ -51,6 +59,8 @@ export const generateQuiz = async ({
   lingua,
 }) => {
   const { data } = await apiClient.post('/quiz/generate', {
+    // Campi assenti: Axios non li serializza, il backend applica i default.
+    ...(quizId ? { quizId } : {}),
     dominio,
     alfabeto,
     gruppi,
@@ -72,14 +82,27 @@ export const generateQuiz = async ({
  * (ProgressoKana | ProgressoKanji); la parte utente (XP/streak/record) è
  * condivisa. L'assenza del campo equivale a 'kana'.
  *
+ * Con `quizId` il motore lo determina il quiz. Per i quiz PERSONALIZZATI la
+ * correzione avviene LATO SERVER: il client invia la risposta scelta, mai
+ * l'esito, e riceve in `risultatoRound.correzione` il verdetto per domanda con
+ * la soluzione, ora che la partita è chiusa.
+ *
  * @param {Object}   payload
+ * @param {string}   [payload.quizId]   UUID del quiz della scuola
  * @param {string}   [payload.dominio]  'kana' | 'kanji' (default 'kana')
  * @param {Array}    payload.risposte
- *        kana:  {kana, tipo, corretto}[] · kanji: {kanji, livelloJLPT, corretto}[]
+ *        kana:      {kana, tipo, corretto}[]
+ *        kanji:     {kanji, livelloJLPT, corretto}[]
+ *        domande:   {domandaId, opzioneId?, testo?}[]
  * @param {{maxCombo:number, timerMode:boolean}} [payload.datiBonus]
  */
-export const submitQuizResults = async ({ dominio, risposte, datiBonus }) => {
-  const { data } = await apiClient.post('/quiz/submit', { dominio, risposte, datiBonus });
+export const submitQuizResults = async ({ quizId, dominio, risposte, datiBonus }) => {
+  const { data } = await apiClient.post('/quiz/submit', {
+    ...(quizId ? { quizId } : {}),
+    dominio,
+    risposte,
+    datiBonus,
+  });
   return data;
 };
 

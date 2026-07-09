@@ -32,9 +32,14 @@ exports.dashboard = catchAsync(async (req, res) => {
 //   - dominio='kanji':           usa livello (JLPT), tipoQuiz, lingua.
 // L'assenza di `dominio` mantiene il comportamento storico (retrocompatibilità
 // con il frontend esistente, che invia solo i filtri kana).
+//
+// Con `quizId` la partita nasce invece da un quiz della scuola: il motore, la
+// configurazione e la dimensione del round li decide il quiz, e i filtri del
+// client valgono solo sui campi che la scuola non ha fissato.
 // ─────────────────────────────────────────────
 exports.generaQuiz = catchAsync(async (req, res) => {
   const {
+    quizId,
     dominio,
     alfabeto,
     gruppi,
@@ -45,7 +50,9 @@ exports.generaQuiz = catchAsync(async (req, res) => {
     lingua,
   } = req.body;
 
-  const sessione = await quizService.generateQuizPool(req.user.id, {
+  const sessione = await quizService.generateQuizPool(req.user, {
+    // quiz della scuola (template installato o quiz personalizzato)
+    quizId,
     // dominio kana (default)
     dominio,
     alfabeto,
@@ -72,15 +79,19 @@ exports.generaQuiz = catchAsync(async (req, res) => {
 // `dominio` (default 'kana') instrada l'aggiornamento SRS verso il modello
 // corretto (ProgressoKana | ProgressoKanji); la parte utente (XP/streak/record)
 // è condivisa. L'assenza del campo preserva il comportamento storico.
+//
+// Con `quizId` il motore lo determina il quiz; per i quiz personalizzati la
+// correzione avviene lato server (il client invia la risposta, non l'esito).
 // ─────────────────────────────────────────────
 exports.inviaRisultati = catchAsync(async (req, res) => {
-  const { risposte, datiBonus, dominio } = req.body;
+  const { risposte, datiBonus, dominio, quizId } = req.body;
 
   const esito = await quizService.submitQuizResults(
-    req.user.id,
+    req.user,
     risposte,
     datiBonus || {},
-    dominio || 'kana'
+    dominio || 'kana',
+    quizId || null
   );
 
   res.status(200).json({

@@ -12,6 +12,8 @@ import QuizStatsPanel from '../features/quiz/components/QuizStatsPanel';
 import QuizSetup from '../features/quiz/components/QuizSetup';
 import QuizPlay from '../features/quiz/components/QuizPlay';
 import KanjiQuizPlay from '../features/quiz/components/KanjiQuizPlay';
+import DomandeQuizPlay from '../features/quiz/components/DomandeQuizPlay';
+import QuizDisponibiliPanel from '../features/quiz/components/QuizDisponibiliPanel';
 import QuizResults from '../features/quiz/components/QuizResults';
 import WritingPracticePanel from '../features/quiz/components/WritingPracticePanel';
 import StreakCard from '../features/quiz/components/StreakCard';
@@ -21,12 +23,18 @@ import { mostraBadgeSbloccati } from '../features/quiz/badgeToasts';
 import styles from './QuizPage.module.css';
 
 /**
- * Pagina del Quiz Kana. Orchestratore a fasi:
+ * Pagina del Quiz. Orchestratore a fasi:
  *
  *   home → setup → playing → (submitting) → results
  *
- * La logica di dominio vive nel backend (SRS, XP, streak, record): qui si
- * coordinano solo le chiamate e le transizioni di vista.
+ * Tre modi di iniziare una partita:
+ *   1. allenamento libero kana/kanji (se la scuola non lo ha disabilitato);
+ *   2. quiz della scuola creato da un TEMPLATE  → passa dal setup, dove restano
+ *      configurabili solo i campi che la scuola non ha fissato;
+ *   3. quiz della scuola PERSONALIZZATO         → parte subito, nessun setup.
+ *
+ * La logica di dominio vive nel backend (SRS, XP, streak, record, correzione):
+ * qui si coordinano solo le chiamate e le transizioni di vista.
  */
 const FASI = {
   HOME: 'home',
@@ -42,6 +50,8 @@ const QuizPage = () => {
 
   const [fase, setFase] = useState(FASI.HOME);
   const [sessione, setSessione] = useState(null);
+  // Quiz della scuola scelto dall'elenco (null ⇒ allenamento libero).
+  const [quizSelezionato, setQuizSelezionato] = useState(null);
   const [timerMode, setTimerMode] = useState(false);
   const [esito, setEsito] = useState(null);
 
@@ -60,6 +70,34 @@ const QuizPage = () => {
       },
       // L'errore è mostrato in linea dentro QuizSetup (vedi sotto).
     });
+  };
+
+  // ── Avvio di un quiz della scuola ─────────────────────────────────
+  // Un quiz da template ha ancora dei filtri da scegliere: si passa dal setup.
+  // Un quiz personalizzato è già completo: si genera e si gioca subito.
+  const handleStartQuizScuola = (quiz) => {
+    setQuizSelezionato(quiz);
+
+    if (quiz.templateCodice) {
+      generateMutation.reset();
+      setFase(FASI.SETUP);
+      return;
+    }
+
+    setTimerMode(false);
+    generateMutation.mutate(
+      { quizId: quiz.id },
+      {
+        onSuccess: (data) => {
+          setSessione(data.data.sessione);
+          setFase(FASI.PLAYING);
+        },
+        onError: (err) => {
+          toast.error(getApiErrorMessage(t, err));
+          setQuizSelezionato(null);
+        },
+      }
+    );
   };
 
   // ── Avvio Allenamento Intensivo: pool mirato sui caratteri deboli ──
@@ -83,7 +121,12 @@ const QuizPage = () => {
   const handleComplete = (risposte, datiBonus) => {
     setFase(FASI.SUBMITTING);
     submitMutation.mutate(
-      { dominio: sessione?.dominio || 'kana', risposte, datiBonus },
+      {
+        ...(sessione?.quizId ? { quizId: sessione.quizId } : {}),
+        dominio: sessione?.dominio || 'kana',
+        risposte,
+        datiBonus,
+      },
       {
         onSuccess: (data) => {
           setEsito(data.data); // { risultatoRound, statistiche }
@@ -93,7 +136,9 @@ const QuizPage = () => {
         },
         onError: (err) => {
           toast.error(getApiErrorMessage(t, err));
-          setFase(FASI.SETUP); // si può riprovare a giocare
+          // I quiz personalizzati non hanno una schermata di configurazione:
+          // si torna alla home, da cui si può rilanciare la partita.
+          setFase(sessione?.dominio === 'domande' ? FASI.HOME : FASI.SETUP);
         },
       }
     );
@@ -101,12 +146,18 @@ const QuizPage = () => {
 
   const vaiAllaConfigurazione = () => {
     generateMutation.reset();
+    // "Gioca ancora" dopo un quiz personalizzato non ha filtri da mostrare.
+    if (quizSelezionato && !quizSelezionato.templateCodice) {
+      handleStartQuizScuola(quizSelezionato);
+      return;
+    }
     setFase(FASI.SETUP);
   };
 
   const tornaAllaHome = () => {
     setSessione(null);
     setEsito(null);
+    setQuizSelezionato(null);
     setFase(FASI.HOME);
   };
 
@@ -137,7 +188,13 @@ const QuizPage = () => {
                 peggioriKana={dashboard.data.peggioriKana}
               />
               <div className={styles.startBar}>
-                <Button size="lg" onClick={vaiAllaConfigurazione}>
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    setQuizSelezionato(null);
+                    vaiAllaConfigurazione();
+                  }}
+                >
                   {t('quiz.startSession')}
                 </Button>
                 <Button
@@ -148,6 +205,12 @@ const QuizPage = () => {
                   {t('quiz.practiceWriting')}
                 </Button>
               </div>
+
+              {/* Quiz assegnati dalla scuola (template installati o personalizzati) */}
+              <QuizDisponibiliPanel
+                onStartQuiz={handleStartQuizScuola}
+                isStarting={generateMutation.isPending}
+              />
 
               {/* Progressi: streak, heatmap attività, caratteri problematici */}
               <section className={styles.progressi} aria-label={t('quiz.progress.title')}>
@@ -169,7 +232,9 @@ const QuizPage = () => {
       {/* ── SETUP: filtri di gioco ────────────────────────────── */}
       {fase === FASI.SETUP && (
         <QuizSetup
+          quiz={quizSelezionato}
           onStart={handleStart}
+          onBack={tornaAllaHome}
           isLoading={generateMutation.isPending}
           errorMessage={
             generateMutation.isError ? getApiErrorMessage(t, generateMutation.error) : null
@@ -179,7 +244,9 @@ const QuizPage = () => {
 
       {/* ── PLAYING: partita in corso (kana o kanji) ──────────── */}
       {fase === FASI.PLAYING && sessione && (
-        sessione.dominio === 'kanji' ? (
+        sessione.dominio === 'domande' ? (
+          <DomandeQuizPlay sessione={sessione} onComplete={handleComplete} />
+        ) : sessione.dominio === 'kanji' ? (
           <KanjiQuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
         ) : (
           <QuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
@@ -199,6 +266,7 @@ const QuizPage = () => {
         <QuizResults
           risultatoRound={esito.risultatoRound}
           statistiche={esito.statistiche}
+          domande={sessione?.domande ?? []}
           onPlayAgain={vaiAllaConfigurazione}
           onBackToDashboard={tornaAllaHome}
         />

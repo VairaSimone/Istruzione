@@ -24,8 +24,15 @@ export const queryKeys = Object.freeze({
     mia: ['scuole', 'mia'],
   },
   quiz: {
+    all: ['quiz'],
     dashboard: ['quiz', 'dashboard'],
     badge: ['quiz', 'badge'],
+    // Quiz delle scuole (template installabili + quiz personalizzati).
+    templates: (filters) => ['quiz', 'templates', filters ?? {}],
+    disponibili: (filters) => ['quiz', 'disponibili', filters ?? {}],
+    gestione: ['quiz', 'gestione'],
+    gestioneList: (filters) => ['quiz', 'gestione', 'list', filters ?? {}],
+    gestioneDetail: (id) => ['quiz', 'gestione', 'detail', id],
     strokeOrder: (alfabeto) => ['quiz', 'strokeOrder', alfabeto],
     strokeOrderKanji: (livello, lingua) => [
       'quiz',

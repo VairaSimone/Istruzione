@@ -121,6 +121,11 @@ const Header = () => {
               </NavLink>
             )}
             {isTeacher && (
+              <NavLink to={ROUTES.QUIZ_GESTIONE} className={navLinkClass}>
+                {t('nav.quizGestione')}
+              </NavLink>
+            )}
+            {isTeacher && (
               <NavLink to={ROUTES.TEACHER_DASHBOARD} className={navLinkClass}>
                 {t('nav.statistiche')}
               </NavLink>

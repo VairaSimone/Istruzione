@@ -1,0 +1,145 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 1.5rem;
+}
+
+.counter {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.quizTitle {
+  margin-left: auto;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.progressTrack {
+  width: 100%;
+  height: 6px;
+  background-color: var(--color-paper-dim);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-matcha);
+  transition: width 0.3s ease;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+}
+
+.prompt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.testo {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.media {
+  width: 100%;
+  max-height: 18rem;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.option {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: left;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.option:hover:not(:disabled) {
+  background-color: var(--color-paper-dim);
+  border-color: var(--color-seal);
+}
+
+.option:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.optionSelected {
+  background-color: var(--color-paper-dim);
+  border-color: var(--color-seal);
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-4);
+  font-size: 1.125rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-seal);
+  outline-offset: 1px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 30rem) {
+  .testo {
+    font-size: 1.125rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+}

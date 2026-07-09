@@ -13,6 +13,8 @@ export const ROUTES = Object.freeze({
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
   QUIZ: '/quiz',
+  QUIZ_GESTIONE: '/gestione/quiz',
+  QUIZ_GESTIONE_DETAIL: '/gestione/quiz/:id',
   AULE: '/aule',
   AULA_DETAIL: '/aule/:id',
   COMPITI: '/compiti',
@@ -40,3 +42,4 @@ export const compitoStudenteDetailPath = (id) => `/i-miei-compiti/${id}`;
 export const corsoDetailPath = (id) => `/corsi/${id}`;
 export const corsoStudenteDetailPath = (id) => `/i-miei-corsi/${id}`;
 export const messaggioDetailPath = (id) => `/messaggi/${id}`;
+export const quizGestioneDetailPath = (id) => `/gestione/quiz/${id}`;

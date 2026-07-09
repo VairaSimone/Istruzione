@@ -64,7 +64,8 @@
     "scuole": "Scuole",
     "invitesManagement": "Inviti",
     "teacherRequest": "Candidati",
-    "teacherRequests": "Candidature"
+    "teacherRequests": "Candidature",
+    "quizGestione": "Gestione quiz"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -377,7 +378,27 @@
       "CAPITOLO_PADRE_NOT_FOUND": "Sezione padre non trovata.",
       "SOTTOCAPITOLO_DEPTH_EXCEEDED": "Un sotto-capitolo non può contenere altri sotto-capitoli.",
       "CAPITOLO_PADRE_INVALID": "Un capitolo non può essere padre di se stesso.",
-      "CAPITOLO_HAS_CHILDREN": "Questo capitolo ha dei sotto-capitoli e non può diventare a sua volta un sotto-capitolo."
+      "CAPITOLO_HAS_CHILDREN": "Questo capitolo ha dei sotto-capitoli e non può diventare a sua volta un sotto-capitolo.",
+      "QUIZ_NOT_FOUND": "Quiz non trovato.",
+      "DOMANDA_NOT_FOUND": "Domanda non trovata.",
+      "ENABLEMENT_NOT_FOUND": "Il quiz non è abilitato per questa aula.",
+      "ALREADY_ENABLED": "Il quiz è già abilitato per questa aula.",
+      "QUIZ_TEMPLATE_NON_ABILITATO": "La tua scuola ha disattivato l’allenamento libero: gioca i quiz assegnati.",
+      "INVALID_QUIZ_TEMPLATE": "Template di quiz non valido.",
+      "INVALID_QUIZ_CONFIG": "Configurazione del quiz non valida.",
+      "QUIZ_TEMPLATE_IMMUTABILE": "Il template di un quiz non è modificabile.",
+      "QUIZ_CONFIG_NON_AMMESSA": "Questa configurazione non è ammessa dal template.",
+      "QUIZ_TEMPLATE_NO_DOMANDE": "Un quiz da template non può avere domande scritte a mano.",
+      "TROPPE_DOMANDE": "Il quiz ha raggiunto il numero massimo di domande.",
+      "DOMANDA_OPZIONI_NON_AMMESSE": "Una domanda a risposta breve non può avere opzioni.",
+      "DOMANDA_RISPOSTA_MANCANTE": "La risposta corretta è obbligatoria.",
+      "DOMANDA_TROPPE_ALTERNATIVE": "Troppe risposte alternative.",
+      "DOMANDA_VERO_FALSO_INCOMPLETA": "Una domanda vero/falso deve avere esattamente 2 opzioni.",
+      "DOMANDA_OPZIONI_MANCANTI": "Le opzioni sono obbligatorie per questo tipo di domanda.",
+      "DOMANDA_NUMERO_OPZIONI": "Numero di opzioni non valido.",
+      "DOMANDA_UNICA_CORRETTA": "Deve esserci esattamente una opzione corretta.",
+      "EMPTY_QUIZ_POOL": "Nessuna domanda disponibile con questi filtri.",
+      "INVALID_SUBMISSION": "Risposte non valide."
     }
   },
   "validation": {
@@ -454,7 +475,10 @@
       "domainLegend": "Cosa vuoi studiare?",
       "levelLegend": "Livello JLPT",
       "levelHint": "Da N5 (base) a N1 (avanzato).",
-      "kanjiTypeLegend": "Tipo di esercizio"
+      "kanjiTypeLegend": "Tipo di esercizio",
+      "quizSubtitle": "Quiz assegnato dalla tua scuola. Alcuni parametri potrebbero essere già fissati.",
+      "configFissata": "Parametri fissati dalla scuola: {{campi}}.",
+      "back": "Torna indietro"
     },
     "play": {
       "progress": "{{current}} di {{total}}",
@@ -478,7 +502,11 @@
       "wrong": "Errate",
       "playAgain": "Gioca ancora",
       "backToDashboard": "Torna al riepilogo",
-      "xpRows": "XP da righe sbloccate"
+      "xpRows": "XP da righe sbloccate",
+      "correzioneTitle": "Correzione",
+      "correzioneOk": "Corretta",
+      "correzioneWrong": "Errata",
+      "correzioneSoluzione": "Risposta corretta: {{risposta}}"
     },
     "practiceWriting": "Pratica di scrittura",
     "audio": {
@@ -670,6 +698,17 @@
       "knew": "Lo sapevo",
       "didNotKnow": "Non lo sapevo",
       "wrong": "Continua ad allenarti"
+    },
+    "disponibili": {
+      "title": "Quiz della tua scuola",
+      "subtitle": "Quiz assegnati dai tuoi insegnanti.",
+      "play": "Gioca",
+      "domande": "{{n}} domande"
+    },
+    "domande": {
+      "answerPlaceholder": "Scrivi la tua risposta…",
+      "submit": "Consegna",
+      "answered": "Risposte date: {{answered}} su {{total}}"
     }
   },
   "aule": {
@@ -1252,6 +1291,146 @@
       "tipo": "Formato del file non supportato.",
       "dimensione": "Il file supera la dimensione massima di {{max}} MB.",
       "nessunFile": "Seleziona prima un file da caricare."
+    }
+  },
+  "quizGestione": {
+    "list": {
+      "title": "Gestione quiz",
+      "subtitle": "Quiz della tua scuola: template installati e quiz personalizzati.",
+      "create": "Nuovo quiz",
+      "search": "Cerca",
+      "searchPlaceholder": "Titolo o descrizione…",
+      "allStates": "Tutti gli stati",
+      "allTypes": "Tutti i tipi",
+      "empty": "Nessun quiz trovato.",
+      "loadError": "Impossibile caricare i quiz."
+    },
+    "catalogo": {
+      "title": "Template disponibili",
+      "subtitle": "Installa un template per aggiungerlo ai quiz della tua scuola. Puoi installarlo più volte con configurazioni diverse.",
+      "installa": "Installa",
+      "installato": "Installato {{n}} volte",
+      "nonInstallato": "Non ancora installato"
+    },
+    "templates": {
+      "kana": "Quiz Kana",
+      "kanji": "Quiz Kanji"
+    },
+    "card": {
+      "personalizzato": "Personalizzato",
+      "generatoDalMotore": "Domande generate dal motore",
+      "domande": "{{n}} domande",
+      "round": "round da {{n}}"
+    },
+    "form": {
+      "titolo": "Titolo",
+      "descrizione": "Descrizione",
+      "materia": "Materia",
+      "materiaHint": "Es. Storia, Matematica, Giapponese.",
+      "template": "Tipo di quiz",
+      "templateHint": "Un template genera le domande automaticamente; un quiz personalizzato usa le domande che scrivi tu.",
+      "templateNessuno": "Quiz personalizzato",
+      "stato": "Stato",
+      "dimensioneRound": "Domande per round",
+      "dimensioneRoundHint": "Da 1 a 50. Quante domande vengono proposte in una partita.",
+      "mescolaDomande": "Mescola le domande",
+      "mescolaDomandeHint": "Ogni partita propone le domande in ordine casuale.",
+      "createTitle": "Nuovo quiz",
+      "editTitle": "Modifica quiz",
+      "installTitle": "Installa «{{nome}}»",
+      "createSubmit": "Crea"
+    },
+    "config": {
+      "title": "Configurazione",
+      "subtitle": "I parametri fissati qui non sono modificabili dallo studente; quelli lasciati liberi restano a sua scelta.",
+      "libero": "Lascia scegliere allo studente",
+      "si": "Sì",
+      "no": "No",
+      "lingua": "Lingua dei significati",
+      "righeLibere": "Nessuna riga fissata: lo studente sceglie liberamente.",
+      "righeFissate": "Solo le righe selezionate saranno proposte.",
+      "saved": "Configurazione salvata."
+    },
+    "domande": {
+      "title": "Domande",
+      "count": "{{n}} domande",
+      "add": "Aggiungi domanda",
+      "empty": "Nessuna domanda: il quiz non è ancora giocabile."
+    },
+    "domanda": {
+      "tipo": "Tipo di domanda",
+      "tipi": {
+        "scelta_multipla": "Scelta multipla",
+        "vero_falso": "Vero o falso",
+        "risposta_breve": "Risposta breve"
+      },
+      "testo": "Testo della domanda",
+      "mediaUrl": "Immagine (URL)",
+      "mediaUrlHint": "Facoltativo: un’immagine http(s) mostrata insieme alla domanda.",
+      "opzioni": "Opzioni",
+      "opzioniHint": "Segna con il selettore l’unica opzione corretta.",
+      "opzioneN": "Opzione {{n}}",
+      "aggiungiOpzione": "Aggiungi opzione",
+      "segnaCorretta": "Segna come corretta",
+      "rispostaCorretta": "Risposta corretta",
+      "risposteAlternative": "Risposte alternative",
+      "risposteAlternativeHint": "Separate da punto e virgola. Massimo 10.",
+      "caseSensitive": "Distingui maiuscole e minuscole",
+      "caseSensitiveHint": "Se attivo, «Roma» e «roma» sono risposte diverse.",
+      "caseSensitiveBadge": "Maiuscole/minuscole",
+      "alternativeLabel": "Accettate anche:",
+      "spiegazione": "Spiegazione",
+      "spiegazioneHint": "Mostrata allo studente nella correzione di fine partita.",
+      "vero": "Vero",
+      "falso": "Falso",
+      "createTitle": "Nuova domanda",
+      "editTitle": "Modifica domanda",
+      "deleteConfirm": "Eliminare questa domanda?"
+    },
+    "aule": {
+      "title": "Aule abilitate",
+      "empty": "Il quiz non è ancora abilitato per nessuna aula.",
+      "aula": "Aula",
+      "selectAula": "Seleziona un’aula",
+      "noAule": "Nessuna aula disponibile",
+      "add": "Abilita",
+      "revoke": "Revoca",
+      "added": "Quiz abilitato per l’aula.",
+      "removed": "Abilitazione revocata.",
+      "removeConfirm": "Revocare l’abilitazione del quiz per questa aula?",
+      "nonPubblicato": "Il quiz non è pubblicato: gli studenti non lo vedranno finché resta in bozza."
+    },
+    "detail": {
+      "back": "Torna ai quiz",
+      "deleteConfirm": "Eliminare questo quiz? Domande e abilitazioni saranno rimosse.",
+      "loadError": "Impossibile caricare il quiz.",
+      "statDomande": "Domande",
+      "statRound": "Domande per round",
+      "statAule": "Aule abilitate"
+    },
+    "toast": {
+      "created": "Quiz creato con successo.",
+      "updated": "Quiz aggiornato con successo.",
+      "deleted": "Quiz eliminato con successo.",
+      "domandaAdded": "Domanda aggiunta con successo.",
+      "domandaUpdated": "Domanda aggiornata con successo.",
+      "domandaDeleted": "Domanda eliminata con successo."
+    },
+    "validation": {
+      "titoloLength": "Il titolo deve avere tra 2 e 160 caratteri",
+      "materiaMax": "La materia non può superare gli 80 caratteri",
+      "template": "Tipo di quiz non valido",
+      "dimensioneRound": "Le domande per round devono essere tra 1 e 50",
+      "tipoDomanda": "Tipo di domanda non valido",
+      "testoRequired": "Il testo della domanda è obbligatorio",
+      "testoMax": "Il testo non può superare i 2000 caratteri",
+      "rispostaMax": "La risposta non può superare i 255 caratteri",
+      "rispostaRequired": "La risposta corretta è obbligatoria",
+      "opzioneTestoRequired": "Il testo dell’opzione è obbligatorio",
+      "opzioneTestoMax": "Il testo dell’opzione non può superare i 500 caratteri",
+      "opzioniVeroFalso": "Una domanda vero/falso deve avere esattamente 2 opzioni",
+      "opzioniNumero": "Servono da {{min}} a {{max}} opzioni",
+      "opzioneUnicaCorretta": "Indica esattamente una opzione corretta"
     }
   }
 }

@@ -9,12 +9,23 @@ import styles from './QuizResults.module.css';
  * Mostra l'esito del round, il dettaglio degli XP guadagnati, l'eventuale
  * salita di livello e le statistiche aggiornate restituite dal backend.
  *
+ * Per i quiz PERSONALIZZATI il backend allega anche `correzione`: la partita è
+ * chiusa, quindi ora può rivelare la soluzione di ogni domanda (il client non
+ * l'ha mai avuta). L'elenco compare solo in quel caso.
+ *
  * @param {Object} risultatoRound  da POST /quiz/submit (risultatoRound)
  * @param {Object} statistiche     statistiche aggiornate
+ * @param {Array}  [domande]       domande della sessione, per mostrarne il testo
  * @param {() => void} onPlayAgain
  * @param {() => void} onBackToDashboard
  */
-const QuizResults = ({ risultatoRound, statistiche, onPlayAgain, onBackToDashboard }) => {
+const QuizResults = ({
+  risultatoRound,
+  statistiche,
+  domande = [],
+  onPlayAgain,
+  onBackToDashboard,
+}) => {
   const { t } = useTranslation();
 
   const {
@@ -30,7 +41,20 @@ const QuizResults = ({ risultatoRound, statistiche, onPlayAgain, onBackToDashboa
     livelloPrima = 1,
     livelloDopo = 1,
     salitoDiLivello = false,
+    correzione = null,
   } = risultatoRound ?? {};
+
+  // Testo e opzioni della domanda, per rendere leggibile la correzione.
+  const domandaPerId = new Map((domande ?? []).map((d) => [d.id, d]));
+
+  // Etichetta della soluzione: testo dell'opzione corretta, oppure la risposta
+  // attesa per le domande aperte.
+  const soluzione = (voce) => {
+    if (voce.rispostaCorretta) return voce.rispostaCorretta;
+    const domanda = domandaPerId.get(voce.domandaId);
+    const opzione = domanda?.opzioni?.find((o) => o.id === voce.opzioneCorrettaId);
+    return opzione?.testo ?? '';
+  };
 
   const toneEsito = percentuale === 100 ? 'matcha' : percentuale >= 80 ? 'gold' : 'seal';
 
@@ -99,6 +123,44 @@ const QuizResults = ({ risultatoRound, statistiche, onPlayAgain, onBackToDashboa
           <dd>{statistiche?.streak ?? 0}</dd>
         </div>
       </dl>
+
+      {/* Correzione per domanda (solo quiz personalizzati) */}
+      {Array.isArray(correzione) && correzione.length > 0 && (
+        <section className={styles.correzione} aria-label={t('quiz.results.correzioneTitle')}>
+          <h3 className={styles.correzioneTitle}>{t('quiz.results.correzioneTitle')}</h3>
+          <ol className={styles.correzioneList}>
+            {correzione.map((voce, indice) => (
+              <li
+                key={voce.domandaId}
+                className={[
+                  styles.correzioneItem,
+                  voce.corretto ? styles.correzioneOk : styles.correzioneWrong,
+                ].join(' ')}
+              >
+                <div className={styles.correzioneHead}>
+                  <span className={styles.correzioneIndice}>{indice + 1}.</span>
+                  <span className={styles.correzioneTesto}>
+                    {domandaPerId.get(voce.domandaId)?.testo ?? ''}
+                  </span>
+                  <span className={styles.correzioneEsito}>
+                    {voce.corretto
+                      ? t('quiz.results.correzioneOk')
+                      : t('quiz.results.correzioneWrong')}
+                  </span>
+                </div>
+                {!voce.corretto && soluzione(voce) && (
+                  <p className={styles.correzioneSoluzione}>
+                    {t('quiz.results.correzioneSoluzione', { risposta: soluzione(voce) })}
+                  </p>
+                )}
+                {voce.spiegazione && (
+                  <p className={styles.correzioneSpiegazione}>{voce.spiegazione}</p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <div className={styles.actions}>
         <Button size="lg" fullWidth onClick={onPlayAgain}>

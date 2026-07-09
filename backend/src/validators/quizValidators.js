@@ -23,14 +23,28 @@ const MAX_RISPOSTE = 50;
 // Lingue ammesse per i significati dei kanji.
 const LINGUE_QUIZ = ['it', 'en'];
 
-// Predicati condizionali riusabili sul campo `dominio`.
-const seKanji = (chain) => chain.if(body('dominio').equals('kanji'));
-const seKana = (chain) => chain.if(body('dominio').not().equals('kanji'));
+// Predicati condizionali riusabili.
+//
+// Le regole "storiche" (kana/kanji nel body) valgono SOLO quando la partita non
+// nasce da un quiz della scuola: con `quizId` il motore, i filtri e la forma
+// delle risposte li decide il quiz, e la validazione semantica è nel service.
+const senzaQuiz = (chain) => chain.if(body('quizId').not().exists());
+const seKanji = (chain) => senzaQuiz(chain).if(body('dominio').equals('kanji'));
+const seKana = (chain) => senzaQuiz(chain).if(body('dominio').not().equals('kanji'));
+
+// Identificativo del quiz della scuola (facoltativo su generate/submit).
+const campoQuizId = () =>
+  body('quizId')
+    .optional()
+    .isUUID(4)
+    .withMessage("L'identificativo del quiz non è valido");
 
 // ─────────────────────────────────────────────
 // POST /api/quiz/generate
 // ─────────────────────────────────────────────
 const validateGenerateQuiz = [
+  campoQuizId(),
+
   body('dominio')
     .optional()
     .isIn(DOMINI).withMessage(`Il dominio deve essere uno di: ${DOMINI.join(', ')}`),
@@ -75,6 +89,8 @@ const validateGenerateQuiz = [
 // POST /api/quiz/submit
 // ─────────────────────────────────────────────
 const validateSubmitQuiz = [
+  campoQuizId(),
+
   body('dominio')
     .optional()
     .isIn(DOMINI).withMessage(`Il dominio deve essere uno di: ${DOMINI.join(', ')}`),
@@ -83,8 +99,30 @@ const validateSubmitQuiz = [
     .isArray({ min: 1, max: MAX_RISPOSTE })
     .withMessage(`Le risposte devono essere un array (1-${MAX_RISPOSTE} elementi)`),
 
-  // Campo comune a entrambi i domini.
-  body('risposte.*.corretto')
+  // — Partita da un quiz della scuola —
+  // Forma: { domandaId, opzioneId? , testo? }. Per i quiz da template (motore
+  // kana/kanji) restano validi anche i campi storici, che qui non sono imposti:
+  // la coerenza la verifica il service, che ignora le risposte non riconosciute.
+  body('risposte.*.domandaId')
+    .if(body('quizId').exists())
+    .optional()
+    .isUUID(4).withMessage("L'identificativo della domanda non è valido"),
+
+  body('risposte.*.opzioneId')
+    .if(body('quizId').exists())
+    .optional({ nullable: true })
+    .isUUID(4).withMessage("L'identificativo dell'opzione non è valido"),
+
+  body('risposte.*.testo')
+    .if(body('quizId').exists())
+    .optional({ nullable: true })
+    .isString().withMessage('La risposta deve essere una stringa')
+    .bail()
+    .trim()
+    .isLength({ max: 255 }).withMessage('La risposta non può superare i 255 caratteri'),
+
+  // — Percorso storico (senza `quizId`): campo comune a kana e kanji —
+  senzaQuiz(body('risposte.*.corretto'))
     .isBoolean().withMessage('Il campo corretto deve essere booleano').toBoolean(),
 
   // — Dominio kana (default) —

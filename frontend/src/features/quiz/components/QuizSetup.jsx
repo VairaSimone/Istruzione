@@ -24,24 +24,45 @@ import styles from './QuizSetup.module.css';
  * `dominio` corretto e solo i campi pertinenti (nessuna riga selezionata per i
  * kana ⇒ tutte le righe, coerente col backend).
  *
+ * QUIZ DELLA SCUOLA (`quiz` valorizzato): la partita nasce da un template
+ * installato. Il dominio lo impone il motore del quiz e i campi che la scuola ha
+ * FISSATO nella `configurazione` non sono più negoziabili: il controllo
+ * corrispondente sparisce e il valore imposto è mostrato come promemoria. Il
+ * backend applica comunque la stessa precedenza (`risolviFiltri`), quindi
+ * nascondere il controllo è una cortesia, non una difesa.
+ *
  * @param {(filtri:Object, timerMode:boolean) => void} onStart
  * @param {boolean} isLoading       generazione in corso
  * @param {string|null} errorMessage  errore di generazione (es. pool vuoto)
+ * @param {Object|null} quiz        quiz-template da giocare (facoltativo)
+ * @param {(() => void)|null} onBack
  */
-const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
+const QuizSetup = ({
+  onStart,
+  isLoading = false,
+  errorMessage = null,
+  quiz = null,
+  onBack = null,
+}) => {
   const { t, i18n } = useTranslation();
 
-  const [dominio, setDominio] = useState('kana');
+  // Con un quiz-template il dominio è quello del motore e non è modificabile.
+  const configurazione = quiz?.configurazione ?? {};
+  const fissato = (campo) => configurazione[campo] !== undefined;
+
+  const [dominio, setDominio] = useState(quiz?.motore ?? 'kana');
 
   // Stato dei filtri kana.
-  const [alfabeto, setAlfabeto] = useState('hiragana');
+  const [alfabeto, setAlfabeto] = useState(configurazione.alfabeto ?? 'hiragana');
   const [gruppiSelezionati, setGruppiSelezionati] = useState(() => new Set());
   const [includiDakuon, setIncludiDakuon] = useState(true);
   const [includiYoon, setIncludiYoon] = useState(true);
 
   // Stato dei filtri kanji.
-  const [livello, setLivello] = useState('N5');
-  const [tipoQuiz, setTipoQuiz] = useState(TIPO_QUIZ_KANJI_DEFAULT);
+  const [livello, setLivello] = useState(configurazione.livello ?? 'N5');
+  const [tipoQuiz, setTipoQuiz] = useState(
+    configurazione.tipoQuiz ?? TIPO_QUIZ_KANJI_DEFAULT
+  );
 
   // Comune.
   const [timerMode, setTimerMode] = useState(false);
@@ -56,9 +77,14 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
   };
 
   const handleStart = () => {
+    // I campi fissati dalla scuola non vengono nemmeno inviati: li applica il
+    // backend leggendo la configurazione del quiz.
+    const quizId = quiz?.id;
+
     if (dominio === 'kanji') {
       onStart(
         {
+          ...(quizId ? { quizId } : {}),
           dominio: 'kanji',
           livello,
           tipoQuiz,
@@ -72,6 +98,7 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
     }
     onStart(
       {
+        ...(quizId ? { quizId } : {}),
         dominio: 'kana',
         alfabeto,
         gruppi: Array.from(gruppiSelezionati), // [] ⇒ tutte le righe
@@ -86,31 +113,45 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
 
   return (
     <Card className={styles.card}>
-      <h2 className={styles.title}>{t('quiz.setup.title')}</h2>
-      <p className={styles.subtitle}>{t('quiz.setup.subtitle')}</p>
+      <h2 className={styles.title}>{quiz ? quiz.titolo : t('quiz.setup.title')}</h2>
+      <p className={styles.subtitle}>
+        {quiz ? t('quiz.setup.quizSubtitle') : t('quiz.setup.subtitle')}
+      </p>
 
-      {/* Dominio: Kana | Kanji */}
-      <fieldset className={styles.fieldset}>
-        <legend className={styles.legend}>{t('quiz.setup.domainLegend')}</legend>
-        <div className={styles.segmented}>
-          {DOMINI_QUIZ.map((dom) => (
-            <button
-              key={dom}
-              type="button"
-              className={[styles.segment, dominio === dom ? styles.segmentActive : ''].join(' ')}
-              aria-pressed={dominio === dom}
-              onClick={() => setDominio(dom)}
-            >
-              {t(`quiz.domains.${dom}`)}
-            </button>
-          ))}
-        </div>
-      </fieldset>
+      {/* Dominio: Kana | Kanji — assente quando lo impone il quiz */}
+      {!quiz && (
+        <fieldset className={styles.fieldset}>
+          <legend className={styles.legend}>{t('quiz.setup.domainLegend')}</legend>
+          <div className={styles.segmented}>
+            {DOMINI_QUIZ.map((dom) => (
+              <button
+                key={dom}
+                type="button"
+                className={[styles.segment, dominio === dom ? styles.segmentActive : ''].join(' ')}
+                aria-pressed={dominio === dom}
+                onClick={() => setDominio(dom)}
+              >
+                {t(`quiz.domains.${dom}`)}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
+      {/* Campi fissati dalla scuola: promemoria, non modificabili */}
+      {quiz && Object.keys(configurazione).length > 0 && (
+        <p className={styles.hint}>
+          {t('quiz.setup.configFissata', {
+            campi: Object.keys(configurazione).join(', '),
+          })}
+        </p>
+      )}
 
       {/* ─────────────── Filtri KANA ─────────────── */}
       {dominio === 'kana' && (
         <>
           {/* Alfabeto */}
+          {!fissato('alfabeto') && (
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>{t('quiz.setup.alphabetLegend')}</legend>
             <div className={styles.segmented}>
@@ -127,8 +168,10 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
               ))}
             </div>
           </fieldset>
+          )}
 
           {/* Righe (gruppi) */}
+          {!fissato('gruppi') && (
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>{t('quiz.setup.rowsLegend')}</legend>
             <p className={styles.hint}>
@@ -154,29 +197,36 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
               })}
             </div>
           </fieldset>
+          )}
 
           {/* Varianti */}
+          {(!fissato('includiDakuon') || !fissato('includiYoon')) && (
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>{t('quiz.setup.variantsLegend')}</legend>
             <div className={styles.toggles}>
-              <label className={styles.toggle}>
-                <input
-                  type="checkbox"
-                  checked={includiDakuon}
-                  onChange={(e) => setIncludiDakuon(e.target.checked)}
-                />
-                <span>{t('quiz.setup.includeDakuon')}</span>
-              </label>
-              <label className={styles.toggle}>
-                <input
-                  type="checkbox"
-                  checked={includiYoon}
-                  onChange={(e) => setIncludiYoon(e.target.checked)}
-                />
-                <span>{t('quiz.setup.includeYoon')}</span>
-              </label>
+              {!fissato('includiDakuon') && (
+                <label className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    checked={includiDakuon}
+                    onChange={(e) => setIncludiDakuon(e.target.checked)}
+                  />
+                  <span>{t('quiz.setup.includeDakuon')}</span>
+                </label>
+              )}
+              {!fissato('includiYoon') && (
+                <label className={styles.toggle}>
+                  <input
+                    type="checkbox"
+                    checked={includiYoon}
+                    onChange={(e) => setIncludiYoon(e.target.checked)}
+                  />
+                  <span>{t('quiz.setup.includeYoon')}</span>
+                </label>
+              )}
             </div>
           </fieldset>
+          )}
         </>
       )}
 
@@ -184,6 +234,7 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
       {dominio === 'kanji' && (
         <>
           {/* Livello JLPT */}
+          {!fissato('livello') && (
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>{t('quiz.setup.levelLegend')}</legend>
             <div className={styles.segmented}>
@@ -201,8 +252,10 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
             </div>
             <p className={styles.hint}>{t('quiz.setup.levelHint')}</p>
           </fieldset>
+          )}
 
           {/* Tipo di quiz */}
+          {!fissato('tipoQuiz') && (
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>{t('quiz.setup.kanjiTypeLegend')}</legend>
             <div className={styles.typeGrid}>
@@ -223,6 +276,7 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
               })}
             </div>
           </fieldset>
+          )}
         </>
       )}
 
@@ -249,6 +303,12 @@ const QuizSetup = ({ onStart, isLoading = false, errorMessage = null }) => {
       <Button size="lg" fullWidth onClick={handleStart} isLoading={isLoading}>
         {t('quiz.setup.start')}
       </Button>
+
+      {onBack && (
+        <Button variant="ghost" fullWidth onClick={onBack} disabled={isLoading}>
+          {t('quiz.setup.back')}
+        </Button>
+      )}
     </Card>
   );
 };

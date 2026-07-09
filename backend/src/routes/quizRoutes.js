@@ -4,8 +4,9 @@ const express = require('express');
 const router = express.Router();
 
 const quizController = require('../controllers/quizController');
+const quizGestioneController = require('../controllers/quizGestioneController');
 
-const { authenticateJWT } = require('../middleware/auth');
+const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
 const { csrfProtection } = require('../middleware/csrf');
 const { quizSubmitLimiter, quizScritturaLimiter } = require('../middleware/rateLimiter');
 const validate = require('../middleware/validate');
@@ -17,6 +18,20 @@ const {
   validateStrokeOrderKanji,
   validateRegistraScrittura,
 } = require('../validators/quizValidators');
+
+const {
+  validateQuizIdParam,
+  validateDomandaParams,
+  validateAbilitazioneParams,
+  validateCreaQuiz,
+  validateAggiornaQuiz,
+  validateCreaDomanda,
+  validateAggiornaDomanda,
+  validateAbilitaPerAula,
+  validateElencoQuiz,
+  validateCatalogoTemplate,
+  validateQuizDisponibili,
+} = require('../validators/quizGestioneValidators');
 
 /**
  * Route del QUIZ (Kana e Kanji) — montate sotto `/api/quiz`.
@@ -34,6 +49,27 @@ const {
  *   POST /api/quiz/generate           → genera la sessione di quiz (sola lettura)
  *   POST /api/quiz/submit             → invia l'esito della partita (muta lo stato)
  *   POST /api/quiz/scrittura          → registra i tratti validati sul canvas (muta)
+ *
+ * ── Quiz delle scuole ──
+ * Un quiz è o l'installazione di un TEMPLATE di piattaforma (kana, kanji, …) o
+ * un quiz PERSONALIZZATO con domande scritte dagli insegnanti, su qualsiasi
+ * materia. `generate`/`submit` accettano `quizId` per giocarlo.
+ *
+ *   GET    /api/quiz/templates                              → catalogo template (staff)
+ *   GET    /api/quiz/disponibili                            → quiz giocabili dal richiedente
+ *   POST   /api/quiz/gestione                               → crea quiz (staff)
+ *   GET    /api/quiz/gestione                               → elenco quiz della scuola (staff)
+ *   GET    /api/quiz/gestione/:id                           → dettaglio con domande e aule (staff)
+ *   PATCH  /api/quiz/gestione/:id                           → modifica quiz (staff)
+ *   DELETE /api/quiz/gestione/:id                           → elimina quiz (staff)
+ *   POST   /api/quiz/gestione/:id/domande                   → aggiungi domanda (staff)
+ *   PATCH  /api/quiz/gestione/:id/domande/:domandaId        → modifica domanda (staff)
+ *   DELETE /api/quiz/gestione/:id/domande/:domandaId        → elimina domanda (staff)
+ *   POST   /api/quiz/gestione/:id/aule                      → abilita per un'aula (staff)
+ *   DELETE /api/quiz/gestione/:id/aule/:classeId            → disabilita per un'aula (staff)
+ *
+ * Ogni insegnante gestisce TUTTI i quiz della propria scuola; l'admin è
+ * trasversale. Le mutazioni sono protette da CSRF.
  */
 
 router.use(authenticateJWT);
@@ -78,6 +114,83 @@ router.post(
   validateRegistraScrittura,
   validate,
   quizController.registraScrittura
+);
+
+// ═════════════════════════════════════════════
+// QUIZ DELLE SCUOLE
+// ═════════════════════════════════════════════
+
+// Sola lettura: quiz che il richiedente può giocare (studente: solo pubblicati
+// e abilitati per una sua aula; staff: quelli della propria scuola).
+router.get('/disponibili', validateQuizDisponibili, validate, quizGestioneController.quizDisponibili);
+
+// ── Staff (insegnante | admin) ──
+const soloStaff = authorizeRoles('insegnante', 'admin');
+
+// Sola lettura: catalogo dei template installabili + numero di installazioni.
+router.get(
+  '/templates',
+  soloStaff,
+  validateCatalogoTemplate,
+  validate,
+  quizGestioneController.elencoTemplate
+);
+
+router
+  .route('/gestione')
+  .post(soloStaff, csrfProtection, validateCreaQuiz, validate, quizGestioneController.creaQuiz)
+  .get(soloStaff, validateElencoQuiz, validate, quizGestioneController.elencoQuiz);
+
+router
+  .route('/gestione/:id')
+  .get(soloStaff, validateQuizIdParam, validate, quizGestioneController.dettaglioQuiz)
+  .patch(soloStaff, csrfProtection, validateAggiornaQuiz, validate, quizGestioneController.aggiornaQuiz)
+  .delete(soloStaff, csrfProtection, validateQuizIdParam, validate, quizGestioneController.eliminaQuiz);
+
+// Domande (solo quiz personalizzati: i quiz da template le generano da sé).
+router.post(
+  '/gestione/:id/domande',
+  soloStaff,
+  csrfProtection,
+  validateCreaDomanda,
+  validate,
+  quizGestioneController.aggiungiDomanda
+);
+
+router
+  .route('/gestione/:id/domande/:domandaId')
+  .patch(
+    soloStaff,
+    csrfProtection,
+    validateAggiornaDomanda,
+    validate,
+    quizGestioneController.aggiornaDomanda
+  )
+  .delete(
+    soloStaff,
+    csrfProtection,
+    validateDomandaParams,
+    validate,
+    quizGestioneController.eliminaDomanda
+  );
+
+// Abilitazione presso le aule.
+router.post(
+  '/gestione/:id/aule',
+  soloStaff,
+  csrfProtection,
+  validateAbilitaPerAula,
+  validate,
+  quizGestioneController.abilitaPerAula
+);
+
+router.delete(
+  '/gestione/:id/aule/:classeId',
+  soloStaff,
+  csrfProtection,
+  validateAbilitazioneParams,
+  validate,
+  quizGestioneController.disabilitaPerAula
 );
 
 module.exports = router;

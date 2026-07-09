@@ -15,6 +15,8 @@ import VerifyEmailChangePage from '../pages/VerifyEmailChangePage';
 import DashboardPage from '../pages/DashboardPage';
 import ProfilePage from '../pages/ProfilePage';
 import QuizPage from '../pages/QuizPage';
+import QuizGestioneListPage from '../pages/QuizGestioneListPage';
+import QuizGestioneDetailPage from '../pages/QuizGestioneDetailPage';
 import AuleListPage from '../pages/AuleListPage';
 import AulaDetailPage from '../pages/AulaDetailPage';
 import CompitiListPage from '../pages/CompitiListPage';
@@ -83,6 +85,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.COMPITO_DETAIL, element: <CompitoDetailPage /> },
           { path: ROUTES.CORSI, element: <CorsiListPage /> },
           { path: ROUTES.CORSO_DETAIL, element: <CorsoDetailPage /> },
+          { path: ROUTES.QUIZ_GESTIONE, element: <QuizGestioneListPage /> },
+          { path: ROUTES.QUIZ_GESTIONE_DETAIL, element: <QuizGestioneDetailPage /> },
           { path: ROUTES.TEACHER_DASHBOARD, element: <TeacherDashboardPage /> },
           { path: ROUTES.USERS_MANAGEMENT, element: <UsersManagementPage /> },
           { path: ROUTES.INVITES_MANAGEMENT, element: <InvitesManagementPage /> },
