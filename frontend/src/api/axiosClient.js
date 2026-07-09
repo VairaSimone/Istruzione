@@ -25,9 +25,6 @@ import { getActiveLanguage } from '../i18n';
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 const CSRF_SAFE_METHODS = ['get', 'head', 'options'];
