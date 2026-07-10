@@ -60,7 +60,7 @@ const ImpostazioniScuolaPage = () => {
     [salvate, modifiche]
   );
 
-  const schema = schemaQuery.data?.impostazioni ?? null;
+const schema = schemaQuery.data?.schema ?? null;
 
   const nomiSezioni = useMemo(() => (schema ? Object.keys(schema) : []), [schema]);
 
