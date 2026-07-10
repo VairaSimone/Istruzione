@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as authService from '../services/authService';
 import { queryKeys } from '../constants/queryKeys';
 import { useAuthStore } from '../store/authStore';
@@ -50,6 +50,39 @@ export const useDeleteMyAccount = () => {
     onSuccess: () => {
       clearUser();
       queryClient.clear();
+    },
+  });
+};
+
+/**
+ * Legge le preferenze di notifica email dell'utente loggato
+ * (GET /me/notifiche). Il backend restituisce il blob COMPLETO con i default
+ * già applicati, quindi il componente non deve gestire chiavi mancanti.
+ */
+export const useNotificationPreferences = () => {
+  return useQuery({
+    queryKey: queryKeys.auth.notifiche,
+    queryFn: async () => {
+      const data = await authService.getNotificationPreferences();
+      return data.data.preferenze;
+    },
+  });
+};
+
+/**
+ * Aggiorna le preferenze di notifica email (PATCH /me/notifiche).
+ * Aggiorna la cache React Query con la versione normalizzata restituita dal
+ * backend, così i toggle riflettono subito lo stato salvato (incluse le
+ * eventuali propagazioni applicate lato server).
+ */
+export const useUpdateNotificationPreferences = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authService.updateNotificationPreferences,
+    onSuccess: (data) => {
+      const preferenze = data.data.preferenze;
+      queryClient.setQueryData(queryKeys.auth.notifiche, preferenze);
     },
   });
 };

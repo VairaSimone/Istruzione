@@ -61,6 +61,38 @@ exports.updateLanguage = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// GET /api/auth/me/notifiche
+// Preferenze di recapito delle notifiche email (complete dei default).
+// ─────────────────────────────────────────────
+exports.getNotificationPreferences = catchAsync(async (req, res) => {
+  const preferenze = await userService.leggiPreferenzeNotifiche(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: { preferenze },
+  });
+});
+
+// ─────────────────────────────────────────────
+// PATCH /api/auth/me/notifiche
+// Aggiorna le preferenze di notifica (interruttore generale + categorie).
+// ─────────────────────────────────────────────
+exports.updateNotificationPreferences = catchAsync(async (req, res) => {
+  const { emailAttive, categorie } = req.body;
+
+  const preferenze = await userService.aggiornaPreferenzeNotifiche(req.user.id, {
+    emailAttive,
+    categorie,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Preferenze di notifica aggiornate con successo.',
+    data: { preferenze },
+  });
+});
+
+// ─────────────────────────────────────────────
 // DELETE /api/auth/me
 // ─────────────────────────────────────────────
 exports.deleteMe = catchAsync(async (req, res) => {

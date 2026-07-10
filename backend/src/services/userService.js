@@ -10,6 +10,7 @@ const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
+const notificheService = require('./notificheService');
 
 /**
  * UserService — responsabilità ESCLUSIVA: gestione utenti e account.
@@ -110,6 +111,22 @@ const aggiornaLingua = async (userId, lingua) => {
   await utente.save();
 
   return utente;
+};
+
+// ─────────────────────────────────────────────
+// Preferenze di notifica email (digest)
+// Delegate al notificheService, che le normalizza contro il registro dei tipi.
+// ─────────────────────────────────────────────
+const leggiPreferenzeNotifiche = async (userId) => {
+  const preferenze = await notificheService.leggiPreferenze(userId);
+  if (!preferenze) throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  return preferenze;
+};
+
+const aggiornaPreferenzeNotifiche = async (userId, blob) => {
+  const preferenze = await notificheService.aggiornaPreferenze(userId, blob);
+  if (!preferenze) throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  return preferenze;
 };
 
 // ─────────────────────────────────────────────
@@ -356,6 +373,8 @@ module.exports = {
   richiediCambioEmail,
   confermaCambioEmail,
   aggiornaLingua,
+  leggiPreferenzeNotifiche,
+  aggiornaPreferenzeNotifiche,
   eliminaAccount,
   getUtentiPerInsegnante,
   aggiornaRuoloUtente,

@@ -13,6 +13,7 @@ const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const tipiAttivita = require('../constants/tipiAttivita');
+const notificheService = require('./notificheService');
 
 /**
  * CompitiService — logica di dominio dei COMPITI.
@@ -133,6 +134,47 @@ const risolviDestinatari = async (compitoId, transaction) => {
   return { studentIds, classeIds, direttiIds };
 };
 
+/**
+ * Accoda le notifiche `nuovo_compito` ai destinatari indicati, per un compito
+ * PUBBLICATO. Best effort e idempotente (una sola notifica per compito+studente
+ * grazie a `unicaPerRiferimento`): può quindi essere invocato più volte per lo
+ * stesso compito (pubblicazione, nuove assegnazioni) senza generare duplicati.
+ * Va chiamato FUORI da transazioni: non deve mai far fallire l'operazione.
+ */
+const notificaNuovoCompito = async (compito, studentIds) => {
+  if (!compito || compito.stato !== 'pubblicato') return;
+  const ids = [...studentIds];
+  if (!ids.length) return;
+
+  const scadenza = (() => {
+    try {
+      return new Date(compito.data_scadenza).toLocaleString('it-IT', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return null;
+    }
+  })();
+
+  for (const utenteId of ids) {
+    await notificheService.accodaNotifica({
+      utenteId,
+      tipo: 'nuovo_compito',
+      titolo: compito.titolo,
+      corpo: scadenza ? `Scadenza: ${scadenza}` : null,
+      link: `/studente/compiti/${compito.id}`,
+      scuolaId: compito.scuola_id ?? null,
+      riferimentoTipo: 'compito',
+      riferimentoId: compito.id,
+      unicaPerRiferimento: true,
+    });
+  }
+};
+
 /** Valida la coppia (classeId|utenteId): esattamente uno dei due. */
 const normalizzaBersaglio = ({ classeId, utenteId }) => {
   if (Boolean(classeId) === Boolean(utenteId)) {
@@ -248,6 +290,17 @@ const creaCompito = async ({ dati, assegnazioni, richiedente }) => {
 
     logger.info(`[COMPITO] Creato compito ${compito.id} "${compito.titolo}" da ${richiedente.id}`);
 
+    // Se il compito nasce già PUBBLICATO con assegnazioni, prepara i destinatari
+    // per la notifica (accodata fuori transazione).
+    let destinatari = null;
+    if (compito.stato === 'pubblicato' && assegnazioniCreate.length) {
+      const { studentIds } = await risolviDestinatari(compito.id, t);
+      destinatari = studentIds;
+    }
+
+    return { compito, assegnazioniCreate, destinatari };
+  }).then(async ({ compito, assegnazioniCreate, destinatari }) => {
+    if (destinatari) await notificaNuovoCompito(compito, destinatari);
     return { ...compito.toPublicJSON(), assegnazioni: assegnazioniCreate };
   });
 };
@@ -387,6 +440,10 @@ const aggiornaCompito = async ({ compitoId, dati, richiedente }) => {
   const compito = await caricaCompito(compitoId);
   assicuraProprietaCompito(compito, richiedente);
 
+  // Rileva la TRANSIZIONE a "pubblicato" per notificare i destinatari una sola
+  // volta (la prima pubblicazione).
+  const eraPubblicato = compito.stato === 'pubblicato';
+
   if (dati.titolo !== undefined) compito.titolo = dati.titolo.trim();
   if (dati.descrizione !== undefined) compito.descrizione = dati.descrizione;
   if (dati.tipoAttivita !== undefined) {
@@ -402,6 +459,13 @@ const aggiornaCompito = async ({ compitoId, dati, richiedente }) => {
 
   await compito.save();
   logger.info(`[COMPITO] Aggiornato compito ${compitoId} da ${richiedente.id}`);
+
+  // Notifica alla PRIMA pubblicazione (bozza/archiviato → pubblicato).
+  if (!eraPubblicato && compito.stato === 'pubblicato') {
+    const { studentIds } = await risolviDestinatari(compito.id);
+    await notificaNuovoCompito(compito, studentIds);
+  }
+
   return compito.toPublicJSON();
 };
 
@@ -431,6 +495,19 @@ const aggiungiAssegnazione = async ({ compitoId, bersaglio, richiedente }) => {
     });
 
     logger.info(`[COMPITO] Assegnazione ${assegnazione.id} aggiunta al compito ${compitoId}`);
+
+    // Se il compito è GIÀ pubblicato, i nuovi destinatari vanno avvisati. Grazie
+    // all'idempotenza (unicaPerRiferimento) i destinatari già notificati in
+    // precedenza non ricevono un duplicato.
+    let destinatari = null;
+    if (compito.stato === 'pubblicato') {
+      const { studentIds } = await risolviDestinatari(compitoId, t);
+      destinatari = studentIds;
+    }
+
+    return { assegnazione, compito, destinatari };
+  }).then(async ({ assegnazione, compito, destinatari }) => {
+    if (destinatari) await notificaNuovoCompito(compito, destinatari);
     return assegnazione.toPublicJSON();
   });
 };

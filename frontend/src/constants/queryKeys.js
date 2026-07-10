@@ -7,6 +7,7 @@
 export const queryKeys = Object.freeze({
   auth: {
     me: ['auth', 'me'],
+    notifiche: ['auth', 'me', 'notifiche'],
   },
   /**
    * Configurazione pubblica di piattaforma/scuola. Dipende dal tenant attivo:

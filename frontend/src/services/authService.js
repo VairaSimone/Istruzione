@@ -97,6 +97,30 @@ export const updateLanguage = async ({ lingua }) => {
   return data;
 };
 
+/**
+ * Legge le preferenze di notifica email dell'utente loggato
+ * (GET /auth/me/notifiche). Il backend restituisce sempre il blob COMPLETO,
+ * con i default già applicati:
+ *   { emailAttive: boolean, categorie: { messaggi, compiti, scadenze, feedback } }
+ */
+export const getNotificationPreferences = async () => {
+  const { data } = await apiClient.get('/auth/me/notifiche');
+  return data;
+};
+
+/**
+ * Aggiorna le preferenze di notifica email (PATCH /auth/me/notifiche):
+ * interruttore generale + toggle per categoria. Il backend normalizza il blob
+ * contro il registro dei tipi e restituisce la versione salvata.
+ */
+export const updateNotificationPreferences = async ({ emailAttive, categorie }) => {
+  const { data } = await apiClient.patch('/auth/me/notifiche', {
+    emailAttive,
+    categorie,
+  });
+  return data;
+};
+
 export const requestEmailChange = async ({ nuovaEmail }) => {
   const { data } = await apiClient.post('/auth/request-email-change', {
     nuovaEmail,

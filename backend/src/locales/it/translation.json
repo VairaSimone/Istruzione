@@ -35,6 +35,20 @@
       "button": "Completa la registrazione",
       "fallback": "Se il pulsante non funziona, copia e incolla questo link nel tuo browser:",
       "footer": "Questo link è personale e scadrà a breve. Se non ti aspettavi questo invito, puoi ignorare questa email."
+    },
+    "digest": {
+      "subject": "Hai {{count}} nuove notifiche sulla piattaforma",
+      "title": "Riepilogo notifiche",
+      "intro": "Ecco un riepilogo di ciò che è successo dall'ultima email. In totale hai {{count}} notifiche da leggere.",
+      "button": "Vai alla piattaforma",
+      "footer": "Ricevi questa email di riepilogo perché hai attivato le notifiche. Puoi modificare le tue preferenze o disattivarle dalle impostazioni del tuo profilo.",
+      "eAltri": "e altri {{count}}…",
+      "tipi": {
+        "nuovoMessaggio": "Nuovi messaggi ({{count}})",
+        "nuovoCompito": "Nuovi compiti assegnati ({{count}})",
+        "scadenzaCompito": "Compiti in scadenza ({{count}})",
+        "feedbackCompito": "Nuovi feedback ricevuti ({{count}})"
+      }
     }
   },
   "messages": {

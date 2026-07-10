@@ -40,6 +40,7 @@ class Utente extends Model {
       lingua: this.lingua,
       email_verificata: this.email_verificata,
       profilo_completo: this.profilo_completo,
+      preferenze_notifiche: this.preferenze_notifiche,
       created_at: this.created_at,
     };
   }
@@ -352,6 +353,54 @@ Utente.init(
       validate: {
         min: { args: [0], msg: 'Il numero di righe sbloccate non può essere negativo' },
       },
+    },
+
+    // ─────────────────────────────────────────────
+    // Notifiche via email (digest periodico)
+    // ─────────────────────────────────────────────
+
+    // Preferenze di recapito delle notifiche email. Blob JSON con la forma
+    //   { emailAttive: boolean, categorie: { messaggi, compiti, scadenze, feedback } }
+    // normalizzata da `constants/tipiNotifica.js`. Le chiavi mancanti ereditano
+    // i default: aggiungere una categoria non richiede migrazioni. In MySQL le
+    // colonne JSON non ammettono un DEFAULT a livello DB: il valore è garantito
+    // da Sequelize e reso completo in lettura dal service.
+    preferenze_notifiche: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: {},
+      field: 'preferenze_notifiche',
+    },
+
+    // Giorno (solo data) a cui si riferisce il contatore dei digest inviati.
+    // Serve ad azzerare il conteggio al cambio di giornata senza un job dedicato.
+    notifiche_digest_data: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+      defaultValue: null,
+      field: 'notifiche_digest_data',
+    },
+
+    // Numero di email di digest già inviate all'utente nella giornata indicata
+    // da `notifiche_digest_data`. Governa il TETTO massimo giornaliero.
+    notifiche_digest_conteggio: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'notifiche_digest_conteggio',
+      validate: {
+        min: { args: [0], msg: 'Il conteggio dei digest non può essere negativo' },
+      },
+    },
+
+    // Istante dell'ultimo digest spedito all'utente. Impone un intervallo
+    // minimo tra due invii, così i pochi slot giornalieri non si esauriscono in
+    // pochi minuti consecutivi.
+    notifiche_ultimo_invio: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      field: 'notifiche_ultimo_invio',
     },
   },
   {

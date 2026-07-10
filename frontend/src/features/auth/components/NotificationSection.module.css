@@ -1,0 +1,108 @@
+.sectionTitle {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-1);
+}
+
+.sectionDescription {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-5);
+  line-height: 1.6;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-5) 0;
+}
+
+.errorText {
+  color: var(--color-danger);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ── Toggle ────────────────────────────────────────────────────────────── */
+
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toggleRiga {
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.toggleRiga:hover {
+  background: var(--color-paper-dim);
+}
+
+/* L'interruttore generale è separato dai toggle di categoria da una linea. */
+.toggleGenerale {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: var(--space-2);
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+}
+
+/* Categoria disattivata perché l'interruttore generale è spento. */
+.disabilitata {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.toggleInput {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.toggleInput:disabled {
+  cursor: not-allowed;
+}
+
+.toggleTesto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.toggleTitolo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.toggleDescrizione {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}
+
+/* ── Azioni ────────────────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-5);
+}

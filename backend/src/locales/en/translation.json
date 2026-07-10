@@ -35,6 +35,20 @@
       "button": "Complete registration",
       "fallback": "If the button doesn't work, copy and paste this link into your browser:",
       "footer": "This link is personal and will expire soon. If you were not expecting this invitation, you can ignore this email."
+    },
+    "digest": {
+      "subject": "You have {{count}} new notifications on the platform",
+      "title": "Notifications summary",
+      "intro": "Here is a summary of what happened since the last email. You have {{count}} notifications to read in total.",
+      "button": "Go to the platform",
+      "footer": "You receive this summary email because notifications are enabled. You can change your preferences or turn them off in your profile settings.",
+      "eAltri": "and {{count}} more…",
+      "tipi": {
+        "nuovoMessaggio": "New messages ({{count}})",
+        "nuovoCompito": "New assignments ({{count}})",
+        "scadenzaCompito": "Assignments due soon ({{count}})",
+        "feedbackCompito": "New feedback received ({{count}})"
+      }
     }
   },
   "messages": {

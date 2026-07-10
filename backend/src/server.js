@@ -32,6 +32,9 @@ require('./models/BadgeUtente');
 require('./models/ProgressoKana');
 require('./models/ProgressoKanji');
 require('./models/AttivitaGiornaliera');
+require('./models/NotificaEmail');
+
+const schedulerService = require('./services/schedulerService');
 
 const PORT = parseInt(process.env.PORT) || 3000;
 
@@ -57,6 +60,10 @@ const avviaServer = async () => {
       logger.info(`📍 Ambiente: ${process.env.NODE_ENV}`);
     });
 
+    // 4. Avvia i job periodici (digest notifiche + scansione scadenze compiti).
+    //    Spegnibile con NOTIFICHE_SCHEDULER_ATTIVO=false.
+    schedulerService.avvia();
+
     // ─────────────────────────────────────────
     // GRACEFUL SHUTDOWN
     // Gestisce SIGTERM (es. da Docker/Kubernetes/PM2)
@@ -64,6 +71,9 @@ const avviaServer = async () => {
     // ─────────────────────────────────────────
     const gracefulShutdown = async (signal) => {
       logger.info(`\n⚠️  Segnale ${signal} ricevuto. Avvio graceful shutdown...`);
+
+      // Ferma i job periodici prima di chiudere le connessioni.
+      schedulerService.arresta();
 
       server.close(async () => {
         logger.info('🔌 Server HTTP chiuso.');

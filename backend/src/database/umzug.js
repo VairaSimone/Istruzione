@@ -32,6 +32,7 @@ require('../models/QuizAula');
 require('../models/ProgressoDomanda');
 require('../models/BadgeUtente');
 require('../models/AttivitaGiornaliera');
+require('../models/NotificaEmail');
 
 /**
  * Runner delle migrazioni versionate basato su Umzug.

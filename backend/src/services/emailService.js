@@ -169,10 +169,107 @@ const sendTeacherInviteEmail = async (email, token, lingua = 'it') => {
   logger.info(`Email di invito insegnante inviata a: ${email} in lingua: ${lingua}`);
 };
 
+/**
+ * Costruisce un URL assoluto dal `link` di una notifica: se è già assoluto lo
+ * restituisce invariato, altrimenti lo antepone a FRONTEND_URL.
+ */
+const urlAssoluto = (link) => {
+  if (!link) return piattaforma.FRONTEND_URL;
+  if (/^https?:\/\//i.test(link)) return link;
+  const base = piattaforma.FRONTEND_URL.replace(/\/+$/, '');
+  const path = String(link).replace(/^\/+/, '');
+  return `${base}/${path}`;
+};
+
+/** Escape minimale per i valori interpolati nell'HTML dell'email. */
+const escapeHtml = (testo) =>
+  String(testo ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+/**
+ * Invia il DIGEST periodico delle notifiche a un utente: un'unica email che
+ * riepiloga, raggruppati per tipo, tutti gli eventi in attesa (nuovi messaggi,
+ * nuovi compiti, scadenze, feedback). Le sezioni e le righe sono già pronte,
+ * composte da `notificheService`; qui avviene solo la resa in HTML.
+ *
+ * @param {string} email
+ * @param {Object} dati
+ * @param {string|null} dati.nomeScuola  nome del tenant (mittente/branding)
+ * @param {Array}  dati.sezioni          [{ i18nSezione, totale, eccedenza, righe }]
+ * @param {number} dati.totale           numero complessivo di notifiche
+ * @param {string} dati.lingua
+ */
+const sendDigestEmail = async (email, { nomeScuola, sezioni, totale, lingua = 'it' }) => {
+  const t = i18next.getFixedT(lingua);
+
+  // Corpo: una "card" per sezione, con l'elenco delle righe.
+  const sezioniHtml = (sezioni || [])
+    .map((sez) => {
+      const titoloSezione = t(`email.digest.tipi.${sez.i18nSezione}`, { count: sez.totale });
+      const righeHtml = sez.righe
+        .map((r) => {
+          const titolo = escapeHtml(r.titolo);
+          const corpo = r.corpo
+            ? `<div style="font-size:13px; color:#666; margin-top:2px;">${escapeHtml(r.corpo)}</div>`
+            : '';
+          const link = r.link
+            ? `<a href="${urlAssoluto(r.link)}" style="color:#4F46E5; text-decoration:none;">${titolo}</a>`
+            : titolo;
+          return `
+            <li style="margin:0 0 10px 0; padding:0; list-style:none;">
+              <div style="font-size:14px; color:#222; font-weight:600;">${link}</div>
+              ${corpo}
+            </li>`;
+        })
+        .join('');
+
+      const eccedenzaHtml =
+        sez.eccedenza > 0
+          ? `<div style="font-size:13px; color:#888; margin-top:6px;">${t('email.digest.eAltri', { count: sez.eccedenza })}</div>`
+          : '';
+
+      return `
+        <div style="margin:0 0 24px 0;">
+          <h3 style="font-size:16px; color:#111; margin:0 0 12px 0;">${escapeHtml(titoloSezione)}</h3>
+          <ul style="margin:0; padding:0;">${righeHtml}</ul>
+          ${eccedenzaHtml}
+        </div>`;
+    })
+    .join('');
+
+  const url = urlAssoluto('/');
+
+  const mailOptions = {
+    from: piattaforma.mittente(nomeScuola),
+    to: email,
+    subject: t('email.digest.subject', { count: totale }),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
+        <h2 style="color: #333;">${escapeHtml(t('email.digest.title'))}</h2>
+        <p style="color:#555;">${escapeHtml(t('email.digest.intro', { count: totale }))}</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+        ${sezioniHtml}
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${url}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">${escapeHtml(t('email.digest.button'))}</a>
+        </div>
+        <hr style="border: none; border-top: 1px solid #eee;" />
+        <p style="font-size: 12px; color: #777;">${escapeHtml(t('email.digest.footer'))}</p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  logger.info(`Email di digest notifiche inviata a: ${email} (${totale} notifiche, lingua: ${lingua})`);
+};
+
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEmailChangeEmail,
   sendStudentInviteEmail,
   sendTeacherInviteEmail,
+  sendDigestEmail,
 };

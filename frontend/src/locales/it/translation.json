@@ -1647,5 +1647,33 @@
       "assente": "Colore non impostato",
       "nomeAssente": "Nome non impostato"
     }
+  },
+  "notifications": {
+    "title": "Notifiche email",
+    "description": "Scegli quali notifiche ricevere via email. Per non intasare la tua casella, gli eventi vengono raggruppati in un riepilogo periodico: riceverai al massimo poche email al giorno, non una per ogni evento.",
+    "master": {
+      "title": "Ricevi notifiche via email",
+      "description": "Interruttore generale. Se disattivato, non riceverai alcuna email di notifica, indipendentemente dalle categorie qui sotto."
+    },
+    "categorie": {
+      "messaggi": {
+        "title": "Nuovi messaggi",
+        "description": "Quando ricevi un messaggio o una risposta da un insegnante."
+      },
+      "compiti": {
+        "title": "Nuovi compiti",
+        "description": "Quando ti viene assegnato un nuovo compito."
+      },
+      "scadenze": {
+        "title": "Compiti in scadenza",
+        "description": "Un promemoria quando un compito che non hai ancora consegnato sta per scadere."
+      },
+      "feedback": {
+        "title": "Feedback ricevuti",
+        "description": "Quando un insegnante valuta o commenta una tua consegna."
+      }
+    },
+    "save": "Salva preferenze",
+    "updated": "Preferenze di notifica aggiornate con successo."
   }
 }

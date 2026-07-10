@@ -1647,5 +1647,33 @@
       "assente": "Colour not set",
       "nomeAssente": "Name not set"
     }
+  },
+  "notifications": {
+    "title": "Email notifications",
+    "description": "Choose which notifications you receive by email. To avoid cluttering your inbox, events are grouped into a periodic summary: you will receive at most a few emails per day, not one per event.",
+    "master": {
+      "title": "Receive email notifications",
+      "description": "Master switch. When turned off, you will not receive any notification emails, regardless of the categories below."
+    },
+    "categorie": {
+      "messaggi": {
+        "title": "New messages",
+        "description": "When you receive a message or a reply from a teacher."
+      },
+      "compiti": {
+        "title": "New assignments",
+        "description": "When a new assignment is given to you."
+      },
+      "scadenze": {
+        "title": "Assignments due soon",
+        "description": "A reminder when an assignment you haven't submitted yet is about to be due."
+      },
+      "feedback": {
+        "title": "Feedback received",
+        "description": "When a teacher grades or comments on one of your submissions."
+      }
+    },
+    "save": "Save preferences",
+    "updated": "Notification preferences updated successfully."
   }
 }

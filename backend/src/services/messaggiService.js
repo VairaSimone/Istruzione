@@ -12,6 +12,7 @@ const AppError = require('../utils/AppError');
 const { assicuraStessaScuola } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const compitiService = require('./compitiService');
+const notificheService = require('./notificheService');
 
 /**
  * MessaggiService — comunicazione interna e feedback.
@@ -171,7 +172,32 @@ const inviaMessaggio = async ({ dati, richiedente }) => {
       `[MSG] ${tipo} ${messaggio.id} da ${richiedente.id} → ${destinatariIds.length} destinatari`
     );
 
-    return { ...messaggio.toPublicJSON(), numeroDestinatari: destinatariIds.length };
+    return {
+      ...messaggio.toPublicJSON(),
+      numeroDestinatari: destinatariIds.length,
+      // Passato al chiamante (fuori transazione) per accodare le notifiche.
+      _destinatariIds: destinatariIds,
+    };
+  }).then(async (risultato) => {
+    // Notifiche email (best effort, FUORI dalla transazione): le note private
+    // non hanno destinatari e non generano notifiche.
+    const destinatariIds = risultato._destinatariIds || [];
+    if (tipo !== 'nota_privata' && destinatariIds.length) {
+      const mittente = `${richiedente.nome ?? ''} ${richiedente.cognome ?? ''}`.trim();
+      await notificheService.accodaNotificaMulti({
+        utenteIds: destinatariIds,
+        tipo: 'nuovo_messaggio',
+        titolo: dati.oggetto || 'Nuovo messaggio',
+        corpo: mittente ? `Da ${mittente}` : null,
+        link: '/messaggi',
+        scuolaId: richiedente.scuola_id ?? null,
+        riferimentoTipo: 'messaggio',
+        riferimentoId: risultato.id,
+      });
+    }
+    // Non esporre il campo interno al chiamante.
+    delete risultato._destinatariIds;
+    return risultato;
   });
 };
 
@@ -211,6 +237,20 @@ const inviaFeedbackCompito = async ({ compitoId, studenteId, corpo, punteggio, r
   });
 
   logger.info(`[MSG] Feedback compito ${compitoId} → studente ${studenteId}`);
+
+  // Notifica email (best effort): lo studente ha ricevuto un feedback.
+  const mittente = `${richiedente.nome ?? ''} ${richiedente.cognome ?? ''}`.trim();
+  await notificheService.accodaNotifica({
+    utenteId: studenteId,
+    tipo: 'feedback_compito',
+    titolo: 'Hai ricevuto un feedback su un compito',
+    corpo: mittente ? `Da ${mittente}` : null,
+    link: '/messaggi',
+    scuolaId: richiedente.scuola_id ?? null,
+    riferimentoTipo: 'messaggio',
+    riferimentoId: messaggio.id,
+  });
+
   return { consegna, messaggio: messaggio.toPublicJSON() };
 };
 
@@ -505,6 +545,20 @@ const rispondi = async ({ messaggioId, corpo, utente }) => {
     );
 
     logger.info(`[MSG] Risposta ${risposta.id} a ${messaggioId} da ${utente.id}`);
+    return { risposta, destinatarioId: padre.mittente_id, oggetto: padre.oggetto };
+  }).then(async ({ risposta, destinatarioId, oggetto }) => {
+    // Notifica email al mittente originale (best effort, fuori transazione).
+    const mittente = `${utente.nome ?? ''} ${utente.cognome ?? ''}`.trim();
+    await notificheService.accodaNotifica({
+      utenteId: destinatarioId,
+      tipo: 'nuovo_messaggio',
+      titolo: oggetto ? `Re: ${oggetto}` : 'Nuova risposta',
+      corpo: mittente ? `Da ${mittente}` : null,
+      link: '/messaggi',
+      scuolaId: utente.scuola_id ?? null,
+      riferimentoTipo: 'messaggio',
+      riferimentoId: risposta.id,
+    });
     return risposta.toPublicJSON();
   });
 };

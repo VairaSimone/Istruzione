@@ -28,6 +28,11 @@ router.post('/confirm-email-change', validateConfirmEmailChange, validate, userC
 // Account dell'utente autenticato
 router.post('/request-email-change', authenticateJWT, csrfProtection, validateChangeEmail, validate, userController.requestEmailChange);
 router.patch('/me/lingua', authenticateJWT, csrfProtection, userController.updateLanguage);
+
+// Preferenze di notifica email (digest)
+router.get('/me/notifiche', authenticateJWT, userController.getNotificationPreferences);
+router.patch('/me/notifiche', authenticateJWT, csrfProtection, userController.updateNotificationPreferences);
+
 router.delete('/me', authenticateJWT, csrfProtection, userController.deleteMe);
 
 // Operazioni amministrative (insegnanti e admin)
