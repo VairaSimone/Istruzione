@@ -3,19 +3,6 @@
 const AppError = require('../utils/AppError');
 
 /**
- * REGISTRO DEI TIPI DI ATTIVITÀ assegnabili in un COMPITO.
- *
- * Prima della generalizzazione, `compiti.tipo_attivita` era un ENUM MySQL con i
- * valori `quiz_kana | quiz_kanji | tracciamento | vocabolario`: una scelta che
- * legava lo schema del database alla materia insegnata e che richiedeva una
- * migrazione ALTER TABLE per ogni nuova attività.
- *
- * Ora la colonna è una STRING validata contro questo registro:
- *
- *   - i tipi sono NEUTRI rispetto alla materia;
- *   - aggiungerne uno non richiede migrazioni (è una voce di questo file);
- *   - i parametri specifici restano nel blob JSON `compiti.configurazione`
- *     (es. `{ quizId }` per il tipo `quiz`), già presente e libero.
  *
  * ─────────────────────────────────────────────
  * MIGRAZIONE DEI VALORI STORICI

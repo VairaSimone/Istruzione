@@ -37,8 +37,6 @@ const {
  *   didattica    → vocabolari della scuola (classi, livelli, materie)
  *   funzionalita → sezioni abilitate/disabilitate (cfr. constants/funzionalita)
  *
- * NULLA in questo file è legato a una materia specifica: i vocabolari didattici
- * (classi, livelli, materie) sono dati della scuola, non costanti di codice.
  */
 
 // ─────────────────────────────────────────────

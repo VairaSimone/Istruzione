@@ -7,15 +7,7 @@
  * di selezione dei caratteri (SRS) e la validazione delle risposte si basano
  * esclusivamente su questi dati.
  *
- * NOTA: il prototipo frontend originale conteneva alcuni refusi che qui sono
- * stati corretti:
- *   - caratteri cirillici/latini usati al posto dei kana ('де' → で, 'niya' → にゃ);
- *   - un カ-set katakana con un べ hiragana (corretto in ベ);
- *   - doppioni nel dakuon katakana (ズ ripetuto: il secondo è ヅ).
- *
- * I dati sono strutturati per "riga" (gruppo) così da poter derivare in modo
- * NON ambiguo il gruppo di appartenenza di ogni dakuon/yoon, evitando le
- * euristiche fragili (`includes`/`startsWith`) presenti nel frontend.
+
  */
 
 // ─────────────────────────────────────────────

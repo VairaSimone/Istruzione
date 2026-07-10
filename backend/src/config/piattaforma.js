@@ -4,9 +4,6 @@
  * CONFIGURAZIONE CENTRALIZZATA DELLA PIATTAFORMA.
  *
  * Questo file è l'unico punto in cui vive l'identità "di prodotto" del backend.
- * Prima della generalizzazione, il nome della piattaforma era cablato nel codice
- * (es. il mittente delle email era la stringa letterale "Piattaforma Giapponese"):
- * ora è una configurazione, sovrascrivibile via variabili d'ambiente.
  *
  * ATTENZIONE alla differenza tra i due livelli di identità:
  *

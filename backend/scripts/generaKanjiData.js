@@ -13,7 +13,6 @@
  *   src/constants/kanjiData/n1.json
  *
  * ──────────────────────────────────────────────────────────────────────────
- *  FONTE DEI DATI (nulla è inventato)
  *  --------------------------------------------------------------------------
  *  Il dataset di partenza è `davidluzgouveia/kanji-data` (kanji.json), una
  *  fusione di:
@@ -45,7 +44,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-// Fonte autorevole (raw GitHub). Vedi intestazione per licenza/attribuzione.
+// Fonte autorevole (raw GitHub).
 const SORGENTE_URL =
   'https://raw.githubusercontent.com/davidluzgouveia/kanji-data/master/kanji.json';
 
@@ -149,7 +148,7 @@ const GLOSSE_IT_N5 = {
 };
 
 // ─────────────────────────────────────────────
-// Utility di normalizzazione delle letture (deterministiche, non inventano nulla)
+// Utility di normalizzazione delle letture 
 // ─────────────────────────────────────────────
 
 /** hiragana → katakana (offset Unicode fisso di 0x60 nel blocco 0x3041–0x3096). */

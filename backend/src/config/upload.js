@@ -5,10 +5,6 @@ const path = require('path');
 /**
  * Configurazione centralizzata dell'UPLOAD DI FILE (videolezioni on-demand).
  *
- * A differenza della versione originale del progetto — che memorizzava SOLO
- * riferimenti (URL) a risorse esterne — i corsi ora accettano il CARICAMENTO di
- * file dal PC dell'insegnante (video, immagini di copertina, documenti allegati).
- *
  * I file NON vengono mai serviti staticamente: sono salvati su disco in una
  * cartella privata, organizzata per scuola (tenant), e distribuiti solo tramite
  * un endpoint protetto (cfr. fileController) che verifica autenticazione,
