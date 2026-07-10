@@ -113,8 +113,6 @@ const BADGES = [
   { code: 'ESPLORATORE', categoria: 'sblocco', criterio: (s) => s.righeSbloccate >= 5 },
 ];
 
-// Insieme dei codici validi (per validazione/coerenza).
-const CODICI_BADGE = BADGES.map((b) => b.code);
 
 module.exports = {
   XP_PER_TRATTO,
@@ -123,5 +121,4 @@ module.exports = {
   TOTALE_RIGHE_BASE,
   RIGHE_BASE,
   BADGES,
-  CODICI_BADGE,
 };

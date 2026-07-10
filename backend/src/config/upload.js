@@ -41,10 +41,6 @@ const LIMITI_DIMENSIONE = {
   documento: intEnv('UPLOAD_MAX_DOCUMENTO_MB', 100) * MB, // 100 MB
 };
 
-// Il limite più alto (usato come guardia globale del middleware multer prima di
-// conoscere il tipo effettivo del campo).
-const LIMITE_DIMENSIONE_MAX = Math.max(...Object.values(LIMITI_DIMENSIONE));
-
 /**
  * MIME type ammessi per tipo, con l'estensione canonica da usare su disco.
  * Il salvataggio NON si fida del nome file del client: l'estensione è derivata
@@ -95,7 +91,6 @@ module.exports = {
   UPLOAD_SUBDIR_CORSI,
   TIPI_FILE,
   LIMITI_DIMENSIONE,
-  LIMITE_DIMENSIONE_MAX,
   MIME_AMMESSI,
   estensionePerMime,
   mimeAmmesso,

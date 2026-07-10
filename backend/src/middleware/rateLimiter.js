@@ -135,25 +135,6 @@ const inviteLimiter = rateLimit({
 });
 
 /**
- * Limita le candidature insegnante (endpoint pubblico): previene lo spam di
- * account in attesa e l'email bombing verso gli admin.
- */
-const teacherRequestLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 ora
-  max: parseInt(process.env.TEACHER_REQUEST_RATE_LIMIT_MAX) || 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    status: 'fail',
-    code: 'TOO_MANY_REQUESTS',
-    message: 'Troppe candidature da questo indirizzo. Riprova più tardi.',
-  },
-  handler: (req, res, next, options) => {
-    res.status(options.statusCode).json(options.message);
-  },
-});
-
-/**
  * Limita l'invio dei risultati del quiz: evita che un client abusi
  * dell'endpoint per gonfiare XP/streak con invii massivi automatizzati.
  */
@@ -200,7 +181,6 @@ module.exports = {
   refreshLimiter,
   resendVerificationLimiter,
   inviteLimiter,
-  teacherRequestLimiter,
   quizSubmitLimiter,
   quizScritturaLimiter,
 };

@@ -35,26 +35,6 @@
       "button": "Complete registration",
       "fallback": "If the button doesn't work, copy and paste this link into your browser:",
       "footer": "This link is personal and will expire soon. If you were not expecting this invitation, you can ignore this email."
-    },
-    "teacherApproved": {
-      "subject": "Your application has been approved",
-      "title": "Application approved!",
-      "body": "Your teacher application has been approved. You can now sign in to the platform with the credentials you chose during your application.",
-      "button": "Go to login",
-      "footer": "If you did not submit this application, please contact the administration."
-    },
-    "teacherRejected": {
-      "subject": "Update on your application",
-      "title": "Application not approved",
-      "body": "We are sorry, your teacher application has not been approved. For more information you can contact the administration.",
-      "footer": "This is an automated message."
-    },
-    "adminNewRequest": {
-      "subject": "New teacher application to review",
-      "title": "New teacher application",
-      "body": "A new teacher application is awaiting approval:",
-      "nameLabel": "Full name",
-      "button": "Go to applications panel"
     }
   },
   "messages": {

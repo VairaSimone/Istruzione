@@ -54,14 +54,6 @@ const { DataTypes, QueryTypes } = require('sequelize');
 const CLASSI_STORICHE = ['Prima', 'Seconda', 'Terza', 'Quarta', 'Quinta'];
 const LIVELLI_STORICI = ['N5', 'N4', 'N3', 'N2', 'N1'];
 const TIPI_ATTIVITA_STORICI = ['quiz_kana', 'quiz_kanji', 'tracciamento', 'vocabolario'];
-const TIPI_ATTIVITA_NUOVI = [
-  'quiz',
-  'corso',
-  'pratica_scrittura',
-  'lettura',
-  'consegna',
-  'personalizzato',
-];
 
 // Traduzione dei tipi di attività storici → codici neutri.
 const MAPPA_TIPI = {
@@ -415,5 +407,3 @@ module.exports = {
     // precedente del codice le ignorava comunque (schema aperto). Nessuna perdita.
   },
 };
-
-module.exports.TIPI_ATTIVITA_NUOVI = TIPI_ATTIVITA_NUOVI;

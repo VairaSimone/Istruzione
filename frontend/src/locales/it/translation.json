@@ -59,8 +59,6 @@
     "messaggi": "Messaggi",
     "scuole": "Scuole",
     "invitesManagement": "Inviti",
-    "teacherRequest": "Candidati",
-    "teacherRequests": "Candidature",
     "quizGestione": "Gestione quiz",
     "impostazioniScuola": "Impostazioni scuola"
   },
@@ -72,8 +70,7 @@
     "start": "Inizia ora",
     "haveAccount": "Ho già un account",
     "login": "Accedi",
-    "studentInviteNote": "Gli studenti possono entrare nella piattaforma solo tramite invito del proprio insegnante.",
-    "teacherCta": "Candidati come insegnante"
+    "studentInviteNote": "Gli studenti possono entrare nella piattaforma solo tramite invito del proprio insegnante."
   },
   "auth": {
     "fields": {
@@ -97,7 +94,6 @@
       "noAccount": "Non hai un account?",
       "success": "Accesso effettuato.",
       "studentInviteNote": "Gli studenti ricevono un invito via email dal proprio insegnante.",
-      "teacherCta": "Invia una candidatura",
       "teacherPrompt": "Sei un insegnante?"
     },
     "register": {
@@ -171,21 +167,9 @@
       "successCta": "Vai al login",
       "successText": "Il tuo account è stato creato. Ora puoi accedere.",
       "successTitle": "Registrazione completata",
-      "teacherCta": "Invia una candidatura",
       "teacherPrompt": "Sei un insegnante?",
       "teacherSubtitle": "Inserisci i tuoi dati per attivare il tuo account insegnante.",
       "teacherTitle": "Completa la registrazione"
-    },
-    "teacherRequest": {
-      "haveAccount": "Hai già un account?",
-      "motivazioneHint": "Aggiungi una breve presentazione per l'amministratore.",
-      "motivazioneLabel": "Messaggio (facoltativo)",
-      "submit": "Invia candidatura",
-      "subtitle": "Invia la tua candidatura: un amministratore la esaminerà prima di abilitare l'accesso.",
-      "successCta": "Torna al login",
-      "successText": "La tua candidatura è in attesa di approvazione. Riceverai un'email non appena un amministratore l'avrà esaminata.",
-      "successTitle": "Candidatura inviata",
-      "title": "Candidatura insegnante"
     }
   },
   "dashboard": {
@@ -1263,23 +1247,6 @@
     "switcher": {
       "label": "Scuola",
       "placeholder": "Scegli la scuola"
-    }
-  },
-  "admin": {
-    "requests": {
-      "approve": "Approva",
-      "approved": "Candidatura di {{name}} approvata.",
-      "confirmRejectDescription": "La candidatura di {{name}} verrà rifiutata e l'accesso resterà negato.",
-      "confirmRejectTitle": "Rifiutare questa candidatura?",
-      "emptyDescription": "Non ci sono candidature insegnante per il filtro selezionato.",
-      "emptyTitle": "Nessuna candidatura",
-      "filterAll": "Tutte",
-      "filterLabel": "Stato",
-      "reject": "Rifiuta",
-      "rejected": "Candidatura di {{name}} rifiutata.",
-      "submittedOn": "Inviata il {{date}}",
-      "subtitle": "Approva o rifiuta le richieste di accesso degli insegnanti.",
-      "title": "Candidature insegnante"
     }
   },
   "invites": {

@@ -35,26 +35,6 @@
       "button": "Completa la registrazione",
       "fallback": "Se il pulsante non funziona, copia e incolla questo link nel tuo browser:",
       "footer": "Questo link è personale e scadrà a breve. Se non ti aspettavi questo invito, puoi ignorare questa email."
-    },
-    "teacherApproved": {
-      "subject": "La tua candidatura è stata approvata",
-      "title": "Candidatura approvata!",
-      "body": "La tua candidatura come insegnante è stata approvata. Ora puoi accedere alla piattaforma con le credenziali scelte in fase di candidatura.",
-      "button": "Vai al login",
-      "footer": "Se non hai presentato tu questa candidatura, contatta l'amministrazione."
-    },
-    "teacherRejected": {
-      "subject": "Aggiornamento sulla tua candidatura",
-      "title": "Candidatura non approvata",
-      "body": "Ci dispiace, la tua candidatura come insegnante non è stata approvata. Per maggiori informazioni puoi contattare l'amministrazione.",
-      "footer": "Questa è una comunicazione automatica."
-    },
-    "adminNewRequest": {
-      "subject": "Nuova candidatura insegnante da approvare",
-      "title": "Nuova candidatura insegnante",
-      "body": "È stata ricevuta una nuova candidatura come insegnante in attesa di approvazione:",
-      "nameLabel": "Nominativo",
-      "button": "Vai al pannello candidature"
     }
   },
   "messages": {

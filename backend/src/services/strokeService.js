@@ -145,36 +145,7 @@ const getStrokeOrderKanji = (livello, lingua = 'it') => {
   };
 };
 
-/**
- * Interfaccia UNICA di recupero tratti per entrambi i domini.
- *
- * Dispatcher sottile che instrada verso il recupero kana o kanji in base al
- * `dominio`. Consente al controller di esporre un solo punto d'ingresso logico
- * mantenendo però la retrocompatibilità delle route esistenti (che continuano
- * a chiamare direttamente `getStrokeOrderByAlfabeto`).
- *
- * @param {Object} opts
- * @param {string} [opts.dominio='kana'] 'kana' | 'kanji'
- * @param {string} [opts.alfabeto] richiesto se dominio='kana'
- * @param {string} [opts.livello]  richiesto se dominio='kanji'
- * @param {string} [opts.lingua='it'] lingua dei significati (solo kanji)
- */
-const getStrokeOrder = ({ dominio = 'kana', alfabeto, livello, lingua = 'it' } = {}) => {
-  if (dominio === 'kanji') {
-    return getStrokeOrderKanji(livello, lingua);
-  }
-  if (dominio === 'kana') {
-    return getStrokeOrderByAlfabeto(alfabeto);
-  }
-  throw new AppError(
-    'Dominio non valido. Usa "kana" o "kanji".',
-    422,
-    'INVALID_DOMAIN'
-  );
-};
-
 module.exports = {
   getStrokeOrderByAlfabeto,
   getStrokeOrderKanji,
-  getStrokeOrder,
 };

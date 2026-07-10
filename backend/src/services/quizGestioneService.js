@@ -12,6 +12,7 @@ const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola, risolviScuolaCreazione, isAdmin } = require('../utils/tenant');
 const logger = require('../utils/logger');
+const { mescola } = require('../utils/mescola');
 const impostazioniService = require('./impostazioniService');
 const {
   catalogoPubblico,
@@ -59,17 +60,6 @@ const OPZIONI_MAX = DomandaQuiz.OPZIONI_MAX; // 6
 // Vive nello schema (`impostazioni.didattica.accessoLiberoTemplate`), non più
 // come chiave ad-hoc di primo livello.
 const CHIAVE_TEMPLATE_LIBERO = 'accessoLiberoTemplate';
-
-// ─────────────────────────────────────────────
-// Helper — mescolamento (Fisher-Yates, non distorto)
-// ─────────────────────────────────────────────
-const mescola = (arr) => {
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
 
 // ─────────────────────────────────────────────
 // Helper — caricamento e autorizzazione

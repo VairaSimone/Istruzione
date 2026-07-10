@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './WritingCanvas.module.css';
 
@@ -83,7 +83,9 @@ const WritingCanvas = ({ componente, viewBox = '0 0 109 109', onCompletato }) =>
   const { t } = useTranslation();
 
   const VIEW = dimensioneViewBox(viewBox);
-  const strokes = componente?.strokes || [];
+  // Memoizzato: `componente?.strokes || []` creava un array nuovo a ogni render,
+  // facendo cambiare a ogni giro le dipendenze dei useCallback che lo leggono.
+  const strokes = useMemo(() => componente?.strokes || [], [componente]);
 
   const canvasRef = useRef(null);
   const pathNascostoRef = useRef(null); // <path> SVG per il campionamento
@@ -100,8 +102,15 @@ const WritingCanvas = ({ componente, viewBox = '0 0 109 109', onCompletato }) =>
   const [feedback, setFeedback] = useState('idle'); // 'idle' | 'ok' | 'wrong'
   const [completato, setCompletato] = useState(false);
 
+  // Specchio in ref dell'indice corrente: serve a mantenere STABILE l'identità
+  // di `ridisegna`/`validaTratto` (useCallback senza `indiceTratto` fra le
+  // dipendenze). La sincronizzazione avviene in un effetto — non durante il
+  // render — ed è dichiarata PRIMA degli effetti che disegnano, così al momento
+  // del ridisegno il ref è già aggiornato.
   const indiceTrattoRef = useRef(0);
-  indiceTrattoRef.current = indiceTratto;
+  useEffect(() => {
+    indiceTrattoRef.current = indiceTratto;
+  }, [indiceTratto]);
 
   // Garantisce che il completamento sia notificato al genitore UNA sola volta
   // per montaggio (cambio carattere/componente ⇒ `key` ⇒ nuovo montaggio ⇒
@@ -392,7 +401,10 @@ const WritingCanvas = ({ componente, viewBox = '0 0 109 109', onCompletato }) =>
             type="button"
             className={styles.azione}
             onClick={annullaUltimo}
-            disabled={trattiCompletatiRef.current.length === 0}
+            // `trattiCompletatiRef.current.length` è per invariante sempre pari
+            // a `indiceTratto` (accetta +1, annulla -1, azzera → 0): si usa lo
+            // stato, che è leggibile durante il render.
+            disabled={indiceTratto === 0}
           >
             {t('quiz.writing.undo')}
           </button>

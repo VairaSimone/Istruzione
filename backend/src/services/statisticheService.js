@@ -5,6 +5,7 @@ const Utente = require('../models/Utente');
 const ProgressoKana = require('../models/ProgressoKana');
 const AttivitaGiornaliera = require('../models/AttivitaGiornaliera');
 const AppError = require('../utils/AppError');
+const { mescola } = require('../utils/mescola');
 const { trovaKana, ALFABETI } = require('../constants/kanaData');
 const {
   mezzanotteOdiernaUTC,
@@ -46,17 +47,6 @@ const DIMENSIONE_INTENSIVO = 20;
 
 // Numero minimo di caratteri deboli per abilitare l'allenamento intensivo.
 const MIN_PER_ALLENAMENTO = 1;
-
-// ─────────────────────────────────────────────
-// Helper — mescolamento (Fisher-Yates)
-// ─────────────────────────────────────────────
-const mescola = (arr) => {
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
 
 // ─────────────────────────────────────────────
 // Helper — punteggio di "problematicità" di un carattere

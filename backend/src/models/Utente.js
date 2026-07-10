@@ -118,12 +118,16 @@ Utente.init(
       },
     },
 
-    // Stato dell'account: governa il ciclo di vita e l'approvazione.
+    // Stato dell'account: governa il ciclo di vita e l'accesso.
     //   - 'attivo'     → l'account può autenticarsi normalmente;
-    //   - 'in_attesa'  → candidatura insegnante NON ancora approvata: login negato;
-    //   - 'rifiutato'  → candidatura respinta da un admin: login negato.
-    // Gli studenti creati su invito e gli insegnanti creati/approvati dall'admin
-    // nascono già 'attivo'.
+    //   - 'in_attesa'  → account sospeso: login negato;
+    //   - 'rifiutato'  → accesso revocato da un admin: login negato.
+    //
+    // NOTA: l'accesso alla piattaforma è ESCLUSIVAMENTE su invito (è la scuola
+    // che invita, non l'utente che si candida). Nessun percorso di codice crea
+    // più utenti in stato 'in_attesa'/'rifiutato': tutti gli account nati da un
+    // invito sono già 'attivo'. I due stati restano nell'ENUM come gate difensivo
+    // di login (cfr. authService) e per non invalidare i dati storici.
     stato: {
       type: DataTypes.ENUM(...STATI_VALIDI),
       allowNull: false,
@@ -134,15 +138,6 @@ Utente.init(
           msg: `Lo stato deve essere uno di: ${STATI_VALIDI.join(', ')}`,
         },
       },
-    },
-
-    // Messaggio facoltativo allegato alla candidatura insegnante, mostrato
-    // all'admin nel pannello di approvazione.
-    nota_candidatura: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-      defaultValue: null,
-      field: 'nota_candidatura',
     },
 
     classe: {

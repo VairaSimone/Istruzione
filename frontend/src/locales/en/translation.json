@@ -51,8 +51,6 @@
     "mainNavAria": "Main navigation",
     "quiz": "Quiz",
     "invitesManagement": "Invites",
-    "teacherRequests": "Applications",
-    "teacherRequest": "Apply",
     "aule": "Classrooms",
     "compiti": "Assignments",
     "corsi": "Courses",
@@ -72,7 +70,6 @@
     "start": "Get started",
     "haveAccount": "I already have an account",
     "login": "Sign in",
-    "teacherCta": "Apply as a teacher",
     "studentInviteNote": "Students can only join the platform via an invitation from their teacher."
   },
   "auth": {
@@ -97,7 +94,6 @@
       "noAccount": "Don't have an account?",
       "success": "Logged in successfully.",
       "teacherPrompt": "Are you a teacher?",
-      "teacherCta": "Submit an application",
       "studentInviteNote": "Students receive an email invitation from their teacher."
     },
     "register": {
@@ -163,7 +159,6 @@
       "noTokenText": "To register you need a valid invitation link. Students receive their invitation from their teacher.",
       "goToLogin": "Go to login",
       "teacherPrompt": "Are you a teacher?",
-      "teacherCta": "Submit an application",
       "checking": "Validating invitation",
       "invalidTitle": "Invalid invitation",
       "successTitle": "Registration complete",
@@ -175,17 +170,6 @@
       "teacherSubtitle": "Enter your details to activate your teacher account.",
       "submit": "Complete registration",
       "haveAccount": "Already have an account?"
-    },
-    "teacherRequest": {
-      "title": "Teacher application",
-      "subtitle": "Submit your application: an administrator will review it before enabling access.",
-      "submit": "Submit application",
-      "haveAccount": "Already have an account?",
-      "motivazioneLabel": "Message (optional)",
-      "motivazioneHint": "Add a short introduction for the administrator.",
-      "successTitle": "Application submitted",
-      "successText": "Your application is pending approval. You will receive an email once an administrator has reviewed it.",
-      "successCta": "Back to login"
     }
   },
   "dashboard": {
@@ -750,23 +734,6 @@
       "answerPlaceholder": "Type your answer…",
       "submit": "Submit",
       "answered": "Answered: {{answered}} of {{total}}"
-    }
-  },
-  "admin": {
-    "requests": {
-      "title": "Teacher applications",
-      "subtitle": "Approve or reject teacher access requests.",
-      "filterLabel": "Status",
-      "filterAll": "All",
-      "approve": "Approve",
-      "reject": "Reject",
-      "approved": "{{name}}'s application approved.",
-      "rejected": "{{name}}'s application rejected.",
-      "submittedOn": "Submitted on {{date}}",
-      "confirmRejectTitle": "Reject this application?",
-      "confirmRejectDescription": "{{name}}'s application will be rejected and access will remain denied.",
-      "emptyTitle": "No applications",
-      "emptyDescription": "There are no teacher applications for the selected filter."
     }
   },
   "aule": {

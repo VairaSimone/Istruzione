@@ -47,8 +47,10 @@ import ImpostazioniScuolaPage from '../pages/ImpostazioniScuolaPage';
  *   2. `FeatureRoute`    → SEZIONE attiva per la scuola dell'utente;
  *   3. il backend        → l'unica difesa che conti davvero.
  *
- * Le sezioni disattivabili sono dichiarate in `constants/funzionalita.js`:
- * dashboard, profilo e messaggistica di sistema restano sempre raggiungibili.
+ * Le sezioni disattivabili sono dichiarate in `constants/funzionalita.js`.
+ * Restano sempre raggiungibili SOLO le funzionalità di nucleo (`nucleo: true`):
+ * il profilo e, di conseguenza, la dashboard. La messaggistica NON è di nucleo:
+ * è gated qui da `FeatureRoute` e lato server da `richiediFunzionalita('messaggi')`.
  */
 export const router = createBrowserRouter([
   {

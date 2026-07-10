@@ -9,6 +9,7 @@ const ProgressoDomanda = require('../models/ProgressoDomanda');
 const AttivitaGiornaliera = require('../models/AttivitaGiornaliera');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
+const { mescola } = require('../utils/mescola');
 const { filtraKana, trovaKana, ALFABETI } = require('../constants/kanaData');
 const {
   filtraKanji,
@@ -87,17 +88,6 @@ const DOMINI = ['kana', 'kanji'];
 // `TIPI_QUIZ_KANJI` arriva dal registro dei template ed è ri-esportato in fondo
 // per i validator, che continuano a importarlo da questo modulo.
 const OPZIONI_PER_DOMANDA = 4;       // quiz a scelta multipla (recognition/reading)
-
-// ─────────────────────────────────────────────
-// Helper — mescolamento (Fisher-Yates, non distorto)
-// ─────────────────────────────────────────────
-const mescola = (arr) => {
-  for (let i = arr.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
 
 // ─────────────────────────────────────────────
 // ADATTATORI DI DOMINIO

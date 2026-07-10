@@ -169,89 +169,10 @@ const sendTeacherInviteEmail = async (email, token, lingua = 'it') => {
   logger.info(`Email di invito insegnante inviata a: ${email} in lingua: ${lingua}`);
 };
 
-/** Notifica all'insegnante l'approvazione della sua candidatura. */
-const sendInsegnanteApprovatoEmail = async (email, lingua = 'it') => {
-  const url = `${piattaforma.FRONTEND_URL}/login`;
-  const t = i18next.getFixedT(lingua);
-
-  const mailOptions = {
-    from: piattaforma.mittente(),
-    to: email,
-    subject: t('email.teacherApproved.subject'),
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
-        <h2 style="color: #333;">${t('email.teacherApproved.title')}</h2>
-        <p>${t('email.teacherApproved.body')}</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${url}" style="background-color: #2e7d32; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">${t('email.teacherApproved.button')}</a>
-        </div>
-        <hr style="border: none; border-top: 1px solid #eee;" />
-        <p style="font-size: 12px; color: #777;">${t('email.teacherApproved.footer')}</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-  logger.info(`Email di approvazione insegnante inviata a: ${email} in lingua: ${lingua}`);
-};
-
-/** Notifica all'insegnante il rifiuto della sua candidatura. */
-const sendInsegnanteRifiutatoEmail = async (email, lingua = 'it') => {
-  const t = i18next.getFixedT(lingua);
-
-  const mailOptions = {
-    from: piattaforma.mittente(),
-    to: email,
-    subject: t('email.teacherRejected.subject'),
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
-        <h2 style="color: #333;">${t('email.teacherRejected.title')}</h2>
-        <p>${t('email.teacherRejected.body')}</p>
-        <hr style="border: none; border-top: 1px solid #eee;" />
-        <p style="font-size: 12px; color: #777;">${t('email.teacherRejected.footer')}</p>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-  logger.info(`Email di rifiuto insegnante inviata a: ${email} in lingua: ${lingua}`);
-};
-
-/** Notifica agli admin l'arrivo di una nuova candidatura insegnante. */
-const sendNuovaCandidaturaAdminEmail = async (emailAdmin, candidato, lingua = 'it') => {
-  const url = `${piattaforma.FRONTEND_URL}/admin/candidature`;
-  const t = i18next.getFixedT(lingua);
-
-  const mailOptions = {
-    from: piattaforma.mittente(),
-    to: emailAdmin,
-    subject: t('email.adminNewRequest.subject'),
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
-        <h2 style="color: #333;">${t('email.adminNewRequest.title')}</h2>
-        <p>${t('email.adminNewRequest.body')}</p>
-        <ul>
-          <li><strong>${t('email.adminNewRequest.nameLabel')}:</strong> ${candidato.nome} ${candidato.cognome}</li>
-          <li><strong>Email:</strong> ${candidato.email}</li>
-        </ul>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${url}" style="background-color: #333; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px;">${t('email.adminNewRequest.button')}</a>
-        </div>
-      </div>
-    `,
-  };
-
-  await transporter.sendMail(mailOptions);
-  logger.info(`Email notifica candidatura inviata all'admin: ${emailAdmin}`);
-};
-
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEmailChangeEmail,
   sendStudentInviteEmail,
   sendTeacherInviteEmail,
-  sendInsegnanteApprovatoEmail,
-  sendInsegnanteRifiutatoEmail,
-  sendNuovaCandidaturaAdminEmail,
 };

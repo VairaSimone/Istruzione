@@ -49,10 +49,6 @@ const TIPI_QUIZ_KANJI = ['production', 'recognition', 'reading'];
 // Lingue ammesse per i significati dei kanji.
 const LINGUE_QUIZ = ['it', 'en'];
 
-// Motori disponibili: 'kana' e 'kanji' sono i motori dei template di
-// piattaforma; 'domande' è il motore dei quiz personalizzati (righe DB).
-const MOTORI = ['kana', 'kanji', 'domande'];
-
 // ─────────────────────────────────────────────
 // Helper di validazione dei blob di configurazione
 // ─────────────────────────────────────────────
@@ -203,8 +199,6 @@ const catalogoPubblico = () =>
     campiSovrascrivibili: t.campiSovrascrivibili,
   }));
 
-/** Elenco delle materie coperte dai template installabili (per i filtri UI). */
-const materieTemplate = () => [...new Set(TEMPLATE.map((t) => t.materia).filter(Boolean))];
 
 /**
  * Risolve i filtri effettivi di una partita generata da un quiz-template.
@@ -240,12 +234,10 @@ const risolviFiltri = (template, configurazione = {}, override = {}) => {
 module.exports = {
   TEMPLATE,
   CODICI_TEMPLATE,
-  MOTORI,
   TIPI_QUIZ_KANJI,
   LINGUE_QUIZ,
   trovaTemplate,
   trovaTemplateObbligatorio,
   catalogoPubblico,
-  materieTemplate,
   risolviFiltri,
 };

@@ -58,14 +58,22 @@ const StrokeOrderViewer = ({ componenti = [], viewBox = '0 0 109 109', numeriIni
   // Indice globale progressivo dei tratti (attraverso tutti i componenti):
   // serve a sfalsare i ritardi di animazione nell'ordine di scrittura corretto.
   const componentiIndicizzati = useMemo(() => {
-    let globale = 0;
-    return componenti.map((comp) => ({
+    // Somme prefisse: `offsets[i]` è il numero di tratti che precedono il
+    // componente i-esimo. Evita il contatore mutabile riassegnato durante il
+    // render (che React 19 segnala come non sicuro): l'indice globale di ogni
+    // tratto è ora una funzione pura della sua posizione.
+    const offsets = componenti.reduce(
+      (acc, comp) => [...acc, acc[acc.length - 1] + comp.strokes.length],
+      [0]
+    );
+
+    return componenti.map((comp, i) => ({
       ...comp,
-      tratti: comp.strokes.map((d) => {
-        const item = { d, indiceGlobale: globale, punto: puntoIniziale(d) };
-        globale += 1;
-        return item;
-      }),
+      tratti: comp.strokes.map((d, j) => ({
+        d,
+        indiceGlobale: offsets[i] + j,
+        punto: puntoIniziale(d),
+      })),
     }));
   }, [componenti]);
 

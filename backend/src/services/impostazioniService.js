@@ -260,8 +260,6 @@ const impostazioneDidattica = async (scuolaId, campo) => {
   return complete.didattica[campo];
 };
 
-/** Utilità per i test/CLI: numero di voci attualmente in cache. */
-const dimensioneCache = () => _cache.size;
 
 logger.debug(`[IMPOSTAZIONI] Cache impostazioni scuola attiva (TTL ${TTL_MS} ms).`);
 
@@ -279,7 +277,6 @@ module.exports = {
   vocabolarioScuola,
   impostazioneDidattica,
   assicuraNelVocabolario,
-  dimensioneCache,
   // Riesportato per comodità dei chiamanti che filtrano le scuole attive.
   Op,
 };
