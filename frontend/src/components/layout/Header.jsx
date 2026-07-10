@@ -8,14 +8,28 @@ import {
   selectIsAdmin,
 } from '../../store/authStore';
 import { useLogout } from '../../hooks/useLogout';
+import { useBranding, useFunzionalita } from '../../hooks/useConfig';
 import { ROUTES } from '../../constants/routes';
+import { FUNZIONALITA } from '../../constants/funzionalita';
 import MessaggiNavLink from '../../features/messaggi/components/MessaggiNavLink';
 import Button from '../ui/Button';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import ThemeToggle from '../ui/ThemeToggle';
+import BrandLogo from '../branding/BrandLogo';
+import ScuolaSwitcher from '../branding/ScuolaSwitcher';
 import toast from 'react-hot-toast';
 import styles from './Header.module.css';
 
+/**
+ * Intestazione dell'applicazione.
+ *
+ * Il MENU non è più una lista fissa: ogni voce dichiara la sezione da cui
+ * dipende, e viene mostrata solo se la scuola l'ha attivata. L'admin è
+ * trasversale alle scuole e vede tutto, come nel backend.
+ *
+ * Anche il MARCHIO è della scuola, non della materia: logo caricato o
+ * monogramma generato dalle iniziali.
+ */
 const Header = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -24,6 +38,9 @@ const Header = () => {
   const isTeacher = useAuthStore(selectIsTeacher);
   const isAdmin = useAuthStore(selectIsAdmin);
   const logoutMutation = useLogout();
+
+  const branding = useBranding();
+  const funzionalita = useFunzionalita();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -45,6 +62,9 @@ const Header = () => {
   const navLinkClass = ({ isActive }) =>
     [styles.navLink, isActive ? styles.navLinkActive : ''].filter(Boolean).join(' ');
 
+  /** L'admin ignora i gate di sezione: non appartiene ad alcuna scuola. */
+  const sezioneAttiva = (chiave) => isAdmin || funzionalita[chiave] !== false;
+
   const handleLogout = async () => {
     try {
       await logoutMutation.mutateAsync();
@@ -55,6 +75,9 @@ const Header = () => {
     }
   };
 
+  const isStudente = user?.ruolo === 'studente';
+  const mostraTemaToggle = branding.aspetto?.temaSelezionabile !== false;
+
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -62,10 +85,8 @@ const Header = () => {
           to={isAuthenticated ? ROUTES.DASHBOARD : ROUTES.HOME}
           className={styles.brand}
         >
-          <span className={styles.brandMark} aria-hidden="true">
-            日
-          </span>
-          <span className={styles.brandName}>{import.meta.env.VITE_APP_NAME}</span>
+          <BrandLogo className={styles.brandMark} />
+          <span className={styles.brandName}>{branding.nome}</span>
         </Link>
 
         {isAuthenticated && (
@@ -85,56 +106,80 @@ const Header = () => {
             >
               ×
             </button>
+
             <NavLink to={ROUTES.DASHBOARD} className={navLinkClass}>
               {t('nav.dashboard')}
             </NavLink>
-            <NavLink to={ROUTES.QUIZ} className={navLinkClass}>
-              {t('nav.quiz')}
-            </NavLink>
-            {user?.ruolo === 'studente' && (
+
+            {sezioneAttiva(FUNZIONALITA.QUIZ) && (
+              <NavLink to={ROUTES.QUIZ} className={navLinkClass}>
+                {t('nav.quiz')}
+              </NavLink>
+            )}
+
+            {isStudente && sezioneAttiva(FUNZIONALITA.COMPITI) && (
               <NavLink to={ROUTES.COMPITI_STUDENTE} className={navLinkClass}>
                 {t('nav.compitiStudente')}
               </NavLink>
             )}
-            {user?.ruolo === 'studente' && (
+
+            {isStudente && sezioneAttiva(FUNZIONALITA.CORSI) && (
               <NavLink to={ROUTES.CORSI_STUDENTE} className={navLinkClass}>
                 {t('nav.corsiStudente')}
               </NavLink>
             )}
+
             <NavLink to={ROUTES.PROFILE} className={navLinkClass}>
               {t('nav.profile')}
             </NavLink>
-            <MessaggiNavLink className={styles.navLink} />
-            {isTeacher && (
+
+            {sezioneAttiva(FUNZIONALITA.MESSAGGI) && (
+              <MessaggiNavLink className={styles.navLink} />
+            )}
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.AULE) && (
               <NavLink to={ROUTES.AULE} className={navLinkClass}>
                 {t('nav.aule')}
               </NavLink>
             )}
-            {isTeacher && (
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.COMPITI) && (
               <NavLink to={ROUTES.COMPITI} className={navLinkClass}>
                 {t('nav.compiti')}
               </NavLink>
             )}
-            {isTeacher && (
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.CORSI) && (
               <NavLink to={ROUTES.CORSI} className={navLinkClass}>
                 {t('nav.corsi')}
               </NavLink>
             )}
-            {isTeacher && (
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.QUIZ) && (
               <NavLink to={ROUTES.QUIZ_GESTIONE} className={navLinkClass}>
                 {t('nav.quizGestione')}
               </NavLink>
             )}
-            {isTeacher && (
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.STATISTICHE) && (
               <NavLink to={ROUTES.TEACHER_DASHBOARD} className={navLinkClass}>
                 {t('nav.statistiche')}
               </NavLink>
             )}
-            {isTeacher && (
+
+            {(isTeacher || isAdmin) && (
               <NavLink to={ROUTES.USERS_MANAGEMENT} className={navLinkClass}>
                 {t('nav.usersManagement')}
               </NavLink>
             )}
+
+            {/* Configurazione della propria scuola: riservata a chi ne ha una. */}
+            {isTeacher && (
+              <NavLink to={ROUTES.IMPOSTAZIONI_SCUOLA} className={navLinkClass}>
+                {t('nav.impostazioniScuola')}
+              </NavLink>
+            )}
+
             {isAdmin && (
               <NavLink to={ROUTES.SCUOLE_MANAGEMENT} className={navLinkClass}>
                 {t('nav.scuole')}
@@ -144,7 +189,8 @@ const Header = () => {
         )}
 
         <div className={styles.actions}>
-          <ThemeToggle />
+          {!isAuthenticated && <ScuolaSwitcher />}
+          {mostraTemaToggle && <ThemeToggle />}
           <LanguageSwitcher />
           {isAuthenticated ? (
             <>

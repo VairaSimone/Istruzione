@@ -8,11 +8,11 @@ const OpzioneQuiz = require('../models/OpzioneQuiz');
 const QuizAula = require('../models/QuizAula');
 const Classe = require('../models/Classe');
 const ClasseUtente = require('../models/ClasseUtente');
-const Scuola = require('../models/Scuola');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola, risolviScuolaCreazione, isAdmin } = require('../utils/tenant');
 const logger = require('../utils/logger');
+const impostazioniService = require('./impostazioniService');
 const {
   catalogoPubblico,
   trovaTemplateObbligatorio,
@@ -55,7 +55,10 @@ const OPZIONI_MAX = DomandaQuiz.OPZIONI_MAX; // 6
 
 // Chiave di impostazione della scuola che governa l'accesso ai quiz storici di
 // giapponese senza passare da un quiz installato. Default: true (retrocompat).
-const CHIAVE_TEMPLATE_LIBERO = 'quizTemplateLibero';
+// Impostazione della scuola che governa l'accesso libero ai TEMPLATE.
+// Vive nello schema (`impostazioni.didattica.accessoLiberoTemplate`), non più
+// come chiave ad-hoc di primo livello.
+const CHIAVE_TEMPLATE_LIBERO = 'accessoLiberoTemplate';
 
 // ─────────────────────────────────────────────
 // Helper — mescolamento (Fisher-Yates, non distorto)
@@ -370,9 +373,12 @@ const creaQuiz = async ({ dati, domande, richiedente }) => {
 
   const domandeInput = Array.isArray(domande) ? domande : [];
   let configurazione = {};
+  // Descrittore del template installato (null per i quiz personalizzati):
+  // serve anche più sotto per ereditarne materia e categoria.
+  let template = null;
 
   if (dati.templateCodice) {
-    const template = trovaTemplateObbligatorio(dati.templateCodice);
+    template = trovaTemplateObbligatorio(dati.templateCodice);
     configurazione = template.valida(dati.configurazione || {});
     if (domandeInput.length > 0) {
       throw new AppError(
@@ -389,12 +395,36 @@ const creaQuiz = async ({ dati, domande, richiedente }) => {
     );
   }
 
+  // La materia è testo libero, ma se la scuola ha definito il proprio
+  // vocabolario (`impostazioni.didattica.materieDisponibili`) il valore deve
+  // appartenervi. Se un template è installato e la materia non è indicata, si
+  // eredita quella dichiarata dal template (es. "Giapponese").
+  const materiaRichiesta =
+    dati.materia !== undefined && dati.materia !== null && dati.materia !== ''
+      ? dati.materia
+      : template
+        ? template.materia
+        : null;
+  const materiaNorm = await impostazioniService.assicuraNelVocabolario(
+    scuolaId,
+    'materieDisponibili',
+    materiaRichiesta,
+    'La materia del quiz'
+  );
+  const categoriaNorm =
+    dati.categoria !== undefined && dati.categoria !== null && dati.categoria !== ''
+      ? String(dati.categoria).trim()
+      : template
+        ? template.categoria || null
+        : null;
+
   const quiz = await sequelize.transaction(async (t) => {
     const nuovo = await Quiz.create(
       {
         titolo: dati.titolo.trim(),
         descrizione: dati.descrizione ?? null,
-        materia: dati.materia ?? null,
+        materia: materiaNorm,
+        categoria: categoriaNorm,
         template_codice: dati.templateCodice ?? null,
         configurazione,
         stato: dati.stato ?? 'bozza',
@@ -422,7 +452,7 @@ const creaQuiz = async ({ dati, domande, richiedente }) => {
 
 /** Elenco dei quiz della scuola del richiedente (admin: tutte, o una scelta). */
 const elencoQuiz = async ({ richiedente, filtri }) => {
-  const { stato, materia, template, q, scuola, page, limit } = filtri;
+  const { stato, materia, categoria, template, q, scuola, page, limit } = filtri;
   const where = {};
 
   if (!isAdmin(richiedente)) {
@@ -436,6 +466,7 @@ const elencoQuiz = async ({ richiedente, filtri }) => {
 
   if (stato) where.stato = stato;
   if (materia) where.materia = materia;
+  if (categoria) where.categoria = categoria;
   // `template=personalizzato` filtra i quiz senza template.
   if (template === 'personalizzato') where.template_codice = null;
   else if (template) where.template_codice = template;
@@ -501,7 +532,7 @@ const dettaglioQuiz = async ({ quizId, richiedente }) => {
   const abilitazioni = await QuizAula.findAll({
     where: { quiz_id: quizId },
     include: [
-      { model: Classe, as: 'classe', attributes: ['id', 'nome', 'anno_scolastico', 'livello_jlpt'] },
+      { model: Classe, as: 'classe', attributes: ['id', 'nome', 'anno_scolastico', 'livello'] },
     ],
     order: [['created_at', 'ASC']],
   });
@@ -512,7 +543,7 @@ const dettaglioQuiz = async ({ quizId, richiedente }) => {
       classeId: a.classe.id,
       nome: a.classe.nome,
       annoScolastico: a.classe.anno_scolastico,
-      livelloJLPT: a.classe.livello_jlpt,
+      livello: a.classe.livello,
       abilitatoIl: a.created_at,
     }));
 
@@ -558,7 +589,15 @@ const aggiornaQuiz = async ({ quizId, dati, richiedente }) => {
 
   if (dati.titolo !== undefined) quiz.titolo = dati.titolo.trim();
   if (dati.descrizione !== undefined) quiz.descrizione = dati.descrizione;
-  if (dati.materia !== undefined) quiz.materia = dati.materia;
+  if (dati.materia !== undefined) {
+    quiz.materia = await impostazioniService.assicuraNelVocabolario(
+      quiz.scuola_id,
+      'materieDisponibili',
+      dati.materia,
+      'La materia del quiz'
+    );
+  }
+  if (dati.categoria !== undefined) quiz.categoria = dati.categoria;
   if (dati.stato !== undefined) quiz.stato = dati.stato;
   if (dati.dimensioneRound !== undefined) quiz.dimensione_round = dati.dimensioneRound;
   if (dati.mescolaDomande !== undefined) quiz.mescola_domande = dati.mescolaDomande;
@@ -745,7 +784,7 @@ const abilitaPerAula = async ({ quizId, classeId, richiedente }) => {
       classeId: classe.id,
       nome: classe.nome,
       annoScolastico: classe.anno_scolastico,
-      livelloJLPT: classe.livello_jlpt,
+      livello: classe.livello,
       abilitatoIl: abilitazione.created_at,
     };
   });
@@ -791,6 +830,7 @@ const quizDisponibili = async ({ richiedente, filtri = {} }) => {
   }
 
   if (filtri.materia) where.materia = filtri.materia;
+  if (filtri.categoria) where.categoria = filtri.categoria;
 
   const righe = await Quiz.findAll({ where, order: [['created_at', 'DESC']] });
   const conteggi = await conteggiDomande(righe.filter((x) => !x.daTemplate).map((x) => x.id));
@@ -801,6 +841,7 @@ const quizDisponibili = async ({ richiedente, filtri = {} }) => {
       titolo: x.titolo,
       descrizione: x.descrizione,
       materia: x.materia,
+      categoria: x.categoria,
       templateCodice: x.template_codice,
       motore: x.motore,
       configurazione: x.configurazione || {},
@@ -966,31 +1007,35 @@ const correggiRisposte = (domande, risposte) => {
 };
 
 // ═════════════════════════════════════════════
-// ACCESSO AI QUIZ STORICI DI GIAPPONESE (kana/kanji senza quizId)
+// ACCESSO LIBERO AI TEMPLATE (motore indicato nel body, senza quizId)
 // ═════════════════════════════════════════════
 
 /**
- * Gli endpoint storici `/generate` e `/submit` con `dominio: 'kana'|'kanji'` e
- * senza `quizId` restano attivi per RETROCOMPATIBILITÀ.
+ * Gli endpoint `/generate` e `/submit` accettano un `dominio` (il motore di un
+ * template) senza `quizId`: è la modalità di ESERCIZIO LIBERO sui template di
+ * piattaforma, utile a chi vuole allenarsi fuori dai quiz assegnati.
  *
- * Una scuola che vuole governare l'accesso al quiz di giapponese imposta
- * `impostazioni.quizTemplateLibero = false` (cfr. PATCH /api/scuole/:id/impostazioni):
+ * Una scuola che vuole governare questo accesso imposta
+ * `impostazioni.didattica.accessoLiberoTemplate = false`
+ * (cfr. PATCH /api/scuole/:id/impostazioni oppure /api/scuole/mia/impostazioni):
  * da quel momento i suoi STUDENTI devono passare da un quiz installato dagli
  * insegnanti (quindi pubblicato e abilitato per una loro aula). Se il valore è
- * assente o `true`, il comportamento resta quello attuale.
+ * assente vale il default `true`.
  *
  * Insegnanti e admin non sono mai bloccati: devono poter provare i template.
  */
 const assicuraAccessoDominioLegacy = async (richiedente) => {
   if (richiedente.ruolo !== 'studente') return;
-  if (!richiedente.scuola_id) return; // nessun tenant: comportamento storico
+  if (!richiedente.scuola_id) return; // nessun tenant: comportamento predefinito
 
-  const scuola = await Scuola.findByPk(richiedente.scuola_id, { attributes: ['id', 'impostazioni'] });
-  const impostazioni = (scuola && scuola.impostazioni) || {};
+  const accessoLibero = await impostazioniService.impostazioneDidattica(
+    richiedente.scuola_id,
+    CHIAVE_TEMPLATE_LIBERO
+  );
 
-  if (impostazioni[CHIAVE_TEMPLATE_LIBERO] === false) {
+  if (accessoLibero === false) {
     throw new AppError(
-      'La tua scuola ha disattivato l\'accesso libero ai quiz di giapponese: gioca dai quiz assegnati alla tua aula.',
+      'La tua scuola ha disattivato l\'esercizio libero sui template: gioca dai quiz assegnati alla tua aula.',
       403,
       'QUIZ_TEMPLATE_NON_ABILITATO'
     );

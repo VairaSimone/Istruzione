@@ -3,6 +3,7 @@
 const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
 const { i18next } = require('../config/i18n');
+const piattaforma = require('../config/piattaforma');
 
 // Configurazione del trasportatore SMTP basato sulle variabili d'ambiente (.env)
 const transporter = nodemailer.createTransport({
@@ -19,12 +20,12 @@ const transporter = nodemailer.createTransport({
  * Invia l'email di verifica dopo la registrazione
  */
 const sendVerificationEmail = async (email, token, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${token}`;
+  const url = `${piattaforma.FRONTEND_URL}/verify-email?token=${token}`;
 
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.verify.subject'),
     html: `
@@ -50,12 +51,12 @@ const sendVerificationEmail = async (email, token, lingua = 'it') => {
  * Invia l'email per il ripristino della password
  */
 const sendPasswordResetEmail = async (email, token, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
+  const url = `${piattaforma.FRONTEND_URL}/reset-password?token=${token}`;
 
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.reset.subject'),
     html: `
@@ -82,12 +83,12 @@ const sendPasswordResetEmail = async (email, token, lingua = 'it') => {
  * POST esplicita di conferma.
  */
 const sendEmailChangeEmail = async (email, token, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email-change?token=${token}`;
+  const url = `${piattaforma.FRONTEND_URL}/verify-email-change?token=${token}`;
 
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.change.subject'),
     html: `
@@ -108,12 +109,12 @@ const sendEmailChangeEmail = async (email, token, lingua = 'it') => {
  * informativo (l'utente non può modificarla).
  */
 const sendStudentInviteEmail = async (email, token, classe, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?token=${token}`;
+  const url = `${piattaforma.FRONTEND_URL}/register?token=${token}`;
 
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.studentInvite.subject'),
     html: `
@@ -141,12 +142,12 @@ const sendStudentInviteEmail = async (email, token, classe, lingua = 'it') => {
  * form di completamento profilo. Nessuna classe.
  */
 const sendTeacherInviteEmail = async (email, token, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/register?token=${token}`;
+  const url = `${piattaforma.FRONTEND_URL}/register?token=${token}`;
 
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.teacherInvite.subject'),
     html: `
@@ -170,11 +171,11 @@ const sendTeacherInviteEmail = async (email, token, lingua = 'it') => {
 
 /** Notifica all'insegnante l'approvazione della sua candidatura. */
 const sendInsegnanteApprovatoEmail = async (email, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`;
+  const url = `${piattaforma.FRONTEND_URL}/login`;
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.teacherApproved.subject'),
     html: `
@@ -199,7 +200,7 @@ const sendInsegnanteRifiutatoEmail = async (email, lingua = 'it') => {
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: email,
     subject: t('email.teacherRejected.subject'),
     html: `
@@ -218,11 +219,11 @@ const sendInsegnanteRifiutatoEmail = async (email, lingua = 'it') => {
 
 /** Notifica agli admin l'arrivo di una nuova candidatura insegnante. */
 const sendNuovaCandidaturaAdminEmail = async (emailAdmin, candidato, lingua = 'it') => {
-  const url = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin/candidature`;
+  const url = `${piattaforma.FRONTEND_URL}/admin/candidature`;
   const t = i18next.getFixedT(lingua);
 
   const mailOptions = {
-    from: `"Piattaforma Giapponese" <${process.env.EMAIL_FROM}>`,
+    from: piattaforma.mittente(),
     to: emailAdmin,
     subject: t('email.adminNewRequest.subject'),
     html: `

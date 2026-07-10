@@ -45,7 +45,7 @@ const InviteRow = ({ invito }) => {
             <Badge tone={invito.ruolo === INVITE_ROLES.INSEGNANTE ? 'gold' : 'seal'}>
               {t(`roles.${invito.ruolo}`)}
             </Badge>
-            {invito.classe && <Badge tone="neutral">{t(`classi.${invito.classe}`)}</Badge>}
+            {invito.classe && <Badge tone="neutral">{invito.classe}</Badge>}
             <Badge tone={STATE_TONE[invito.stato] ?? 'neutral'}>
               {t(`invites.status.${invito.stato}`)}
             </Badge>

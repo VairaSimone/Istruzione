@@ -6,6 +6,9 @@ const app = require('./app');
 const sequelize = require('./config/database');
 const logger = require('./utils/logger');
 
+// L'ordine dei require conta: i modelli registrano le proprie associazioni al
+// momento del caricamento. `Scuola` (tenant) è la radice e va caricata per prima.
+require('./models/Scuola');
 require('./models/Utente');
 require('./models/Classe');
 require('./models/ClasseUtente');
@@ -15,6 +18,17 @@ require('./models/CompitoConsegna');
 require('./models/Messaggio');
 require('./models/MessaggioDestinatario');
 require('./models/Invito');
+require('./models/Quiz');
+require('./models/QuizAula');
+require('./models/DomandaQuiz');
+require('./models/OpzioneQuiz');
+require('./models/ProgressoDomanda');
+require('./models/Corso');
+require('./models/Capitolo');
+require('./models/DocumentoCapitolo');
+require('./models/CorsoAula');
+require('./models/FileCaricato');
+require('./models/BadgeUtente');
 require('./models/ProgressoKana');
 require('./models/ProgressoKanji');
 require('./models/AttivitaGiornaliera');

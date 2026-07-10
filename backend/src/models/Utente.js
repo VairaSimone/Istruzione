@@ -4,8 +4,12 @@ const { DataTypes, Model } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('../config/database');
 
-// Valori ammessi per la classe: immutabili e condivisi con i validator
-const CLASSI_VALIDE = ['Prima', 'Seconda', 'Terza', 'Quarta', 'Quinta'];
+// La CLASSE dello studente (es. "Prima", "A1", "Gruppo serale") è testo libero:
+// la piattaforma è generica e ogni scuola definisce il proprio vocabolario in
+// `impostazioni.didattica.classiDisponibili`. La verifica di appartenenza al
+// vocabolario avviene nei service (che conoscono il tenant); qui resta solo il
+// vincolo di lunghezza.
+const CLASSE_MAX = 60;
 const RUOLI_VALIDI = ['studente', 'insegnante', 'admin'];
 const STATI_VALIDI = ['attivo', 'in_attesa', 'rifiutato'];
 const LINGUE_VALIDE = ['it', 'en'];
@@ -142,15 +146,13 @@ Utente.init(
     },
 
     classe: {
-      type: DataTypes.ENUM(...CLASSI_VALIDE),
+      type: DataTypes.STRING(CLASSE_MAX),
       // Reso opzionale a livello DB per la registrazione automatica via
       // Google. La registrazione classica continua a richiederla.
       allowNull: true,
+      defaultValue: null,
       validate: {
-        isIn: {
-          args: [CLASSI_VALIDE],
-          msg: `La classe deve essere una di: ${CLASSI_VALIDE.join(', ')}`,
-        },
+        len: { args: [0, CLASSE_MAX], msg: `La classe non può superare i ${CLASSE_MAX} caratteri` },
       },
     },
 
@@ -260,7 +262,7 @@ Utente.init(
     },
 
     // ─────────────────────────────────────────────
-    // Statistiche di gioco globali (Quiz Kana)
+    // Statistiche di gioco globali (gamification, trasversale ai quiz)
     // Il livello NON è memorizzato: è derivato dagli XP con la formula
     //   livello = Math.floor(Math.sqrt(xp / 100)) + 1
     // (cfr. quizService.calcolaLivello), per evitare disallineamenti.
@@ -344,9 +346,9 @@ Utente.init(
       },
     },
 
-    // Contatore MONOTÒNO delle righe base di kana sbloccate (portate al
-    // punteggio SRS massimo). Garantisce l'assegnazione una-tantum degli XP di
-    // sblocco riga: non decresce mai, anche se una riga tornasse non completa.
+    // Contatore MONOTÒNO delle "righe" sbloccate dai template che prevedono un
+    // progresso a gruppi (portate al punteggio SRS massimo). Garantisce
+    // l'assegnazione una-tantum degli XP di sblocco: non decresce mai.
     righe_sbloccate: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -408,7 +410,7 @@ const Scuola = require('./Scuola');
 Utente.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'RESTRICT' });
 Scuola.hasMany(Utente, { as: 'utenti', foreignKey: 'scuola_id', onDelete: 'RESTRICT' });
 
-Utente.CLASSI_VALIDE = CLASSI_VALIDE;
+Utente.CLASSE_MAX = CLASSE_MAX;
 Utente.RUOLI_VALIDI = RUOLI_VALIDI;
 Utente.STATI_VALIDI = STATI_VALIDI;
 

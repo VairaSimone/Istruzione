@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuleList } from '../hooks/useAule';
-import { LIVELLI_JLPT } from '../constants/domain';
 import AulaCard from '../features/aule/components/AulaCard';
 import AulaFormModal from '../features/aule/components/AulaFormModal';
 import Button from '../components/ui/Button';
 import Select from '../components/ui/Select';
+import FiltroVocabolario from '../components/ui/FiltroVocabolario';
 import TextField from '../components/ui/TextField';
 import Spinner from '../components/ui/Spinner';
 import styles from '../features/aule/components/Aule.module.css';
@@ -56,18 +56,13 @@ const AuleListPage = () => {
           onChange={(e) => updateFilter('q', e.target.value)}
           placeholder={t('aule.list.searchPlaceholder')}
         />
-        <Select
-          label={t('aule.form.livelloJLPT')}
+        <FiltroVocabolario
+          vocabolario="livelliDisponibili"
+          label={t('aule.form.livello')}
           placeholder={t('aule.list.allLevels')}
           value={filters.livello}
-          onChange={(e) => updateFilter('livello', e.target.value)}
-        >
-          {LIVELLI_JLPT.map((liv) => (
-            <option key={liv} value={liv}>
-              {liv}
-            </option>
-          ))}
-        </Select>
+          onChange={(valore) => updateFilter('livello', valore)}
+        />
         <Select
           label={t('aule.list.statusFilter')}
           placeholder={t('aule.list.statusAll')}

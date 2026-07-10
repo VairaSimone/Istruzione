@@ -1,7 +1,7 @@
 {
-  "name": "node-auth-backend",
-  "version": "1.0.0",
-  "description": "Backend Node.js con Express, MySQL, JWT - Sistema di autenticazione completo",
+  "name": "piattaforma-didattica-backend",
+  "version": "2.0.0",
+  "description": "Backend Node.js/Express/Sequelize per una piattaforma didattica generica e multi-scuola (multi-tenant).",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -9,7 +9,8 @@
     "db:migrate": "node src/database/umzug.js up",
     "db:migrate:down": "node src/database/umzug.js down",
     "db:sync": "node src/database/migrate.js",
-    "seed:admin": "node src/database/seedAdmin.js"
+    "seed:admin": "node src/database/seedAdmin.js",
+    "seed:scuola": "node src/database/seedScuola.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -43,6 +44,9 @@
     "node": ">=20.0.0"
   },
   "nodemonConfig": {
-  "ignore": ["uploads/**", "logs/**"]
-}
+    "ignore": [
+      "uploads/**",
+      "logs/**"
+    ]
+  }
 }

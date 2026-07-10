@@ -19,10 +19,24 @@ const AppError = require('../utils/AppError');
 
 // POST /api/corsi
 exports.creaCorso = catchAsync(async (req, res) => {
-  const { titolo, descrizione, copertinaUrl, livelloJLPT, stato, videoScaricabile, scuolaId, capitoli } = req.body;
+  // `livelloJLPT` è accettato come ALIAS STORICO di `livello` finché il
+  // frontend non viene aggiornato: il backend persiste solo `livello`.
+  const {
+    titolo, descrizione, copertinaUrl, materia, livello, livelloJLPT,
+    stato, videoScaricabile, scuolaId, capitoli,
+  } = req.body;
 
   const corso = await corsiService.creaCorso({
-    dati: { titolo, descrizione, copertinaUrl, livelloJLPT, stato, videoScaricabile, scuolaId },
+    dati: {
+      titolo,
+      descrizione,
+      copertinaUrl,
+      materia,
+      livello: livello !== undefined ? livello : livelloJLPT,
+      stato,
+      videoScaricabile,
+      scuolaId,
+    },
     capitoli,
     richiedente: req.user,
   });
@@ -66,11 +80,21 @@ exports.dettaglioCorso = catchAsync(async (req, res) => {
 
 // PATCH /api/corsi/:id
 exports.aggiornaCorso = catchAsync(async (req, res) => {
-  const { titolo, descrizione, copertinaUrl, livelloJLPT, stato, videoScaricabile } = req.body;
+  const {
+    titolo, descrizione, copertinaUrl, materia, livello, livelloJLPT, stato, videoScaricabile,
+  } = req.body;
 
   const corso = await corsiService.aggiornaCorso({
     corsoId: req.params.id,
-    dati: { titolo, descrizione, copertinaUrl, livelloJLPT, stato, videoScaricabile },
+    dati: {
+      titolo,
+      descrizione,
+      copertinaUrl,
+      materia,
+      livello: livello !== undefined ? livello : livelloJLPT,
+      stato,
+      videoScaricabile,
+    },
     richiedente: req.user,
   });
 

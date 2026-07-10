@@ -13,7 +13,8 @@
     "edit": "Modifica",
     "previous": "Precedente",
     "next": "Successivo",
-    "pageOf": "Pagina {{page}} di {{total}}"
+    "pageOf": "Pagina {{page}} di {{total}}",
+    "all": "Tutti"
   },
   "language": {
     "label": "Lingua",
@@ -38,11 +39,6 @@
     "admin": "Amministratore"
   },
   "classi": {
-    "Prima": "Prima",
-    "Seconda": "Seconda",
-    "Terza": "Terza",
-    "Quarta": "Quarta",
-    "Quinta": "Quinta",
     "null": "Insegnante"
   },
   "nav": {
@@ -65,13 +61,14 @@
     "invitesManagement": "Inviti",
     "teacherRequest": "Candidati",
     "teacherRequests": "Candidature",
-    "quizGestione": "Gestione quiz"
+    "quizGestione": "Gestione quiz",
+    "impostazioniScuola": "Impostazioni scuola"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
   },
   "home": {
-    "subtitle": "La piattaforma per studenti e insegnanti per seguire il percorso di apprendimento della lingua giapponese, classe per classe.",
+    "subtitle": "La piattaforma della tua scuola per studiare, esercitarti e seguire i tuoi progressi.",
     "start": "Inizia ora",
     "haveAccount": "Ho già un account",
     "login": "Accedi",
@@ -279,7 +276,9 @@
     "notFoundCta": "Torna alla home",
     "forbiddenTitle": "Accesso negato",
     "forbiddenText": "Non hai i permessi necessari per visualizzare questa pagina.",
-    "forbiddenCta": "Torna alla dashboard"
+    "forbiddenCta": "Torna alla dashboard",
+    "featureDisabledTitle": "Sezione non attiva",
+    "featureDisabledText": "La tua scuola non ha attivato la sezione \"{{sezione}}\". Se pensi si tratti di un errore, parlane con un insegnante."
   },
   "session": {
     "checking": "Verifica della sessione in corso"
@@ -345,7 +344,6 @@
       "SCUOLA_NAME_TAKEN": "Esiste già una scuola con questo nome.",
       "SCUOLA_HAS_USERS": "Impossibile eliminare la scuola: ha ancora utenti collegati.",
       "NO_SCUOLA": "Il tuo account non è associato ad alcuna scuola.",
-      "INVALID_SETTINGS": "Le impostazioni devono essere un oggetto JSON valido.",
       "ACCOUNT_NOT_ACTIVE": "Questo account non è abilitato all'accesso. Contatta un amministratore.",
       "ACCOUNT_PENDING": "Il tuo account è in attesa di approvazione da parte di un amministratore.",
       "ADMIN_ROLE_FORBIDDEN": "Questa operazione è riservata agli amministratori.",
@@ -398,7 +396,12 @@
       "DOMANDA_NUMERO_OPZIONI": "Numero di opzioni non valido.",
       "DOMANDA_UNICA_CORRETTA": "Deve esserci esattamente una opzione corretta.",
       "EMPTY_QUIZ_POOL": "Nessuna domanda disponibile con questi filtri.",
-      "INVALID_SUBMISSION": "Risposte non valide."
+      "INVALID_SUBMISSION": "Risposte non valide.",
+      "FEATURE_DISABLED": "Questa sezione non è attiva per la tua scuola.",
+      "SCUOLA_SOSPESA": "La tua scuola è temporaneamente sospesa. Contatta un insegnante.",
+      "SLUG_REQUIRED": "Indica un identificativo pubblico (slug) per la scuola.",
+      "SLUG_CONFLICT": "Esiste già una scuola con questo identificativo pubblico.",
+      "INVALID_ACTIVITY_TYPE": "Il tipo di attività indicato non è valido."
     }
   },
   "validation": {
@@ -419,11 +422,12 @@
     "passwordComplexity": "La password deve contenere almeno 8 caratteri, una maiuscola, una minuscola, un numero e un carattere speciale",
     "confirmRequired": "Conferma la password",
     "passwordMismatch": "Le password non coincidono",
-    "classeInvalid": "La classe deve essere una di: {{values}}",
     "roleInvalid": "Ruolo non valido",
     "scuolaRequired": "La scuola è obbligatoria",
     "scuolaInvalid": "L'identificativo della scuola non è valido",
-    "motivazioneMax": "Il messaggio non può superare i {{max}} caratteri"
+    "motivazioneMax": "Il messaggio non può superare i {{max}} caratteri",
+    "classeRequired": "La classe è obbligatoria",
+    "classeMax": "La classe non può superare i 60 caratteri"
   },
   "quiz": {
     "pageTitle": "Quiz Kana",
@@ -717,8 +721,8 @@
       "nomeLength": "Il nome dell'aula deve avere tra 2 e 120 caratteri",
       "descrizioneMax": "La descrizione non può superare i 5000 caratteri",
       "annoFormato": "L'anno scolastico deve essere nel formato AAAA/AAAA (es. 2025/2026)",
-      "livello": "Livello JLPT non valido",
-      "colore": "Il colore deve essere esadecimale (es. #4F46E5)"
+      "colore": "Il colore deve essere esadecimale (es. #4F46E5)",
+      "livelloMax": "Il livello non può superare i 40 caratteri"
     },
     "form": {
       "createTitle": "Nuova aula",
@@ -727,11 +731,11 @@
       "nome": "Nome",
       "descrizione": "Descrizione",
       "annoScolastico": "Anno scolastico",
-      "livelloJLPT": "Livello JLPT",
       "livelloNessuno": "Nessun livello",
       "colore": "Colore",
       "coloreHint": "Colore identificativo esadecimale (facoltativo)",
-      "scuola": "Scuola"
+      "scuola": "Scuola",
+      "livello": "Livello"
     },
     "toast": {
       "created": "Aula creata con successo.",
@@ -780,10 +784,12 @@
   },
   "compiti": {
     "tipi": {
-      "quiz_kana": "Quiz Kana",
-      "quiz_kanji": "Quiz Kanji",
-      "tracciamento": "Tracciamento",
-      "vocabolario": "Vocabolario"
+      "quiz": "Quiz",
+      "corso": "Corso",
+      "pratica_scrittura": "Pratica di scrittura",
+      "lettura": "Lettura",
+      "consegna": "Elaborato da consegnare",
+      "personalizzato": "Attività personalizzata"
     },
     "stati": {
       "bozza": "Bozza",
@@ -796,10 +802,6 @@
       "scaduto": "Scaduto",
       "completato": "Completato"
     },
-    "alfabeti": {
-      "hiragana": "Hiragana",
-      "katakana": "Katakana"
-    },
     "validation": {
       "titoloLength": "Il titolo deve avere tra 2 e 160 caratteri",
       "tipo": "Tipo di attività non valido",
@@ -809,7 +811,9 @@
       "stato": "Stato non valido",
       "numeroDomande": "Il numero di domande deve essere tra 1 e 200",
       "punteggio": "Il punteggio deve essere tra 0 e 1000",
-      "tempoImpiegato": "Il tempo impiegato deve essere tra 0 e 86400 secondi"
+      "tempoImpiegato": "Il tempo impiegato deve essere tra 0 e 86400 secondi",
+      "quizRichiesto": "Scegli il quiz che lo studente dovrà svolgere.",
+      "corsoRichiesto": "Scegli il corso che lo studente dovrà seguire."
     },
     "form": {
       "createTitle": "Nuovo compito",
@@ -825,10 +829,17 @@
       "tempoLimite": "Tempo limite (minuti)",
       "tempoLimiteHint": "Facoltativo",
       "configTitle": "Configurazione attività",
-      "alfabeto": "Alfabeto",
-      "livelloJLPT": "Livello JLPT",
       "numeroDomande": "Numero di domande",
-      "qualsiasi": "Qualsiasi"
+      "qualsiasi": "Qualsiasi",
+      "quiz": "Quiz da svolgere",
+      "quizPlaceholder": "Scegli un quiz",
+      "quizVuoto": "Nessun quiz pubblicato",
+      "corso": "Corso da seguire",
+      "corsoPlaceholder": "Scegli un corso",
+      "corsoVuoto": "Nessun corso pubblicato",
+      "numeroDomandeHint": "Lascia vuoto per usare la dimensione predefinita del quiz.",
+      "istruzioni": "Istruzioni per lo studente",
+      "istruzioniHint": "Testo mostrato allo studente insieme al compito."
     },
     "toast": {
       "created": "Compito creato con successo.",
@@ -907,6 +918,14 @@
       "submitSuccess": "Compito consegnato con successo.",
       "tempoLimite": "Tempo limite: {{minuti}} minuti",
       "feedbackTitle": "Feedback dell’insegnante"
+    },
+    "tipiDescrizione": {
+      "quiz": "Lo studente svolge un quiz pubblicato della scuola.",
+      "corso": "Lo studente segue un corso di videolezioni.",
+      "pratica_scrittura": "Lo studente si esercita sulla scrittura guidata dei caratteri.",
+      "lettura": "Lo studente legge un materiale indicato nelle istruzioni.",
+      "consegna": "Lo studente consegna un elaborato e dichiara di averlo completato.",
+      "personalizzato": "Attività libera: descrivila nelle istruzioni."
     }
   },
   "corsi": {
@@ -923,11 +942,12 @@
       "url": "L'URL deve essere un indirizzo http(s) valido",
       "urlMax": "L'URL non può superare i 2048 caratteri",
       "urlRequired": "L'URL è obbligatorio",
-      "livello": "Livello JLPT non valido",
       "stato": "Stato non valido",
       "durata": "La durata deve essere tra 0 e 86400 secondi",
       "ordine": "L'ordine deve essere un intero maggiore o uguale a 0",
-      "capitoloPadre": "Sezione padre non valida"
+      "capitoloPadre": "Sezione padre non valida",
+      "livelloMax": "Il livello non può superare i 40 caratteri",
+      "materiaMax": "La materia non può superare gli 80 caratteri"
     },
     "card": {
       "scaricabile": "Video scaricabili",
@@ -942,7 +962,8 @@
       "allStates": "Tutti gli stati",
       "allLevels": "Tutti i livelli",
       "empty": "Nessun corso trovato. Creane uno per iniziare.",
-      "loadError": "Impossibile caricare i corsi."
+      "loadError": "Impossibile caricare i corsi.",
+      "allSubjects": "Tutte le materie"
     },
     "form": {
       "createTitle": "Nuovo corso",
@@ -952,11 +973,13 @@
       "descrizione": "Descrizione",
       "copertinaUrl": "URL copertina",
       "copertinaHint": "Facoltativo · indirizzo http(s) di un’immagine",
-      "livelloJLPT": "Livello JLPT",
       "livelloQualsiasi": "Nessuno",
       "stato": "Stato",
       "videoScaricabile": "Consenti il download dei video",
-      "videoScaricabileHint": "Policy predefinita del corso. Ogni capitolo può sovrascriverla singolarmente."
+      "videoScaricabileHint": "Policy predefinita del corso. Ogni capitolo può sovrascriverla singolarmente.",
+      "livello": "Livello",
+      "materia": "Materia",
+      "materiaQualsiasi": "Qualsiasi materia"
     },
     "detail": {
       "back": "Torna ai corsi",
@@ -1186,7 +1209,7 @@
   },
   "scuole": {
     "managementTitle": "Gestione scuole",
-    "managementSubtitle": "Crea le scuole, gestiscine le impostazioni personali ed elimina quelle non più necessarie.",
+    "managementSubtitle": "Crea le scuole, assegna slug e stato, ed elimina quelle non più necessarie.",
     "create": {
       "cta": "Nuova scuola"
     },
@@ -1196,15 +1219,24 @@
       "emptyDescription": "Non è ancora stata creata alcuna scuola. Creane una per iniziare.",
       "utentiCount": "{{count}} utenti",
       "auleCount": "{{count}} aule",
-      "deleteBlocked": "La scuola ha utenti collegati e non può essere eliminata."
+      "deleteBlocked": "La scuola ha utenti collegati e non può essere eliminata.",
+      "predefinita": "Predefinita",
+      "sospesa": "Sospesa"
     },
     "form": {
       "createTitle": "Nuova scuola",
       "editTitle": "Modifica scuola",
       "nome": "Nome della scuola",
       "impostazioni": "Impostazioni (JSON)",
-      "impostazioniHint": "Oggetto JSON con le impostazioni personali della scuola. Lascia vuoto per nessuna impostazione.",
-      "createSubmit": "Crea scuola"
+      "impostazioniHint": "Oggetto JSON conforme allo schema della piattaforma. Per la configurazione ordinaria usa «Impostazioni scuola».",
+      "createSubmit": "Crea scuola",
+      "slug": "Identificativo pubblico (slug)",
+      "slugHint": "Usato in ?scuola=… per servire il branding giusto prima del login. Lascialo vuoto per generarlo dal nome.",
+      "slugAnteprima": "Se lo lasci vuoto verrà usato: {{slug}}",
+      "attiva": "Scuola attiva",
+      "attivaHint": "Una scuola sospesa non è raggiungibile dai suoi utenti.",
+      "predefinita": "Scuola predefinita",
+      "predefinitaHint": "Viene servita quando nessuna scuola è indicata. Ce ne può essere una sola."
     },
     "toast": {
       "created": "Scuola creata con successo.",
@@ -1224,7 +1256,13 @@
       "nomeLength": "Il nome deve avere tra 2 e 160 caratteri",
       "impostazioniJson": "Le impostazioni devono essere in formato JSON valido",
       "impostazioniObject": "Le impostazioni devono essere un oggetto JSON (coppie chiave/valore)",
-      "impostazioniMax": "Le impostazioni superano la dimensione massima consentita"
+      "impostazioniMax": "Le impostazioni superano la dimensione massima consentita",
+      "slugLength": "Lo slug deve avere tra 2 e 80 caratteri",
+      "slugFormato": "Lo slug può contenere solo lettere minuscole, cifre e trattini"
+    },
+    "switcher": {
+      "label": "Scuola",
+      "placeholder": "Scegli la scuola"
     }
   },
   "admin": {
@@ -1338,7 +1376,10 @@
       "createTitle": "Nuovo quiz",
       "editTitle": "Modifica quiz",
       "installTitle": "Installa «{{nome}}»",
-      "createSubmit": "Crea"
+      "createSubmit": "Crea",
+      "categoria": "Categoria",
+      "categoriaHint": "Raggruppa i quiz dentro la materia (es. \"Grammatica\", \"Algebra\").",
+      "materiaQualsiasi": "Nessuna materia"
     },
     "config": {
       "title": "Configurazione",
@@ -1430,7 +1471,214 @@
       "opzioneTestoMax": "Il testo dell’opzione non può superare i 500 caratteri",
       "opzioniVeroFalso": "Una domanda vero/falso deve avere esattamente 2 opzioni",
       "opzioniNumero": "Servono da {{min}} a {{max}} opzioni",
-      "opzioneUnicaCorretta": "Indica esattamente una opzione corretta"
+      "opzioneUnicaCorretta": "Indica esattamente una opzione corretta",
+      "categoriaMax": "La categoria non può superare gli 80 caratteri"
+    },
+    "template": {
+      "esempio": "Esempio"
+    }
+  },
+  "footer": {
+    "linkAria": "Collegamenti del piè di pagina",
+    "socialAria": "Profili social",
+    "credits": "Basato su {{piattaforma}}"
+  },
+  "vocabolario": {
+    "nessuno": "Nessuno",
+    "testoLiberoHint": "Campo libero: la tua scuola non ha definito un elenco di valori."
+  },
+  "funzionalita": {
+    "profilo": {
+      "nome": "Profilo",
+      "descrizione": "Dati personali, sessioni e preferenze. Sempre attiva."
+    },
+    "aule": {
+      "nome": "Aule",
+      "descrizione": "Classi virtuali con insegnanti e studenti."
+    },
+    "quiz": {
+      "nome": "Quiz",
+      "descrizione": "Quiz creati dagli insegnanti e template di piattaforma."
+    },
+    "corsi": {
+      "nome": "Corsi",
+      "descrizione": "Videolezioni on-demand con capitoli e materiali."
+    },
+    "compiti": {
+      "nome": "Compiti",
+      "descrizione": "Assegnazioni con scadenza, consegne e valutazione. Richiede le aule."
+    },
+    "messaggi": {
+      "nome": "Messaggi",
+      "descrizione": "Messaggistica interna tra insegnanti e studenti."
+    },
+    "statistiche": {
+      "nome": "Statistiche",
+      "descrizione": "Cruscotti, andamento e attività nel tempo."
+    },
+    "gamification": {
+      "nome": "Gamification",
+      "descrizione": "Punti esperienza, livelli, serie giornaliere e obiettivi."
+    },
+    "praticaScrittura": {
+      "nome": "Pratica di scrittura",
+      "descrizione": "Ordine dei tratti e canvas di scrittura guidata. Utile solo per le materie con scrittura a mano."
+    }
+  },
+  "impostazioni": {
+    "title": "Impostazioni della scuola",
+    "subtitle": "Identità, aspetto, contatti e sezioni attive. Le modifiche valgono per tutti gli utenti della tua scuola.",
+    "privata": "Non pubblica",
+    "modifiche": "{{count}} sezione modificata",
+    "modifiche_other": "{{count}} sezioni modificate",
+    "admin": {
+      "title": "Nessuna scuola associata",
+      "description": "L'account amministratore è trasversale a tutte le scuole e non ne ha una propria. Configura le singole scuole da «Gestione scuole»."
+    },
+    "toast": {
+      "salvate": "Impostazioni salvate."
+    },
+    "sezioni": {
+      "identita": {
+        "titolo": "Identità",
+        "descrizione": "Nome, slogan, logo e immagini mostrati agli utenti e nelle anteprime dei link."
+      },
+      "aspetto": {
+        "titolo": "Aspetto",
+        "descrizione": "Colori del marchio e tema predefinito. Le tinte per gli stati (successo, errore) restano quelle della piattaforma."
+      },
+      "contatti": {
+        "titolo": "Contatti",
+        "descrizione": "Recapiti mostrati nel piè di pagina."
+      },
+      "indirizzo": {
+        "titolo": "Indirizzo",
+        "descrizione": "Sede fisica della scuola. I campi vuoti non vengono mostrati."
+      },
+      "social": {
+        "titolo": "Social",
+        "descrizione": "Collegamenti ai profili della scuola. Lascia vuoto ciò che non usi."
+      },
+      "footer": {
+        "titolo": "Piè di pagina",
+        "descrizione": "Testo e collegamenti in fondo a ogni pagina."
+      },
+      "didattica": {
+        "titolo": "Didattica",
+        "descrizione": "I vocabolari della tua scuola: classi, livelli e materie. Se un elenco è vuoto, il campo corrispondente resta a testo libero."
+      },
+      "funzionalita": {
+        "titolo": "Sezioni attive",
+        "descrizione": "Ciò che spegni qui sparisce dal menu e viene rifiutato anche via API."
+      }
+    },
+    "campi": {
+      "identita": {
+        "nomeVisualizzato": "Nome visualizzato",
+        "slogan": "Slogan",
+        "descrizione": "Descrizione",
+        "logoUrl": "Logo",
+        "logoScuroUrl": "Logo per il tema scuro",
+        "faviconUrl": "Favicon",
+        "immagineHeroUrl": "Immagine di copertina",
+        "immagineCopertinaUrl": "Immagine social"
+      },
+      "aspetto": {
+        "colorePrimario": "Colore primario",
+        "coloreSecondario": "Colore secondario",
+        "coloreAccento": "Colore accento",
+        "temaPredefinito": "Tema predefinito",
+        "temaSelezionabile": "Consenti il cambio tema"
+      },
+      "contatti": {
+        "email": "Email",
+        "telefono": "Telefono",
+        "sitoWeb": "Sito web"
+      },
+      "indirizzo": {
+        "via": "Via",
+        "citta": "Città",
+        "cap": "CAP",
+        "provincia": "Provincia",
+        "paese": "Paese"
+      },
+      "footer": {
+        "testo": "Testo",
+        "link": "Collegamenti",
+        "mostraCredits": "Mostra i crediti della piattaforma"
+      },
+      "didattica": {
+        "classiDisponibili": "Classi",
+        "livelliDisponibili": "Livelli",
+        "materieDisponibili": "Materie",
+        "accessoLiberoTemplate": "Esercizio libero sui template"
+      }
+    },
+    "hint": {
+      "identita": {
+        "logoUrl": "URL assoluto o percorso relativo (es. /assets/logo.svg).",
+        "logoScuroUrl": "Usato quando il tema scuro è attivo. Se assente si usa il logo normale.",
+        "immagineHeroUrl": "Mostrata nella pagina di ingresso."
+      },
+      "aspetto": {
+        "colorePrimario": "Pulsanti e azioni principali.",
+        "coloreSecondario": "Elementi di supporto.",
+        "coloreAccento": "Contorni di messa a fuoco e dettagli.",
+        "temaSelezionabile": "Se disattivato, l'interruttore chiaro/scuro non compare."
+      },
+      "didattica": {
+        "classiDisponibili": "Le classi che i tuoi studenti possono avere. Lascia vuoto per usare un campo libero.",
+        "livelliDisponibili": "I livelli di aule e corsi (es. A1, Base, Terzo anno). Lascia vuoto per usare un campo libero.",
+        "materieDisponibili": "Le materie insegnate. Lascia vuoto per usare un campo libero.",
+        "accessoLiberoTemplate": "Se attivo, gli studenti possono esercitarsi sui template di quiz anche senza un compito assegnato."
+      },
+      "footer": {
+        "testo": "Una riga di presentazione, mostrata sopra i collegamenti."
+      }
+    },
+    "valori": {
+      "temaPredefinito": {
+        "chiaro": "Chiaro",
+        "scuro": "Scuro",
+        "sistema": "Come il sistema"
+      }
+    },
+    "vocabolario": {
+      "vuoto": "Nessuna voce: il campo resterà a testo libero.",
+      "placeholder": "Aggiungi una voce…",
+      "aggiungi": "Aggiungi",
+      "rimuovi": "Rimuovi {{voce}}",
+      "pieno": "Hai raggiunto il massimo di {{max}} voci."
+    },
+    "footer": {
+      "linkVuoti": "Nessun collegamento.",
+      "aggiungiLink": "Aggiungi collegamento",
+      "etichetta": "Etichetta",
+      "url": "Indirizzo"
+    },
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "tiktok": "TikTok",
+      "telegram": "Telegram",
+      "altri": "Altri collegamenti",
+      "altriHint": "Qualsiasi altro profilo o sito: Mastodon, Discord, un blog…"
+    },
+    "funzionalita": {
+      "nucleo": "Sempre attiva",
+      "dipende": "Richiede la sezione «{{sezione}}», attualmente spenta."
+    },
+    "anteprima": {
+      "titolo": "Anteprima",
+      "descrizione": "Come appariranno i colori scelti, nel tema attivo.",
+      "bottone": "Pulsante",
+      "hover": "Al passaggio",
+      "velatura": "Sfondo tenue",
+      "assente": "Colore non impostato",
+      "nomeAssente": "Nome non impostato"
     }
   }
 }

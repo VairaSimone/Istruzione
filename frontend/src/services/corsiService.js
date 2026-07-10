@@ -51,6 +51,7 @@ const buildFormData = (file, campi = {}) => {
 export const getCorsi = async (filters = {}) => {
   const params = {};
   if (filters.stato) params.stato = filters.stato;
+  if (filters.materia) params.materia = filters.materia;
   if (filters.livello) params.livello = filters.livello;
   if (filters.q) params.q = filters.q;
   if (filters.scuola) params.scuola = filters.scuola;
@@ -205,6 +206,7 @@ export const revocaDisponibilita = async ({ id, classeId }) => {
 /** GET /api/corsi/studente — catalogo dei corsi disponibili allo studente. */
 export const getCorsiStudente = async (filters = {}) => {
   const params = {};
+  if (filters.materia) params.materia = filters.materia;
   if (filters.livello) params.livello = filters.livello;
   if (filters.q) params.q = filters.q;
   if (filters.page) params.page = filters.page;

@@ -1,11 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/*
+ * I font giapponesi (Shippori Mincho, Noto Sans JP) restano caricati: servono a
+ * rendere correttamente i glifi dei TEMPLATE di giapponese, che una scuola può
+ * installare. Non sono più i font di interfaccia: `--font-display` e
+ * `--font-body` usano famiglie neutre, e i glifi CJK arrivano dal fallback.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /*
  * ──────────────────────────────────────────────────────────────────────────
- *  DESIGN SYSTEM — "Washi & Sumi"
+ *  DESIGN SYSTEM — tema di base "Washi & Sumi"
  *  --------------------------------------------------------------------------
- *  Identità giapponese sobria: carta washi, inchiostro sumi, sigillo hanko,
- *  matcha, oro tenue. Nessuno stereotipo, nessun kitsch.
+ *  Questo è il tema PREDEFINITO della piattaforma: sobrio, caldo, ad alto
+ *  contrasto. Non è l'unico: ogni SCUOLA può sostituire i tre colori di brand
+ *  (primario, secondario, accento) dalle proprie impostazioni. Il
+ *  `BrandingProvider` sovrascrive a runtime i token qui sotto su <html>, e ne
+ *  deriva hover e velature. I token SEMANTICI (successo, errore, avviso) non
+ *  vengono mai toccati: il verde del successo resta verde in ogni scuola.
  *
  *  Regole:
  *  - I token NON cromatici (tipografia, spaziatura, raggi, ombre strutturali,
@@ -37,6 +47,16 @@
   --color-gold: #b89b5e; /* oro tenue — focus, dettagli, ring */
   --color-gold-text: #7a652f; /* oro leggibile su chiaro (badge) */
 
+  /* Alias di BRAND — sovrascritti a runtime dal BrandingProvider con i colori
+     scelti dalla scuola. I valori qui sono i default della piattaforma. */
+  --color-brand-primary: var(--color-seal);
+  --color-brand-primary-contrast: #ffffff;
+  --color-brand-secondary: #3d5a4c;
+  --color-brand-secondary-strong: #2c4337;
+  --color-brand-secondary-soft: #eaf1ec;
+  --color-brand-secondary-contrast: #ffffff;
+  --color-brand-accent: var(--color-gold);
+
   --color-border: #e6e1d5; /* hairline standard */
   --color-border-strong: #cdc6b3; /* bordi input, divisori marcati */
   --color-text-muted: #6b6558; /* testo terziario / didascalie */
@@ -67,8 +87,10 @@
   --shadow-focus: 0 0 0 3px var(--color-ring);
 
   /* ── Tipografia ──────────────────────────────────────────────────────── */
-  --font-display: 'Shippori Mincho', 'Noto Serif JP', serif;
+  --font-display: 'Source Serif 4', 'Shippori Mincho', 'Noto Serif JP', serif;
   --font-body: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Famiglia per i glifi CJK dei template di giapponese (kana/kanji). */
+  --font-cjk: 'Shippori Mincho', 'Noto Sans JP', 'Noto Serif JP', serif;
   --font-sans: var(--font-body); /* alias (correzione bug: era indefinito) */
   --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
 
@@ -142,6 +164,14 @@
   --color-matcha-dark: #a7c7b6;
   --color-gold: #cbab6a;
   --color-gold-text: #d8bd84;
+
+  --color-brand-primary: var(--color-seal);
+  --color-brand-primary-contrast: #16140f;
+  --color-brand-secondary: #6f9a85;
+  --color-brand-secondary-strong: #a7c7b6;
+  --color-brand-secondary-soft: #1c2a23;
+  --color-brand-secondary-contrast: #16140f;
+  --color-brand-accent: var(--color-gold);
 
   --color-border: #2e2b22;
   --color-border-strong: #463f33;

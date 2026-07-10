@@ -26,7 +26,7 @@ const CorsoStudenteCard = ({ corso }) => {
 
       <div className={styles.cardHead}>
         <h3 className={styles.cardTitle}>{corso.titolo}</h3>
-        {corso.livelloJLPT && <Badge tone="neutral">{corso.livelloJLPT}</Badge>}
+        {corso.livello && <Badge tone="neutral">{corso.livello}</Badge>}
       </div>
 
       {corso.descrizione && <p className={styles.cardDesc}>{corso.descrizione}</p>}

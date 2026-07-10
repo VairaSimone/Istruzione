@@ -2,29 +2,103 @@
 
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
+const {
+  applicaDefault,
+  impostazioniPubbliche,
+  funzionalitaDi,
+} = require('../constants/impostazioniScuola');
+
+// Lo slug identifica la scuola in modo leggibile e stabile negli URL pubblici
+// (`GET /api/config?scuola=liceo-manzoni`). Minuscole, cifre e trattini.
+const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_MAX = 80;
+
+/**
+ * Genera uno slug a partire da un nome libero. Diacritici rimossi, spazi e
+ * punteggiatura convertiti in trattini. Se il risultato è vuoto restituisce
+ * `null`: il chiamante deve fornire uno slug esplicito.
+ */
+const slugifica = (testo) => {
+  if (typeof testo !== 'string') return null;
+  const s = testo
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // rimuove i segni diacritici
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, SLUG_MAX)
+    .replace(/-+$/g, '');
+  return s === '' ? null : s;
+};
 
 /**
  * Scuola — TENANT della piattaforma.
  *
- * Ogni studente e ogni insegnante appartiene a una scuola (cfr. `Utente.scuola_id`);
- * aule, compiti e messaggi nascono legati alla scuola del loro autore. Gli
- * insegnanti vedono e operano SOLO entro la propria scuola; l'admin (che NON
- * appartiene ad alcuna scuola, `scuola_id = null`) ha piena visibilità su tutte.
+ * La piattaforma è GENERICA: nulla, qui dentro, presuppone una materia
+ * insegnata. Una «scuola» è un qualsiasi ente di formazione (scuola pubblica,
+ * accademia di lingue, centro professionale, azienda che eroga corsi interni).
  *
- * `impostazioni` è un blob JSON di configurazione PERSONALE della scuola: ogni
- * scuola può avere settaggi differenti per l'intera piattaforma senza influenzare
- * le altre. Lo schema del blob è volutamente libero (estensibile senza migrazioni):
- * le chiavi sconosciute sono ignorate, i default vivono nell'applicazione.
+ * Ogni studente e ogni insegnante appartiene a una scuola (cfr. `Utente.scuola_id`);
+ * aule, quiz, corsi, compiti e messaggi nascono legati alla scuola del loro
+ * autore. Gli insegnanti vedono e operano SOLO entro la propria scuola; l'admin
+ * (che NON appartiene ad alcuna scuola, `scuola_id = null`) ha piena visibilità.
+ *
+ * `impostazioni` è il blob JSON di configurazione del tenant: identità visiva
+ * (nome, logo, favicon, colori, tema), contatti, social, footer, vocabolari
+ * didattici e FUNZIONALITÀ ABILITATE. La sua forma è descritta in modo
+ * dichiarativo da `constants/impostazioniScuola.js`: aggiungere un settaggio non
+ * richiede migrazioni, le chiavi sconosciute sono ignorate in lettura e i
+ * default vivono nell'applicazione.
+ *
+ * `slug` consente al frontend NON autenticato di risolvere il tenant (pagina di
+ * login personalizzata) senza esporre gli UUID interni.
+ *
+ * `predefinita` marca la scuola servita da `GET /api/config` quando la richiesta
+ * non indica alcun tenant: è il caso dei deploy MONO-SCUOLA, dove la piattaforma
+ * ospita un solo ente e il frontend non deve preoccuparsi del multi-tenant.
+ *
+ * `attiva` permette di sospendere un tenant (branding non servito, accesso
+ * negato) senza eliminarne i dati.
  */
 class Scuola extends Model {
-  /** Dati esponibili al client. */
+  /** Mappa risolta delle funzionalità abilitate per questa scuola. */
+  get funzionalita() {
+    return funzionalitaDi(this.impostazioni);
+  }
+
+  /** True se la sezione indicata è abilitata per questa scuola. */
+  funzionalitaAttiva(chiave) {
+    return Boolean(this.funzionalita[chiave]);
+  }
+
+  /**
+   * Dati per lo STAFF e per il frontend autenticato: impostazioni COMPLETE,
+   * con i default applicati a ogni chiave mancante.
+   */
   toPublicJSON() {
     return {
       id: this.id,
       nome: this.nome,
-      impostazioni: this.impostazioni || {},
+      slug: this.slug,
+      attiva: this.attiva,
+      predefinita: this.predefinita,
+      impostazioni: applicaDefault(this.impostazioni, this.nome),
       created_at: this.created_at,
       updated_at: this.updated_at,
+    };
+  }
+
+  /**
+   * Dati per il frontend NON autenticato (`GET /api/config`): solo l'identità
+   * visiva e le funzionalità abilitate. Nessun vocabolario didattico, nessun
+   * conteggio, nessun UUID di risorse interne.
+   */
+  toBrandingJSON() {
+    return {
+      id: this.id,
+      slug: this.slug,
+      nome: this.nome,
+      impostazioni: impostazioniPubbliche(this.impostazioni, this.nome),
     };
   }
 }
@@ -50,7 +124,43 @@ Scuola.init(
       },
     },
 
-    // Configurazione personale della scuola (blob JSON libero). Default {}.
+    // Identificativo leggibile per gli URL pubblici. Derivato dal nome se non
+    // fornito. Nullable a livello DB solo per le righe legacy: il service lo
+    // valorizza sempre.
+    slug: {
+      type: DataTypes.STRING(SLUG_MAX),
+      allowNull: true,
+      defaultValue: null,
+      unique: {
+        name: 'unique_scuola_slug',
+        msg: 'Esiste già una scuola con questo identificativo (slug)',
+      },
+      validate: {
+        is: {
+          args: SLUG_REGEX,
+          msg: 'Lo slug può contenere solo lettere minuscole, cifre e trattini (es. liceo-manzoni)',
+        },
+      },
+    },
+
+    // Tenant sospendibile senza perdita di dati.
+    attiva: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+
+    // Scuola servita dagli endpoint pubblici quando il tenant non è indicato.
+    // L'unicità del flag è garantita dal service (una sola scuola predefinita).
+    predefinita: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+
+    // Configurazione del tenant. Schema in `constants/impostazioniScuola.js`.
+    // In MySQL le colonne JSON non ammettono un DEFAULT a livello DB: il valore
+    // di default `{}` è garantito da Sequelize.
     impostazioni: {
       type: DataTypes.JSON,
       allowNull: false,
@@ -65,8 +175,18 @@ Scuola.init(
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-    indexes: [{ unique: true, fields: ['nome'], name: 'scuole_nome' }],
+    indexes: [
+      { unique: true, fields: ['nome'], name: 'scuole_nome' },
+      { unique: true, fields: ['slug'], name: 'scuole_slug' },
+      // Risoluzione del tenant predefinito in una sola lettura indicizzata.
+      { fields: ['predefinita'], name: 'scuole_predefinita' },
+      { fields: ['attiva'], name: 'scuole_attiva' },
+    ],
   }
 );
+
+Scuola.SLUG_REGEX = SLUG_REGEX;
+Scuola.SLUG_MAX = SLUG_MAX;
+Scuola.slugifica = slugifica;
 
 module.exports = Scuola;

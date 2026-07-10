@@ -78,10 +78,23 @@ const storeCreator = (set, get) => ({
   theme: initialTheme,
   hasExplicitPreference: initialHasExplicit,
 
-  /** Imposta un tema specifico come scelta esplicita dell'utente. */
-  setTheme: (theme) => {
+  /**
+   * Imposta un tema specifico.
+   *
+   * Con `{ implicito: true }` il tema viene applicato SENZA marcare una scelta
+   * dell'utente e senza persistere: è la modalità usata dal branding di scuola,
+   * che propone il proprio tema predefinito ma non deve mai sovrascrivere una
+   * preferenza personale. La prima volta che l'utente tocca l'interruttore, la
+   * sua scelta diventa esplicita e vince per sempre.
+   */
+  setTheme: (theme, { implicito = false } = {}) => {
     if (!VALID_THEMES.includes(theme)) return;
+    if (implicito && get().hasExplicitPreference) return;
     applyThemeToDom(theme);
+    if (implicito) {
+      set({ theme }, false, 'theme/setThemeImplicito');
+      return;
+    }
     persistTheme(theme);
     set({ theme, hasExplicitPreference: true }, false, 'theme/setTheme');
   },
@@ -97,6 +110,10 @@ const storeCreator = (set, get) => ({
   /**
    * Allinea il tema alla preferenza di sistema. Ignorato se l'utente ha già
    * espresso una scelta esplicita. Invocato dal listener di matchMedia.
+   *
+   * Nota: se la scuola impone un tema predefinito, il BrandingProvider lo
+   * riapplica in modo implicito al proprio effetto; il sistema resta la fonte
+   * solo per le scuole che scelgono `temaPredefinito: 'sistema'`.
    */
   syncWithSystem: (prefersDark) => {
     if (get().hasExplicitPreference) return;

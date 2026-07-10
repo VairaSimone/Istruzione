@@ -41,7 +41,11 @@ const TemplateCatalogPanel = () => {
           <Card key={tpl.codice} className={styles.templateCard}>
             <div className={styles.templateHead}>
               <span className={styles.templateName}>{tpl.nome}</span>
-              {tpl.materia && <Badge tone="neutral">{tpl.materia}</Badge>}
+              {tpl.materia && <Badge tone="gold">{tpl.materia}</Badge>}
+              {tpl.categoria && <Badge tone="neutral">{tpl.categoria}</Badge>}
+              {tpl.esempio && (
+                <Badge tone="neutral">{t('quizGestione.template.esempio')}</Badge>
+              )}
             </div>
 
             <p className={styles.templateDesc}>{tpl.descrizione}</p>

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CLASSI, ETA_MIN, ETA_MAX } from '../constants/domain';
+import { CLASSE_MAX, ETA_MIN, ETA_MAX } from '../constants/domain';
 
 /**
  * Schemi di validazione Zod localizzati.
@@ -108,9 +108,15 @@ const buildScuolaIdSchema = (t, required) => {
 export const buildStudentInviteSchema = (t, { requireScuola = false } = {}) =>
   z.object({
     email: buildEmailSchema(t),
-    classe: z.enum(CLASSI, {
-      message: t('validation.classeInvalid', { values: CLASSI.join(', ') }),
-    }),
+    // La classe è TESTO LIBERO: il vocabolario ammesso è un'impostazione della
+    // scuola di destinazione (`didattica.classiDisponibili`), non una costante
+    // di codice. Se la scuola l'ha definito, il <select> mostra solo quelle voci
+    // e il backend rifiuta comunque i valori estranei.
+    classe: z
+      .string()
+      .trim()
+      .min(1, t('validation.classeRequired'))
+      .max(CLASSE_MAX, t('validation.classeMax')),
     scuolaId: buildScuolaIdSchema(t, requireScuola),
   });
 

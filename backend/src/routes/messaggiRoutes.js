@@ -6,6 +6,7 @@ const router = express.Router();
 const messaggiController = require('../controllers/messaggiController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const validate = require('../middleware/validate');
 
@@ -40,6 +41,8 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione: messaggistica interna disattivabile per scuola.
+router.use(richiediFunzionalita('messaggi'));
 
 // ── DOCENTE ──
 router.post(

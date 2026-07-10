@@ -1,9 +1,15 @@
 import { z } from 'zod';
-import { LIVELLI_JLPT } from '../constants/domain';
+import { LIVELLO_MAX } from '../constants/domain';
 
 /**
  * Schemi di validazione Zod per le AULE, localizzati (funzioni che ricevono
  * `t`). Rispecchiano le regole di `backend/src/validators/auleValidators.js`.
+ *
+ * Il LIVELLO non è più un ENUM (`N5…N1`): è testo libero, perché la piattaforma
+ * è generica e ogni scuola nomina i propri livelli («A1», «Base», «Terzo
+ * anno»). Qui si valida solo la FORMA; l'appartenenza al vocabolario
+ * eventualmente definito dalla scuola è verificata dal backend, che è l'unico a
+ * conoscerne il contenuto.
  */
 
 const ANNO_REGEX = /^\d{4}\/\d{4}$/;
@@ -30,12 +36,9 @@ export const buildAulaSchema = (t, { requireScuola = false } = {}) =>
     annoScolastico: optionalString().pipe(
       z.string().regex(ANNO_REGEX, t('aule.validation.annoFormato')).optional()
     ),
-    livelloJLPT: z
-      .string()
-      .trim()
-      .optional()
-      .transform((v) => (v === '' ? undefined : v))
-      .pipe(z.enum(LIVELLI_JLPT, { message: t('aule.validation.livello') }).optional()),
+    livello: optionalString().pipe(
+      z.string().max(LIVELLO_MAX, t('aule.validation.livelloMax')).optional()
+    ),
     colore: optionalString().pipe(
       z.string().regex(COLORE_REGEX, t('aule.validation.colore')).optional()
     ),

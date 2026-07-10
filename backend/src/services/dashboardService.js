@@ -352,7 +352,7 @@ const dashboardAula = async ({ classeId, richiedente, opzioni }) => {
   const dati = await calcolaDashboard(studentIds, opzioni);
 
   return {
-    aula: { id: classe.id, nome: classe.nome, livelloJLPT: classe.livello_jlpt },
+    aula: { id: classe.id, nome: classe.nome, livello: classe.livello },
     ...dati,
   };
 };

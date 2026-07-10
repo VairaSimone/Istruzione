@@ -12,6 +12,7 @@ const FileCaricato = require('../models/FileCaricato');
 const fileService = require('./fileService');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const impostazioniService = require('./impostazioniService');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 
@@ -334,13 +335,29 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
     );
   }
 
+  // Livello e materia sono testo libero, ma se la scuola ha definito i propri
+  // vocabolari (`impostazioni.didattica`) i valori devono appartenervi.
+  const livelloNorm = await impostazioniService.assicuraNelVocabolario(
+    scuolaId,
+    'livelliDisponibili',
+    dati.livello,
+    'Il livello del corso'
+  );
+  const materiaNorm = await impostazioniService.assicuraNelVocabolario(
+    scuolaId,
+    'materieDisponibili',
+    dati.materia,
+    'La materia del corso'
+  );
+
   const corso = await sequelize.transaction(async (t) => {
     const nuovo = await Corso.create(
       {
         titolo: dati.titolo.trim(),
         descrizione: dati.descrizione ?? null,
         copertina_url: dati.copertinaUrl ?? null,
-        livello_jlpt: dati.livelloJLPT ?? null,
+        materia: materiaNorm,
+        livello: livelloNorm,
         stato: dati.stato ?? 'bozza',
         video_scaricabile: dati.videoScaricabile ?? false,
         scuola_id: scuolaId,
@@ -412,7 +429,7 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
 // STAFF — ELENCO CORSI (della propria scuola, con conteggio capitoli)
 // ─────────────────────────────────────────────
 const elencoCorsi = async ({ richiedente, filtri }) => {
-  const { stato, livello, q, scuola, page, limit } = filtri;
+  const { stato, livello, materia, q, scuola, page, limit } = filtri;
   const where = {};
 
   if (richiedente.ruolo !== 'admin') {
@@ -425,7 +442,8 @@ const elencoCorsi = async ({ richiedente, filtri }) => {
   }
 
   if (stato) where.stato = stato;
-  if (livello) where.livello_jlpt = livello;
+  if (livello) where.livello = livello;
+  if (materia) where.materia = materia;
   if (q) {
     where.titolo = { [Op.like]: `%${escapeLike(q.trim())}%` };
   }
@@ -481,7 +499,7 @@ const dettaglioCorso = async ({ corsoId, richiedente }) => {
 
   const disponibilita = await CorsoAula.findAll({
     where: { corso_id: corsoId },
-    include: [{ model: Classe, as: 'classe', attributes: ['id', 'nome', 'anno_scolastico', 'livello_jlpt'] }],
+    include: [{ model: Classe, as: 'classe', attributes: ['id', 'nome', 'anno_scolastico', 'livello'] }],
     order: [['created_at', 'ASC']],
   });
 
@@ -491,7 +509,7 @@ const dettaglioCorso = async ({ corsoId, richiedente }) => {
       classeId: d.classe.id,
       nome: d.classe.nome,
       annoScolastico: d.classe.anno_scolastico,
-      livelloJLPT: d.classe.livello_jlpt,
+      livello: d.classe.livello,
       resaDisponibileIl: d.created_at,
     }));
 
@@ -515,7 +533,22 @@ const aggiornaCorso = async ({ corsoId, dati, richiedente }) => {
   if (dati.titolo !== undefined) corso.titolo = dati.titolo.trim();
   if (dati.descrizione !== undefined) corso.descrizione = dati.descrizione;
   if (dati.copertinaUrl !== undefined) corso.copertina_url = dati.copertinaUrl;
-  if (dati.livelloJLPT !== undefined) corso.livello_jlpt = dati.livelloJLPT;
+  if (dati.livello !== undefined) {
+    corso.livello = await impostazioniService.assicuraNelVocabolario(
+      corso.scuola_id,
+      'livelliDisponibili',
+      dati.livello,
+      'Il livello del corso'
+    );
+  }
+  if (dati.materia !== undefined) {
+    corso.materia = await impostazioniService.assicuraNelVocabolario(
+      corso.scuola_id,
+      'materieDisponibili',
+      dati.materia,
+      'La materia del corso'
+    );
+  }
   if (dati.stato !== undefined) corso.stato = dati.stato;
   if (dati.videoScaricabile !== undefined) corso.video_scaricabile = dati.videoScaricabile;
 
@@ -897,7 +930,7 @@ const rendiDisponibile = async ({ corsoId, classeId, richiedente }) => {
       classeId: classe.id,
       nome: classe.nome,
       annoScolastico: classe.anno_scolastico,
-      livelloJLPT: classe.livello_jlpt,
+      livello: classe.livello,
       resaDisponibileIl: disponibilita.created_at,
     };
   });
@@ -946,9 +979,10 @@ const elencoCorsiStudente = async ({ studente, filtri }) => {
   const corsoIds = await idCorsiDisponibiliStudente(studente.id);
   if (!corsoIds.length) return { corsi: [], paginazione: null };
 
-  const { livello, q, page, limit } = filtri;
+  const { livello, materia, q, page, limit } = filtri;
   const where = { id: { [Op.in]: corsoIds }, stato: 'pubblicato' };
-  if (livello) where.livello_jlpt = livello;
+  if (livello) where.livello = livello;
+  if (materia) where.materia = materia;
   if (q) where.titolo = { [Op.like]: `%${escapeLike(q.trim())}%` };
 
   const pageNum = parseInt(page, 10);
@@ -980,7 +1014,8 @@ const elencoCorsiStudente = async ({ studente, filtri }) => {
     descrizione: c.descrizione,
     copertinaFileId: c.copertina_file_id,
     copertinaUrl: c.copertina_url,
-    livelloJLPT: c.livello_jlpt,
+    materia: c.materia,
+    livello: c.livello,
     conteggioCapitoli: conteggi.get(c.id) || 0,
     created_at: c.created_at,
   }));
@@ -1020,7 +1055,8 @@ const dettaglioCorsoStudente = async ({ corsoId, studente }) => {
     descrizione: corso.descrizione,
     copertinaFileId: corso.copertina_file_id,
     copertinaUrl: corso.copertina_url,
-    livelloJLPT: corso.livello_jlpt,
+    materia: corso.materia,
+    livello: corso.livello,
     conteggioCapitoli: conteggi.get(corsoId) || 0,
     capitoli,
     created_at: corso.created_at,

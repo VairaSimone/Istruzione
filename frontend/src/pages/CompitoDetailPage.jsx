@@ -15,6 +15,7 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import styles from '../features/compiti/components/Compiti.module.css';
+import { etichettaTipoAttivita } from '../constants/tipiAttivita';
 
 /** Dettaglio compito (docente): metadati, statistiche, assegnazioni e consegne. */
 const CompitoDetailPage = () => {
@@ -56,7 +57,7 @@ const CompitoDetailPage = () => {
             <Badge tone={STATO_COMPITO_TONE[compito.stato] || 'neutral'}>
               {t(`compiti.stati.${compito.stato}`)}
             </Badge>
-            <Badge tone="neutral">{t(`compiti.tipi.${compito.tipoAttivita}`)}</Badge>
+            <Badge tone="neutral">{t(etichettaTipoAttivita(compito.tipoAttivita))}</Badge>
             <span className={styles.mutedSmall}>
               {t('compiti.card.scadenza', {
                 data: formatDateTime(compito.dataScadenza, i18n.language),

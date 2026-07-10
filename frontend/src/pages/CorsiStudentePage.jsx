@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCorsiStudente } from '../hooks/useCorsi';
-import { LIVELLI_JLPT } from '../constants/domain';
 import CorsoStudenteCard from '../features/corsi/components/CorsoStudenteCard';
 import Button from '../components/ui/Button';
-import Select from '../components/ui/Select';
+import FiltroVocabolario from '../components/ui/FiltroVocabolario';
 import TextField from '../components/ui/TextField';
 import Spinner from '../components/ui/Spinner';
 import styles from '../features/corsi/components/Corsi.module.css';
@@ -49,18 +48,13 @@ const CorsiStudentePage = () => {
           onChange={(e) => updateFilter('q', e.target.value)}
           placeholder={t('corsi.list.searchPlaceholder')}
         />
-        <Select
-          label={t('corsi.form.livelloJLPT')}
+        <FiltroVocabolario
+          vocabolario="livelliDisponibili"
+          label={t('corsi.form.livello')}
           placeholder={t('corsi.list.allLevels')}
           value={filters.livello}
-          onChange={(e) => updateFilter('livello', e.target.value)}
-        >
-          {LIVELLI_JLPT.map((liv) => (
-            <option key={liv} value={liv}>
-              {liv}
-            </option>
-          ))}
-        </Select>
+          onChange={(valore) => updateFilter('livello', valore)}
+        />
       </div>
 
       {isLoading && <Spinner size="lg" />}

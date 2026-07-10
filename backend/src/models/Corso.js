@@ -4,9 +4,13 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('./Utente');
 
-// Livelli JLPT ammessi per il corso (allineati ad aule/kanji, ma facoltativi:
-// un corso può essere trasversale e non avere un livello unico).
-const LIVELLI_JLPT = ['N5', 'N4', 'N3', 'N2', 'N1'];
+// Livello e materia del corso sono STRINGHE LIBERE, non ENUM: la piattaforma è
+// generica e ogni scuola usa la propria scala ("A1", "Base", "Terzo anno") e le
+// proprie materie ("Inglese", "Matematica", "Sicurezza sul lavoro"). I valori
+// possono essere ristretti per tenant tramite
+// `impostazioni.didattica.livelliDisponibili` / `materieDisponibili`.
+const LIVELLO_MAX = 40;
+const MATERIA_MAX = 80;
 
 // Stato di pubblicazione del corso (coerente con lo stato dei compiti):
 //   - 'bozza'      → visibile solo allo staff della scuola, non agli studenti;
@@ -59,7 +63,8 @@ class Corso extends Model {
       // `/api/corsi/files/<copertinaFileId>`; in alternativa resta l'URL esterno.
       copertinaFileId: this.copertina_file_id,
       copertinaUrl: this.copertina_url,
-      livelloJLPT: this.livello_jlpt,
+      materia: this.materia,
+      livello: this.livello,
       stato: this.stato,
       videoScaricabile: this.video_scaricabile,
       scuolaId: this.scuola_id,
@@ -116,17 +121,24 @@ Corso.init(
       field: 'copertina_file_id',
     },
 
-    // Livello JLPT prevalente del corso (facoltativo).
-    livello_jlpt: {
-      type: DataTypes.ENUM(...LIVELLI_JLPT),
+    // Materia/categoria del corso (facoltativa, testo libero).
+    materia: {
+      type: DataTypes.STRING(MATERIA_MAX),
       allowNull: true,
       defaultValue: null,
-      field: 'livello_jlpt',
       validate: {
-        isIn: {
-          args: [LIVELLI_JLPT],
-          msg: `Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`,
-        },
+        len: { args: [0, MATERIA_MAX], msg: `La materia non può superare i ${MATERIA_MAX} caratteri` },
+      },
+    },
+
+    // Livello prevalente del corso (facoltativo, testo libero).
+    // La validazione contro il vocabolario della scuola avviene nel service.
+    livello: {
+      type: DataTypes.STRING(LIVELLO_MAX),
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        len: { args: [0, LIVELLO_MAX], msg: `Il livello non può superare i ${LIVELLO_MAX} caratteri` },
       },
     },
 
@@ -184,7 +196,8 @@ Corso.init(
       { fields: ['scuola_id'], name: 'corsi_scuola_id' },
       { fields: ['creato_da'], name: 'corsi_creato_da' },
       { fields: ['stato'], name: 'corsi_stato' },
-      { fields: ['livello_jlpt'], name: 'corsi_livello_jlpt' },
+      { fields: ['livello'], name: 'corsi_livello' },
+      { fields: ['materia'], name: 'corsi_materia' },
       { fields: ['copertina_file_id'], name: 'corsi_copertina_file_id' },
     ],
   }
@@ -206,7 +219,8 @@ Corso.belongsTo(FileCaricato, {
   onDelete: 'SET NULL',
 });
 
-Corso.LIVELLI_JLPT = LIVELLI_JLPT;
+Corso.LIVELLO_MAX = LIVELLO_MAX;
+Corso.MATERIA_MAX = MATERIA_MAX;
 Corso.STATI_CORSO = STATI_CORSO;
 Corso.URL_MAX = URL_MAX;
 Corso.URL_REGEX = URL_REGEX;

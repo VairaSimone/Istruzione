@@ -1,0 +1,40 @@
+import { Navigate, Outlet } from 'react-router-dom';
+import { useConfig, useFunzionalitaAttiva } from '../hooks/useConfig';
+import { useAuthStore, selectIsAdmin } from '../store/authStore';
+import { ROUTES } from '../constants/routes';
+import Spinner from '../components/ui/Spinner';
+
+/**
+ * GUARD DI SEZIONE.
+ *
+ * Una scuola può disattivare intere sezioni (quiz, corsi, compiti, messaggi…).
+ * Nascondere la voce di menu non basta: chi conosce l'URL ci arriverebbe
+ * comunque e vedrebbe una pagina rotta, con una manciata di 403 dalle chiamate
+ * API. Questo componente intercetta la navigazione prima del render.
+ *
+ * Il controllo è di sola cortesia — la difesa vera è nel backend, che risponde
+ * `403 FEATURE_DISABLED` su ogni route della sezione (middleware
+ * `richiediFunzionalita`). Qui evitiamo solo un'esperienza sgradevole.
+ *
+ * L'ADMIN è trasversale alle scuole e non ha una propria configurazione: passa
+ * sempre, coerentemente col backend.
+ *
+ * @param {string} funzionalita chiave del registro (`constants/funzionalita.js`)
+ */
+const FeatureRoute = ({ funzionalita }) => {
+  const { isLoading } = useConfig();
+  const isAdmin = useAuthStore(selectIsAdmin);
+  const attiva = useFunzionalitaAttiva(funzionalita);
+
+  // Finché la configurazione non è arrivata non sappiamo nulla: attendere è
+  // meglio che rimbalzare l'utente su /403 e poi riportarlo indietro.
+  if (isLoading) return <Spinner size="lg" />;
+
+  if (!isAdmin && !attiva) {
+    return <Navigate to={ROUTES.FORBIDDEN} replace state={{ funzionalita }} />;
+  }
+
+  return <Outlet />;
+};
+
+export default FeatureRoute;

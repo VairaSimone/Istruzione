@@ -6,6 +6,7 @@ const router = express.Router();
 const compitiController = require('../controllers/compitiController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const validate = require('../middleware/validate');
 
@@ -52,6 +53,8 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione (dipende a sua volta da `aule`, cfr. registro funzionalità).
+router.use(richiediFunzionalita('compiti'));
 
 // ── STUDENTE ──
 router.get(

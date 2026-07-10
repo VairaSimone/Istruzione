@@ -22,6 +22,7 @@ import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import FormError from '../components/shared/FormError';
 import styles from './AuthPage.module.css';
+import { etichettaClasse } from '../utils/classe';
 
 const RegisterPage = () => {
   const { t } = useTranslation();
@@ -175,7 +176,7 @@ const RegisterPage = () => {
         {!isTeacherInvite && (
           <TextField
             label={t('auth.fields.classe')}
-            value={t(`classi.${invito.classe}`)}
+            value={etichettaClasse(t, invito.classe)}
             readOnly
             disabled
           />

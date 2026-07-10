@@ -3,17 +3,21 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { buildCompitoSchema } from '../../../validators/compitiSchemas';
+import { buildCompitoSchema, buildConfigurazione } from '../../../validators/compitiSchemas';
 import { useCreateCompito, useUpdateCompito } from '../../../hooks/useCompiti';
+import { useQuizList } from '../../../hooks/useQuizGestione';
+import { useCorsiList } from '../../../hooks/useCorsi';
+import { useFunzionalitaAttiva } from '../../../hooks/useConfig';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
 import { toDatetimeLocal, fromDatetimeLocal } from '../../../utils/datetime';
+import { STATI_COMPITO } from '../../../constants/domain';
 import {
-  TIPI_ATTIVITA_COMPITO,
-  STATI_COMPITO,
-  ALFABETI_KANA,
-  LIVELLI_JLPT,
-} from '../../../constants/domain';
+  CODICI_ATTIVITA,
+  TIPI_ATTIVITA,
+  normalizzaTipoAttivita,
+} from '../../../constants/tipiAttivita';
+import { FUNZIONALITA } from '../../../constants/funzionalita';
 import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
@@ -21,27 +25,38 @@ import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
 import styles from './Compiti.module.css';
 
-const CAMPI = ['titolo', 'descrizione', 'tipoAttivita', 'dataScadenza', 'tempoLimiteMinuti', 'punteggioMassimo', 'stato'];
+const CAMPI = [
+  'titolo',
+  'descrizione',
+  'tipoAttivita',
+  'dataScadenza',
+  'tempoLimiteMinuti',
+  'punteggioMassimo',
+  'stato',
+];
 
-/** Costruisce l'oggetto `configurazione` dai campi condizionali del form. */
-const buildConfigurazione = (values) => {
-  const cfg = {};
-  if (values.tipoAttivita === 'quiz_kana' && values.alfabeto) cfg.alfabeto = values.alfabeto;
-  if (values.tipoAttivita === 'quiz_kanji' && values.livelloJLPT) cfg.livelloJLPT = values.livelloJLPT;
-  if (
-    (values.tipoAttivita === 'quiz_kana' || values.tipoAttivita === 'quiz_kanji') &&
-    values.numeroDomande
-  ) {
-    cfg.numeroDomande = values.numeroDomande;
-  }
-  return Object.keys(cfg).length ? cfg : null;
-};
-
+/**
+ * Crea o modifica un COMPITO.
+ *
+ * Il tipo di attività viene dal registro `constants/tipiAttivita.js`: codici
+ * neutri (`quiz`, `corso`, `pratica_scrittura`, `lettura`, `consegna`,
+ * `personalizzato`), non più i vecchi `quiz_kana`/`quiz_kanji`. Un compito di
+ * tipo `quiz` punta a un quiz REALE della scuola — che sia l'installazione di
+ * un template di giapponese o un quiz di matematica scritto a mano, al compito
+ * non interessa.
+ *
+ * I tipi la cui sezione è disattivata per la scuola non vengono proposti: non
+ * ha senso assegnare un corso a una scuola che non usa i corsi.
+ */
 const CompitoFormModal = ({ isOpen, onClose, compito = null }) => {
   const { t } = useTranslation();
   const createCompito = useCreateCompito();
   const updateCompito = useUpdateCompito();
   const isEdit = Boolean(compito);
+
+  const quizAttivi = useFunzionalitaAttiva(FUNZIONALITA.QUIZ);
+  const corsiAttivi = useFunzionalitaAttiva(FUNZIONALITA.CORSI);
+  const scritturaAttiva = useFunzionalitaAttiva(FUNZIONALITA.PRATICA_SCRITTURA);
 
   const schema = useMemo(() => buildCompitoSchema(t), [t]);
   const {
@@ -55,20 +70,48 @@ const CompitoFormModal = ({ isOpen, onClose, compito = null }) => {
 
   const tipoAttivita = useWatch({ control, name: 'tipoAttivita' });
 
+  // Gli elenchi si caricano solo quando servono davvero al tipo selezionato.
+  const { data: quizData } = useQuizList(
+    tipoAttivita === TIPI_ATTIVITA.QUIZ ? { stato: 'pubblicato', limit: 100 } : {}
+  );
+  const { data: corsiData } = useCorsiList(
+    tipoAttivita === TIPI_ATTIVITA.CORSO ? { stato: 'pubblicato', limit: 100 } : {}
+  );
+
+  const quiz = quizData?.quiz ?? [];
+  const corsi = corsiData?.corsi ?? [];
+
+  /** Tipi proponibili: nascondiamo quelli la cui sezione è spenta. */
+  const tipiDisponibili = useMemo(
+    () =>
+      CODICI_ATTIVITA.filter((codice) => {
+        if (codice === TIPI_ATTIVITA.QUIZ) return quizAttivi;
+        if (codice === TIPI_ATTIVITA.CORSO) return corsiAttivi;
+        if (codice === TIPI_ATTIVITA.PRATICA_SCRITTURA) return scritturaAttiva;
+        return true;
+      }),
+    [quizAttivi, corsiAttivi, scritturaAttiva]
+  );
+
   useEffect(() => {
     if (!isOpen) return;
     const cfg = compito?.configurazione || {};
     reset({
       titolo: compito?.titolo ?? '',
       descrizione: compito?.descrizione ?? '',
-      tipoAttivita: compito?.tipoAttivita ?? '',
+      // I compiti creati prima della generalizzazione portano ancora i codici
+      // storici: li traduciamo in lettura, così il <select> li riconosce.
+      tipoAttivita: compito?.tipoAttivita
+        ? normalizzaTipoAttivita(compito.tipoAttivita)
+        : '',
       dataScadenza: toDatetimeLocal(compito?.dataScadenza) ?? '',
       tempoLimiteMinuti: compito?.tempoLimiteMinuti ?? '',
       punteggioMassimo: compito?.punteggioMassimo ?? 100,
       stato: compito?.stato ?? 'bozza',
-      alfabeto: cfg.alfabeto ?? '',
-      livelloJLPT: cfg.livelloJLPT ?? '',
+      quizId: cfg.quizId ?? '',
+      corsoId: cfg.corsoId ?? '',
       numeroDomande: cfg.numeroDomande ?? '',
+      istruzioni: cfg.istruzioni ?? '',
     });
   }, [isOpen, compito, reset]);
 
@@ -105,7 +148,9 @@ const CompitoFormModal = ({ isOpen, onClose, compito = null }) => {
   };
 
   const isPending = createCompito.isPending || updateCompito.isPending;
-  const isQuiz = tipoAttivita === 'quiz_kana' || tipoAttivita === 'quiz_kanji';
+  const isQuiz = tipoAttivita === TIPI_ATTIVITA.QUIZ;
+  const isCorso = tipoAttivita === TIPI_ATTIVITA.CORSO;
+  const mostraConfig = Boolean(tipoAttivita);
 
   return (
     <Modal
@@ -145,7 +190,7 @@ const CompitoFormModal = ({ isOpen, onClose, compito = null }) => {
             error={errors.tipoAttivita?.message}
             {...register('tipoAttivita')}
           >
-            {TIPI_ATTIVITA_COMPITO.map((tipo) => (
+            {tipiDisponibili.map((tipo) => (
               <option key={tipo} value={tipo}>
                 {t(`compiti.tipi.${tipo}`)}
               </option>
@@ -193,46 +238,73 @@ const CompitoFormModal = ({ isOpen, onClose, compito = null }) => {
           />
         </div>
 
-        {/* Configurazione attività (condizionale) */}
-        {isQuiz && (
+        {/* Configurazione dell'attività: dipende dal tipo selezionato. */}
+        {mostraConfig && (
           <div className={styles.configBox}>
             <span className={styles.configTitle}>{t('compiti.form.configTitle')}</span>
-            <div className={styles.formRow}>
-              {tipoAttivita === 'quiz_kana' && (
+            <p className={styles.configHint}>{t(`compiti.tipiDescrizione.${tipoAttivita}`)}</p>
+
+            {isQuiz && (
+              <div className={styles.formRow}>
                 <Select
-                  label={t('compiti.form.alfabeto')}
-                  placeholder={t('compiti.form.qualsiasi')}
-                  {...register('alfabeto')}
+                  label={t('compiti.form.quiz')}
+                  required
+                  placeholder={
+                    quiz.length === 0
+                      ? t('compiti.form.quizVuoto')
+                      : t('compiti.form.quizPlaceholder')
+                  }
+                  disabled={quiz.length === 0}
+                  error={errors.quizId?.message}
+                  {...register('quizId')}
                 >
-                  {ALFABETI_KANA.map((a) => (
-                    <option key={a} value={a}>
-                      {t(`compiti.alfabeti.${a}`)}
+                  {quiz.map((q) => (
+                    <option key={q.id} value={q.id}>
+                      {q.titolo}
+                      {q.materia ? ` — ${q.materia}` : ''}
                     </option>
                   ))}
                 </Select>
-              )}
-              {tipoAttivita === 'quiz_kanji' && (
-                <Select
-                  label={t('compiti.form.livelloJLPT')}
-                  placeholder={t('compiti.form.qualsiasi')}
-                  {...register('livelloJLPT')}
-                >
-                  {LIVELLI_JLPT.map((liv) => (
-                    <option key={liv} value={liv}>
-                      {liv}
-                    </option>
-                  ))}
-                </Select>
-              )}
-              <TextField
-                label={t('compiti.form.numeroDomande')}
-                type="number"
-                min="1"
-                max="200"
-                error={errors.numeroDomande?.message}
-                {...register('numeroDomande')}
-              />
-            </div>
+                <TextField
+                  label={t('compiti.form.numeroDomande')}
+                  type="number"
+                  min="1"
+                  max="200"
+                  hint={t('compiti.form.numeroDomandeHint')}
+                  error={errors.numeroDomande?.message}
+                  {...register('numeroDomande')}
+                />
+              </div>
+            )}
+
+            {isCorso && (
+              <Select
+                label={t('compiti.form.corso')}
+                required
+                placeholder={
+                  corsi.length === 0
+                    ? t('compiti.form.corsoVuoto')
+                    : t('compiti.form.corsoPlaceholder')
+                }
+                disabled={corsi.length === 0}
+                error={errors.corsoId?.message}
+                {...register('corsoId')}
+              >
+                {corsi.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.titolo}
+                  </option>
+                ))}
+              </Select>
+            )}
+
+            <TextArea
+              label={t('compiti.form.istruzioni')}
+              rows={2}
+              hint={t('compiti.form.istruzioniHint')}
+              error={errors.istruzioni?.message}
+              {...register('istruzioni')}
+            />
           </div>
         )}
       </form>

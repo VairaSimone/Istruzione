@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getActiveLanguage } from '../i18n';
+import { getScuolaSlug, HEADER_SCUOLA } from './tenant';
 
 /**
  * Istanza Axios condivisa da tutti i service.
@@ -21,6 +22,12 @@ import { getActiveLanguage } from '../i18n';
  * (notifiche/contenuti localizzati lato server). Si usa il query param e
  * NON l'header `Accept-Language` perché quest'ultimo è un "forbidden
  * header" che il browser non consente di impostare via JS.
+ *
+ * Multi-scuola: quando il tenant attivo è noto (vedi `api/tenant.js`) lo slug
+ * viaggia nell'header `X-Scuola`. Serve agli endpoint PUBBLICI di
+ * configurazione (`/config`), che devono sapere quale branding servire a un
+ * visitatore anonimo. Per le richieste autenticate il backend ignora l'header e
+ * usa la scuola dell'utente: l'isolamento tra tenant non dipende dal client.
  */
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -36,8 +43,13 @@ const getCookie = (name) => {
 };
 
 apiClient.interceptors.request.use((config) => {
-
   config.params = { ...(config.params || {}), lang: getActiveLanguage() };
+
+  const scuolaSlug = getScuolaSlug();
+  if (scuolaSlug) {
+    config.headers = config.headers || {};
+    config.headers[HEADER_SCUOLA] = scuolaSlug;
+  }
 
   const method = (config.method || 'get').toLowerCase();
   if (!CSRF_SAFE_METHODS.includes(method)) {

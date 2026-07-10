@@ -56,7 +56,8 @@ const CorsoDetailPage = () => {
             <Badge tone={STATO_CORSO_TONE[corso.stato] || 'neutral'}>
               {t(`corsi.stati.${corso.stato}`)}
             </Badge>
-            {corso.livelloJLPT && <Badge tone="neutral">{corso.livelloJLPT}</Badge>}
+            {corso.materia && <Badge tone="gold">{corso.materia}</Badge>}
+            {corso.livello && <Badge tone="neutral">{corso.livello}</Badge>}
             <Badge tone={corso.videoScaricabile ? 'matcha' : 'neutral'}>
               {corso.videoScaricabile
                 ? t('corsi.detail.downloadDefaultOn')

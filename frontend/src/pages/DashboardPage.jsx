@@ -12,7 +12,10 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import GamificationSummary from '../features/quiz/components/GamificationSummary';
+import { useFunzionalitaAttiva } from '../hooks/useConfig';
+import { FUNZIONALITA } from '../constants/funzionalita';
 import styles from './DashboardPage.module.css';
+import { etichettaClasse } from '../utils/classe';
 
 const DashboardPage = () => {
   const { t } = useTranslation();
@@ -20,6 +23,7 @@ const DashboardPage = () => {
   const isAdmin = useAuthStore(selectIsAdmin);
   const canManage = useAuthStore(selectCanManage);
   const isTeacher = useAuthStore(selectIsTeacher);
+  const gamificationAttiva = useFunzionalitaAttiva(FUNZIONALITA.GAMIFICATION);
 
   if (!user) return null; // ProtectedRoute garantisce che qui user esista sempre
 
@@ -46,7 +50,7 @@ const DashboardPage = () => {
             {user.classe && (
               <div className={styles.summaryRow}>
                 <dt>{t('dashboard.labelClasse')}</dt>
-                <dd>{t(`classi.${user.classe}`)}</dd>
+                <dd>{etichettaClasse(t, user.classe)}</dd>
               </div>
             )}
             <div className={styles.summaryRow}>
@@ -71,7 +75,8 @@ const DashboardPage = () => {
         </Card>
 
         {/* PROGRESSI / GAMIFICATION */}
-        <GamificationSummary />
+        {/* Punti, livelli e serie: solo se la scuola usa la gamification. */}
+        {gamificationAttiva && <GamificationSummary />}
 
         {/* GESTIONE DOCENTE / CAN MANAGE */}
         {(canManage || isTeacher) && (

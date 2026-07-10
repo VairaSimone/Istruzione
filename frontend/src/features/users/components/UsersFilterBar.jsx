@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { CLASSI, ROLE_OPTIONS } from '../../../constants/domain';
+import { ROLE_OPTIONS } from '../../../constants/domain';
+import { useVocabolario } from '../../../hooks/useImpostazioniScuola';
 import TextField from '../../../components/ui/TextField';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
@@ -10,9 +11,14 @@ import styles from './UsersFilterBar.module.css';
  * Filtri per GET /gestione/utenti. Rispecchiano i parametri di query
  * REALMENTE supportati da `authService.getUtentiPerInsegnante`
  * (?ruolo=, ?classe=, ?nome=).
+ *
+ * Le CLASSI arrivano dal vocabolario della scuola, non da una costante: se la
+ * scuola non ne ha definito alcuno il filtro per classe non ha voci da offrire
+ * e viene omesso, invece di mostrare un menu di classi che nessuno usa.
  */
 const UsersFilterBar = ({ onFilterChange, currentFilters }) => {
   const { t } = useTranslation();
+  const classi = useVocabolario('classiDisponibili');
   const { register, handleSubmit, reset } = useForm({
     defaultValues: currentFilters,
   });
@@ -52,19 +58,29 @@ const UsersFilterBar = ({ onFilterChange, currentFilters }) => {
           ))}
         </Select>
       </div>
-      <div className={styles.fieldNarrow}>
-        <Select
-          label={t('users.filters.classeLabel')}
-          placeholder={t('users.filters.classeAll')}
-          {...register('classe')}
-        >
-          {CLASSI.map((classe) => (
-            <option key={classe} value={classe}>
-              {t(`classi.${classe}`)}
-            </option>
-          ))}
-        </Select>
-      </div>
+      {classi.length > 0 ? (
+        <div className={styles.fieldNarrow}>
+          <Select
+            label={t('users.filters.classeLabel')}
+            placeholder={t('users.filters.classeAll')}
+            {...register('classe')}
+          >
+            {classi.map((classe) => (
+              <option key={classe} value={classe}>
+                {classe}
+              </option>
+            ))}
+          </Select>
+        </div>
+      ) : (
+        <div className={styles.fieldNarrow}>
+          <TextField
+            label={t('users.filters.classeLabel')}
+            placeholder={t('users.filters.classeAll')}
+            {...register('classe')}
+          />
+        </div>
+      )}
       <div className={styles.actions}>
         <Button type="submit" size="sm">
           {t('users.filters.submit')}

@@ -8,11 +8,12 @@ import { useCreateCorso, useUpdateCorso } from '../../../hooks/useCorsi';
 import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
-import { LIVELLI_JLPT, STATI_CORSO } from '../../../constants/domain';
+import { STATI_CORSO, LIVELLO_MAX, MATERIA_MAX } from '../../../constants/domain';
 import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
 import Select from '../../../components/ui/Select';
+import VocabolarioField from '../../../components/ui/VocabolarioField';
 import Button from '../../../components/ui/Button';
 import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Corsi.module.css';
@@ -21,7 +22,8 @@ const CAMPI = [
   'titolo',
   'descrizione',
   'copertinaUrl',
-  'livelloJLPT',
+  'materia',
+  'livello',
   'stato',
   'scuolaId',
 ];
@@ -30,6 +32,10 @@ const CAMPI = [
  * Crea o modifica un corso. In creazione, un admin deve indicare la scuola
  * (l'insegnante usa la propria, gestita dal backend). La scuola NON è
  * modificabile dopo la creazione (il backend non accetta il cambio tenant).
+ *
+ * MATERIA e LIVELLO sono `VocabolarioField`: diventano <select> se la scuola ha
+ * definito i propri vocabolari, altrimenti restano a testo libero. Un corso può
+ * riguardare qualsiasi disciplina — nessun elenco è cablato qui.
  */
 const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
   const { t } = useTranslation();
@@ -57,7 +63,9 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
       titolo: corso?.titolo ?? '',
       descrizione: corso?.descrizione ?? '',
       copertinaUrl: corso?.copertinaUrl ?? '',
-      livelloJLPT: corso?.livelloJLPT ?? '',
+      materia: corso?.materia ?? '',
+      // `livelloJLPT`: alias storico ancora presente nelle risposte in cache.
+      livello: corso?.livello ?? corso?.livelloJLPT ?? '',
       stato: corso?.stato ?? 'bozza',
       videoScaricabile: corso?.videoScaricabile ?? false,
       scuolaId: corso?.scuolaId ?? '',
@@ -69,7 +77,8 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
       titolo: values.titolo,
       descrizione: values.descrizione ?? null,
       copertinaUrl: values.copertinaUrl ?? null,
-      livelloJLPT: values.livelloJLPT ?? null,
+      materia: values.materia ?? null,
+      livello: values.livello ?? null,
       stato: values.stato,
       videoScaricabile: Boolean(values.videoScaricabile),
     };
@@ -139,18 +148,25 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
           {...register('copertinaUrl')}
         />
         <div className={styles.formRow}>
-          <Select
-            label={t('corsi.form.livelloJLPT')}
+          <VocabolarioField
+            vocabolario="materieDisponibili"
+            label={t('corsi.form.materia')}
+            placeholder={t('corsi.form.materiaQualsiasi')}
+            maxLength={MATERIA_MAX}
+            error={errors.materia?.message}
+            {...register('materia')}
+          />
+          <VocabolarioField
+            vocabolario="livelliDisponibili"
+            label={t('corsi.form.livello')}
             placeholder={t('corsi.form.livelloQualsiasi')}
-            error={errors.livelloJLPT?.message}
-            {...register('livelloJLPT')}
-          >
-            {LIVELLI_JLPT.map((liv) => (
-              <option key={liv} value={liv}>
-                {liv}
-              </option>
-            ))}
-          </Select>
+            maxLength={LIVELLO_MAX}
+            error={errors.livello?.message}
+            {...register('livello')}
+          />
+        </div>
+
+        <div className={styles.formRow}>
           <Select
             label={t('corsi.form.stato')}
             required

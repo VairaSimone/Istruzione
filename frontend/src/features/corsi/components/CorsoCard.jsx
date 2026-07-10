@@ -35,7 +35,8 @@ const CorsoCard = ({ corso }) => {
       {corso.descrizione && <p className={styles.cardDesc}>{corso.descrizione}</p>}
 
       <div className={styles.cardMeta}>
-        {corso.livelloJLPT && <Badge tone="neutral">{corso.livelloJLPT}</Badge>}
+        {corso.materia && <Badge tone="gold">{corso.materia}</Badge>}
+        {corso.livello && <Badge tone="neutral">{corso.livello}</Badge>}
         {corso.videoScaricabile && (
           <Badge tone="matcha">{t('corsi.card.scaricabile')}</Badge>
         )}

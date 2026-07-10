@@ -6,6 +6,7 @@ const router = express.Router();
 const statisticheController = require('../controllers/statisticheController');
 
 const { authenticateJWT } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const validate = require('../middleware/validate');
 const {
   validateHeatmap,
@@ -28,6 +29,8 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione: statistiche/heatmap disattivabili per scuola.
+router.use(richiediFunzionalita('statistiche'));
 
 router.get('/heatmap', validateHeatmap, validate, statisticheController.heatmap);
 

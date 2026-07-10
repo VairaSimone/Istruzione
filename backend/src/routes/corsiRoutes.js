@@ -6,6 +6,7 @@ const router = express.Router();
 const corsiController = require('../controllers/corsiController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const { uploadVideo, uploadImmagine, uploadDocumento } = require('../middleware/upload');
 const validate = require('../middleware/validate');
@@ -64,6 +65,9 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione: se la scuola ha disattivato i corsi, l'intero modulo è 403.
+// Nascondere la voce di menu lato frontend non basta: il controllo è qui.
+router.use(richiediFunzionalita('corsi'));
 
 // ═════════════════════════════════════════════
 // STUDENTE

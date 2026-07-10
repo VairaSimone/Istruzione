@@ -6,11 +6,16 @@ import LanguageSection from '../features/auth/components/LanguageSection';
 import ChangeEmailSection from '../features/auth/components/ChangeEmailSection';
 import DeleteAccountSection from '../features/auth/components/DeleteAccountSection';
 import BadgeSection from '../features/quiz/components/BadgeSection';
+import { useFunzionalitaAttiva } from '../hooks/useConfig';
+import { FUNZIONALITA } from '../constants/funzionalita';
 import styles from './ProfilePage.module.css';
+import { etichettaClasse } from '../utils/classe';
 
 const ProfilePage = () => {
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
+  // Gli hook vanno chiamati prima di qualunque uscita anticipata.
+  const gamificationAttiva = useFunzionalitaAttiva(FUNZIONALITA.GAMIFICATION);
 
   if (!user) return null;
 
@@ -43,7 +48,7 @@ const ProfilePage = () => {
           {user.classe && (
             <div>
               <dt>{t('profile.classe')}</dt>
-              <dd>{t(`classi.${user.classe}`)}</dd>
+              <dd>{etichettaClasse(t, user.classe)}</dd>
             </div>
           )}
           <div>
@@ -67,7 +72,8 @@ const ProfilePage = () => {
         </dl>
       </Card>
 
-      <BadgeSection />
+      {/* Obiettivi e badge: solo se la scuola usa la gamification. */}
+      {gamificationAttiva && <BadgeSection />}
 
       <LanguageSection />
       <ChangeEmailSection />

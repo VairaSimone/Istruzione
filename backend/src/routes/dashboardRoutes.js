@@ -6,6 +6,7 @@ const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const validate = require('../middleware/validate');
 const {
   validateDashboardQuery,
@@ -27,6 +28,8 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione: la dashboard dell'insegnante è parte delle statistiche.
+router.use(richiediFunzionalita('statistiche'));
 router.use(authorizeRoles('insegnante', 'admin'));
 
 router.get('/', validateDashboardQuery, validate, dashboardController.dashboardGlobale);

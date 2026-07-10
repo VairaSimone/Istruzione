@@ -20,6 +20,8 @@ import StreakCard from '../features/quiz/components/StreakCard';
 import ActivityHeatmap from '../features/quiz/components/ActivityHeatmap';
 import ProblematicCharsPanel from '../features/quiz/components/ProblematicCharsPanel';
 import { mostraBadgeSbloccati } from '../features/quiz/badgeToasts';
+import { useFunzionalitaAttiva } from '../hooks/useConfig';
+import { FUNZIONALITA } from '../constants/funzionalita';
 import styles from './QuizPage.module.css';
 
 /**
@@ -54,6 +56,9 @@ const QuizPage = () => {
   const [quizSelezionato, setQuizSelezionato] = useState(null);
   const [timerMode, setTimerMode] = useState(false);
   const [esito, setEsito] = useState(null);
+
+  const statisticheAttive = useFunzionalitaAttiva(FUNZIONALITA.STATISTICHE);
+  const scritturaAttiva = useFunzionalitaAttiva(FUNZIONALITA.PRATICA_SCRITTURA);
 
   const dashboard = useQuizDashboard();
   const generateMutation = useGenerateQuiz();
@@ -168,66 +173,76 @@ const QuizPage = () => {
         <p className={styles.subtitle}>{t('quiz.pageSubtitle')}</p>
       </header>
 
-      {/* ── HOME: statistiche + avvio ─────────────────────────── */}
+      {/*
+        ── HOME: avvio, quiz assegnati, statistiche ───────────────
+        Le statistiche e i progressi appartengono alla sezione `statistiche`,
+        la scrittura guidata alla sezione `praticaScrittura`: entrambe possono
+        essere spente dalla scuola. L'avvio di una partita e i quiz assegnati
+        restano sempre visibili — sono il cuore della pagina e non dipendono
+        da nulla di opzionale.
+      */}
       {fase === FASI.HOME && (
-        <>
-          {dashboard.isLoading && <Spinner size="lg" label={t('common.loading')} />}
+        <div className={styles.homeLayout}>
+          {statisticheAttive && dashboard.isLoading && (
+            <Spinner size="lg" label={t('common.loading')} />
+          )}
 
-          {dashboard.isError && (
+          {statisticheAttive && dashboard.isError && (
             <ErrorState
               message={getApiErrorMessage(t, dashboard.error)}
               onRetry={dashboard.refetch}
             />
           )}
 
-          {dashboard.isSuccess && (
-            <div className={styles.homeLayout}>
-              <QuizStatsPanel
-                statistiche={dashboard.data.statistiche}
-                mastered={dashboard.data.mastered}
-                peggioriKana={dashboard.data.peggioriKana}
-              />
-              <div className={styles.startBar}>
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    setQuizSelezionato(null);
-                    vaiAllaConfigurazione();
-                  }}
-                >
-                  {t('quiz.startSession')}
-                </Button>
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  onClick={() => setFase(FASI.PRACTICE)}
-                >
-                  {t('quiz.practiceWriting')}
-                </Button>
-              </div>
-
-              {/* Quiz assegnati dalla scuola (template installati o personalizzati) */}
-              <QuizDisponibiliPanel
-                onStartQuiz={handleStartQuizScuola}
-                isStarting={generateMutation.isPending}
-              />
-
-              {/* Progressi: streak, heatmap attività, caratteri problematici */}
-              <section className={styles.progressi} aria-label={t('quiz.progress.title')}>
-                <StreakCard />
-                <ActivityHeatmap />
-                <ProblematicCharsPanel
-                  onStartIntensivo={handleStartIntensivo}
-                  isStarting={intensivoMutation.isPending}
-                />
-              </section>
-            </div>
+          {statisticheAttive && dashboard.isSuccess && (
+            <QuizStatsPanel
+              statistiche={dashboard.data.statistiche}
+              mastered={dashboard.data.mastered}
+              peggioriKana={dashboard.data.peggioriKana}
+            />
           )}
-        </>
+
+          <div className={styles.startBar}>
+            <Button
+              size="lg"
+              onClick={() => {
+                setQuizSelezionato(null);
+                vaiAllaConfigurazione();
+              }}
+            >
+              {t('quiz.startSession')}
+            </Button>
+            {scritturaAttiva && (
+              <Button size="lg" variant="secondary" onClick={() => setFase(FASI.PRACTICE)}>
+                {t('quiz.practiceWriting')}
+              </Button>
+            )}
+          </div>
+
+          {/* Quiz assegnati dalla scuola (template installati o personalizzati) */}
+          <QuizDisponibiliPanel
+            onStartQuiz={handleStartQuizScuola}
+            isStarting={generateMutation.isPending}
+          />
+
+          {/* Progressi: streak, heatmap attività, caratteri problematici */}
+          {statisticheAttive && (
+            <section className={styles.progressi} aria-label={t('quiz.progress.title')}>
+              <StreakCard />
+              <ActivityHeatmap />
+              <ProblematicCharsPanel
+                onStartIntensivo={handleStartIntensivo}
+                isStarting={intensivoMutation.isPending}
+              />
+            </section>
+          )}
+        </div>
       )}
 
       {/* ── PRACTICE: ordine tratti, scrittura su schermo, audio ─ */}
-      {fase === FASI.PRACTICE && <WritingPracticePanel onBack={tornaAllaHome} />}
+      {fase === FASI.PRACTICE && scritturaAttiva && (
+        <WritingPracticePanel onBack={tornaAllaHome} />
+      )}
 
       {/* ── SETUP: filtri di gioco ────────────────────────────── */}
       {fase === FASI.SETUP && (

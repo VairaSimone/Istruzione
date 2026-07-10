@@ -77,10 +77,12 @@ Invito.init(
       },
     },
 
-    // Valorizzata SOLO per gli inviti studente.
+    // Valorizzata SOLO per gli inviti studente. Testo libero: il vocabolario
+    // delle classi è una impostazione della scuola, non una costante di codice.
     classe: {
-      type: DataTypes.ENUM(...Utente.CLASSI_VALIDE),
+      type: DataTypes.STRING(Utente.CLASSE_MAX),
       allowNull: true,
+      defaultValue: null,
     },
 
     // Aula virtuale (facoltativa) a cui l'invito è legato: se valorizzata, al

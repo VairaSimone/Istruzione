@@ -17,8 +17,12 @@ const DIMENSIONE_ROUND_MIN = 1;
 const DIMENSIONE_ROUND_MAX = 50;
 const DIMENSIONE_ROUND_DEFAULT = 20;
 
-// Lunghezza massima della materia (campo libero: \"Giapponese\", \"Matematica\"…).
+// Lunghezza massima di materia e categoria (campi liberi: \"Inglese\",
+// \"Matematica\", \"Sicurezza sul lavoro\"…). Sono i due assi di classificazione
+// dei quiz: la MATERIA dice di che disciplina si tratta, la CATEGORIA raggruppa
+// i quiz dentro la materia (\"Grammatica\", \"Algebra\", \"Modulo 1\").
 const MATERIA_MAX = 80;
+const CATEGORIA_MAX = 80;
 
 /**
  * Quiz — un quiz DI UNA SCUOLA.
@@ -27,17 +31,18 @@ const MATERIA_MAX = 80;
  * specie, distinte da `template_codice`:
  *
  *   1. QUIZ DA TEMPLATE (`template_codice` valorizzato, es. 'kana' | 'kanji')
- *      La scuola INSTALLA un template di piattaforma. Le domande non stanno in
- *      database: le genera il motore del template (SRS sui dizionari canonici).
- *      La `configurazione` JSON fissa i parametri della partita (es. alfabeto,
- *      livello JLPT); i campi lasciati liberi restano scelti dallo studente.
- *      La stessa scuola può installare lo stesso template più volte con
- *      configurazioni diverse. Il quiz di giapponese storico vive qui: una
- *      scuola può inserirlo o meno.
+ *      La scuola INSTALLA un template di piattaforma: un quiz \"di esempio\" con
+ *      un motore di generazione scritto in codice. Le domande non stanno in
+ *      database: le genera il motore del template. La `configurazione` JSON
+ *      fissa i parametri della partita; i campi lasciati liberi restano scelti
+ *      dallo studente. La stessa scuola può installare lo stesso template più
+ *      volte con configurazioni diverse. I template di giapponese forniti con
+ *      la piattaforma vivono qui: una scuola può installarli o ignorarli, e
+ *      in futuro se ne aggiungeranno per altre lingue e materie.
  *
  *   2. QUIZ PERSONALIZZATO (`template_codice` null)
- *      Le domande sono righe di `domande_quiz` scritte dagli insegnanti. Il
- *      contenuto è libero: può non riguardare affatto il giapponese.
+ *      Le domande sono righe di `domande_quiz` scritte dagli insegnanti, su
+ *      qualsiasi materia (inglese, francese, matematica, informatica…).
  *
  * ISOLAMENTO TRA SCUOLE: `scuola_id` timbra il tenant. Un quiz è abilitabile
  * SOLO ad aule della stessa scuola (cfr. QuizAula) e gli studenti raggiungono i
@@ -66,6 +71,7 @@ class Quiz extends Model {
       titolo: this.titolo,
       descrizione: this.descrizione,
       materia: this.materia,
+      categoria: this.categoria,
       templateCodice: this.template_codice,
       motore: this.motore,
       configurazione: this.configurazione || {},
@@ -103,13 +109,29 @@ Quiz.init(
       defaultValue: null,
     },
 
-    // Materia libera: il quiz può non riguardare il giapponese.
+    // Materia libera: la piattaforma è generica, il quiz può riguardare
+    // qualunque disciplina. Il vocabolario delle materie è una impostazione
+    // della scuola (`impostazioni.didattica.materieDisponibili`), non una
+    // costante di codice: vuoto ⇒ testo libero.
     materia: {
       type: DataTypes.STRING(MATERIA_MAX),
       allowNull: true,
       defaultValue: null,
       validate: {
         len: { args: [0, MATERIA_MAX], msg: `La materia non può superare i ${MATERIA_MAX} caratteri` },
+      },
+    },
+
+    // Categoria/argomento libero, per raggruppare i quiz dentro una materia.
+    categoria: {
+      type: DataTypes.STRING(CATEGORIA_MAX),
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        len: {
+          args: [0, CATEGORIA_MAX],
+          msg: `La categoria non può superare i ${CATEGORIA_MAX} caratteri`,
+        },
       },
     },
 
@@ -201,6 +223,9 @@ Quiz.init(
       { fields: ['scuola_id'], name: 'quiz_scuola_id' },
       { fields: ['creato_da'], name: 'quiz_creato_da' },
       { fields: ['stato'], name: 'quiz_stato' },
+      // Filtro/raggruppamento dei quiz per materia e categoria.
+      { fields: ['scuola_id', 'materia'], name: 'quiz_scuola_materia' },
+      { fields: ['scuola_id', 'categoria'], name: 'quiz_scuola_categoria' },
       // Verifica rapida \"questa scuola ha installato il template X?\".
       { fields: ['scuola_id', 'template_codice'], name: 'quiz_scuola_template' },
     ],
@@ -220,5 +245,6 @@ Quiz.DIMENSIONE_ROUND_MIN = DIMENSIONE_ROUND_MIN;
 Quiz.DIMENSIONE_ROUND_MAX = DIMENSIONE_ROUND_MAX;
 Quiz.DIMENSIONE_ROUND_DEFAULT = DIMENSIONE_ROUND_DEFAULT;
 Quiz.MATERIA_MAX = MATERIA_MAX;
+Quiz.CATEGORIA_MAX = CATEGORIA_MAX;
 
 module.exports = Quiz;

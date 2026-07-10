@@ -8,6 +8,7 @@ const requestLogger = require('./middleware/requestLogger');
 const errorHandler = require('./middleware/errorHandler');
 const { globalLimiter } = require('./middleware/rateLimiter');
 const AppError = require('./utils/AppError');
+const configRoutes = require('./routes/configRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const inviteRoutes = require('./routes/inviteRoutes');
@@ -21,6 +22,7 @@ const messaggiRoutes = require('./routes/messaggiRoutes');
 const corsiRoutes = require('./routes/corsiRoutes');
 const { passport } = require('./config/passport');
 const cookieParser = require('cookie-parser');
+const piattaforma = require('./config/piattaforma');
 const app = express();
 
 // ─────────────────────────────────────────────
@@ -63,7 +65,9 @@ const corsOptions = {
     }
   },
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+  // `X-Scuola` consente al frontend di indicare il tenant sulle richieste non
+  // autenticate (deploy multi-scuola su un unico host).
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Scuola'],
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -102,13 +106,18 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    version: '1.0.0',
+    version: piattaforma.VERSIONE,
   });
 });
 
 // ─────────────────────────────────────────────
 // ROUTE PRINCIPALI
 // ─────────────────────────────────────────────
+// Configurazione PUBBLICA: branding e funzionalità della scuola. Il frontend la
+// interroga al bootstrap, prima del login, per personalizzarsi. Nessun dato
+// riservato: la vista è filtrata dallo schema delle impostazioni.
+app.use('/api/config', configRoutes);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/invites', inviteRoutes);

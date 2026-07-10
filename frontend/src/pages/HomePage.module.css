@@ -9,12 +9,22 @@
   animation: surface-in var(--dur-slow) var(--ease-out);
 }
 
-.eyebrow {
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  color: var(--color-seal);
-  letter-spacing: 0.35em;
-  padding-left: 0.35em; /* compensa il letter-spacing per centrare otticamente */
+/*
+ * Immagine di copertina della scuola (facoltativa). Rapporto d'aspetto ampio,
+ * ritagliata al centro: qualunque immagine la scuola carichi, l'impaginazione
+ * non si scompone.
+ */
+.heroImage {
+  width: 100%;
+  max-height: 14rem;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+/* Marchio della scuola: logo caricato o monogramma. */
+.heroMark {
   margin-bottom: var(--space-6);
 }
 

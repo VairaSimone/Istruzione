@@ -192,6 +192,12 @@ const campiOpzionaliQuiz = [
     .isLength({ max: 10000 })
     .withMessage('La descrizione non può superare i 10000 caratteri'),
 
+  body('categoria')
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: Quiz.CATEGORIA_MAX })
+    .withMessage(`La categoria non può superare i ${Quiz.CATEGORIA_MAX} caratteri`),
+
   body('materia')
     .optional({ nullable: true })
     .trim()
@@ -298,6 +304,12 @@ const validateElencoQuiz = [
     .isIn(STATI_QUIZ)
     .withMessage(`Lo stato deve essere uno di: ${STATI_QUIZ.join(', ')}`),
 
+  query('categoria')
+    .optional()
+    .trim()
+    .isLength({ max: Quiz.CATEGORIA_MAX })
+    .withMessage(`La categoria non può superare i ${Quiz.CATEGORIA_MAX} caratteri`),
+
   query('materia')
     .optional()
     .trim()
@@ -339,6 +351,12 @@ const validateCatalogoTemplate = [
 ];
 
 const validateQuizDisponibili = [
+  query('categoria')
+    .optional()
+    .trim()
+    .isLength({ max: Quiz.CATEGORIA_MAX })
+    .withMessage(`La categoria non può superare i ${Quiz.CATEGORIA_MAX} caratteri`),
+
   query('materia')
     .optional()
     .trim()

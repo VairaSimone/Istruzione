@@ -11,6 +11,7 @@ const { hashToken } = require('../utils/tokenHash');
 const { escapeLike } = require('../utils/escapeLike');
 const { risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
+const impostazioniService = require('./impostazioniService');
 const emailService = require('./emailService');
 
 /**
@@ -122,21 +123,28 @@ const creaInvito = async ({ email, ruolo, classe, classeId = null, scuolaId = nu
 // CREA INVITO STUDENTE (insegnante / admin)
 // ─────────────────────────────────────────────
 const creaInvitoStudente = async ({ email, classe, scuolaId, richiedente, lingua }) => {
-  if (!Utente.CLASSI_VALIDE.includes(classe)) {
-    throw new AppError(
-      `La classe deve essere una di: ${Utente.CLASSI_VALIDE.join(', ')}`,
-      422,
-      'INVALID_CLASS'
-    );
-  }
   // Tenant: insegnante → propria scuola; admin → scuolaId indicata (obbligatoria).
   const scuolaFinale = risolviScuolaCreazione(richiedente, scuolaId, {
     scuolaObbligatoriaPerAdmin: true,
   });
+
+  // La classe non è più un ENUM di piattaforma: ogni scuola definisce il proprio
+  // vocabolario in `impostazioni.didattica.classiDisponibili`. Vocabolario vuoto
+  // ⇒ testo libero. La classe resta comunque obbligatoria per gli inviti studente.
+  if (classe === undefined || classe === null || String(classe).trim() === '') {
+    throw new AppError('La classe è obbligatoria per gli inviti studente.', 422, 'INVALID_CLASS');
+  }
+  const classeNorm = await impostazioniService.assicuraNelVocabolario(
+    scuolaFinale,
+    'classiDisponibili',
+    classe,
+    'La classe'
+  );
+
   return creaInvito({
     email,
     ruolo: 'studente',
-    classe,
+    classe: classeNorm,
     scuolaId: scuolaFinale,
     invitatoDa: richiedente.id,
     lingua,

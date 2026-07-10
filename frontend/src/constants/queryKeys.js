@@ -8,6 +8,16 @@ export const queryKeys = Object.freeze({
   auth: {
     me: ['auth', 'me'],
   },
+  /**
+   * Configurazione pubblica di piattaforma/scuola. Dipende dal tenant attivo:
+   * cambiando scuola cambia la chiave, quindi la cache non si sporca.
+   */
+  config: {
+    all: ['config'],
+    branding: (scuolaSlug) => ['config', 'branding', scuolaSlug ?? 'predefinita'],
+    scuolePubbliche: ['config', 'scuolePubbliche'],
+    schema: ['config', 'schema'],
+  },
   users: {
     all: ['users'],
     list: (filters) => ['users', 'list', filters ?? {}],
@@ -22,6 +32,7 @@ export const queryKeys = Object.freeze({
     list: (filters) => ['scuole', 'list', filters ?? {}],
     detail: (id) => ['scuole', 'detail', id],
     mia: ['scuole', 'mia'],
+    mieImpostazioni: ['scuole', 'mia', 'impostazioni'],
   },
   quiz: {
     all: ['quiz'],

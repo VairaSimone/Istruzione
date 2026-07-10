@@ -54,11 +54,15 @@ const tokenRules = (fieldName = 'token', message = 'Token non valido') =>
 // ─────────────────────────────────────────────
 const validateInvitoStudente = [
   emailRules('email'),
+  // La classe è TESTO LIBERO: il vocabolario ammesso è una impostazione della
+  // scuola (`impostazioni.didattica.classiDisponibili`), verificata nel service
+  // che conosce il tenant di destinazione.
   body('classe')
     .trim()
     .notEmpty().withMessage('La classe è obbligatoria')
-    .isIn(Utente.CLASSI_VALIDE)
-    .withMessage(`La classe deve essere una di: ${Utente.CLASSI_VALIDE.join(', ')}`),
+    .bail()
+    .isLength({ max: Utente.CLASSE_MAX })
+    .withMessage(`La classe non può superare i ${Utente.CLASSE_MAX} caratteri`),
   body('scuolaId')
     .optional({ nullable: true })
     .isUUID(4).withMessage("L'identificativo della scuola non è valido"),

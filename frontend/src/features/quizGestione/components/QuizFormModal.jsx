@@ -11,11 +11,17 @@ import { useCreateQuiz, useUpdateQuiz } from '../../../hooks/useQuizGestione';
 import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
-import { STATI_QUIZ, DIMENSIONE_ROUND_DEFAULT } from '../../../constants/quizGestione';
+import {
+  STATI_QUIZ,
+  DIMENSIONE_ROUND_DEFAULT,
+  QUIZ_CATEGORIA_MAX,
+} from '../../../constants/quizGestione';
+import { MATERIA_MAX } from '../../../constants/domain';
 import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
 import Select from '../../../components/ui/Select';
+import VocabolarioField from '../../../components/ui/VocabolarioField';
 import Button from '../../../components/ui/Button';
 import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './QuizGestione.module.css';
@@ -24,6 +30,7 @@ const CAMPI = [
   'titolo',
   'descrizione',
   'materia',
+  'categoria',
   'templateCodice',
   'stato',
   'dimensioneRound',
@@ -35,8 +42,14 @@ const CAMPI = [
  * Crea o modifica un quiz.
  *
  * In CREAZIONE si sceglie la natura del quiz:
- *   - un TEMPLATE di piattaforma (kana, kanji…) → le domande le genera il motore;
+ *   - un TEMPLATE di piattaforma → le domande le genera il motore. I template
+ *     di giapponese (kana, kanji) sono quelli forniti come esempio; il catalogo
+ *     arriva dall'API e può contenerne altri, per altre materie;
  *   - «personalizzato» → le domande le scrivono gli insegnanti, su ogni materia.
+ *
+ * MATERIA e CATEGORIA classificano il quiz. Installando un template, entrambe
+ * si precompilano con quelle dichiarate dal template: chi installa un quiz di
+ * kanji non deve digitare «Giapponese» a mano.
  * Il template è IMMUTABILE: in modifica il selettore è assente e il backend
  * rifiuta comunque il cambio (`QUIZ_TEMPLATE_IMMUTABILE`).
  *
@@ -84,6 +97,7 @@ const QuizFormModal = ({
       titolo: quiz?.titolo ?? templateScelto?.nome ?? '',
       descrizione: quiz?.descrizione ?? templateScelto?.descrizione ?? '',
       materia: quiz?.materia ?? templateScelto?.materia ?? '',
+      categoria: quiz?.categoria ?? templateScelto?.categoria ?? '',
       templateCodice: quiz?.templateCodice ?? templateBloccato ?? TEMPLATE_NESSUNO,
       stato: quiz?.stato ?? 'bozza',
       dimensioneRound: quiz?.dimensioneRound ?? DIMENSIONE_ROUND_DEFAULT,
@@ -97,6 +111,7 @@ const QuizFormModal = ({
       titolo: values.titolo,
       descrizione: values.descrizione ?? null,
       materia: values.materia ?? null,
+      categoria: values.categoria ?? null,
       stato: values.stato,
       dimensioneRound: values.dimensioneRound ?? DIMENSIONE_ROUND_DEFAULT,
       mescolaDomande: Boolean(values.mescolaDomande),
@@ -193,12 +208,25 @@ const QuizFormModal = ({
         )}
 
         <div className={styles.formRow}>
-          <TextField
+          <VocabolarioField
+            vocabolario="materieDisponibili"
             label={t('quizGestione.form.materia')}
+            placeholder={t('quizGestione.form.materiaQualsiasi')}
             hint={t('quizGestione.form.materiaHint')}
+            maxLength={MATERIA_MAX}
             error={errors.materia?.message}
             {...register('materia')}
           />
+          <TextField
+            label={t('quizGestione.form.categoria')}
+            hint={t('quizGestione.form.categoriaHint')}
+            maxLength={QUIZ_CATEGORIA_MAX}
+            error={errors.categoria?.message}
+            {...register('categoria')}
+          />
+        </div>
+
+        <div className={styles.formRow}>
           <Select
             label={t('quizGestione.form.stato')}
             required

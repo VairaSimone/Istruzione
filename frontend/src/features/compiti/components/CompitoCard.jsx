@@ -6,6 +6,7 @@ import { STATO_COMPITO_TONE } from '../statoTone';
 import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import styles from './Compiti.module.css';
+import { etichettaTipoAttivita } from '../../../constants/tipiAttivita';
 
 /** Card di riepilogo di un compito nella lista docente. */
 const CompitoCard = ({ compito }) => {
@@ -22,7 +23,7 @@ const CompitoCard = ({ compito }) => {
       </div>
 
       <div className={styles.cardMeta}>
-        <Badge tone="neutral">{t(`compiti.tipi.${compito.tipoAttivita}`)}</Badge>
+        <Badge tone="neutral">{t(etichettaTipoAttivita(compito.tipoAttivita))}</Badge>
         <span className={styles.mutedSmall}>
           {t('compiti.card.scadenza', {
             data: formatDateTime(compito.dataScadenza, i18n.language),

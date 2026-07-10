@@ -323,3 +323,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+/*
+ * Descrizione del tipo di attività selezionato: spiega all'insegnante che cosa
+ * lo studente vedrà, senza costringerlo a indovinarlo dal nome del tipo.
+ */
+.configHint {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}

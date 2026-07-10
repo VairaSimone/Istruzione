@@ -4,9 +4,12 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('./Utente');
 
-// Livelli JLPT ammessi per l'aula (allineati a ProgressoKanji, ma facoltativi:
-// un'aula può essere trasversale e non avere un livello unico).
-const LIVELLI_JLPT = ['N5', 'N4', 'N3', 'N2', 'N1'];
+// Lunghezza massima del livello dell'aula. Il livello è una STRINGA LIBERA e
+// non un ENUM: ogni scuola usa la propria scala (es. "A1", "Base", "Terzo anno",
+// "Avanzato"). I valori ammessi possono essere ristretti per tenant tramite
+// `impostazioni.didattica.livelliDisponibili`; un vocabolario vuoto significa
+// «nessun vincolo».
+const LIVELLO_MAX = 40;
 
 // Pattern esadecimale per il colore opzionale dell'aula (#RGB o #RRGGBB).
 const COLORE_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -38,7 +41,7 @@ class Classe extends Model {
       descrizione: this.descrizione,
       scuolaId: this.scuola_id,
       annoScolastico: this.anno_scolastico,
-      livelloJLPT: this.livello_jlpt,
+      livello: this.livello,
       colore: this.colore,
       icona: this.icona,
       archiviata: this.archiviata,
@@ -98,17 +101,14 @@ Classe.init(
       },
     },
 
-    // Livello JLPT prevalente dell'aula (facoltativo).
-    livello_jlpt: {
-      type: DataTypes.ENUM(...LIVELLI_JLPT),
+    // Livello prevalente dell'aula (facoltativo, testo libero).
+    // La validazione contro il vocabolario della scuola avviene nel service.
+    livello: {
+      type: DataTypes.STRING(LIVELLO_MAX),
       allowNull: true,
       defaultValue: null,
-      field: 'livello_jlpt',
       validate: {
-        isIn: {
-          args: [LIVELLI_JLPT],
-          msg: `Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`,
-        },
+        len: { args: [0, LIVELLO_MAX], msg: `Il livello non può superare i ${LIVELLO_MAX} caratteri` },
       },
     },
 
@@ -166,7 +166,7 @@ Classe.init(
       // Scope per tenant (scuola): elenco aule di una scuola.
       { fields: ['scuola_id'], name: 'classi_scuola_id' },
       // Filtri comuni della lista aule.
-      { fields: ['livello_jlpt'], name: 'classi_livello_jlpt' },
+      { fields: ['livello'], name: 'classi_livello' },
       { fields: ['anno_scolastico'], name: 'classi_anno_scolastico' },
       { fields: ['archiviata'], name: 'classi_archiviata' },
     ],
@@ -185,7 +185,7 @@ const Scuola = require('./Scuola');
 Classe.belongsTo(Scuola, { as: 'scuola', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 Scuola.hasMany(Classe, { as: 'aule', foreignKey: 'scuola_id', onDelete: 'CASCADE' });
 
-Classe.LIVELLI_JLPT = LIVELLI_JLPT;
+Classe.LIVELLO_MAX = LIVELLO_MAX;
 Classe.COLORE_REGEX = COLORE_REGEX;
 
 module.exports = Classe;

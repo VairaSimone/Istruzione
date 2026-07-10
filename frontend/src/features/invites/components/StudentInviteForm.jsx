@@ -7,11 +7,11 @@ import { buildStudentInviteSchema } from '../../../validators/authSchemas';
 import { useCreateStudentInvite } from '../../../hooks/useInvites';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
-import { CLASSI } from '../../../constants/domain';
+import { CLASSE_MAX } from '../../../constants/domain';
 import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import Card from '../../../components/ui/Card';
 import TextField from '../../../components/ui/TextField';
-import Select from '../../../components/ui/Select';
+import VocabolarioField from '../../../components/ui/VocabolarioField';
 import Button from '../../../components/ui/Button';
 import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Invites.module.css';
@@ -70,18 +70,21 @@ const StudentInviteForm = () => {
           error={errors.email?.message}
           {...register('email')}
         />
-        <Select
+        {/*
+          La classe non è più un ENUM di piattaforma: se la scuola ha definito
+          `didattica.classiDisponibili` compare un <select> con quelle voci,
+          altrimenti un campo a testo libero. Un'accademia serale non deve
+          scegliere fra "Prima" e "Quinta".
+        */}
+        <VocabolarioField
+          vocabolario="classiDisponibili"
           label={t('auth.fields.classe')}
           required
+          consentiVuoto={false}
+          maxLength={CLASSE_MAX}
           error={errors.classe?.message}
           {...register('classe')}
-        >
-          {CLASSI.map((classe) => (
-            <option key={classe} value={classe}>
-              {t(`classi.${classe}`)}
-            </option>
-          ))}
-        </Select>
+        />
         {isAdmin && (
           <ScuolaSelect required error={errors.scuolaId?.message} {...register('scuolaId')} />
         )}

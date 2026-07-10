@@ -12,6 +12,7 @@ const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
+const tipiAttivita = require('../constants/tipiAttivita');
 
 /**
  * CompitiService — logica di dominio dei COMPITI.
@@ -208,12 +209,19 @@ const creaCompito = async ({ dati, assegnazioni, richiedente }) => {
     scuolaObbligatoriaPerAdmin: false,
   });
 
+  // Normalizza il tipo di attività contro il registro: traduce gli alias
+  // storici (quiz_kana → quiz, tracciamento → pratica_scrittura) e rifiuta i
+  // codici sconosciuti. Poi verifica che la configurazione porti le chiavi
+  // obbligatorie del tipo (es. `quizId` per il tipo `quiz`).
+  const tipoAttivita = tipiAttivita.normalizza(dati.tipoAttivita);
+  tipiAttivita.validaConfigurazione(tipoAttivita, dati.configurazione);
+
   return sequelize.transaction(async (t) => {
     const compito = await Compito.create(
       {
         titolo: dati.titolo.trim(),
         descrizione: dati.descrizione ?? null,
-        tipo_attivita: dati.tipoAttivita,
+        tipo_attivita: tipoAttivita,
         configurazione: dati.configurazione ?? null,
         data_scadenza: dati.dataScadenza,
         tempo_limite_minuti: dati.tempoLimiteMinuti ?? null,
@@ -255,7 +263,7 @@ const elencoCompiti = async ({ richiedente, filtri }) => {
     where.creato_da = richiedente.id;
   }
   if (stato) where.stato = stato;
-  if (tipo) where.tipo_attivita = tipo;
+  if (tipo) where.tipo_attivita = tipiAttivita.normalizza(tipo);
   if (q) where.titolo = { [Op.like]: `%${escapeLike(q.trim())}%` };
 
   const pageNum = parseInt(page, 10);
@@ -381,8 +389,12 @@ const aggiornaCompito = async ({ compitoId, dati, richiedente }) => {
 
   if (dati.titolo !== undefined) compito.titolo = dati.titolo.trim();
   if (dati.descrizione !== undefined) compito.descrizione = dati.descrizione;
-  if (dati.tipoAttivita !== undefined) compito.tipo_attivita = dati.tipoAttivita;
+  if (dati.tipoAttivita !== undefined) {
+    compito.tipo_attivita = tipiAttivita.normalizza(dati.tipoAttivita);
+  }
   if (dati.configurazione !== undefined) compito.configurazione = dati.configurazione;
+  // Rivalida la coerenza tipo ↔ configurazione dopo l'applicazione dei campi.
+  tipiAttivita.validaConfigurazione(compito.tipo_attivita, compito.configurazione);
   if (dati.dataScadenza !== undefined) compito.data_scadenza = dati.dataScadenza;
   if (dati.tempoLimiteMinuti !== undefined) compito.tempo_limite_minuti = dati.tempoLimiteMinuti;
   if (dati.punteggioMassimo !== undefined) compito.punteggio_massimo = dati.punteggioMassimo;

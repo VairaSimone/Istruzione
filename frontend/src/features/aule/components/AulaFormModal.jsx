@@ -7,22 +7,26 @@ import { buildAulaSchema } from '../../../validators/auleSchemas';
 import { useCreateAula, useUpdateAula } from '../../../hooks/useAule';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
-import { LIVELLI_JLPT } from '../../../constants/domain';
+import { LIVELLO_MAX } from '../../../constants/domain';
 import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
-import Select from '../../../components/ui/Select';
+import VocabolarioField from '../../../components/ui/VocabolarioField';
 import Button from '../../../components/ui/Button';
 import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Aule.module.css';
 
-const CAMPI = ['nome', 'descrizione', 'annoScolastico', 'livelloJLPT', 'colore', 'scuolaId'];
+const CAMPI = ['nome', 'descrizione', 'annoScolastico', 'livello', 'colore', 'scuolaId'];
 
 /**
  * Modal per creare (aula = null) o modificare un'aula esistente.
  * I campi opzionali svuotati vengono inviati come `null` così da poterli
  * azzerare anche in modifica.
+ *
+ * Il LIVELLO è un `VocabolarioField`: diventa un <select> se la scuola ha
+ * definito `didattica.livelliDisponibili`, altrimenti resta a testo libero.
+ * Nessun elenco di livelli è cablato in questo componente.
  */
 const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
   const { t } = useTranslation();
@@ -53,7 +57,9 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
       nome: aula?.nome ?? '',
       descrizione: aula?.descrizione ?? '',
       annoScolastico: aula?.annoScolastico ?? '',
-      livelloJLPT: aula?.livelloJLPT ?? '',
+      // `livelloJLPT` è letto come alias storico: le aule in cache create prima
+      // della generalizzazione portano ancora quel nome.
+      livello: aula?.livello ?? aula?.livelloJLPT ?? '',
       colore: aula?.colore ?? '',
       scuolaId: '',
     });
@@ -65,7 +71,7 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
       nome: values.nome,
       descrizione: values.descrizione ?? null,
       annoScolastico: values.annoScolastico ?? null,
-      livelloJLPT: values.livelloJLPT ?? null,
+      livello: values.livello ?? null,
       colore: values.colore ?? null,
     };
     // In creazione da admin includiamo la scuola scelta.
@@ -131,18 +137,14 @@ const AulaFormModal = ({ isOpen, onClose, aula = null }) => {
             error={errors.annoScolastico?.message}
             {...register('annoScolastico')}
           />
-          <Select
-            label={t('aule.form.livelloJLPT')}
+          <VocabolarioField
+            vocabolario="livelliDisponibili"
+            label={t('aule.form.livello')}
             placeholder={t('aule.form.livelloNessuno')}
-            error={errors.livelloJLPT?.message}
-            {...register('livelloJLPT')}
-          >
-            {LIVELLI_JLPT.map((liv) => (
-              <option key={liv} value={liv}>
-                {liv}
-              </option>
-            ))}
-          </Select>
+            maxLength={LIVELLO_MAX}
+            error={errors.livello?.message}
+            {...register('livello')}
+          />
         </div>
         <TextField
           label={t('aule.form.colore')}

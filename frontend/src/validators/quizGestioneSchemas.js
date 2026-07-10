@@ -5,6 +5,7 @@ import {
   QUIZ_TITOLO_MIN,
   QUIZ_TITOLO_MAX,
   QUIZ_MATERIA_MAX,
+  QUIZ_CATEGORIA_MAX,
   QUIZ_DESCRIZIONE_MAX,
   DIMENSIONE_ROUND_MIN,
   DIMENSIONE_ROUND_MAX,
@@ -88,6 +89,12 @@ export const buildQuizSchema = (
 
     materia: optionalTrimmed().pipe(
       z.string().max(QUIZ_MATERIA_MAX, t('quizGestione.validation.materiaMax')).optional()
+    ),
+
+    // Categoria/argomento dentro la materia ("Grammatica", "Algebra", "Modulo 1").
+    // Testo libero: raggruppa i quiz senza imporre una tassonomia.
+    categoria: optionalTrimmed().pipe(
+      z.string().max(QUIZ_CATEGORIA_MAX, t('quizGestione.validation.categoriaMax')).optional()
     ),
 
     templateCodice: optionalTrimmed().pipe(

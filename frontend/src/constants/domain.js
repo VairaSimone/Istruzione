@@ -1,13 +1,20 @@
 /**
  * Costanti di dominio.
- * Rispecchiano ESATTAMENTE i valori validi definiti nel modello Sequelize
- * `Utente.js` (CLASSI_VALIDE, RUOLI_VALIDI, LINGUE_VALIDE) e nei validators
- * Express. Tenute centralizzate per evitare valori "magici" sparsi nei componenti.
+ * Rispecchiano ESATTAMENTE i valori validi definiti nei modelli Sequelize e nei
+ * validator Express. Tenute centralizzate per evitare valori "magici" sparsi
+ * nei componenti.
  *
- * NOTA i18n: le etichette leggibili (ruoli, classi, lingue) NON sono più
- * definite qui ma risolte a runtime tramite le chiavi di traduzione
- * (`roles.*`, `classi.*`, `language.options.*`). Qui restano solo i VALORI
- * di dominio, che coincidono con quelli persistiti dal backend.
+ * NOTA i18n: le etichette leggibili (ruoli, lingue) NON sono definite qui ma
+ * risolte a runtime tramite le chiavi di traduzione (`roles.*`,
+ * `language.options.*`). Qui restano solo i VALORI di dominio, che coincidono
+ * con quelli persistiti dal backend.
+ *
+ * NOTA GENERALIZZAZIONE: classi, livelli e materie NON sono più elencati qui.
+ * Erano ENUM legati all'insegnamento del giapponese (`Prima…Quinta`, `N5…N1`) e
+ * sono diventati VOCABOLARI DELLA SCUOLA, letti a runtime dalle impostazioni
+ * (`hooks/useImpostazioniScuola.js`). Qui restano solo i limiti di lunghezza,
+ * che sono un vincolo di colonna e non di dominio. Analogamente i tipi di
+ * attività dei compiti vivono ora in `constants/tipiAttivita.js`.
  */
 
 export const ROLES = Object.freeze({
@@ -50,21 +57,16 @@ export const INVITE_ROLES = Object.freeze({
   INSEGNANTE: 'insegnante',
 });
 
-export const CLASSI = Object.freeze(['Prima', 'Seconda', 'Terza', 'Quarta', 'Quinta']);
-
 /**
- * Livelli JLPT usati dalle aule virtuali (modello `Classe.LIVELLI_JLPT`) e dai
- * compiti. Ordinati dal più elementare (N5) al più avanzato (N1).
+ * Limiti di LUNGHEZZA dei campi a testo libero, allineati alle colonne del
+ * backend. Non sono vocabolari: il contenuto ammesso lo decide ogni scuola.
+ *   - `classe`  → `Utente.CLASSE_MAX`  (es. "Prima", "A1", "Gruppo serale")
+ *   - `livello` → `Classe.LIVELLO_MAX` / `Corso.LIVELLO_MAX`
+ *   - `materia` → `Corso.MATERIA_MAX`  (es. "Matematica", "Inglese")
  */
-export const LIVELLI_JLPT = Object.freeze(['N5', 'N4', 'N3', 'N2', 'N1']);
-
-/** Tipi di attività assegnabili in un compito (modello `Compito.TIPI_ATTIVITA`). */
-export const TIPI_ATTIVITA_COMPITO = Object.freeze([
-  'quiz_kana',
-  'quiz_kanji',
-  'tracciamento',
-  'vocabolario',
-]);
+export const CLASSE_MAX = 60;
+export const LIVELLO_MAX = 40;
+export const MATERIA_MAX = 80;
 
 /** Stato di pubblicazione del compito (modello `Compito.STATI_COMPITO`). */
 export const STATI_COMPITO = Object.freeze(['bozza', 'pubblicato', 'archiviato']);
@@ -85,7 +87,11 @@ export const STATI_COMPITO_STUDENTE = Object.freeze([
   'completato',
 ]);
 
-/** Alfabeti kana (per la configurazione dei quiz kana). */
+/**
+ * Alfabeti kana. Appartengono al TEMPLATE di giapponese, non al nucleo della
+ * piattaforma: li usano solo i componenti del quiz kana e della pratica di
+ * scrittura, visibili unicamente alle scuole che hanno installato quel template.
+ */
 export const ALFABETI_KANA = Object.freeze(['hiragana', 'katakana']);
 
 /** Tipi di messaggio (modello `Messaggio.TIPI_MESSAGGIO`). */
@@ -172,6 +178,13 @@ export const API_ERROR_CODES = Object.freeze({
   SCUOLA_HAS_USERS: 'SCUOLA_HAS_USERS',
   NO_SCUOLA: 'NO_SCUOLA',
   INVALID_SETTINGS: 'INVALID_SETTINGS',
+  // Sezioni disattivabili per scuola (middleware `richiediFunzionalita`)
+  FEATURE_DISABLED: 'FEATURE_DISABLED',
+  SCUOLA_SOSPESA: 'SCUOLA_SOSPESA',
+  SLUG_REQUIRED: 'SLUG_REQUIRED',
+  SLUG_CONFLICT: 'SLUG_CONFLICT',
+  INVALID_ACTIVITY_TYPE: 'INVALID_ACTIVITY_TYPE',
+  VALORE_FUORI_VOCABOLARIO: 'VALORE_FUORI_VOCABOLARIO',
   // Videolezioni on-demand (corsi)
   CORSO_NOT_FOUND: 'CORSO_NOT_FOUND',
   CAPITOLO_NOT_FOUND: 'CAPITOLO_NOT_FOUND',

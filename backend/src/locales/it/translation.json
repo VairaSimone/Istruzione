@@ -2,7 +2,7 @@
   "email": {
     "verify": {
       "subject": "Verifica il tuo indirizzo Email",
-      "title": "Benvenuto sulla nostra Piattaforma di Giapponese!",
+      "title": "Benvenuto sulla piattaforma!",
       "body": "Grazie per esserti registrato. Per completare l'attivazione del tuo account, clicca sul pulsante sottostante:",
       "button": "Verifica Email",
       "fallback": "Se il pulsante non funziona, copia e incolla questo link nel tuo browser:",
@@ -20,8 +20,8 @@
       "body": "Clicca sul link sottostante per confermare il cambio del tuo indirizzo email:"
     },
     "studentInvite": {
-      "subject": "Sei stato invitato sulla Piattaforma di Giapponese",
-      "title": "Invito alla Piattaforma di Giapponese",
+      "subject": "Sei stato invitato sulla piattaforma",
+      "title": "Invito alla piattaforma",
       "body": "Il tuo insegnante ti ha invitato a unirti alla piattaforma. Clicca sul pulsante per completare la registrazione (nome, cognome, età e password):",
       "classLabel": "Classe assegnata",
       "button": "Completa la registrazione",
@@ -29,7 +29,7 @@
       "footer": "Questo link è personale e scadrà a breve. Se non ti aspettavi questo invito, puoi ignorare questa email."
     },
     "teacherInvite": {
-      "subject": "Invito come Insegnante sulla Piattaforma di Giapponese",
+      "subject": "Invito come insegnante sulla piattaforma",
       "title": "Invito come Insegnante",
       "body": "Un amministratore ti ha invitato a unirti alla piattaforma come insegnante. Clicca sul pulsante per completare la registrazione (nome, cognome e password):",
       "button": "Completa la registrazione",

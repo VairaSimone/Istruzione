@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCompitiList } from '../hooks/useCompiti';
-import { STATI_COMPITO, TIPI_ATTIVITA_COMPITO } from '../constants/domain';
+import { STATI_COMPITO } from '../constants/domain';
+import { CODICI_ATTIVITA } from '../constants/tipiAttivita';
 import CompitoCard from '../features/compiti/components/CompitoCard';
 import CompitoFormModal from '../features/compiti/components/CompitoFormModal';
 import Button from '../components/ui/Button';
@@ -71,7 +72,7 @@ const CompitiListPage = () => {
           value={filters.tipo}
           onChange={(e) => updateFilter('tipo', e.target.value)}
         >
-          {TIPI_ATTIVITA_COMPITO.map((tipo) => (
+          {CODICI_ATTIVITA.map((tipo) => (
             <option key={tipo} value={tipo}>
               {t(`compiti.tipi.${tipo}`)}
             </option>

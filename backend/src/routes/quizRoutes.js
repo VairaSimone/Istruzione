@@ -7,6 +7,7 @@ const quizController = require('../controllers/quizController');
 const quizGestioneController = require('../controllers/quizGestioneController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const { quizSubmitLimiter, quizScritturaLimiter } = require('../middleware/rateLimiter');
 const validate = require('../middleware/validate');
@@ -34,26 +35,37 @@ const {
 } = require('../validators/quizGestioneValidators');
 
 /**
- * Route del QUIZ (Kana e Kanji) — montate sotto `/api/quiz`.
+ * Route dei QUIZ — montate sotto `/api/quiz`.
  * Accessibili a qualsiasi utente autenticato e attivo (studenti, insegnanti,
  * admin): la difesa sullo stato dell'account è già in `authenticateJWT`.
  *
- * Il dominio (kana|kanji) viaggia nel body di generate/submit; le route non si
- * duplicano. L'unica route aggiuntiva è quella dei tratti dei kanji, che ha una
- * chiave diversa (livello JLPT anziché alfabeto).
+ * ── Gate delle funzionalità ──
+ * Ogni gruppo di route dichiara la SEZIONE a cui appartiene. Una scuola che ha
+ * disattivato i quiz riceve 403 `FEATURE_DISABLED` anche chiamando l'API a mano.
+ *   · quiz             → gestione e svolgimento dei quiz;
+ *   · statistiche      → cruscotto personale;
+ *   · gamification     → badge e obiettivi;
+ *   · praticaScrittura → ordine dei tratti e canvas di scrittura. Sezione
+ *     OPZIONALE, rilevante solo per le materie con scrittura guidata: è spenta
+ *     di default per le scuole nuove.
  *
- *   GET  /api/quiz/dashboard          → statistiche + mastered + peggiori kana + badge
- *   GET  /api/quiz/badge              → catalogo badge + stato di sblocco (profilo)
- *   GET  /api/quiz/stroke/:alfabeto   → ordine dei tratti dei kana (statico)
- *   GET  /api/quiz/stroke/kanji/:livello → ordine dei tratti dei kanji (statico)
- *   POST /api/quiz/generate           → genera la sessione di quiz (sola lettura)
- *   POST /api/quiz/submit             → invia l'esito della partita (muta lo stato)
- *   POST /api/quiz/scrittura          → registra i tratti validati sul canvas (muta)
+ * I motori dei template (kana, kanji) restano attivi solo per le scuole che
+ * hanno installato il relativo quiz; il dominio viaggia nel body di
+ * generate/submit e le route non si duplicano.
+ *
+ *   GET  /api/quiz/dashboard             → cruscotto personale + badge
+ *   GET  /api/quiz/badge                 → catalogo badge + stato di sblocco
+ *   GET  /api/quiz/stroke/:alfabeto      → ordine dei tratti (template kana)
+ *   GET  /api/quiz/stroke/kanji/:livello → ordine dei tratti (template kanji)
+ *   POST /api/quiz/generate              → genera la sessione di quiz (sola lettura)
+ *   POST /api/quiz/submit                → invia l'esito della partita (muta lo stato)
+ *   POST /api/quiz/scrittura             → registra i tratti validati sul canvas (muta)
  *
  * ── Quiz delle scuole ──
- * Un quiz è o l'installazione di un TEMPLATE di piattaforma (kana, kanji, …) o
- * un quiz PERSONALIZZATO con domande scritte dagli insegnanti, su qualsiasi
- * materia. `generate`/`submit` accettano `quizId` per giocarlo.
+ * Un quiz è o l'installazione di un TEMPLATE di piattaforma (i template di
+ * giapponese forniti come esempio, e in futuro altri) o un quiz PERSONALIZZATO
+ * con domande scritte dagli insegnanti, su qualsiasi materia.
+ * `generate`/`submit` accettano `quizId` per giocarlo.
  *
  *   GET    /api/quiz/templates                              → catalogo template (staff)
  *   GET    /api/quiz/disponibili                            → quiz giocabili dal richiedente
@@ -75,30 +87,44 @@ const {
 router.use(authenticateJWT);
 
 // Sola lettura: nessuna mutazione di stato ⇒ niente CSRF.
-router.get('/dashboard', quizController.dashboard);
+router.get('/dashboard', richiediFunzionalita('statistiche'), quizController.dashboard);
 
 // Sola lettura: catalogo badge + stato di sblocco dell'utente.
-router.get('/badge', quizController.profiloBadge);
+router.get('/badge', richiediFunzionalita('gamification'), quizController.profiloBadge);
 
-// Sola lettura: dati statici dell'ordine dei tratti dei KANJI (per livello JLPT).
+// Sola lettura: dati statici dell'ordine dei tratti (template kanji).
 // Registrata prima della route kana per chiarezza; i percorsi non collidono
 // (segmenti diversi), ma la più specifica resta in testa.
 router.get(
   '/stroke/kanji/:livello',
+  richiediFunzionalita('praticaScrittura'),
   validateStrokeOrderKanji,
   validate,
   quizController.ordineTrattiKanji
 );
 
 // Sola lettura: dati statici dell'ordine dei tratti (animazione + scrittura).
-router.get('/stroke/:alfabeto', validateStrokeOrder, validate, quizController.ordineTratti);
+router.get(
+  '/stroke/:alfabeto',
+  richiediFunzionalita('praticaScrittura'),
+  validateStrokeOrder,
+  validate,
+  quizController.ordineTratti
+);
 
 // Sola lettura (POST per via dei filtri nel body): nessuna mutazione ⇒ niente CSRF.
-router.post('/generate', validateGenerateQuiz, validate, quizController.generaQuiz);
+router.post(
+  '/generate',
+  richiediFunzionalita('quiz'),
+  validateGenerateQuiz,
+  validate,
+  quizController.generaQuiz
+);
 
 // Mutazione di stato: protetto da CSRF (double-submit cookie) e rate limiter.
 router.post(
   '/submit',
+  richiediFunzionalita('quiz'),
   csrfProtection,
   quizSubmitLimiter,
   validateSubmitQuiz,
@@ -109,6 +135,7 @@ router.post(
 // Mutazione di stato (XP/badge di scrittura): CSRF + rate limiter dedicato.
 router.post(
   '/scrittura',
+  richiediFunzionalita('praticaScrittura'),
   csrfProtection,
   quizScritturaLimiter,
   validateRegistraScrittura,
@@ -117,8 +144,9 @@ router.post(
 );
 
 // ═════════════════════════════════════════════
-// QUIZ DELLE SCUOLE
+// QUIZ DELLE SCUOLE — tutto il gruppo richiede la sezione "quiz" attiva.
 // ═════════════════════════════════════════════
+router.use(richiediFunzionalita('quiz'));
 
 // Sola lettura: quiz che il richiedente può giocare (studente: solo pubblicati
 // e abilitati per una sua aula; staff: quelli della propria scuola).

@@ -3,23 +3,23 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('./Utente');
+const { CODICI_ATTIVITA, esiste: tipoAttivitaEsiste } = require('../constants/tipiAttivita');
 
 /**
- * Tipi di attività assegnabili in un compito. Allineati alle attività già
- * presenti nel progetto:
- *   - 'quiz_kana'    → quiz sui kana (dominio kana di /api/quiz/generate);
- *   - 'quiz_kanji'   → quiz sui kanji (dominio kanji);
- *   - 'tracciamento' → pratica di scrittura/ordine dei tratti (canvas);
- *   - 'vocabolario'  → esercizio di vocabolario (predisposto: la
- *                      configurazione è libera, così un futuro modulo lo
- *                      interpreta senza modifiche allo schema).
+ * Tipi di attività assegnabili in un compito.
  *
- * I parametri specifici dell'attività (dominio, alfabeto, livello JLPT, numero
- * di domande, ecc.) vivono nel campo JSON `configurazione`, che rispecchia il
- * payload già usato dal frontend per generare l'attività: nessun accoppiamento
- * rigido, piena estensibilità.
+ * NON sono più un ENUM di database: il valore è una stringa validata contro il
+ * REGISTRO `constants/tipiAttivita.js`. Prima della generalizzazione l'ENUM
+ * conteneva `quiz_kana | quiz_kanji | tracciamento | vocabolario`, valori legati
+ * alla materia insegnata che imponevano una migrazione ALTER TABLE per ogni
+ * nuovo tipo. Ora i tipi sono neutri (`quiz`, `corso`, `pratica_scrittura`,
+ * `lettura`, `consegna`, `personalizzato`) e aggiungerne uno significa
+ * aggiungere una voce al registro.
+ *
+ * I parametri specifici (quale quiz, quale corso, quante domande…) vivono nel
+ * campo JSON `configurazione`: nessun accoppiamento rigido, piena estensibilità.
  */
-const TIPI_ATTIVITA = ['quiz_kana', 'quiz_kanji', 'tracciamento', 'vocabolario'];
+const TIPI_ATTIVITA = CODICI_ATTIVITA;
 
 // Stato di pubblicazione del compito (distinto dallo stato PER STUDENTE, che è
 // derivato: assegnato / in_scadenza / scaduto / completato).
@@ -72,19 +72,22 @@ Compito.init(
       defaultValue: null,
     },
 
+    // Codice del tipo di attività (registro `constants/tipiAttivita.js`).
+    // Colonna STRING: nuovi tipi senza migrazioni.
     tipo_attivita: {
-      type: DataTypes.ENUM(...TIPI_ATTIVITA),
+      type: DataTypes.STRING(50),
       allowNull: false,
       field: 'tipo_attivita',
       validate: {
-        isIn: {
-          args: [TIPI_ATTIVITA],
-          msg: `Il tipo di attività deve essere uno di: ${TIPI_ATTIVITA.join(', ')}`,
+        appartieneAlRegistro(valore) {
+          if (!tipoAttivitaEsiste(valore)) {
+            throw new Error(`Il tipo di attività deve essere uno di: ${TIPI_ATTIVITA.join(', ')}`);
+          }
         },
       },
     },
 
-    // Parametri dell'attività (dominio, alfabeto, livello JLPT, numeroDomande…).
+    // Parametri dell'attività (quizId, corsoId, numeroDomande…).
     configurazione: {
       type: DataTypes.JSON,
       allowNull: true,

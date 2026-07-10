@@ -9,9 +9,12 @@ import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 import styles from './Scuole.module.css';
 
 /**
- * Riga di una scuola nell'elenco admin: nome, conteggi utenti/aule e azioni
- * (modifica / elimina). L'eliminazione richiede conferma ed è bloccata
- * server-side se la scuola ha ancora utenti collegati.
+ * Riga di una scuola nell'elenco admin: nome, slug pubblico, stato, conteggi
+ * utenti/aule e azioni (modifica / elimina). L'eliminazione richiede conferma
+ * ed è bloccata server-side se la scuola ha ancora utenti collegati.
+ *
+ * Lo SLUG è mostrato perché è ciò che si incolla in `?scuola=…`: senza vederlo,
+ * l'admin dovrebbe indovinarlo.
  */
 const ScuolaRow = ({ scuola, onEdit }) => {
   const { t } = useTranslation();
@@ -37,9 +40,18 @@ const ScuolaRow = ({ scuola, onEdit }) => {
       <div className={styles.item}>
         <div className={styles.itemMain}>
           <span className={styles.itemName}>{scuola.nome}</span>
+          {scuola.slug && <span className={styles.itemSlug}>/{scuola.slug}</span>}
           <span className={styles.itemMeta}>
-            <Badge tone="neutral">{t('scuole.list.utentiCount', { count: utenti })}</Badge>
-            <Badge tone="neutral">{t('scuole.list.auleCount', { count: aule })}</Badge>
+            <span className={styles.itemBadges}>
+              {scuola.predefinita && (
+                <Badge tone="gold">{t('scuole.list.predefinita')}</Badge>
+              )}
+              {scuola.attiva === false && (
+                <Badge tone="seal">{t('scuole.list.sospesa')}</Badge>
+              )}
+              <Badge tone="neutral">{t('scuole.list.utentiCount', { count: utenti })}</Badge>
+              <Badge tone="neutral">{t('scuole.list.auleCount', { count: aule })}</Badge>
+            </span>
           </span>
         </div>
         <div className={styles.itemActions}>

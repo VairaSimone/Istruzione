@@ -7,8 +7,12 @@ import { queryClient } from './api/queryClient';
 import { router } from './routes/router';
 import { setupAuthInterceptor } from './api/authInterceptor';
 import { useCurrentUser } from './hooks/useCurrentUser';
+import BrandingProvider from './components/branding/BrandingProvider';
 
-
+/**
+ * Ricostruisce la sessione (GET /me) al boot. Vive fuori dal router perché non
+ * deve dipendere dalla rotta corrente.
+ */
 const SessionBootstrap = () => {
   useCurrentUser();
   return null;
@@ -21,6 +25,12 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/*
+        Il branding si carica in parallelo alla sessione, non dopo: `GET /config`
+        è pubblico, e il nome e i colori della scuola devono essere sullo schermo
+        già alla pagina di login, non solo dopo l'autenticazione.
+      */}
+      <BrandingProvider />
       <SessionBootstrap />
       <RouterProvider router={router} />
       <Toaster
@@ -28,10 +38,11 @@ const App = () => {
         toastOptions={{
           duration: 4000,
           style: {
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: 'var(--font-body)',
             fontSize: '0.875rem',
             borderRadius: '6px',
-            // Token del tema attivo: i toast seguono Chiaro/Scuro
+            // Token del tema attivo: i toast seguono Chiaro/Scuro e il brand
+            // della scuola, perché i token sono sovrascritti su <html>.
             background: 'var(--color-paper)',
             color: 'var(--color-ink)',
             border: '1px solid var(--color-border)',
@@ -41,7 +52,7 @@ const App = () => {
             iconTheme: { primary: 'var(--color-matcha)', secondary: 'var(--color-paper)' },
           },
           error: {
-            iconTheme: { primary: 'var(--color-seal)', secondary: 'var(--color-paper)' },
+            iconTheme: { primary: 'var(--color-danger)', secondary: 'var(--color-paper)' },
           },
         }}
       />

@@ -48,7 +48,7 @@ const {
  *   - con `quizId`  → il quiz della scuola determina il motore, la configurazione
  *     e la dimensione del round (cfr. `quizGestioneService`);
  *   - senza `quizId` → percorso storico kana/kanji (retrocompatibilità), soggetto
- *     al flag di scuola `quizTemplateLibero`.
+ *     al flag di scuola `impostazioni.didattica.accessoLiberoTemplate`.
  *
  * Per i quiz personalizzati la CORREZIONE È LATO SERVER: il client invia solo la
  * risposta scelta, mai il verdetto.

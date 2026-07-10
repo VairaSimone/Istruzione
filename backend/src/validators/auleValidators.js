@@ -7,9 +7,25 @@ const Classe = require('../models/Classe');
  * Validator delle AULE (express-validator), usati prima del middleware
  * `validate`. Coerenti con lo stile degli altri validator del progetto:
  * messaggi in italiano, sanitizzazione (`trim`) e cast (`toInt`/`toBoolean`).
+ *
+ * Il LIVELLO dell'aula è testo libero (la piattaforma è generica: "A1", "Base",
+ * "Terzo anno"…). Qui si valida solo la forma; l'appartenenza al vocabolario
+ * eventualmente definito dalla scuola è verificata nel service, che è l'unico a
+ * conoscere il tenant del richiedente.
  */
 
-const LIVELLI_JLPT = Classe.LIVELLI_JLPT;
+const LIVELLO_MAX = Classe.LIVELLO_MAX;
+
+/**
+ * Regola condivisa per il campo livello. `livelloJLPT` resta accettato come
+ * ALIAS STORICO finché il frontend non viene aggiornato.
+ */
+const livelloRule = (chain) =>
+  chain
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: LIVELLO_MAX })
+    .withMessage(`Il livello non può superare i ${LIVELLO_MAX} caratteri`);
 
 // ─────────────────────────────────────────────
 // Parametri di rotta (UUID)
@@ -52,11 +68,8 @@ const campiOpzionaliAula = [
     .matches(/^\d{4}\/\d{4}$/)
     .withMessage("L'anno scolastico deve essere nel formato AAAA/AAAA (es. 2025/2026)"),
 
-  body('livelloJLPT')
-    .optional({ nullable: true })
-    .trim()
-    .isIn(LIVELLI_JLPT)
-    .withMessage(`Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`),
+  livelloRule(body('livello')),
+  livelloRule(body('livelloJLPT')),
 
   body('colore')
     .optional({ nullable: true })
@@ -134,11 +147,7 @@ const validateInvitoStudenteAula = [
 // Filtri elenco aule
 // ─────────────────────────────────────────────
 const validateElencoClassi = [
-  query('livello')
-    .optional()
-    .trim()
-    .isIn(LIVELLI_JLPT)
-    .withMessage(`Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`),
+  livelloRule(query('livello')),
 
   query('anno')
     .optional()

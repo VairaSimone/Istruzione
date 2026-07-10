@@ -33,7 +33,7 @@ const AulaCard = ({ aula }) => {
       {aula.descrizione && <p className={styles.cardText}>{aula.descrizione}</p>}
 
       <div className={styles.cardMeta}>
-        {aula.livelloJLPT && <Badge tone="matcha">{aula.livelloJLPT}</Badge>}
+        {aula.livello && <Badge tone="matcha">{aula.livello}</Badge>}
         {aula.annoScolastico && <Badge tone="gold">{aula.annoScolastico}</Badge>}
       </div>
 

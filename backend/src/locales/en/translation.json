@@ -2,7 +2,7 @@
   "email": {
     "verify": {
       "subject": "Verify your Email address",
-      "title": "Welcome to our Japanese Platform!",
+      "title": "Welcome to the platform!",
       "body": "Thank you for registering. To complete your account activation, click the button below:",
       "button": "Verify Email",
       "fallback": "If the button doesn't work, copy and paste this link into your browser:",
@@ -20,8 +20,8 @@
       "body": "Click the link below to confirm your new email address:"
     },
     "studentInvite": {
-      "subject": "You have been invited to the Japanese Platform",
-      "title": "Invitation to the Japanese Platform",
+      "subject": "You have been invited to the platform",
+      "title": "Invitation to the platform",
       "body": "Your teacher has invited you to join the platform. Click the button to complete your registration (first name, last name, age and password):",
       "classLabel": "Assigned class",
       "button": "Complete registration",
@@ -29,7 +29,7 @@
       "footer": "This link is personal and will expire soon. If you were not expecting this invitation, you can ignore this email."
     },
     "teacherInvite": {
-      "subject": "Teacher invitation to the Japanese Platform",
+      "subject": "Teacher invitation to the platform",
       "title": "Teacher Invitation",
       "body": "An administrator has invited you to join the platform as a teacher. Click the button to complete your registration (first name, last name and password):",
       "button": "Complete registration",

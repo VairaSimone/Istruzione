@@ -115,7 +115,8 @@ const CorsoStudenteDetailPage = () => {
             <p className={styles.pageSubtitle}>{corso.descrizione}</p>
           )}
           <div className={styles.cardMeta}>
-            {corso.livelloJLPT && <Badge tone="neutral">{corso.livelloJLPT}</Badge>}
+            {corso.materia && <Badge tone="gold">{corso.materia}</Badge>}
+            {corso.livello && <Badge tone="neutral">{corso.livello}</Badge>}
             <span className={styles.mutedSmall}>
               {t('corsi.card.capitoli', { n: corso.conteggioCapitoli ?? 0 })}
             </span>

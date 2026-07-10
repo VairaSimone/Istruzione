@@ -71,7 +71,7 @@ const DisponibilitaPanel = ({ corso }) => {
             <li key={aula.classeId} className={styles.aulaRow}>
               <span className={styles.aulaInfo}>
                 <span className={styles.aulaName}>{aula.nome}</span>
-                {aula.livelloJLPT && <Badge tone="neutral">{aula.livelloJLPT}</Badge>}
+                {aula.livello && <Badge tone="neutral">{aula.livello}</Badge>}
                 {aula.annoScolastico && (
                   <span className={styles.mutedSmall}>{aula.annoScolastico}</span>
                 )}

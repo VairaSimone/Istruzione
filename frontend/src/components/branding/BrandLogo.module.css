@@ -1,0 +1,45 @@
+/*
+ * Marchio della scuola: logo caricato o monogramma generato.
+ * I colori vengono dai token di brand, sovrascritti a runtime dal
+ * BrandingProvider con quelli scelti dalla scuola.
+ */
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background-color: var(--color-brand-primary);
+  color: var(--color-brand-primary-contrast);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+.sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 0.75rem;
+}
+
+.md {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 0.875rem;
+}
+
+.lg {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}

@@ -12,6 +12,7 @@ import Badge from '../../../components/ui/Badge';
 import Button from '../../../components/ui/Button';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 import styles from './UserRow.module.css';
+import { etichettaClasse } from '../../../utils/classe';
 
 const STATE_TONE = {
   [ACCOUNT_STATES.ATTIVO]: 'matcha',
@@ -69,7 +70,7 @@ const UserRow = ({ utente }) => {
             <span className={styles.email}>{utente.email}</span>
           </div>
         </td>
-        <td>{utente.classe ? t(`classi.${utente.classe}`) : '—'}</td>
+        <td>{etichettaClasse(t, utente.classe, '—')}</td>
         <td>
           <div className={styles.statusCell}>
             <Badge tone={utente.email_verificata ? 'matcha' : 'danger'}>

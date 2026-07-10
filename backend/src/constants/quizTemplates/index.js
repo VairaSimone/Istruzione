@@ -29,10 +29,14 @@ const { LIVELLI_DISPONIBILI } = require('../kanjiData');
  *   1. se serve un nuovo MOTORE, implementarne la generazione in `quizService`
  *      (funzione `generate<Motore>QuizPool`) e mapparla nel dispatcher;
  *   2. aggiungere qui un descrittore al vettore `TEMPLATE`:
- *        { codice, nome, descrizione, materia, motore,
+ *        { codice, nome, descrizione, materia, categoria, esempio, motore,
  *          configurazioneDefault, campiSovrascrivibili, valida }
  *   3. nessuna migrazione richiesta: `quiz.template_codice` è una stringa e
  *      `quiz.configurazione` un blob JSON libero.
+ *
+ * Un template NON deve stare in questo file per forza: la sua implementazione
+ * (dizionari + motore) può vivere in un modulo separato ed essere importata
+ * qui. Il registro è l'unico punto di aggancio.
  *
  * Ogni descrittore espone `valida(configurazione)` che NORMALIZZA il blob
  * (scartando le chiavi sconosciute) e lancia 422 se un valore non è ammesso:
@@ -135,6 +139,12 @@ const TEMPLATE = [
     descrizione:
       'Quiz sui sillabari giapponesi con ripetizione spaziata (SRS), gruppi selezionabili, dakuon e yōon.',
     materia: 'Giapponese',
+    categoria: 'Sistemi di scrittura',
+    // Template DI ESEMPIO fornito con la piattaforma. Non viene installato
+    // automaticamente in nessuna scuola: è disponibile nel catalogo.
+    esempio: true,
+    // La pratica dei tratti richiede la funzionalità omonima; il quiz in sé no.
+    funzionalitaRichiesta: 'quiz',
     motore: 'kana',
     // Nessun campo fissato: la scuola può lasciare la scelta allo studente.
     configurazioneDefault: {},
@@ -149,6 +159,9 @@ const TEMPLATE = [
     descrizione:
       'Quiz sui kanji per livello JLPT (N5–N1) con tre modalità: riconoscimento, lettura e produzione.',
     materia: 'Giapponese',
+    categoria: 'Ideogrammi',
+    esempio: true,
+    funzionalitaRichiesta: 'quiz',
     motore: 'kanji',
     configurazioneDefault: { tipoQuiz: 'recognition' },
     campiSovrascrivibili: ['livello', 'tipoQuiz', 'lingua'],
@@ -182,10 +195,16 @@ const catalogoPubblico = () =>
     nome: t.nome,
     descrizione: t.descrizione,
     materia: t.materia,
+    categoria: t.categoria || null,
+    esempio: Boolean(t.esempio),
+    funzionalitaRichiesta: t.funzionalitaRichiesta || 'quiz',
     motore: t.motore,
     configurazioneDefault: t.configurazioneDefault,
     campiSovrascrivibili: t.campiSovrascrivibili,
   }));
+
+/** Elenco delle materie coperte dai template installabili (per i filtri UI). */
+const materieTemplate = () => [...new Set(TEMPLATE.map((t) => t.materia).filter(Boolean))];
 
 /**
  * Risolve i filtri effettivi di una partita generata da un quiz-template.
@@ -227,5 +246,6 @@ module.exports = {
   trovaTemplate,
   trovaTemplateObbligatorio,
   catalogoPubblico,
+  materieTemplate,
   risolviFiltri,
 };

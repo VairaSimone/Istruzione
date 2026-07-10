@@ -8,6 +8,7 @@ const Utente = require('../models/Utente');
 const Scuola = require('../models/Scuola');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const impostazioniService = require('./impostazioniService');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const inviteService = require('./inviteService');
@@ -158,6 +159,15 @@ const creaClasse = async ({ dati, creatore }) => {
     throw new AppError('Scuola di destinazione non trovata.', 404, 'SCUOLA_NOT_FOUND');
   }
 
+  // Il livello è testo libero, ma se la scuola ha definito un vocabolario
+  // (`impostazioni.didattica.livelliDisponibili`) il valore deve appartenervi.
+  const livelloNorm = await impostazioniService.assicuraNelVocabolario(
+    scuolaId,
+    'livelliDisponibili',
+    dati.livello,
+    "Il livello dell'aula"
+  );
+
   const classe = await sequelize.transaction(async (t) => {
     const nuova = await Classe.create(
       {
@@ -165,7 +175,7 @@ const creaClasse = async ({ dati, creatore }) => {
         descrizione: dati.descrizione ?? null,
         scuola_id: scuolaId,
         anno_scolastico: dati.annoScolastico ?? null,
-        livello_jlpt: dati.livelloJLPT ?? null,
+        livello: livelloNorm,
         colore: dati.colore ?? null,
         icona: dati.icona ?? null,
         creata_da: creatore.id,
@@ -223,7 +233,7 @@ const elencoClassi = async ({ richiedente, filtri }) => {
     where.scuola_id = scuola;
   }
 
-  if (livello) where.livello_jlpt = livello;
+  if (livello) where.livello = livello;
   if (anno) where.anno_scolastico = anno;
   if (archiviata !== undefined) where.archiviata = archiviata;
   if (q) {
@@ -327,7 +337,14 @@ const aggiornaClasse = async ({ classeId, dati, richiedente }) => {
   if (dati.nome !== undefined) classe.nome = dati.nome.trim();
   if (dati.descrizione !== undefined) classe.descrizione = dati.descrizione;
   if (dati.annoScolastico !== undefined) classe.anno_scolastico = dati.annoScolastico;
-  if (dati.livelloJLPT !== undefined) classe.livello_jlpt = dati.livelloJLPT;
+  if (dati.livello !== undefined) {
+    classe.livello = await impostazioniService.assicuraNelVocabolario(
+      classe.scuola_id,
+      'livelliDisponibili',
+      dati.livello,
+      "Il livello dell'aula"
+    );
+  }
   if (dati.colore !== undefined) classe.colore = dati.colore;
   if (dati.icona !== undefined) classe.icona = dati.icona;
   if (dati.archiviata !== undefined) classe.archiviata = dati.archiviata;

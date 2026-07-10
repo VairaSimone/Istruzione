@@ -44,6 +44,7 @@ export const getTemplateQuiz = async (filters = {}) => {
 export const getQuizDisponibili = async (filters = {}) => {
   const params = {};
   if (filters.materia) params.materia = filters.materia;
+  if (filters.categoria) params.categoria = filters.categoria;
   if (filters.scuola) params.scuola = filters.scuola;
 
   const { data } = await apiClient.get('/quiz/disponibili', { params });
@@ -57,6 +58,7 @@ export const getQuizList = async (filters = {}) => {
   const params = {};
   if (filters.stato) params.stato = filters.stato;
   if (filters.materia) params.materia = filters.materia;
+  if (filters.categoria) params.categoria = filters.categoria;
   if (filters.template) params.template = filters.template;
   if (filters.q) params.q = filters.q;
   if (filters.scuola) params.scuola = filters.scuola;

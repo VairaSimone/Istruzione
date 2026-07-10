@@ -42,6 +42,7 @@ exports.creaQuiz = catchAsync(async (req, res) => {
     titolo,
     descrizione,
     materia,
+    categoria,
     templateCodice,
     configurazione,
     stato,
@@ -56,6 +57,7 @@ exports.creaQuiz = catchAsync(async (req, res) => {
       titolo,
       descrizione,
       materia,
+    categoria,
       templateCodice,
       configurazione,
       stato,
@@ -76,11 +78,11 @@ exports.creaQuiz = catchAsync(async (req, res) => {
 
 // GET /api/quiz/gestione
 exports.elencoQuiz = catchAsync(async (req, res) => {
-  const { stato, materia, template, q, scuola, page, limit } = req.query;
+  const { stato, materia, categoria, template, q, scuola, page, limit } = req.query;
 
   const { quiz, paginazione } = await quizGestioneService.elencoQuiz({
     richiedente: req.user,
-    filtri: { stato, materia, template, q, scuola, page, limit },
+    filtri: { stato, materia, categoria, template, q, scuola, page, limit },
   });
 
   res.status(200).json({
@@ -110,6 +112,7 @@ exports.aggiornaQuiz = catchAsync(async (req, res) => {
     titolo,
     descrizione,
     materia,
+    categoria,
     templateCodice,
     configurazione,
     stato,
@@ -123,6 +126,7 @@ exports.aggiornaQuiz = catchAsync(async (req, res) => {
       titolo,
       descrizione,
       materia,
+    categoria,
       templateCodice,
       configurazione,
       stato,
@@ -231,11 +235,11 @@ exports.disabilitaPerAula = catchAsync(async (req, res) => {
 
 // GET /api/quiz/disponibili
 exports.quizDisponibili = catchAsync(async (req, res) => {
-  const { materia, scuola } = req.query;
+  const { materia, categoria, scuola } = req.query;
 
   const { quiz } = await quizGestioneService.quizDisponibili({
     richiedente: req.user,
-    filtri: { materia, scuola },
+    filtri: { materia, categoria, scuola },
   });
 
   res.status(200).json({

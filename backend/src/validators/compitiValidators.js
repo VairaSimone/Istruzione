@@ -9,7 +9,11 @@ const Compito = require('../models/Compito');
  * stile del progetto.
  */
 
-const TIPI_ATTIVITA = Compito.TIPI_ATTIVITA;
+// Codici canonici del registro + alias storici (`quiz_kana`, `tracciamento`…),
+// così un client non ancora aggiornato continua a funzionare: il service li
+// normalizza al codice neutro corrispondente.
+const { CODICI_ACCETTATI, CODICI_ATTIVITA } = require('../constants/tipiAttivita');
+const TIPI_ATTIVITA = CODICI_ACCETTATI;
 const STATI_COMPITO = Compito.STATI_COMPITO;
 // Stati PER STUDENTE (derivati) accettati come filtro.
 const STATI_STUDENTE = ['assegnato', 'completato', 'in_scadenza', 'scaduto'];
@@ -105,7 +109,7 @@ const validateCreaCompito = [
     .withMessage("Il tipo di attività è obbligatorio")
     .bail()
     .isIn(TIPI_ATTIVITA)
-    .withMessage(`Il tipo di attività deve essere uno di: ${TIPI_ATTIVITA.join(', ')}`),
+    .withMessage(`Il tipo di attività deve essere uno di: ${CODICI_ATTIVITA.join(', ')}`),
 
   body('dataScadenza')
     .notEmpty()
@@ -145,7 +149,7 @@ const validateAggiornaCompito = [
     .optional()
     .trim()
     .isIn(TIPI_ATTIVITA)
-    .withMessage(`Il tipo di attività deve essere uno di: ${TIPI_ATTIVITA.join(', ')}`),
+    .withMessage(`Il tipo di attività deve essere uno di: ${CODICI_ATTIVITA.join(', ')}`),
 
   body('dataScadenza')
     .optional()
@@ -227,7 +231,7 @@ const validateElencoCompiti = [
     .optional()
     .trim()
     .isIn(TIPI_ATTIVITA)
-    .withMessage(`Il tipo deve essere uno di: ${TIPI_ATTIVITA.join(', ')}`),
+    .withMessage(`Il tipo deve essere uno di: ${CODICI_ATTIVITA.join(', ')}`),
   query('q')
     .optional()
     .trim()

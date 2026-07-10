@@ -16,7 +16,14 @@ export const STATI_QUIZ = Object.freeze(['bozza', 'pubblicato', 'archiviato']);
 /**
  * Codici dei template di piattaforma installabili. Il catalogo autorevole
  * arriva da `GET /quiz/templates`: questa lista serve solo ai filtri e alla
- * validazione ottimistica dei form.
+ * validazione ottimistica dei form, e va tenuta allineata al registro del
+ * backend.
+ *
+ * `kana` e `kanji` sono i template DI ESEMPIO forniti con la piattaforma: una
+ * scuola li installa se insegna giapponese, altrimenti non li incontra mai.
+ * Quando il catalogo si allargherà ad altre materie, questa lista crescerà —
+ * senza che nulla nel resto del frontend debba cambiare, perché i form leggono
+ * il catalogo dall'API.
  */
 export const CODICI_TEMPLATE = Object.freeze(['kana', 'kanji']);
 
@@ -49,6 +56,7 @@ export const MAX_DOMANDE_PER_QUIZ = 500;
 export const QUIZ_TITOLO_MIN = 2;
 export const QUIZ_TITOLO_MAX = 160;
 export const QUIZ_MATERIA_MAX = 80;
+export const QUIZ_CATEGORIA_MAX = 80;
 export const QUIZ_DESCRIZIONE_MAX = 10000;
 
 export const DIMENSIONE_ROUND_MIN = 1;
@@ -56,11 +64,12 @@ export const DIMENSIONE_ROUND_MAX = 50;
 export const DIMENSIONE_ROUND_DEFAULT = 20;
 
 /**
- * Chiave dell'impostazione di scuola che governa l'accesso libero ai quiz
- * storici di giapponese (kana/kanji senza passare da un quiz installato).
+ * Impostazione di scuola che governa l'ESERCIZIO LIBERO sui template (giocare
+ * un motore di template senza passare da un quiz installato dagli insegnanti).
+ * Vive in `impostazioni.didattica.accessoLiberoTemplate`.
  * Assente o `true` ⇒ accesso libero; `false` ⇒ solo quiz assegnati all'aula.
  */
-export const CHIAVE_TEMPLATE_LIBERO = 'quizTemplateLibero';
+export const CHIAVE_TEMPLATE_LIBERO = 'accessoLiberoTemplate';
 
 /**
  * Campi della `configurazione` che ogni template può fissare. Se la scuola li

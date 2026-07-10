@@ -1,11 +1,15 @@
 import { z } from 'zod';
-import { LIVELLI_JLPT, STATI_CORSO } from '../constants/domain';
+import { STATI_CORSO, LIVELLO_MAX, MATERIA_MAX } from '../constants/domain';
 
 /**
  * Schemi Zod per i CORSI (videolezioni on-demand), localizzati (funzioni che
  * ricevono `t`). Rispecchiano `backend/src/validators/corsiValidators.js`:
  * stessi limiti di lunghezza, stessi enum e URL http(s) con protocollo
  * obbligatorio.
+ *
+ * MATERIA e LIVELLO sono testo libero: un corso può riguardare qualsiasi
+ * disciplina. Se la scuola ha definito i propri vocabolari, il backend li fa
+ * rispettare; qui si controlla solo la lunghezza.
  *
  * Video, copertine e documenti si caricano come FILE dal PC (multipart, fuori
  * da questi schemi: la validazione dei file vive in `constants/upload.js`).
@@ -70,12 +74,12 @@ export const buildCorsoSchema = (t, { requireScuola = false } = {}) =>
       z.string().max(10000, t('corsi.validation.descrizioneMax')).optional()
     ),
     copertinaUrl: optionalHttpUrl(t),
-    livelloJLPT: z
-      .string()
-      .trim()
-      .optional()
-      .transform((v) => (v === '' ? undefined : v))
-      .pipe(z.enum(LIVELLI_JLPT, { message: t('corsi.validation.livello') }).optional()),
+    materia: optionalTrimmed().pipe(
+      z.string().max(MATERIA_MAX, t('corsi.validation.materiaMax')).optional()
+    ),
+    livello: optionalTrimmed().pipe(
+      z.string().max(LIVELLO_MAX, t('corsi.validation.livelloMax')).optional()
+    ),
     stato: z.enum(STATI_CORSO, { message: t('corsi.validation.stato') }),
     videoScaricabile: z.boolean().optional(),
     // Scuola del corso: obbligatoria solo quando compila un admin (in creazione).

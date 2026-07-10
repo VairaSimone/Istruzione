@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import * as statisticheService from '../services/statisticheService';
 import { queryKeys } from '../constants/queryKeys';
+import { useFunzionalitaAttiva } from './useConfig';
+import { FUNZIONALITA } from '../constants/funzionalita';
 
 /**
  * Recupera i caratteri problematici dell'utente
@@ -11,12 +13,15 @@ import { queryKeys } from '../constants/queryKeys';
  * @param {{ enabled?: boolean }} [opts]
  */
 export const useCaratteriProblematici = (filtri = {}, { enabled = true } = {}) => {
+  // Protetto dal gate di sezione `statistiche` lato backend.
+  const statisticheAttive = useFunzionalitaAttiva(FUNZIONALITA.STATISTICHE);
+
   return useQuery({
     queryKey: queryKeys.statistiche.caratteriProblematici(filtri),
     queryFn: async () => {
       const data = await statisticheService.getCaratteriProblematici(filtri);
       return data.data; // { caratteri, riepilogo }
     },
-    enabled,
+    enabled: enabled && statisticheAttive,
   });
 };

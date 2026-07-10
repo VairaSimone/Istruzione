@@ -8,7 +8,29 @@ const Corso = require('../models/Corso');
  * sanitizzazione (`trim`) e cast coerenti con lo stile del progetto.
  */
 
-const LIVELLI_JLPT = Corso.LIVELLI_JLPT;
+const LIVELLO_MAX = Corso.LIVELLO_MAX;
+const MATERIA_MAX = Corso.MATERIA_MAX;
+
+/**
+ * Livello e materia del corso sono TESTO LIBERO: la piattaforma è generica.
+ * Qui si valida solo la forma; l'appartenenza al vocabolario eventualmente
+ * definito dalla scuola è verificata nel service (che conosce il tenant).
+ * `livelloJLPT` resta accettato come alias storico finché il frontend non viene
+ * aggiornato.
+ */
+const livelloRule = (chain) =>
+  chain
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: LIVELLO_MAX })
+    .withMessage(`Il livello non può superare i ${LIVELLO_MAX} caratteri`);
+
+const materiaRule = (chain) =>
+  chain
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: MATERIA_MAX })
+    .withMessage(`La materia non può superare i ${MATERIA_MAX} caratteri`);
 const STATI_CORSO = Corso.STATI_CORSO;
 const URL_MAX = Corso.URL_MAX;
 
@@ -72,11 +94,9 @@ const campiOpzionaliCorso = [
     .isLength({ max: URL_MAX })
     .withMessage(`L'URL della copertina non può superare i ${URL_MAX} caratteri`),
 
-  body('livelloJLPT')
-    .optional({ nullable: true })
-    .trim()
-    .isIn(LIVELLI_JLPT)
-    .withMessage(`Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`),
+  livelloRule(body('livello')),
+  livelloRule(body('livelloJLPT')),
+  materiaRule(body('materia')),
 
   body('stato')
     .optional()
@@ -279,11 +299,8 @@ const validateElencoCorsi = [
     .isIn(STATI_CORSO)
     .withMessage(`Lo stato deve essere uno di: ${STATI_CORSO.join(', ')}`),
 
-  query('livello')
-    .optional()
-    .trim()
-    .isIn(LIVELLI_JLPT)
-    .withMessage(`Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`),
+  livelloRule(query('livello')),
+  materiaRule(query('materia')),
 
   query('q')
     .optional()
@@ -313,11 +330,8 @@ const validateElencoCorsi = [
 // Filtri elenco corsi (studente): niente stato/scuola (impliciti)
 // ─────────────────────────────────────────────
 const validateElencoCorsiStudente = [
-  query('livello')
-    .optional()
-    .trim()
-    .isIn(LIVELLI_JLPT)
-    .withMessage(`Il livello JLPT deve essere uno di: ${LIVELLI_JLPT.join(', ')}`),
+  livelloRule(query('livello')),
+  materiaRule(query('materia')),
 
   query('q')
     .optional()

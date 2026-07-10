@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import * as statisticheService from '../services/statisticheService';
 import { queryKeys } from '../constants/queryKeys';
+import { useFunzionalitaAttiva } from './useConfig';
+import { FUNZIONALITA } from '../constants/funzionalita';
 
 /**
  * Recupera la heatmap delle attività (GET /statistiche/heatmap): attività per
@@ -13,12 +15,15 @@ import { queryKeys } from '../constants/queryKeys';
  * @param {{ enabled?: boolean }} [opts]
  */
 export const useHeatmap = (giorni = 365, { enabled = true } = {}) => {
+  // Protetto dal gate di sezione `statistiche` lato backend.
+  const statisticheAttive = useFunzionalitaAttiva(FUNZIONALITA.STATISTICHE);
+
   return useQuery({
     queryKey: queryKeys.statistiche.heatmap(giorni),
     queryFn: async () => {
       const data = await statisticheService.getHeatmap(giorni);
       return data.data; // { dal, al, giorniRichiesti, massimoGiornaliero, giorni, riepilogo }
     },
-    enabled,
+    enabled: enabled && statisticheAttive,
   });
 };

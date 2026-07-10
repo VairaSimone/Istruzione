@@ -8,11 +8,16 @@
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: http: https:; media-src 'self' http: https:; connect-src 'self' http: https: ws: wss:;"    />
+    <!--
+      Titolo e descrizione sono SEGNAPOSTO: al bootstrap il BrandingProvider li
+      sostituisce con quelli della scuola (GET /api/config). Restano qui perché
+      i crawler e le anteprime dei link leggono l'HTML statico.
+    -->
     <meta
       name="description"
-      content="Piattaforma per studenti e insegnanti di lingua giapponese."
+      content="Piattaforma didattica per studenti e insegnanti."
     />
-    <title>Piattaforma Giapponese</title>
+    <title>Piattaforma didattica</title>
     <!--
       Bootstrap del tema (anti-FOUC): imposta `data-theme` su <html> in modo
       SINCRONO prima del primo paint, così non c'è alcun lampeggio di tema al

@@ -1,0 +1,405 @@
+/*
+ * Pannello IMPOSTAZIONI SCUOLA.
+ * Solo token del design system: i colori del brand arrivano a runtime dal
+ * BrandingProvider, mai valori esadecimali cablati qui.
+ */
+
+.sezioni {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sezione {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sezioneHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-3);
+}
+
+.sezioneTitolo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.sezioneDescrizione {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+}
+
+.sezioneCorpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* I vocabolari e le liste di link occupano tutta la riga: hanno bisogno di aria. */
+.campoLargo {
+  grid-column: 1 / -1;
+}
+
+/* ── Campi ─────────────────────────────────────────────────────────────── */
+
+.campoLabel {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-1);
+}
+
+.campoHint {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}
+
+.inputInline {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.inputInline:focus {
+  outline: none;
+  border-color: var(--color-brand-accent);
+  box-shadow: var(--shadow-focus);
+}
+
+.inputInline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkboxField {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.checkboxTesto {
+  display: flex;
+  flex-direction: column;
+}
+
+.coloreField {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.coloreField > *:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.colorePicker {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 40px;
+  margin-top: 26px; /* allinea al campo, sotto l'etichetta */
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+/* ── Vocabolari ────────────────────────────────────────────────────────── */
+
+.vocabolario,
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.chipRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font-size: var(--text-md);
+  line-height: 1;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+
+.chipRemove:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+.vocabolarioVuoto {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-md);
+}
+
+.vocabolarioRiga,
+.linkRiga {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.linkRiga {
+  flex-wrap: wrap;
+}
+
+/* ── Funzionalità ──────────────────────────────────────────────────────── */
+
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toggleRiga {
+  border-radius: var(--radius-md);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.toggleRiga:hover {
+  background: var(--color-paper-dim);
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  cursor: pointer;
+}
+
+.toggleInput {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.toggleInput:disabled {
+  cursor: not-allowed;
+}
+
+.toggleTesto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.toggleTitolo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.toggleDescrizione {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}
+
+.toggleAvviso {
+  font-size: var(--text-xs);
+  color: var(--color-warning);
+}
+
+/* ── Anteprima ─────────────────────────────────────────────────────────── */
+
+.anteprima {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.anteprimaIdentita {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.anteprimaLogo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+}
+
+.anteprimaNome {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.anteprimaSlogan {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.anteprimaGriglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.anteprimaVoce {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.anteprimaEtichetta {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.anteprimaCampioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.anteprimaBottone {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+}
+
+.anteprimaVelatura {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-ink);
+  border: 1px solid;
+  border-radius: var(--radius-md);
+}
+
+.anteprimaAssente {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Barra di salvataggio ──────────────────────────────────────────────── */
+
+.barraSalvataggio {
+  position: sticky;
+  bottom: var(--space-4);
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+}
+
+.barraTesto {
+  font-size: var(--text-sm);
+  color: var(--color-ink-soft);
+}
+
+.barraAzioni {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .coloreField {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .colorePicker {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .linkRiga > .inputInline {
+    flex-basis: 100%;
+  }
+}

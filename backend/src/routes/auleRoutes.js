@@ -6,6 +6,7 @@ const router = express.Router();
 const auleController = require('../controllers/auleController');
 
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const { inviteLimiter } = require('../middleware/rateLimiter');
 const validate = require('../middleware/validate');
@@ -42,6 +43,8 @@ const {
  */
 
 router.use(authenticateJWT);
+// Gate di sezione: aule virtuali disattivabili per scuola.
+router.use(richiediFunzionalita('aule'));
 router.use(authorizeRoles('insegnante', 'admin'));
 
 // ── Letture ──

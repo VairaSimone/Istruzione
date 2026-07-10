@@ -50,7 +50,7 @@ const AulaDetailPage = () => {
           <h1 className={styles.pageTitle}>{aula.nome}</h1>
           {aula.descrizione && <p className={styles.pageSubtitle}>{aula.descrizione}</p>}
           <div className={styles.cardMeta}>
-            {aula.livelloJLPT && <Badge tone="matcha">{aula.livelloJLPT}</Badge>}
+            {aula.livello && <Badge tone="matcha">{aula.livello}</Badge>}
             {aula.annoScolastico && <Badge tone="gold">{aula.annoScolastico}</Badge>}
             {aula.archiviata && <Badge tone="neutral">{t('aule.archived')}</Badge>}
           </div>

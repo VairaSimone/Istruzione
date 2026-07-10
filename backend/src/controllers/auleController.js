@@ -14,10 +14,20 @@ const auleService = require('../services/auleService');
 // POST /api/aule
 // ─────────────────────────────────────────────
 exports.creaClasse = catchAsync(async (req, res) => {
-  const { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, scuolaId } = req.body;
+  // `livelloJLPT` è accettato come ALIAS STORICO di `livello` finché il
+  // frontend non viene aggiornato: il backend persiste solo `livello`.
+  const { nome, descrizione, annoScolastico, livello, livelloJLPT, colore, icona, scuolaId } = req.body;
 
   const classe = await auleService.creaClasse({
-    dati: { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, scuolaId },
+    dati: {
+      nome,
+      descrizione,
+      annoScolastico,
+      livello: livello !== undefined ? livello : livelloJLPT,
+      colore,
+      icona,
+      scuolaId,
+    },
     creatore: req.user,
   });
 
@@ -66,11 +76,19 @@ exports.dettaglioClasse = catchAsync(async (req, res) => {
 // PATCH /api/aule/:id
 // ─────────────────────────────────────────────
 exports.aggiornaClasse = catchAsync(async (req, res) => {
-  const { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, archiviata } = req.body;
+  const { nome, descrizione, annoScolastico, livello, livelloJLPT, colore, icona, archiviata } = req.body;
 
   const classe = await auleService.aggiornaClasse({
     classeId: req.params.id,
-    dati: { nome, descrizione, annoScolastico, livelloJLPT, colore, icona, archiviata },
+    dati: {
+      nome,
+      descrizione,
+      annoScolastico,
+      livello: livello !== undefined ? livello : livelloJLPT,
+      colore,
+      icona,
+      archiviata,
+    },
     richiedente: req.user,
   });
 

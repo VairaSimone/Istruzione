@@ -9,6 +9,7 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Spinner from '../components/ui/Spinner';
 import styles from '../features/compiti/components/Compiti.module.css';
+import { etichettaTipoAttivita } from '../constants/tipiAttivita';
 
 /** Dettaglio compito (studente): descrizione, scadenza, feedback ricevuto, consegna. */
 const CompitoStudenteDetailPage = () => {
@@ -34,7 +35,7 @@ const CompitoStudenteDetailPage = () => {
             <Badge tone={STATO_STUDENTE_TONE[compito.statoStudente] || 'neutral'}>
               {t(`compiti.statiStudente.${compito.statoStudente}`)}
             </Badge>
-            <Badge tone="neutral">{t(`compiti.tipi.${compito.tipoAttivita}`)}</Badge>
+            <Badge tone="neutral">{t(etichettaTipoAttivita(compito.tipoAttivita))}</Badge>
             <span className={styles.mutedSmall}>
               {t('compiti.card.scadenza', {
                 data: formatDateTime(compito.dataScadenza, i18n.language),

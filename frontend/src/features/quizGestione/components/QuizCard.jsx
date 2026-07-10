@@ -34,7 +34,8 @@ const QuizCard = ({ quiz }) => {
         ) : (
           <Badge tone="neutral">{t('quizGestione.card.personalizzato')}</Badge>
         )}
-        {quiz.materia && <Badge tone="neutral">{quiz.materia}</Badge>}
+        {quiz.materia && <Badge tone="gold">{quiz.materia}</Badge>}
+        {quiz.categoria && <Badge tone="neutral">{quiz.categoria}</Badge>}
       </div>
 
       <div className={styles.cardStats}>

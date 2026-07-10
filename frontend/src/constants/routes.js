@@ -31,6 +31,7 @@ export const ROUTES = Object.freeze({
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
   SCUOLE_MANAGEMENT: '/gestione/scuole',
+  IMPOSTAZIONI_SCUOLA: '/gestione/impostazioni',
   NOT_FOUND: '/404',
   FORBIDDEN: '/403',
 });
