@@ -153,6 +153,9 @@ Messaggio.init(
 
     indexes: [
       { fields: ['mittente_id'], name: 'messaggi_mittente' },
+      // Indice composto per l'elenco dei messaggi INVIATI: filtro per mittente
+      // e ordinamento per data (cfr. messaggiService.elencoInviati).
+      { fields: ['mittente_id', 'created_at'], name: 'messaggi_mittente_created' },
       { fields: ['scuola_id'], name: 'messaggi_scuola_id' },
       { fields: ['classe_id'], name: 'messaggi_classe' },
       { fields: ['compito_id'], name: 'messaggi_compito' },

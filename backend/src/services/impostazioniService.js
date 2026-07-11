@@ -57,6 +57,22 @@ const _scrivi = (chiave, valore) => {
   return valore;
 };
 
+// Listener notificati a ogni invalidazione. Consente ad altre cache derivate
+// (es. la cache della risposta di GET /api/config nel controller) di azzerarsi
+// in modo coerente quando il branding/le impostazioni cambiano, senza che
+// questo service conosca i loro dettagli.
+/** @type {Set<(scuolaId: ?string) => void>} */
+const _listenerInvalidazione = new Set();
+
+/**
+ * Registra un callback invocato a ogni `invalida()`. Riceve lo `scuolaId`
+ * (o null quando l'invalidazione è totale).
+ * @param {(scuolaId: ?string) => void} fn
+ */
+const registraInvalidazione = (fn) => {
+  if (typeof fn === 'function') _listenerInvalidazione.add(fn);
+};
+
 /**
  * Invalida la cache. Senza argomenti svuota tutto (usato dai test e dopo le
  * operazioni che toccano più scuole).
@@ -65,13 +81,22 @@ const _scrivi = (chiave, valore) => {
 const invalida = (scuolaId = null) => {
   if (!scuolaId) {
     _cache.clear();
-    return;
+  } else {
+    _cache.delete(`id:${String(scuolaId)}`);
+    // Lo slug e il flag `predefinita` possono essere cambiati dalla stessa
+    // scrittura: le voci derivate vanno rimosse in blocco.
+    for (const chiave of _cache.keys()) {
+      if (chiave.startsWith('slug:') || chiave === 'predefinita') _cache.delete(chiave);
+    }
   }
-  _cache.delete(`id:${String(scuolaId)}`);
-  // Lo slug e il flag `predefinita` possono essere cambiati dalla stessa
-  // scrittura: le voci derivate vanno rimosse in blocco.
-  for (const chiave of _cache.keys()) {
-    if (chiave.startsWith('slug:') || chiave === 'predefinita') _cache.delete(chiave);
+
+  // Propaga l'invalidazione alle cache derivate (best effort).
+  for (const fn of _listenerInvalidazione) {
+    try {
+      fn(scuolaId);
+    } catch (_) {
+      /* una cache derivata non deve far fallire l'invalidazione principale */
+    }
   }
 };
 
@@ -266,6 +291,7 @@ logger.debug(`[IMPOSTAZIONI] Cache impostazioni scuola attiva (TTL ${TTL_MS} ms)
 module.exports = {
   TTL_MS,
   invalida,
+  registraInvalidazione,
   perId,
   perSlug,
   predefinita,

@@ -185,16 +185,104 @@ const accodaNotifica = async ({
 /**
  * Accoda la stessa notifica a più destinatari. Comodo per i messaggi d'aula e i
  * compiti assegnati a una classe. Restituisce il numero di notifiche create.
+ *
+ * PERFORMANCE: versione BATCH, priva del problema N+1. A prescindere dal numero
+ * di destinatari esegue al massimo:
+ *   - 1 SELECT   per recuperare tutti gli utenti coinvolti (`findAll`);
+ *   - 1 SELECT   (solo se `unicaPerRiferimento`) per l'idempotenza di gruppo;
+ *   - 1 INSERT   per creare tutte le notifiche in blocco (`bulkCreate`).
+ * Il filtraggio (account attivo, email presente, preferenza attiva) avviene in
+ * memoria sui dati già caricati, senza ulteriori query per-utente.
+ *
+ * Come `accodaNotifica`, è "best effort": non deve mai far fallire l'azione di
+ * dominio che l'ha invocata. Ogni errore viene loggato e assorbito.
  */
-const accodaNotificaMulti = async ({ utenteIds, ...comune }) => {
+const accodaNotificaMulti = async ({
+  utenteIds,
+  tipo,
+  titolo,
+  corpo = null,
+  link = null,
+  scuolaId = null,
+  riferimentoTipo = null,
+  riferimentoId = null,
+  unicaPerRiferimento = false,
+  transaction = null,
+}) => {
+  if (!NOTIFICHE_ATTIVE) return 0;
   if (!Array.isArray(utenteIds) || !utenteIds.length) return 0;
-  const unici = [...new Set(utenteIds.map(String))];
-  let create = 0;
-  for (const utenteId of unici) {
-    const n = await accodaNotifica({ ...comune, utenteId });
-    if (n) create += 1;
+
+  try {
+    if (!tipiNotifica.esiste(tipo)) {
+      logger.warn(`[NOTIFICHE] Tipo sconosciuto ignorato: ${tipo}`);
+      return 0;
+    }
+
+    const unici = [...new Set(utenteIds.map(String))];
+
+    // 1. UNA sola query per TUTTI i destinatari (elimina l'N+1).
+    const utenti = await Utente.findAll({
+      where: { id: { [Op.in]: unici } },
+      attributes: ['id', 'stato', 'email', 'preferenze_notifiche'],
+      transaction,
+    });
+
+    // 2. Filtro in memoria: solo account attivi, con email, che desiderano
+    //    ricevere questa categoria di notifica.
+    let destinatari = utenti
+      .filter(
+        (u) =>
+          u.stato === 'attivo' &&
+          u.email &&
+          tipiNotifica.vuoleRicevere(u.preferenze_notifiche, tipo)
+      )
+      .map((u) => String(u.id));
+
+    if (!destinatari.length) return 0;
+
+    // 3. Idempotenza opzionale: UNA sola query scopre quali destinatari hanno
+    //    già una notifica per questo (riferimento, tipo), così da non duplicarla.
+    if (unicaPerRiferimento && riferimentoTipo && riferimentoId) {
+      const esistenti = await NotificaEmail.findAll({
+        where: {
+          utente_id: { [Op.in]: destinatari },
+          tipo,
+          riferimento_tipo: riferimentoTipo,
+          riferimento_id: riferimentoId,
+        },
+        attributes: ['utente_id'],
+        transaction,
+        raw: true,
+      });
+      const gia = new Set(esistenti.map((r) => String(r.utente_id)));
+      destinatari = destinatari.filter((id) => !gia.has(id));
+      if (!destinatari.length) return 0;
+    }
+
+    // 4. UNA sola INSERT per tutte le notifiche.
+    const titoloOk = String(titolo || '').slice(0, 200);
+    const corpoOk = corpo != null ? String(corpo).slice(0, 500) : null;
+    const linkOk = link != null ? String(link).slice(0, 500) : null;
+
+    const righe = destinatari.map((utenteId) => ({
+      utente_id: utenteId,
+      scuola_id: scuolaId,
+      tipo,
+      titolo: titoloOk,
+      corpo: corpoOk,
+      link: linkOk,
+      riferimento_tipo: riferimentoTipo,
+      riferimento_id: riferimentoId,
+      stato: 'in_attesa',
+    }));
+
+    await NotificaEmail.bulkCreate(righe, { transaction });
+    return righe.length;
+  } catch (err) {
+    // Una notifica non deve MAI compromettere l'operazione principale.
+    logger.error(`[NOTIFICHE] Accodamento multiplo fallito (tipo=${tipo}): ${err.message}`);
+    return 0;
   }
-  return create;
 };
 
 // ─────────────────────────────────────────────

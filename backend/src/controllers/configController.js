@@ -28,15 +28,58 @@ const { descrizioneSchema } = require('../constants/impostazioniScuola');
  */
 
 // ─────────────────────────────────────────────
+// CACHE DI RISPOSTA per GET /api/config
+//
+// Il branding cambia di rado (solo dal pannello di amministrazione), mentre il
+// frontend interroga questo endpoint a ogni bootstrap. Una cache in memoria con
+// TTL breve evita di ricomporre branding + catalogo funzionalità a ogni
+// richiesta. Il payload NON dipende dalla lingua (nome/descrizione sono chiavi
+// statiche del catalogo), quindi la chiave di cache è il solo tenant risolto.
+//
+// COERENZA: registrando un listener su impostazioniService.invalida(), la cache
+// viene azzerata immediatamente a ogni scrittura delle impostazioni della
+// scuola; il TTL è quindi solo una rete di sicurezza.
+// ─────────────────────────────────────────────
+
+// TTL in millisecondi, vincolato all'intervallo consigliato 60–120 s.
+const CONFIG_TTL_MS = Math.min(
+  120000,
+  Math.max(60000, parseInt(process.env.CONFIG_CACHE_TTL_MS, 10) || 90000)
+);
+
+/** @type {Map<string, { scadenza: number, payload: object }>} */
+const _cacheConfig = new Map();
+
+const _leggiConfig = (chiave) => {
+  const voce = _cacheConfig.get(chiave);
+  if (!voce) return undefined;
+  if (voce.scadenza < Date.now()) {
+    _cacheConfig.delete(chiave);
+    return undefined;
+  }
+  return voce.payload;
+};
+
+const _scriviConfig = (chiave, payload) => {
+  _cacheConfig.set(chiave, { scadenza: Date.now() + CONFIG_TTL_MS, payload });
+  return payload;
+};
+
+// Azzera la cache di risposta a ogni invalidazione delle impostazioni: così un
+// cambio di branding è visibile subito, senza attendere la scadenza del TTL.
+impostazioniService.registraInvalidazione(() => _cacheConfig.clear());
+
+// ─────────────────────────────────────────────
 // GET /api/config  (pubblico)
 // ─────────────────────────────────────────────
 exports.configurazione = catchAsync(async (req, res) => {
   const scuola = await impostazioniService.risolviTenantRichiesta(req);
-  const branding = impostazioniService.brandingPubblico(scuola);
+  const chiave = scuola ? `id:${scuola.id}` : 'default';
 
-  res.status(200).json({
-    status: 'success',
-    data: {
+  let payload = _leggiConfig(chiave);
+  if (!payload) {
+    const branding = impostazioniService.brandingPubblico(scuola);
+    payload = {
       piattaforma: {
         nome: piattaforma.NOME,
         descrizione: piattaforma.DESCRIZIONE,
@@ -46,8 +89,15 @@ exports.configurazione = catchAsync(async (req, res) => {
       // Catalogo completo: descrittori + stato di abilitazione per questa
       // scuola. Il frontend costruisce il menu da qui, senza elenchi cablati.
       funzionalita: catalogoFunzionalita(branding.impostazioni.funzionalita),
-    },
-  });
+    };
+    _scriviConfig(chiave, payload);
+  }
+
+  // Cache-Control coerente col TTL applicativo: permette anche a browser e CDN
+  // di riusare la risposta per la stessa finestra temporale.
+  res.set('Cache-Control', `public, max-age=${Math.floor(CONFIG_TTL_MS / 1000)}`);
+
+  res.status(200).json({ status: 'success', data: payload });
 });
 
 // ─────────────────────────────────────────────

@@ -27,7 +27,30 @@ const authenticateJWT = catchAsync(async (req, res, next) => {
     return next(new AppError('Token non valido. Autenticazione fallita.', 401, 'INVALID_TOKEN'));
   }
 
-  const utente = await Utente.findByPk(decoded.id);
+  // Recupera SOLO le colonne effettivamente usate qui sotto (validazione della
+  // sessione + costruzione di `req.user`), evitando il SELECT * che a ogni
+  // richiesta trascinerebbe hash password, token, contatori di gamification e
+  // il blob JSON delle preferenze notifiche.
+  const utente = await Utente.findByPk(decoded.id, {
+    attributes: [
+      // Necessari alle verifiche di sessione:
+      'token_version',
+      'stato',
+      'bloccato_fino_al',
+      // Necessari a comporre req.user:
+      'id',
+      'nome',
+      'cognome',
+      'eta',
+      'email',
+      'ruolo',
+      'classe',
+      'scuola_id',
+      'lingua',
+      'email_verificata',
+      'profilo_completo',
+    ],
+  });
 
   if (!utente) {
     return next(new AppError('Utente non trovato. Autenticazione fallita.', 401, 'INVALID_TOKEN'));

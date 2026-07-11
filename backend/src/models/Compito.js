@@ -166,6 +166,10 @@ Compito.init(
 
     indexes: [
       { fields: ['creato_da'], name: 'compiti_creato_da' },
+      // Indice composto per le viste "compiti dell'autore per scadenza": filtro
+      // per creatore e ordinamento/range su data_scadenza (cfr. calendarioService
+      // e compitiService).
+      { fields: ['creato_da', 'data_scadenza'], name: 'compiti_creato_da_scadenza' },
       { fields: ['scuola_id'], name: 'compiti_scuola_id' },
       { fields: ['stato'], name: 'compiti_stato' },
       { fields: ['tipo_attivita'], name: 'compiti_tipo_attivita' },

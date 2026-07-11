@@ -77,6 +77,26 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // ─────────────────────────────────────────────
+// COMPRESSIONE HTTP (opzionale)
+// Da attivare (COMPRESSIONE_HTTP=true) SOLO se Node è esposto direttamente a
+// Internet. Dietro un reverse proxy (Nginx) o una CDN (Cloudflare) la
+// compressione è già gestita a monte: abilitarla anche qui sarebbe ridondante
+// e sprecherebbe CPU. Disattivata per default; il require è protetto così
+// l'assenza del pacchetto non blocca l'avvio.
+// ─────────────────────────────────────────────
+if (process.env.COMPRESSIONE_HTTP === 'true') {
+  try {
+    const compression = require('compression');
+    app.use(compression());
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[APP] COMPRESSIONE_HTTP=true ma il pacchetto "compression" non è installato: compressione disattivata. Esegui `npm install`.'
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
 // RATE LIMITING GLOBALE
 // Prima linea di difesa contro flooding/DDoS
 // ─────────────────────────────────────────────
