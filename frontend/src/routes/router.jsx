@@ -7,41 +7,51 @@ import { ROUTES } from '../constants/routes';
 import { ROLES } from '../constants/domain';
 import { FUNZIONALITA } from '../constants/funzionalita';
 
-import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '../pages/RegisterPage';
-import ForgotPasswordPage from '../pages/ForgotPasswordPage';
-import ResetPasswordPage from '../pages/ResetPasswordPage';
-import VerifyEmailPage from '../pages/VerifyEmailPage';
-import VerifyEmailChangePage from '../pages/VerifyEmailChangePage';
-import DashboardPage from '../pages/DashboardPage';
-import ProfilePage from '../pages/ProfilePage';
-import QuizPage from '../pages/QuizPage';
-import QuizGestioneListPage from '../pages/QuizGestioneListPage';
-import QuizGestioneDetailPage from '../pages/QuizGestioneDetailPage';
-import AuleListPage from '../pages/AuleListPage';
-import AulaDetailPage from '../pages/AulaDetailPage';
-import CompitiListPage from '../pages/CompitiListPage';
-import CompitoDetailPage from '../pages/CompitoDetailPage';
-import CompitiStudentePage from '../pages/CompitiStudentePage';
-import CompitoStudenteDetailPage from '../pages/CompitoStudenteDetailPage';
-import CorsiListPage from '../pages/CorsiListPage';
-import CorsoDetailPage from '../pages/CorsoDetailPage';
-import CorsiStudentePage from '../pages/CorsiStudentePage';
-import CorsoStudenteDetailPage from '../pages/CorsoStudenteDetailPage';
-import TeacherDashboardPage from '../pages/TeacherDashboardPage';
-import MessaggiPage from '../pages/MessaggiPage';
-import MessaggioDetailPage from '../pages/MessaggioDetailPage';
-import CalendarioPage from '../pages/CalendarioPage';
-import CertificatiListPage from '../pages/CertificatiListPage';
-import CertificatiStudentePage from '../pages/CertificatiStudentePage';
-import VerificaCertificatoPage from '../pages/VerificaCertificatoPage';
-import UsersManagementPage from '../pages/UsersManagementPage';
-import NotFoundPage from '../pages/NotFoundPage';
-import ForbiddenPage from '../pages/ForbiddenPage';
-import InvitesManagementPage from '../pages/InvitesManagementPage';
-import ScuoleManagementPage from '../pages/ScuoleManagementPage';
-import ImpostazioniScuolaPage from '../pages/ImpostazioniScuolaPage';
+// ─────────────────────────────────────────────
+// CODE SPLITTING — le pagine sono caricate in modo LAZY (React.lazy),
+// dichiarate in `lazyPages.js`. Ogni pagina diventa un chunk separato,
+// scaricato solo quando la relativa route viene visitata: il bundle iniziale
+// non le contiene più. Lo shell del router (AppLayout, componenti di guardia)
+// resta eager per non ritardare il primo render. Il confine <Suspense> che
+// copre queste route vive in AppLayout, intorno all'<Outlet>.
+// ─────────────────────────────────────────────
+import {
+  HomePage,
+  LoginPage,
+  RegisterPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  VerifyEmailPage,
+  VerifyEmailChangePage,
+  DashboardPage,
+  ProfilePage,
+  QuizPage,
+  QuizGestioneListPage,
+  QuizGestioneDetailPage,
+  AuleListPage,
+  AulaDetailPage,
+  CompitiListPage,
+  CompitoDetailPage,
+  CompitiStudentePage,
+  CompitoStudenteDetailPage,
+  CorsiListPage,
+  CorsoDetailPage,
+  CorsiStudentePage,
+  CorsoStudenteDetailPage,
+  TeacherDashboardPage,
+  MessaggiPage,
+  MessaggioDetailPage,
+  CalendarioPage,
+  CertificatiListPage,
+  CertificatiStudentePage,
+  VerificaCertificatoPage,
+  UsersManagementPage,
+  NotFoundPage,
+  ForbiddenPage,
+  InvitesManagementPage,
+  ScuoleManagementPage,
+  ImpostazioniScuolaPage,
+} from './lazyPages';
 
 /**
  * Albero delle route.

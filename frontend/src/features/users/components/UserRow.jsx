@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../../store/authStore';
@@ -132,4 +132,8 @@ const UserRow = ({ utente }) => {
   );
 };
 
-export default UserRow;
+// React.memo: la riga è ripetuta molte volte nella tabella utenti. Memoizzarla
+// evita di ri-renderizzare tutte le righe quando il componente padre si
+// aggiorna per motivi estranei alla singola riga (es. il toggle di isFetching
+// della paginazione). Applicato SOLO qui, dove la ripetizione lo giustifica.
+export default memo(UserRow);

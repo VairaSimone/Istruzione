@@ -1,17 +1,17 @@
 import apiClient from '../api/axiosClient';
 
 /**
- * Service layer per il modulo di gestione utenti (sezione 4.3 della doc).
- * Tutti gli endpoint richiedono ruolo 'insegnante' — il controllo di
+ * Service layer per il modulo di gestione utenti.
+ * Tutti gli endpoint richiedono ruolo 'insegnante'/'admin' — il controllo di
  * autorizzazione è comunque applicato server-side (authorizeRoles), il
  * frontend lo replica solo per UX (nascondere/disabilitare la UI).
  *
- * NOTA: l'endpoint GET /gestione/utenti supporta filtri reali via query
- * string (?ruolo=, ?classe=, ?nome=), confermati nel codice sorgente
- * (authService.getUtentiPerInsegnante) ma non esplicitati nella
- * documentazione fornita. NON supporta paginazione lato server
- * (findAll senza limit/offset) nonostante la doc lo lasci intendere:
- * qualsiasi paginazione necessaria va quindi gestita client-side.
+ * GET /auth/gestione/utenti supporta:
+ *   - filtri:      ?ruolo=  ?classe=  ?nome=
+ *   - paginazione: ?page=   ?limit=
+ * Quando page/limit sono presenti il backend risponde con findAndCountAll e
+ * include un blocco `paginazione` { paginaCorrente, elementiPerPagina,
+ * totaleElementi, totalePagine }. Senza page/limit restituisce l'elenco intero.
  */
 
 export const getAllUsers = async (filters = {}) => {
@@ -19,6 +19,10 @@ export const getAllUsers = async (filters = {}) => {
   if (filters.ruolo) params.ruolo = filters.ruolo;
   if (filters.classe) params.classe = filters.classe;
   if (filters.nome) params.nome = filters.nome;
+  // Paginazione server-side: inviati solo se valorizzati, così il resto del
+  // codice può continuare a chiamare getAllUsers senza pagina per liste piccole.
+  if (filters.page != null) params.page = filters.page;
+  if (filters.limit != null) params.limit = filters.limit;
 
   const { data } = await apiClient.get('/auth/gestione/utenti', { params });
   return data;
