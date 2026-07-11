@@ -1,0 +1,358 @@
+/* ── Header di pagina / filtri ─────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-ink);
+  margin: 0 0 var(--space-1);
+}
+
+.pageSubtitle {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: var(--space-5);
+}
+
+.emptyText {
+  color: var(--color-text-muted);
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+/* ── Griglia dei certificati ───────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.cardStudente {
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.cardCodice {
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.02em;
+  color: var(--color-ink-soft);
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Form (modale rilascio) ────────────────────────────────────────────── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hintBlock {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* ── Paginazione ───────────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.pageInfo {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ── Pannello di personalizzazione (impostazioni) ──────────────────────── */
+.configPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.sezioneTitolo {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-ink);
+  margin: 0 0 var(--space-1);
+}
+
+.sezioneDescr {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-4);
+}
+
+.gruppo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper-dim);
+}
+
+.gruppoTitolo {
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.colori {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Colore: campo di testo + selettore nativo affiancati. */
+.coloreField {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+.coloreField > :first-child {
+  flex: 1;
+}
+
+.colorePicker {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+}
+
+/* Chip dei segnaposto inseribili nel corpo. */
+.segnaposti {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.segnaposto {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-sm);
+  padding: 0.25rem 0.6rem;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-pill, 999px);
+  background-color: var(--color-surface);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+}
+
+.segnaposto:hover {
+  border-color: var(--color-seal);
+  color: var(--color-seal);
+}
+
+.checkboxField {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.checkboxField input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-seal);
+  cursor: pointer;
+}
+
+.checkboxTesto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.checkboxLabel {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.checkboxHint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Anteprima risorse (logo/firma). */
+.risorse {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.risorsaBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.risorsaLabel {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.risorsaPreview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.risorsaPreview img {
+  max-height: 88px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.risorsaVuota {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.risorsaAzioni {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── Verifica pubblica ─────────────────────────────────────────────────── */
+.verificaWrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.verificaForm {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.verificaForm > :first-child {
+  flex: 1;
+}
+
+.esitoValido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.esitoRiga {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.esitoEtichetta {
+  color: var(--color-text-muted);
+}
+
+.esitoValore {
+  font-weight: 600;
+  color: var(--color-ink);
+  text-align: right;
+}
+
+.statoBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.statoValido {
+  background-color: var(--color-success-bg);
+  color: var(--color-matcha-dark);
+}
+
+.statoRevocato {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}

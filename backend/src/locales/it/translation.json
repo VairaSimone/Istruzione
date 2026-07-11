@@ -47,7 +47,8 @@
         "nuovoMessaggio": "Nuovi messaggi ({{count}})",
         "nuovoCompito": "Nuovi compiti assegnati ({{count}})",
         "scadenzaCompito": "Compiti in scadenza ({{count}})",
-        "feedbackCompito": "Nuovi feedback ricevuti ({{count}})"
+        "feedbackCompito": "Nuovi feedback ricevuti ({{count}})",
+        "certificatoRilasciato": "Nuovi certificati ricevuti ({{count}})"
       }
     }
   },

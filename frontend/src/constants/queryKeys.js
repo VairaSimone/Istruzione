@@ -101,4 +101,10 @@ export const queryKeys = Object.freeze({
     eventi: (filters) => ['calendario', 'eventi', filters ?? {}],
     eventoDetail: (id) => ['calendario', 'eventi', 'detail', id],
   },
+  certificati: {
+    all: ['certificati'],
+    list: (filters) => ['certificati', 'list', filters ?? {}],
+    detail: (id) => ['certificati', 'detail', id],
+    verifica: (codice) => ['certificati', 'verifica', codice],
+  },
 });

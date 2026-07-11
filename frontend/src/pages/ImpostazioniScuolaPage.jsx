@@ -14,6 +14,7 @@ import EmptyState from '../components/shared/EmptyState';
 import ErrorState from '../components/shared/ErrorState';
 import SezioneImpostazioni from '../features/impostazioni/components/SezioneImpostazioni';
 import AnteprimaBranding from '../features/impostazioni/components/AnteprimaBranding';
+import CertificatoConfigPanel from '../features/certificati/components/CertificatoConfigPanel';
 import pageStyles from './UsersManagementPage.module.css';
 import styles from '../features/impostazioni/components/Impostazioni.module.css';
 
@@ -63,6 +64,14 @@ const ImpostazioniScuolaPage = () => {
 const schema = schemaQuery.data?.schema ?? null;
 
   const nomiSezioni = useMemo(() => (schema ? Object.keys(schema) : []), [schema]);
+
+  // La sezione `certificato` ha un pannello dedicato (upload logo/firma, corpo
+  // con segnaposto, selettori di colore): la escludiamo dalla resa generica.
+  const nomiSezioniGeneriche = useMemo(
+    () => nomiSezioni.filter((nome) => nome !== 'certificato'),
+    [nomiSezioni]
+  );
+  const haCertificato = nomiSezioni.includes('certificato');
 
   const aggiornaSezione = (nome, valore) => {
     setModifiche((prec) => ({ ...prec, [nome]: valore }));
@@ -133,7 +142,7 @@ const schema = schemaQuery.data?.schema ?? null;
       <AnteprimaBranding impostazioni={bozza} />
 
       <div className={styles.sezioni}>
-        {nomiSezioni.map((nome) => (
+        {nomiSezioniGeneriche.map((nome) => (
           <SezioneImpostazioni
             key={nome}
             nome={nome}
@@ -143,6 +152,13 @@ const schema = schemaQuery.data?.schema ?? null;
             onChange={(valore) => aggiornaSezione(nome, valore)}
           />
         ))}
+
+        {haCertificato && (
+          <CertificatoConfigPanel
+            valore={bozza.certificato}
+            onChange={(valore) => aggiornaSezione('certificato', valore)}
+          />
+        )}
       </div>
 
       {/* Barra di salvataggio: compare solo quando c'è qualcosa da salvare, e

@@ -72,6 +72,13 @@ const TIPI_NOTIFICA = [
     ordine: 40,
     defaultAttiva: true,
   },
+  {
+    chiave: 'certificato_rilasciato',
+    categoria: 'certificati',
+    i18nSezione: 'certificatoRilasciato',
+    ordine: 50,
+    defaultAttiva: true,
+  },
 ];
 
 // Indice per lookup O(1) sul `tipo`.

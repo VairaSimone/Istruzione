@@ -61,7 +61,9 @@
     "calendario": "Calendar",
     "scuole": "Schools",
     "quizGestione": "Quiz management",
-    "impostazioniScuola": "School settings"
+    "impostazioniScuola": "School settings",
+    "certificati": "Certificates",
+    "certificatiStudente": "My certificates"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -1774,5 +1776,123 @@
     },
     "save": "Save preferences",
     "updated": "Notification preferences updated successfully."
+  },
+  "certificati": {
+    "stati": {
+      "valido": "Valid",
+      "revocato": "Revoked"
+    },
+    "list": {
+      "title": "Certificates",
+      "subtitle": "Issue and manage your school's course completion certificates.",
+      "emetti": "Issue certificate",
+      "search": "Search",
+      "searchPlaceholder": "Student, path or code…",
+      "stato": "Status",
+      "allStates": "All statuses",
+      "loadError": "Unable to load certificates. Please try again.",
+      "empty": "No certificates issued yet."
+    },
+    "studente": {
+      "title": "My certificates",
+      "subtitle": "The certificates you have received, downloadable as PDF.",
+      "loadError": "Unable to load your certificates. Please try again.",
+      "emptyTitle": "No certificates",
+      "emptyDescription": "You have not received any course completion certificates yet."
+    },
+    "card": {
+      "percorso": "Path",
+      "esito": "Result",
+      "dataCompletamento": "Completed on",
+      "scaricaPdf": "Download PDF",
+      "verifica": "Verify",
+      "revoca": "Revoke"
+    },
+    "form": {
+      "title": "Issue a certificate",
+      "submit": "Issue",
+      "intro": "Select the student and the completed path. The visual template (logo, colours, text) is your school's, editable in settings.",
+      "aula": "Class",
+      "aulaPlaceholder": "Select a class",
+      "studente": "Student",
+      "studentePlaceholder": "Select a student",
+      "corso": "Course",
+      "corsoPlaceholder": "No course (use free text)",
+      "nomeCorso": "Path name",
+      "nomeCorsoHint": "Alternative to a course: free-text name of the completed path.",
+      "dataCompletamento": "Completion date",
+      "esito": "Result",
+      "esitoHint": "Optional, e.g. \"Passed with honours\" or \"90/100\".",
+      "titolo": "Title (optional)",
+      "titoloHint": "Leave empty to use the school template's title."
+    },
+    "revoca": {
+      "title": "Revoke the certificate?",
+      "description": "{{studente}}'s certificate will be marked as revoked. This can only be undone by issuing a new one.",
+      "confirm": "Revoke"
+    },
+    "config": {
+      "title": "Certificate template",
+      "subtitle": "Customise the look of course completion certificates: text, colours, orientation, logo and signature.",
+      "gruppoTesti": "Text",
+      "gruppoAspetto": "Appearance",
+      "gruppoImmagini": "Logo and signature",
+      "testoCorpoHint": "Use the placeholders below: they will be replaced with the student's details on issue.",
+      "mostraCodiceHint": "Print the public verification code at the bottom of the certificate.",
+      "immagineHint": "PNG or JPEG. A transparent background is recommended for the logo.",
+      "risorsaCaricata": "Image uploaded.",
+      "nessunaImmagine": "No image",
+      "caricaImmagine": "Upload",
+      "rimuoviImmagine": "Remove",
+      "campi": {
+        "titolo": "Title",
+        "sottotitolo": "Subtitle",
+        "testoCorpo": "Certificate body",
+        "firmatarioNome": "Signatory name",
+        "firmatarioTitolo": "Signatory role",
+        "piePagina": "Footer",
+        "coloreTitolo": "Title colour",
+        "coloreTesto": "Text colour",
+        "coloreBordo": "Border colour",
+        "coloreSfondo": "Background colour",
+        "orientamento": "Orientation",
+        "mostraCodiceVerifica": "Show verification code",
+        "logo": "Logo",
+        "firma": "Signature"
+      },
+      "orientamenti": {
+        "orizzontale": "Landscape",
+        "verticale": "Portrait"
+      }
+    },
+    "verifica": {
+      "title": "Verify certificate",
+      "subtitle": "Enter the code shown on the certificate to verify its authenticity.",
+      "codiceLabel": "Verification code",
+      "submit": "Verify",
+      "valido": "Valid certificate",
+      "revocato": "Revoked certificate",
+      "campi": {
+        "nomeStudente": "Student",
+        "nomeCorso": "Path",
+        "esito": "Result",
+        "scuola": "School",
+        "dataCompletamento": "Completed on",
+        "dataRilascio": "Issued on"
+      }
+    },
+    "toast": {
+      "emesso": "Certificate issued successfully.",
+      "revocato": "Certificate revoked."
+    },
+    "validation": {
+      "studenteRequired": "Select the recipient student.",
+      "percorsoRequired": "Provide a course or the path name.",
+      "nomeCorsoLength": "The path name cannot exceed 200 characters.",
+      "esitoLength": "The result cannot exceed 120 characters.",
+      "titoloLength": "The title cannot exceed 200 characters.",
+      "dataNonValida": "The date is not valid.",
+      "motivoLength": "The reason cannot exceed 255 characters."
+    }
   }
 }

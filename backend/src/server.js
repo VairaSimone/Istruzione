@@ -35,6 +35,7 @@ require('./models/AttivitaGiornaliera');
 require('./models/NotificaEmail');
 require('./models/EventoCalendario');
 require('./models/EventoDestinatario');
+require('./models/Certificato');
 
 const schedulerService = require('./services/schedulerService');
 

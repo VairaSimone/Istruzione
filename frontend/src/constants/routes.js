@@ -29,6 +29,10 @@ export const ROUTES = Object.freeze({
   MESSAGGI: '/messaggi',
   MESSAGGIO_DETAIL: '/messaggi/:id',
   CALENDARIO: '/calendario',
+  CERTIFICATI: '/certificati',
+  CERTIFICATI_STUDENTE: '/i-miei-certificati',
+  VERIFICA_CERTIFICATO: '/verifica-certificato',
+  VERIFICA_CERTIFICATO_CODICE: '/verifica-certificato/:codice',
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
   SCUOLE_MANAGEMENT: '/gestione/scuole',
@@ -45,3 +49,7 @@ export const corsoDetailPath = (id) => `/corsi/${id}`;
 export const corsoStudenteDetailPath = (id) => `/i-miei-corsi/${id}`;
 export const messaggioDetailPath = (id) => `/messaggi/${id}`;
 export const quizGestioneDetailPath = (id) => `/gestione/quiz/${id}`;
+
+/** Path della pagina di verifica pubblica precompilata con un codice. */
+export const verificaCertificatoPath = (codice) =>
+  `/verifica-certificato/${encodeURIComponent(codice)}`;

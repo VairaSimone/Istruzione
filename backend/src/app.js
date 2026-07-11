@@ -21,6 +21,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const messaggiRoutes = require('./routes/messaggiRoutes');
 const corsiRoutes = require('./routes/corsiRoutes');
 const calendarioRoutes = require('./routes/calendarioRoutes');
+const certificatoRoutes = require('./routes/certificatoRoutes');
 const { passport } = require('./config/passport');
 const cookieParser = require('cookie-parser');
 const piattaforma = require('./config/piattaforma');
@@ -131,6 +132,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/messaggi', messaggiRoutes);
 app.use('/api/corsi', corsiRoutes);
 app.use('/api/calendario', calendarioRoutes);
+app.use('/api/certificati', certificatoRoutes);
 
 // ─────────────────────────────────────────────
 // GESTIONE ROUTE NON TROVATE (404)

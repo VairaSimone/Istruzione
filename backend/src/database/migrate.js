@@ -15,6 +15,7 @@ require('../models/CorsoAula');
 require('../models/ProgressoKana');
 require('../models/ProgressoKanji');
 require('../models/AttivitaGiornaliera');
+require('../models/Certificato');
 
 const migrate = async () => {
   try {

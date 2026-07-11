@@ -31,6 +31,7 @@
     "nodemailer": "^9.0.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pdfkit": "^0.15.2",
     "sequelize": "^6.37.3",
     "umzug": "^3.8.3",
     "uuid": "^10.0.0",

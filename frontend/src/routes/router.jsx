@@ -33,6 +33,9 @@ import TeacherDashboardPage from '../pages/TeacherDashboardPage';
 import MessaggiPage from '../pages/MessaggiPage';
 import MessaggioDetailPage from '../pages/MessaggioDetailPage';
 import CalendarioPage from '../pages/CalendarioPage';
+import CertificatiListPage from '../pages/CertificatiListPage';
+import CertificatiStudentePage from '../pages/CertificatiStudentePage';
+import VerificaCertificatoPage from '../pages/VerificaCertificatoPage';
 import UsersManagementPage from '../pages/UsersManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ForbiddenPage from '../pages/ForbiddenPage';
@@ -63,6 +66,11 @@ export const router = createBrowserRouter([
       { path: ROUTES.VERIFY_EMAIL_CHANGE, element: <VerifyEmailChangePage /> },
       { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
       { path: ROUTES.FORBIDDEN, element: <ForbiddenPage /> },
+
+      // Verifica pubblica di un certificato: accessibile a chiunque, anche
+      // esternamente (link/QR), senza autenticazione.
+      { path: ROUTES.VERIFICA_CERTIFICATO, element: <VerificaCertificatoPage /> },
+      { path: ROUTES.VERIFICA_CERTIFICATO_CODICE, element: <VerificaCertificatoPage /> },
 
       // ── Route pubbliche SOLO per utenti non autenticati ──
       {
@@ -116,6 +124,13 @@ export const router = createBrowserRouter([
             element: <FeatureRoute funzionalita={FUNZIONALITA.CALENDARIO} />,
             children: [{ path: ROUTES.CALENDARIO, element: <CalendarioPage /> }],
           },
+          {
+            // I certificati ricevuti dallo studente (scaricabili in PDF).
+            element: <FeatureRoute funzionalita={FUNZIONALITA.CERTIFICAZIONI} />,
+            children: [
+              { path: ROUTES.CERTIFICATI_STUDENTE, element: <CertificatiStudentePage /> },
+            ],
+          },
         ],
       },
 
@@ -156,6 +171,10 @@ export const router = createBrowserRouter([
               { path: ROUTES.QUIZ_GESTIONE, element: <QuizGestioneListPage /> },
               { path: ROUTES.QUIZ_GESTIONE_DETAIL, element: <QuizGestioneDetailPage /> },
             ],
+          },
+          {
+            element: <FeatureRoute funzionalita={FUNZIONALITA.CERTIFICAZIONI} />,
+            children: [{ path: ROUTES.CERTIFICATI, element: <CertificatiListPage /> }],
           },
           {
             element: <FeatureRoute funzionalita={FUNZIONALITA.STATISTICHE} />,

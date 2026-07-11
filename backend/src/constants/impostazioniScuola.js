@@ -52,6 +52,10 @@ const LUNGHEZZA = {
   testoFooter: 1000,
   etichetta: 60,
   vocabolo: 80,
+  // Corpo del certificato: testo con segnaposto ({{studente}}, {{corso}}…).
+  testoCertificato: 1500,
+  // Identificativo di un file caricato (UUID) usato come logo/firma del certificato.
+  idFile: 36,
 };
 
 // Numero massimo di voci nelle liste (difesa contro blob gonfiati).
@@ -75,6 +79,15 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TELEFONO_REGEX = /^[+()\-.\s\d]{4,40}$/;
 
 const TEMI = ['chiaro', 'scuro', 'sistema'];
+
+// Orientamento del foglio del certificato PDF.
+const ORIENTAMENTI_CERTIFICATO = ['orizzontale', 'verticale'];
+
+// Corpo predefinito del certificato. I segnaposto ({{...}}) sono sostituiti al
+// momento del rilascio con i dati dello studente/corso (cfr. certificatoService).
+const CORPO_CERTIFICATO_PREDEFINITO =
+  'si attesta che {{studente}} ha completato con successo il percorso "{{corso}}" ' +
+  'in data {{data}}. Il presente certificato è rilasciato da {{scuola}}.';
 
 // Reti sociali riconosciute. `altri` accoglie qualunque altro collegamento
 // senza toccare lo schema.
@@ -338,6 +351,50 @@ const SCHEMA = {
     },
   },
 
+  // MODELLO DEL CERTIFICATO DI FINE CORSO.
+  // Interamente personalizzabile dalla scuola: intestazione, testo con
+  // segnaposto, colori, orientamento del foglio, logo e firma (immagini
+  // caricate e referenziate per id). Config riservata allo staff: non è esposta
+  // a `GET /api/config` (pubblica: false). I valori vengono "congelati" in uno
+  // snapshot al momento del rilascio, così i certificati già emessi non cambiano
+  // se in seguito la scuola modifica il modello (cfr. certificatoService).
+  certificato: {
+    pubblica: false,
+    campi: {
+      // Intestazione grande in cima al certificato.
+      titolo: { tipo: 'stringa', max: LUNGHEZZA.nome, default: 'Certificato di Fine Corso', pubblico: false },
+      // Riga introduttiva sopra il nome dello studente.
+      sottotitolo: { tipo: 'stringa', max: LUNGHEZZA.slogan, default: 'Si conferisce il presente attestato a', pubblico: false },
+      // Corpo con segnaposto: {{studente}}, {{corso}}, {{scuola}}, {{data}},
+      // {{esito}}, {{firmatario}}.
+      testoCorpo: {
+        tipo: 'stringa',
+        max: LUNGHEZZA.testoCertificato,
+        default: CORPO_CERTIFICATO_PREDEFINITO,
+        pubblico: false,
+      },
+      // Blocco firma (nome + qualifica di chi firma per la scuola).
+      firmatarioNome: { tipo: 'stringa', max: LUNGHEZZA.nome, default: null, pubblico: false },
+      firmatarioTitolo: { tipo: 'stringa', max: LUNGHEZZA.etichetta, default: null, pubblico: false },
+      // Nota a piè di pagina (es. riferimenti legali, sede).
+      piePagina: { tipo: 'stringa', max: LUNGHEZZA.testoFooter, default: null, pubblico: false },
+      // Logo e firma: id di file immagine caricati (PNG/JPEG) e serviti in
+      // locale. Sono validati come stringa qui; l'appartenenza alla scuola è
+      // verificata al momento del rendering del PDF (difesa in profondità).
+      logoFileId: { tipo: 'stringa', max: LUNGHEZZA.idFile, default: null, pubblico: false },
+      firmaFileId: { tipo: 'stringa', max: LUNGHEZZA.idFile, default: null, pubblico: false },
+      // Palette del certificato.
+      coloreTitolo: { tipo: 'colore', default: '#1F2937', pubblico: false },
+      coloreTesto: { tipo: 'colore', default: '#374151', pubblico: false },
+      coloreBordo: { tipo: 'colore', default: '#4F46E5', pubblico: false },
+      coloreSfondo: { tipo: 'colore', default: '#FFFFFF', pubblico: false },
+      // Orientamento del foglio A4.
+      orientamento: { tipo: 'enum', valori: ORIENTAMENTI_CERTIFICATO, default: 'orizzontale', pubblico: false },
+      // Se true, stampa il codice di verifica pubblico sul certificato.
+      mostraCodiceVerifica: { tipo: 'booleano', default: true, pubblico: false },
+    },
+  },
+
   funzionalita: {
     pubblica: true,
     campoUnico: { tipo: 'funzionalita', default: null, pubblico: true },
@@ -577,11 +634,22 @@ const vocabolario = (persistite, nome) => {
   return Array.isArray(voci) ? voci : [];
 };
 
+/**
+ * Estrae il MODELLO DEL CERTIFICATO risolto (default applicati) da un blob
+ * persistito. È lo snapshot che il certificatoService congela al rilascio.
+ */
+const modelloCertificato = (persistite, nomeScuola = null) => {
+  const complete = applicaDefault(persistite, nomeScuola);
+  return { ...complete.certificato };
+};
+
 module.exports = {
   SCHEMA,
   NOMI_SEZIONI,
   TEMI,
   RETI_SOCIAL,
+  ORIENTAMENTI_CERTIFICATO,
+  CORPO_CERTIFICATO_PREDEFINITO,
   COLORE_REGEX,
   URL_REGEX,
   impostazioniPredefinite,
@@ -592,4 +660,5 @@ module.exports = {
   descrizioneSchema,
   funzionalitaDi,
   vocabolario,
+  modelloCertificato,
 };

@@ -61,7 +61,9 @@
     "scuole": "Scuole",
     "invitesManagement": "Inviti",
     "quizGestione": "Gestione quiz",
-    "impostazioniScuola": "Impostazioni scuola"
+    "impostazioniScuola": "Impostazioni scuola",
+    "certificati": "Certificati",
+    "certificatiStudente": "I miei certificati"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -1774,5 +1776,123 @@
     },
     "save": "Salva preferenze",
     "updated": "Preferenze di notifica aggiornate con successo."
+  },
+  "certificati": {
+    "stati": {
+      "valido": "Valido",
+      "revocato": "Revocato"
+    },
+    "list": {
+      "title": "Certificati",
+      "subtitle": "Rilascia e gestisci i certificati di fine corso della tua scuola.",
+      "emetti": "Rilascia certificato",
+      "search": "Cerca",
+      "searchPlaceholder": "Studente, percorso o codice…",
+      "stato": "Stato",
+      "allStates": "Tutti gli stati",
+      "loadError": "Impossibile caricare i certificati. Riprova.",
+      "empty": "Nessun certificato rilasciato."
+    },
+    "studente": {
+      "title": "I miei certificati",
+      "subtitle": "I certificati che hai ricevuto, scaricabili in PDF.",
+      "loadError": "Impossibile caricare i tuoi certificati. Riprova.",
+      "emptyTitle": "Nessun certificato",
+      "emptyDescription": "Non hai ancora ricevuto certificati di fine corso."
+    },
+    "card": {
+      "percorso": "Percorso",
+      "esito": "Esito",
+      "dataCompletamento": "Completato il",
+      "scaricaPdf": "Scarica PDF",
+      "verifica": "Verifica",
+      "revoca": "Revoca"
+    },
+    "form": {
+      "title": "Rilascia un certificato",
+      "submit": "Rilascia",
+      "intro": "Seleziona lo studente e il percorso completato. Il modello grafico (logo, colori, testi) è quello della tua scuola, modificabile nelle impostazioni.",
+      "aula": "Aula",
+      "aulaPlaceholder": "Seleziona un'aula",
+      "studente": "Studente",
+      "studentePlaceholder": "Seleziona uno studente",
+      "corso": "Corso",
+      "corsoPlaceholder": "Nessun corso (usa il nome libero)",
+      "nomeCorso": "Nome del percorso",
+      "nomeCorsoHint": "In alternativa al corso: nome libero del percorso completato.",
+      "dataCompletamento": "Data di completamento",
+      "esito": "Esito",
+      "esitoHint": "Facoltativo, es. \"Superato con lode\" o \"90/100\".",
+      "titolo": "Titolo (facoltativo)",
+      "titoloHint": "Lascia vuoto per usare il titolo del modello della scuola."
+    },
+    "revoca": {
+      "title": "Revocare il certificato?",
+      "description": "Il certificato di {{studente}} verrà contrassegnato come revocato. L'operazione è reversibile solo rilasciandone uno nuovo.",
+      "confirm": "Revoca"
+    },
+    "config": {
+      "title": "Modello del certificato",
+      "subtitle": "Personalizza l'aspetto dei certificati di fine corso: testi, colori, orientamento, logo e firma.",
+      "gruppoTesti": "Testi",
+      "gruppoAspetto": "Aspetto",
+      "gruppoImmagini": "Logo e firma",
+      "testoCorpoHint": "Usa i segnaposto qui sotto: verranno sostituiti con i dati dello studente al rilascio.",
+      "mostraCodiceHint": "Stampa il codice di verifica pubblico in fondo al certificato.",
+      "immagineHint": "PNG o JPEG. Consigliato uno sfondo trasparente per il logo.",
+      "risorsaCaricata": "Immagine caricata.",
+      "nessunaImmagine": "Nessuna immagine",
+      "caricaImmagine": "Carica",
+      "rimuoviImmagine": "Rimuovi",
+      "campi": {
+        "titolo": "Titolo",
+        "sottotitolo": "Sottotitolo",
+        "testoCorpo": "Testo del certificato",
+        "firmatarioNome": "Nome del firmatario",
+        "firmatarioTitolo": "Qualifica del firmatario",
+        "piePagina": "Piè di pagina",
+        "coloreTitolo": "Colore del titolo",
+        "coloreTesto": "Colore del testo",
+        "coloreBordo": "Colore del bordo",
+        "coloreSfondo": "Colore di sfondo",
+        "orientamento": "Orientamento",
+        "mostraCodiceVerifica": "Mostra il codice di verifica",
+        "logo": "Logo",
+        "firma": "Firma"
+      },
+      "orientamenti": {
+        "orizzontale": "Orizzontale",
+        "verticale": "Verticale"
+      }
+    },
+    "verifica": {
+      "title": "Verifica certificato",
+      "subtitle": "Inserisci il codice riportato sul certificato per verificarne l'autenticità.",
+      "codiceLabel": "Codice di verifica",
+      "submit": "Verifica",
+      "valido": "Certificato valido",
+      "revocato": "Certificato revocato",
+      "campi": {
+        "nomeStudente": "Studente",
+        "nomeCorso": "Percorso",
+        "esito": "Esito",
+        "scuola": "Scuola",
+        "dataCompletamento": "Completato il",
+        "dataRilascio": "Rilasciato il"
+      }
+    },
+    "toast": {
+      "emesso": "Certificato rilasciato con successo.",
+      "revocato": "Certificato revocato."
+    },
+    "validation": {
+      "studenteRequired": "Seleziona lo studente destinatario.",
+      "percorsoRequired": "Indica il corso oppure il nome del percorso.",
+      "nomeCorsoLength": "Il nome del percorso non può superare i 200 caratteri.",
+      "esitoLength": "L'esito non può superare i 120 caratteri.",
+      "titoloLength": "Il titolo non può superare i 200 caratteri.",
+      "dataNonValida": "La data non è valida.",
+      "motivoLength": "Il motivo non può superare i 255 caratteri."
+    }
   }
 }

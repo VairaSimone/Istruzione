@@ -47,7 +47,8 @@
         "nuovoMessaggio": "New messages ({{count}})",
         "nuovoCompito": "New assignments ({{count}})",
         "scadenzaCompito": "Assignments due soon ({{count}})",
-        "feedbackCompito": "New feedback received ({{count}})"
+        "feedbackCompito": "New feedback received ({{count}})",
+        "certificatoRilasciato": "New certificates received ({{count}})"
       }
     }
   },

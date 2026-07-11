@@ -91,6 +91,13 @@ const FUNZIONALITA = [
     defaultAbilitata: true,
   },
   {
+    chiave: 'certificazioni',
+    nome: 'Certificazioni',
+    descrizione:
+      'Certificati di fine corso rilasciati dagli insegnanti agli studenti, scaricabili in PDF e interamente personalizzabili dalla scuola (logo, colori, testi, firma).',
+    defaultAbilitata: true,
+  },
+  {
     chiave: 'statistiche',
     nome: 'Statistiche e dashboard',
     descrizione: 'Heatmap di attività, streak di studio e cruscotto per gli insegnanti.',
