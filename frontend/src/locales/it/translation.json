@@ -57,6 +57,7 @@
     "corsiStudente": "I miei corsi",
     "statistiche": "Statistiche",
     "messaggi": "Messaggi",
+    "calendario": "Calendario",
     "scuole": "Scuole",
     "invitesManagement": "Inviti",
     "quizGestione": "Gestione quiz",
@@ -1191,6 +1192,100 @@
       "loadError": "Impossibile caricare il messaggio."
     }
   },
+  "calendario": {
+    "page": {
+      "title": "Calendario",
+      "subtitle": "Scadenze dei compiti ed eventi in un'unica vista.",
+      "loadError": "Impossibile caricare il calendario."
+    },
+    "toolbar": {
+      "today": "Oggi"
+    },
+    "filtro": {
+      "tutti": "Tutti",
+      "evento": "Eventi",
+      "compito": "Compiti"
+    },
+    "list": {
+      "create": "Nuovo evento"
+    },
+    "tipi": {
+      "lezione": "Lezione",
+      "videochiamata": "Videochiamata",
+      "riunione": "Riunione",
+      "verifica": "Verifica",
+      "evento": "Evento",
+      "altro": "Altro"
+    },
+    "piattaforme": {
+      "zoom": "Zoom",
+      "meet": "Google Meet",
+      "teams": "Microsoft Teams",
+      "webex": "Webex",
+      "jitsi": "Jitsi",
+      "altro": "Altro"
+    },
+    "voce": {
+      "scadenzaCompito": "Scadenza compito"
+    },
+    "giorno": {
+      "empty": "Nessun evento in questo giorno."
+    },
+    "form": {
+      "createTitle": "Nuovo evento",
+      "editTitle": "Modifica evento",
+      "createSubmit": "Crea evento",
+      "titolo": "Titolo",
+      "tipo": "Tipo",
+      "luogo": "Luogo",
+      "luogoHint": "Aula, indirizzo o sede (facoltativo).",
+      "dataInizio": "Inizio",
+      "dataFine": "Fine",
+      "dataFineHint": "Facoltativa.",
+      "tuttoIlGiorno": "Tutto il giorno",
+      "linkVideochiamata": "Link videochiamata",
+      "linkHint": "Incolla il link di Zoom, Meet o Teams.",
+      "descrizione": "Descrizione"
+    },
+    "destinatari": {
+      "title": "Destinatari",
+      "empty": "Nessun destinatario: l'evento non è ancora condiviso.",
+      "emptyPicker": "Aggiungi le aule o gli studenti a cui è rivolto l'evento.",
+      "toClass": "Aula",
+      "toStudent": "Studente",
+      "aula": "Aula",
+      "selectAula": "Seleziona un'aula",
+      "studente": "Studente",
+      "selectStudente": "Seleziona uno studente"
+    },
+    "detail": {
+      "quando": "Quando",
+      "fine": "Fine",
+      "luogo": "Luogo",
+      "videochiamata": "Videochiamata",
+      "partecipa": "Partecipa",
+      "compitoHint": "Apri la scadenza dalla sezione Compiti per i dettagli."
+    },
+    "delete": {
+      "title": "Elimina evento",
+      "description": "Vuoi eliminare \"{{titolo}}\"? L'operazione è irreversibile."
+    },
+    "toast": {
+      "created": "Evento creato.",
+      "updated": "Evento aggiornato.",
+      "deleted": "Evento eliminato.",
+      "destinatarioAdded": "Destinatario aggiunto.",
+      "destinatarioRemoved": "Destinatario rimosso."
+    },
+    "validation": {
+      "titoloLength": "Il titolo deve avere tra 2 e 160 caratteri.",
+      "tipo": "Seleziona un tipo valido.",
+      "inizioRequired": "La data di inizio è obbligatoria.",
+      "intervallo": "La fine non può precedere l'inizio.",
+      "linkNonValido": "Inserisci un URL valido (http/https).",
+      "linkRichiesto": "Per una videochiamata inserisci il link."
+    }
+  },
   "scuole": {
     "managementTitle": "Gestione scuole",
     "managementSubtitle": "Crea le scuole, assegna slug e stato, ed elimina quelle non più necessarie.",
@@ -1478,6 +1573,10 @@
     "messaggi": {
       "nome": "Messaggi",
       "descrizione": "Messaggistica interna tra insegnanti e studenti."
+    },
+    "calendario": {
+      "nome": "Calendario",
+      "descrizione": "Calendario condiviso con scadenze dei compiti ed eventi con link a videochiamate."
     },
     "statistiche": {
       "nome": "Statistiche",

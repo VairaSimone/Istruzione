@@ -33,6 +33,8 @@ require('./models/ProgressoKana');
 require('./models/ProgressoKanji');
 require('./models/AttivitaGiornaliera');
 require('./models/NotificaEmail');
+require('./models/EventoCalendario');
+require('./models/EventoDestinatario');
 
 const schedulerService = require('./services/schedulerService');
 

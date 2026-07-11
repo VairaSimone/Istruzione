@@ -33,6 +33,8 @@ require('../models/ProgressoDomanda');
 require('../models/BadgeUtente');
 require('../models/AttivitaGiornaliera');
 require('../models/NotificaEmail');
+require('../models/EventoCalendario');
+require('../models/EventoDestinatario');
 
 /**
  * Runner delle migrazioni versionate basato su Umzug.

@@ -20,6 +20,7 @@ const compitiRoutes = require('./routes/compitiRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const messaggiRoutes = require('./routes/messaggiRoutes');
 const corsiRoutes = require('./routes/corsiRoutes');
+const calendarioRoutes = require('./routes/calendarioRoutes');
 const { passport } = require('./config/passport');
 const cookieParser = require('cookie-parser');
 const piattaforma = require('./config/piattaforma');
@@ -129,6 +130,7 @@ app.use('/api/compiti', compitiRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/messaggi', messaggiRoutes);
 app.use('/api/corsi', corsiRoutes);
+app.use('/api/calendario', calendarioRoutes);
 
 // ─────────────────────────────────────────────
 // GESTIONE ROUTE NON TROVATE (404)

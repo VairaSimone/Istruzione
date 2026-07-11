@@ -58,6 +58,7 @@
     "corsiStudente": "My courses",
     "statistiche": "Statistics",
     "messaggi": "Messages",
+    "calendario": "Calendar",
     "scuole": "Schools",
     "quizGestione": "Quiz management",
     "impostazioniScuola": "School settings"
@@ -1228,6 +1229,100 @@
       "loadError": "Unable to load the message."
     }
   },
+  "calendario": {
+    "page": {
+      "title": "Calendar",
+      "subtitle": "Assignment deadlines and events in a single view.",
+      "loadError": "Unable to load the calendar."
+    },
+    "toolbar": {
+      "today": "Today"
+    },
+    "filtro": {
+      "tutti": "All",
+      "evento": "Events",
+      "compito": "Assignments"
+    },
+    "list": {
+      "create": "New event"
+    },
+    "tipi": {
+      "lezione": "Lesson",
+      "videochiamata": "Video call",
+      "riunione": "Meeting",
+      "verifica": "Test",
+      "evento": "Event",
+      "altro": "Other"
+    },
+    "piattaforme": {
+      "zoom": "Zoom",
+      "meet": "Google Meet",
+      "teams": "Microsoft Teams",
+      "webex": "Webex",
+      "jitsi": "Jitsi",
+      "altro": "Other"
+    },
+    "voce": {
+      "scadenzaCompito": "Assignment due"
+    },
+    "giorno": {
+      "empty": "No events on this day."
+    },
+    "form": {
+      "createTitle": "New event",
+      "editTitle": "Edit event",
+      "createSubmit": "Create event",
+      "titolo": "Title",
+      "tipo": "Type",
+      "luogo": "Location",
+      "luogoHint": "Room, address or venue (optional).",
+      "dataInizio": "Start",
+      "dataFine": "End",
+      "dataFineHint": "Optional.",
+      "tuttoIlGiorno": "All day",
+      "linkVideochiamata": "Video call link",
+      "linkHint": "Paste the Zoom, Meet or Teams link.",
+      "descrizione": "Description"
+    },
+    "destinatari": {
+      "title": "Recipients",
+      "empty": "No recipients: the event isn't shared yet.",
+      "emptyPicker": "Add the classes or students this event is for.",
+      "toClass": "Class",
+      "toStudent": "Student",
+      "aula": "Class",
+      "selectAula": "Select a class",
+      "studente": "Student",
+      "selectStudente": "Select a student"
+    },
+    "detail": {
+      "quando": "When",
+      "fine": "End",
+      "luogo": "Location",
+      "videochiamata": "Video call",
+      "partecipa": "Join",
+      "compitoHint": "Open the deadline from the Assignments section for details."
+    },
+    "delete": {
+      "title": "Delete event",
+      "description": "Delete \"{{titolo}}\"? This action cannot be undone."
+    },
+    "toast": {
+      "created": "Event created.",
+      "updated": "Event updated.",
+      "deleted": "Event deleted.",
+      "destinatarioAdded": "Recipient added.",
+      "destinatarioRemoved": "Recipient removed."
+    },
+    "validation": {
+      "titoloLength": "The title must be between 2 and 160 characters.",
+      "tipo": "Select a valid type.",
+      "inizioRequired": "The start date is required.",
+      "intervallo": "The end cannot be before the start.",
+      "linkNonValido": "Enter a valid URL (http/https).",
+      "linkRichiesto": "Add the link for a video call."
+    }
+  },
   "scuole": {
     "managementTitle": "School management",
     "managementSubtitle": "Create schools, assign slug and status, and delete the ones no longer needed.",
@@ -1478,6 +1573,10 @@
     "messaggi": {
       "nome": "Messages",
       "descrizione": "Internal messaging between teachers and students."
+    },
+    "calendario": {
+      "nome": "Calendar",
+      "descrizione": "Shared calendar with assignment deadlines and events linking to video calls."
     },
     "statistiche": {
       "nome": "Statistics",

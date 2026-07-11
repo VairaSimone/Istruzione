@@ -793,4 +793,9 @@ module.exports = {
   dettaglioCompitoStudente,
   consegnaCompito,
   SOGLIA_IN_SCADENZA_ORE,
+  // Riusati dal CalendarioService per comporre il feed senza duplicare la
+  // logica di derivazione dei compiti destinati a uno studente né il calcolo
+  // dello stato per-studente.
+  idCompitiDestinati,
+  statoPerStudente,
 };

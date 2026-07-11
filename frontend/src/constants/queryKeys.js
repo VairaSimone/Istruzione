@@ -95,4 +95,10 @@ export const queryKeys = Object.freeze({
     notifiche: ['messaggi', 'notifiche'],
     detail: (id) => ['messaggi', 'detail', id],
   },
+  calendario: {
+    all: ['calendario'],
+    feed: (filters) => ['calendario', 'feed', filters ?? {}],
+    eventi: (filters) => ['calendario', 'eventi', filters ?? {}],
+    eventoDetail: (id) => ['calendario', 'eventi', 'detail', id],
+  },
 });

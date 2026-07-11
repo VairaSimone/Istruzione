@@ -32,6 +32,7 @@ import CorsoStudenteDetailPage from '../pages/CorsoStudenteDetailPage';
 import TeacherDashboardPage from '../pages/TeacherDashboardPage';
 import MessaggiPage from '../pages/MessaggiPage';
 import MessaggioDetailPage from '../pages/MessaggioDetailPage';
+import CalendarioPage from '../pages/CalendarioPage';
 import UsersManagementPage from '../pages/UsersManagementPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ForbiddenPage from '../pages/ForbiddenPage';
@@ -109,6 +110,11 @@ export const router = createBrowserRouter([
               { path: ROUTES.MESSAGGI, element: <MessaggiPage /> },
               { path: ROUTES.MESSAGGIO_DETAIL, element: <MessaggioDetailPage /> },
             ],
+          },
+          {
+            // Calendario condiviso: accessibile a studenti e insegnanti.
+            element: <FeatureRoute funzionalita={FUNZIONALITA.CALENDARIO} />,
+            children: [{ path: ROUTES.CALENDARIO, element: <CalendarioPage /> }],
           },
         ],
       },

@@ -84,6 +84,13 @@ const FUNZIONALITA = [
     defaultAbilitata: true,
   },
   {
+    chiave: 'calendario',
+    nome: 'Calendario',
+    descrizione:
+      'Calendario condiviso per studenti e insegnanti: scadenze dei compiti ed eventi con link a videochiamate (Zoom, Meet, Teams…).',
+    defaultAbilitata: true,
+  },
+  {
     chiave: 'statistiche',
     nome: 'Statistiche e dashboard',
     descrizione: 'Heatmap di attività, streak di studio e cruscotto per gli insegnanti.',

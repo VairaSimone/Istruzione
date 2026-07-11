@@ -137,6 +137,12 @@ const Header = () => {
               <MessaggiNavLink className={styles.navLink} />
             )}
 
+            {sezioneAttiva(FUNZIONALITA.CALENDARIO) && (
+              <NavLink to={ROUTES.CALENDARIO} className={navLinkClass}>
+                {t('nav.calendario')}
+              </NavLink>
+            )}
+
             {isTeacher && sezioneAttiva(FUNZIONALITA.AULE) && (
               <NavLink to={ROUTES.AULE} className={navLinkClass}>
                 {t('nav.aule')}

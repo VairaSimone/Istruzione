@@ -28,6 +28,7 @@ export const ROUTES = Object.freeze({
   TEACHER_DASHBOARD: '/statistiche',
   MESSAGGI: '/messaggi',
   MESSAGGIO_DETAIL: '/messaggi/:id',
+  CALENDARIO: '/calendario',
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
   SCUOLE_MANAGEMENT: '/gestione/scuole',
