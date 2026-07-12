@@ -11,6 +11,27 @@ const { assicuraStessaScuola } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
 const notificheService = require('./notificheService');
+const {
+  ACCOUNT_CANCELLAZIONE_GIORNI,
+  NOTIFICHE_INVIATE_GIORNI,
+  dataSoglia,
+} = require('../constants/retention');
+
+// Modelli usati per l'esportazione dei dati personali e per la purga di
+// retention. Richiesti qui (non in cima al file per macro-sezioni) per tenere
+// vicino l'uso al punto di import.
+const CompitoConsegna = require('../models/CompitoConsegna');
+const ProgressoDomanda = require('../models/ProgressoDomanda');
+const ProgressoKana = require('../models/ProgressoKana');
+const ProgressoKanji = require('../models/ProgressoKanji');
+const BadgeUtente = require('../models/BadgeUtente');
+const AttivitaGiornaliera = require('../models/AttivitaGiornaliera');
+const ClasseUtente = require('../models/ClasseUtente');
+const Messaggio = require('../models/Messaggio');
+const MessaggioDestinatario = require('../models/MessaggioDestinatario');
+const NotificaEmail = require('../models/NotificaEmail');
+const Certificato = require('../models/Certificato');
+const EventoDestinatario = require('../models/EventoDestinatario');
 
 /**
  * UserService — responsabilità ESCLUSIVA: gestione utenti e account.
@@ -140,6 +161,186 @@ const eliminaAccount = async (userId) => {
 
   await utente.destroy();
   logger.info(`Account eliminato definitivamente. ID Utente: ${userId}`);
+};
+
+// ─────────────────────────────────────────────
+// ESPORTAZIONE DATI PERSONALI (art. 20 GDPR — portabilità)
+// Aggrega, in un unico oggetto JSON, tutti i dati riferiti all'utente:
+// profilo, iscrizioni, consegne, progressi, badge, attività, messaggi,
+// notifiche, certificati ed eventi. Il profilo passa da toPublicJSON, quindi
+// NON include mai password né token; le altre tabelle non contengono segreti.
+// ─────────────────────────────────────────────
+const esportaDatiUtente = async (userId) => {
+  const utente = await Utente.findByPk(userId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
+
+  const [
+    iscrizioniAule,
+    consegne,
+    progressiQuiz,
+    progressiKana,
+    progressiKanji,
+    badge,
+    attivita,
+    messaggiInviati,
+    messaggiRicevuti,
+    notifiche,
+    certificati,
+    eventiDestinatario,
+  ] = await Promise.all([
+    ClasseUtente.findAll({ where: { utente_id: userId }, raw: true }),
+    CompitoConsegna.findAll({ where: { utente_id: userId }, raw: true }),
+    ProgressoDomanda.findAll({ where: { utente_id: userId }, raw: true }),
+    ProgressoKana.findAll({ where: { utente_id: userId }, raw: true }),
+    ProgressoKanji.findAll({ where: { utente_id: userId }, raw: true }),
+    BadgeUtente.findAll({ where: { utente_id: userId }, raw: true }),
+    AttivitaGiornaliera.findAll({ where: { utente_id: userId }, raw: true }),
+    Messaggio.findAll({ where: { mittente_id: userId }, raw: true }),
+    MessaggioDestinatario.findAll({ where: { utente_id: userId }, raw: true }),
+    NotificaEmail.findAll({ where: { utente_id: userId }, raw: true }),
+    Certificato.findAll({ where: { utente_id: userId }, raw: true }),
+    EventoDestinatario.findAll({ where: { utente_id: userId }, raw: true }),
+  ]);
+
+  return {
+    _meta: {
+      generato_il: new Date().toISOString(),
+      formato: 'json',
+      versione_schema: 1,
+      descrizione:
+        'Esportazione dei dati personali associati al tuo account (art. 20 GDPR).',
+    },
+    profilo: utente.toPublicJSON(),
+    iscrizioni_aule: iscrizioniAule,
+    consegne_compiti: consegne,
+    progressi_quiz: progressiQuiz,
+    progressi_kana: progressiKana,
+    progressi_kanji: progressiKanji,
+    badge,
+    attivita_giornaliera: attivita,
+    messaggi_inviati: messaggiInviati,
+    messaggi_ricevuti: messaggiRicevuti,
+    notifiche_email: notifiche,
+    certificati,
+    eventi_destinatario: eventiDestinatario,
+  };
+};
+
+// ─────────────────────────────────────────────
+// RICHIESTA DI CANCELLAZIONE ACCOUNT (art. 17 GDPR, con periodo di grazia)
+// Non elimina subito: marca l'account con l'istante della richiesta. Lo
+// scheduler lo eliminerà DEFINITIVAMENTE al termine del periodo di grazia (cfr.
+// constants/retention). Entro quel termine l'utente può annullare la richiesta.
+// Idempotente: una seconda richiesta non modifica l'istante originale.
+// ─────────────────────────────────────────────
+const richiediCancellazioneAccount = async (userId) => {
+  const utente = await Utente.findByPk(userId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
+
+  if (!utente.cancellazione_richiesta_at) {
+    utente.cancellazione_richiesta_at = new Date();
+    await utente.save();
+    logger.info(`[GDPR] Richiesta di cancellazione registrata per utente ${userId}`);
+  }
+
+  return utente;
+};
+
+// ─────────────────────────────────────────────
+// ANNULLAMENTO DELLA RICHIESTA DI CANCELLAZIONE
+// Rimuove il marcatore: l'account non verrà più purgato.
+// ─────────────────────────────────────────────
+const annullaCancellazioneAccount = async (userId) => {
+  const utente = await Utente.findByPk(userId);
+  if (!utente) {
+    throw new AppError('Utente non trovato.', 404, 'USER_NOT_FOUND');
+  }
+
+  if (utente.cancellazione_richiesta_at) {
+    utente.cancellazione_richiesta_at = null;
+    await utente.save();
+    logger.info(`[GDPR] Richiesta di cancellazione annullata per utente ${userId}`);
+  }
+
+  return utente;
+};
+
+// ─────────────────────────────────────────────
+// PURGA ACCOUNT OLTRE IL PERIODO DI GRAZIA (retention)
+// Elimina DEFINITIVAMENTE gli account la cui richiesta di cancellazione è più
+// vecchia del periodo di grazia. Le relazioni con onDelete: CASCADE seguono.
+// Salvaguardia: NON elimina l'ultimo admin, per non bloccare la piattaforma;
+// la richiesta resta pendente e va gestita manualmente.
+// ─────────────────────────────────────────────
+const purgaAccountCancellati = async () => {
+  const soglia = dataSoglia(ACCOUNT_CANCELLAZIONE_GIORNI);
+
+  const candidati = await Utente.findAll({
+    where: {
+      cancellazione_richiesta_at: { [Op.ne]: null, [Op.lte]: soglia },
+    },
+  });
+  if (!candidati.length) return { eliminati: 0, saltati: 0 };
+
+  let eliminati = 0;
+  let saltati = 0;
+
+  for (const utente of candidati) {
+    if (utente.ruolo === 'admin') {
+      const numAdmin = await Utente.count({ where: { ruolo: 'admin' } });
+      if (numAdmin <= 1) {
+        saltati += 1;
+        logger.warn(
+          `[RETENTION] Purga saltata: l'utente ${utente.id} è l'ultimo amministratore.`
+        );
+        continue;
+      }
+    }
+
+    await utente.destroy(); // CASCADE sulle relazioni collegate
+    eliminati += 1;
+  }
+
+  if (eliminati || saltati) {
+    logger.info(
+      `[RETENTION] Account purgati: ${eliminati} eliminati, ${saltati} saltati.`
+    );
+  }
+  return { eliminati, saltati };
+};
+
+// ─────────────────────────────────────────────
+// PURGA NOTIFICHE EMAIL GIÀ INVIATE (retention)
+// Le notifiche in stato 'inviata' più vecchie del periodo di conservazione sono
+// solo storico di recapito: vengono rimosse.
+// ─────────────────────────────────────────────
+const purgaNotificheInviate = async () => {
+  const soglia = dataSoglia(NOTIFICHE_INVIATE_GIORNI);
+
+  const eliminate = await NotificaEmail.destroy({
+    where: {
+      stato: 'inviata',
+      inviata_il: { [Op.ne]: null, [Op.lt]: soglia },
+    },
+  });
+
+  if (eliminate) {
+    logger.info(`[RETENTION] Notifiche email purgate: ${eliminate}.`);
+  }
+  return { eliminate };
+};
+
+// ─────────────────────────────────────────────
+// GIRO COMPLETO DI RETENTION (invocato dallo scheduler)
+// ─────────────────────────────────────────────
+const eseguiRetention = async () => {
+  const account = await purgaAccountCancellati();
+  const notifiche = await purgaNotificheInviate();
+  return { account, notifiche };
 };
 
 // ─────────────────────────────────────────────
@@ -376,6 +577,12 @@ module.exports = {
   leggiPreferenzeNotifiche,
   aggiornaPreferenzeNotifiche,
   eliminaAccount,
+  esportaDatiUtente,
+  richiediCancellazioneAccount,
+  annullaCancellazioneAccount,
+  purgaAccountCancellati,
+  purgaNotificheInviate,
+  eseguiRetention,
   getUtentiPerInsegnante,
   aggiornaRuoloUtente,
   eliminaUtenteComeInsegnante,

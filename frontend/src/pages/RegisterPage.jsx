@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import {
   buildRegisterStudentSchema,
   buildRegisterTeacherSchema,
@@ -18,6 +18,7 @@ import { ROUTES } from '../constants/routes';
 import { INVITE_ROLES } from '../constants/domain';
 import Card from '../components/ui/Card';
 import TextField from '../components/ui/TextField';
+import Checkbox from '../components/ui/Checkbox';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import FormError from '../components/shared/FormError';
@@ -229,6 +230,25 @@ const RegisterPage = () => {
             required
             error={errors.confermaPassword?.message}
             {...register('confermaPassword')}
+          />
+
+          <Checkbox
+            required
+            error={errors.accettaTermini?.message}
+            label={
+              <Trans
+                i18nKey="auth.terms.label"
+                components={{
+                  termini: (
+                    <Link to={ROUTES.TERMINI} target="_blank" rel="noopener noreferrer" />
+                  ),
+                  privacy: (
+                    <Link to={ROUTES.PRIVACY} target="_blank" rel="noopener noreferrer" />
+                  ),
+                }}
+              />
+            }
+            {...register('accettaTermini')}
           />
 
           <Button type="submit" fullWidth size="lg" isLoading={isPending}>

@@ -41,6 +41,14 @@ class Utente extends Model {
       email_verificata: this.email_verificata,
       profilo_completo: this.profilo_completo,
       preferenze_notifiche: this.preferenze_notifiche,
+      // Consensi legali (per far mostrare al frontend lo stato/versione).
+      accettazione_termini_at: this.accettazione_termini_at,
+      versione_termini: this.versione_termini,
+      consenso_email_at: this.consenso_email_at,
+      versione_consenso_email: this.versione_consenso_email,
+      // Richiesta di cancellazione pendente (per il banner "cancellazione
+      // programmata" e il pulsante di annullamento).
+      cancellazione_richiesta_at: this.cancellazione_richiesta_at,
       created_at: this.created_at,
     };
   }
@@ -402,6 +410,53 @@ Utente.init(
       defaultValue: null,
       field: 'notifiche_ultimo_invio',
     },
+
+    // ─────────────────────────────────────────────
+    // Consensi legali (GDPR) — dimostrabilità del consenso
+    // ─────────────────────────────────────────────
+
+    // Istante di accettazione dei Termini/Privacy alla registrazione.
+    accettazione_termini_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      field: 'accettazione_termini_at',
+    },
+
+    // Versione del documento accettato (cfr. constants/legale.js).
+    versione_termini: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: null,
+      field: 'versione_termini',
+    },
+
+    // Istante in cui l'utente ha acconsentito al recapito delle notifiche email.
+    consenso_email_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      field: 'consenso_email_at',
+    },
+
+    // Versione dell'informativa sul recapito email vigente al momento del consenso.
+    versione_consenso_email: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      defaultValue: null,
+      field: 'versione_consenso_email',
+    },
+
+    // Istante della richiesta di cancellazione dell'account. Se valorizzato,
+    // l'account è in periodo di grazia: lo scheduler lo eliminerà in via
+    // definitiva una volta scaduto (cfr. constants/retention.js). Null se non
+    // è pendente alcuna richiesta (o dopo un annullamento).
+    cancellazione_richiesta_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+      field: 'cancellazione_richiesta_at',
+    },
   },
   {
     sequelize,
@@ -426,6 +481,9 @@ Utente.init(
       { fields: ['refresh_token'] },
       // Indice sul google_id: lookup rapido in fase di login OAuth.
       { fields: ['google_id'] },
+      // Indice sulla richiesta di cancellazione: rende efficiente la scansione
+      // periodica di retention (solo le righe con richiesta pendente).
+      { fields: ['cancellazione_richiesta_at'] },
     ],
 
     // Hook: hash della password prima di ogni INSERT/UPDATE

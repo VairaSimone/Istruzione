@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '../../hooks/useConfig';
+import { ROUTES } from '../../constants/routes';
+import { useConsensoStore } from '../../store/consensoStore';
 import styles from './Footer.module.css';
 
 /** Reti social riconosciute, nell'ordine in cui vanno mostrate. */
@@ -43,6 +45,7 @@ const LinkFooter = ({ etichetta, url }) => {
 const Footer = () => {
   const { t } = useTranslation();
   const branding = useBranding();
+  const riapriConsenso = useConsensoStore((state) => state.riapri);
 
   const { contatti, indirizzo, social, footer, nome, piattaforma } = branding;
 
@@ -122,6 +125,26 @@ const Footer = () => {
             ))}
           </nav>
         )}
+
+        {/* Link legali sempre presenti: obbligo di trasparenza e conformità,
+            indipendente dalla configurazione della scuola. */}
+        <nav className={styles.links} aria-label={t('footer.legaleAria')}>
+          <Link to={ROUTES.PRIVACY} className={styles.link}>
+            {t('footer.legale.privacy')}
+          </Link>
+          <Link to={ROUTES.COOKIE} className={styles.link}>
+            {t('footer.legale.cookie')}
+          </Link>
+          <Link to={ROUTES.TERMINI} className={styles.link}>
+            {t('footer.legale.termini')}
+          </Link>
+          <Link to={ROUTES.ACCESSIBILITA} className={styles.link}>
+            {t('footer.legale.accessibilita')}
+          </Link>
+          <button type="button" className={styles.linkButton} onClick={riapriConsenso}>
+            {t('footer.legale.gestisciCookie')}
+          </button>
+        </nav>
 
         <span className={styles.copyright}>
           {nome} — © {new Date().getFullYear()}

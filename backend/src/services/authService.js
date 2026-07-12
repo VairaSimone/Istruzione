@@ -10,6 +10,7 @@ const ClasseUtente = require('../models/ClasseUtente');
 const AppError = require('../utils/AppError');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwtHelpers');
 const { hashToken } = require('../utils/tokenHash');
+const { VERSIONE_TERMINI } = require('../constants/legale');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
 
@@ -71,7 +72,17 @@ const caricaInvitoValido = async (tokenInChiaro, ruoloAtteso, t) => {
 // già attivo e con email verificata (il possesso del link prova il controllo
 // della casella).
 // ─────────────────────────────────────────────
-const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password }) => {
+const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password, accettaTermini }) => {
+  // Difesa in profondità: l'accettazione dei termini è già imposta dai
+  // validator, ma il service non deve MAI creare un utente senza consenso.
+  if (accettaTermini !== true) {
+    throw new AppError(
+      'Devi accettare i Termini e la Privacy Policy per registrarti.',
+      422,
+      'TERMS_NOT_ACCEPTED'
+    );
+  }
+
   return sequelize.transaction(async (t) => {
     const invito = await caricaInvitoValido(token, 'studente', t);
 
@@ -89,6 +100,9 @@ const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password })
         lingua: 'it',
         email_verificata: true,
         profilo_completo: true,
+        // Prova del consenso: istante + versione del documento accettato.
+        accettazione_termini_at: new Date(),
+        versione_termini: VERSIONE_TERMINI,
       },
       { transaction: t }
     );
@@ -127,7 +141,16 @@ const registraStudenteDaInvito = async ({ token, nome, cognome, eta, password })
 // L'insegnante non inserisce alcuna classe. Account già attivo: l'admin che
 // ha generato l'invito funge da approvazione.
 // ─────────────────────────────────────────────
-const registraInsegnanteDaInvito = async ({ token, nome, cognome, password }) => {
+const registraInsegnanteDaInvito = async ({ token, nome, cognome, password, accettaTermini }) => {
+  // Difesa in profondità: nessun utente creato senza consenso ai termini.
+  if (accettaTermini !== true) {
+    throw new AppError(
+      'Devi accettare i Termini e la Privacy Policy per registrarti.',
+      422,
+      'TERMS_NOT_ACCEPTED'
+    );
+  }
+
   return sequelize.transaction(async (t) => {
     const invito = await caricaInvitoValido(token, 'insegnante', t);
 
@@ -145,6 +168,9 @@ const registraInsegnanteDaInvito = async ({ token, nome, cognome, password }) =>
         lingua: 'it',
         email_verificata: true,
         profilo_completo: true,
+        // Prova del consenso: istante + versione del documento accettato.
+        accettazione_termini_at: new Date(),
+        versione_termini: VERSIONE_TERMINI,
       },
       { transaction: t }
     );

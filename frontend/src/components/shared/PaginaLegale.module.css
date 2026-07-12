@@ -1,0 +1,65 @@
+.wrapper {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.article {
+  color: var(--color-ink);
+  line-height: var(--leading-normal);
+}
+
+.header {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-2);
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-2);
+}
+
+.paragraph {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.reportBox {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.reportBox h2 {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-2);
+}
+
+.reportLink {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+}
+
+.reportLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

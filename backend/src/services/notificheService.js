@@ -7,6 +7,7 @@ const Scuola = require('../models/Scuola');
 const emailService = require('./emailService');
 const logger = require('../utils/logger');
 const tipiNotifica = require('../constants/tipiNotifica');
+const { VERSIONE_CONSENSO_EMAIL } = require('../constants/legale');
 
 /**
  * NotificheService — recapito EMAIL delle notifiche, in forma di DIGEST.
@@ -455,6 +456,18 @@ const aggiornaPreferenze = async (utenteId, blob) => {
   if (!utente) return null;
   const normalizzate = tipiNotifica.normalizzaPreferenze(blob);
   utente.preferenze_notifiche = normalizzate;
+
+  // Tracciamento del consenso (art. 7 GDPR): quando l'utente ha le email
+  // attive registriamo istante e versione dell'informativa, così è possibile
+  // provare a cosa ha acconsentito e quando. Il timestamp NON viene sovrascritto
+  // a ogni salvataggio: si aggiorna solo se assente o se la versione è cambiata.
+  if (normalizzate.emailAttive === true) {
+    if (!utente.consenso_email_at || utente.versione_consenso_email !== VERSIONE_CONSENSO_EMAIL) {
+      utente.consenso_email_at = new Date();
+      utente.versione_consenso_email = VERSIONE_CONSENSO_EMAIL;
+    }
+  }
+
   await utente.save();
   return normalizzate;
 };

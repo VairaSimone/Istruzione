@@ -173,6 +173,9 @@
       "teacherSubtitle": "Enter your details to activate your teacher account.",
       "submit": "Complete registration",
       "haveAccount": "Already have an account?"
+    },
+    "terms": {
+      "label": "I accept the <termini>Terms and Conditions</termini> and the <privacy>Privacy Policy</privacy>"
     }
   },
   "dashboard": {
@@ -221,7 +224,20 @@
     "deleteCta": "Delete my account",
     "deleteSuccess": "Your account has been deleted.",
     "badgesTitle": "Goals and badges",
-    "badgesDescription": "The milestones you have reached by studying, writing and keeping your streak alive."
+    "badgesDescription": "The milestones you have reached by studying, writing and keeping your streak alive.",
+    "dati": {
+      "title": "Your data",
+      "description": "Export a copy of your personal data or request account deletion.",
+      "exportCta": "Export my data",
+      "exportSuccess": "Export started: check your downloads.",
+      "deleteRequestCta": "Request deletion",
+      "deleteConfirmText": "Your account will be permanently deleted after a grace period. You can cancel the request while it is pending. Do you want to proceed?",
+      "deleteConfirm": "Confirm request",
+      "deleteRequested": "Deletion request registered.",
+      "pendingText": "Your account deletion is scheduled. You can still cancel it.",
+      "cancelDeleteCta": "Cancel deletion",
+      "deleteCancelled": "Deletion request cancelled."
+    }
   },
   "users": {
     "managementTitle": "User management",
@@ -414,7 +430,8 @@
     "scuolaRequired": "The school is required",
     "scuolaInvalid": "The school identifier is not valid",
     "classeRequired": "Class is required",
-    "classeMax": "Class cannot exceed 60 characters"
+    "classeMax": "Class cannot exceed 60 characters",
+    "termsRequired": "You must accept the Terms and Privacy Policy to sign up"
   },
   "stati": {
     "attivo": "Active",
@@ -1545,7 +1562,15 @@
   "footer": {
     "linkAria": "Footer links",
     "socialAria": "Social profiles",
-    "credits": "Powered by {{piattaforma}}"
+    "credits": "Powered by {{piattaforma}}",
+    "legaleAria": "Legal links",
+    "legale": {
+      "privacy": "Privacy",
+      "cookie": "Cookies",
+      "termini": "Terms",
+      "accessibilita": "Accessibility",
+      "gestisciCookie": "Manage cookies"
+    }
   },
   "vocabolario": {
     "nessuno": "None",
@@ -1894,5 +1919,35 @@
       "dataNonValida": "The date is not valid.",
       "motivoLength": "The reason cannot exceed 255 characters."
     }
+  },
+  "legale": {
+    "aggiornamento": "Version {{versione}}"
+  },
+  "cookie": {
+    "bannerTitolo": "We respect your privacy",
+    "bannerTesto": "We use necessary technical cookies and, with your consent, preference, statistics and marketing cookies.",
+    "bannerLink": "Read the Cookie Policy",
+    "preferenzeTitolo": "Your preferences",
+    "catNecessari": "Necessary",
+    "catNecessariHint": "Essential for operation and security. Always on.",
+    "cat_preferenze": "Preferences",
+    "cat_preferenze_hint": "Remember your choices to improve the experience.",
+    "cat_statistiche": "Statistics",
+    "cat_statistiche_hint": "Help us understand how the platform is used, in aggregate form.",
+    "cat_marketing": "Marketing",
+    "cat_marketing_hint": "Used for personalised content and communications.",
+    "salva": "Save preferences",
+    "personalizza": "Customise",
+    "rifiuta": "Reject",
+    "accetta": "Accept all",
+    "gestisciTitolo": "Consent management",
+    "gestisciTesto": "You can review or change your cookie choices at any time.",
+    "gestisci": "Manage cookie preferences"
+  },
+  "accessibilita": {
+    "segnalaTitolo": "Report a barrier",
+    "segnalaTesto": "If you encounter an obstacle using the platform, write to us: we will act as soon as possible.",
+    "segnalaOggetto": "Accessibility report",
+    "segnalaFallback": "Contact the school office to report an accessibility issue."
   }
 }

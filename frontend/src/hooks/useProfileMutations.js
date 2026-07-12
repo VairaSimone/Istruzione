@@ -55,6 +55,74 @@ export const useDeleteMyAccount = () => {
 };
 
 /**
+ * Esporta i dati personali dell'utente e avvia il download del file JSON
+ * (GET /me/esporta-dati). Il download è un effetto lato browser: lo eseguiamo
+ * qui in `mutationFn`, dopo aver ricevuto il Blob dal service.
+ */
+export const useEsportaDati = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const { blob, filename } = await authService.esportaDati();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      return { filename };
+    },
+  });
+};
+
+/**
+ * Programma la cancellazione dell'account (POST /me/richiesta-cancellazione).
+ * Aggiorna lo store con l'utente aggiornato quando disponibile, così la UI
+ * mostra subito lo stato "cancellazione programmata".
+ */
+export const useRichiediCancellazione = () => {
+  const queryClient = useQueryClient();
+  const setUser = useAuthStore((state) => state.setUser);
+
+  return useMutation({
+    mutationFn: authService.richiediCancellazione,
+    onSuccess: (data) => {
+      const at = data?.data?.cancellazione_richiesta_at;
+      if (at) {
+        const current = useAuthStore.getState().user;
+        if (current) {
+          const updated = { ...current, cancellazione_richiesta_at: at };
+          setUser(updated);
+          queryClient.setQueryData(queryKeys.auth.me, updated);
+        }
+      }
+    },
+  });
+};
+
+/**
+ * Annulla la richiesta di cancellazione pendente
+ * (DELETE /me/richiesta-cancellazione).
+ */
+export const useAnnullaCancellazione = () => {
+  const queryClient = useQueryClient();
+  const setUser = useAuthStore((state) => state.setUser);
+
+  return useMutation({
+    mutationFn: authService.annullaCancellazione,
+    onSuccess: () => {
+      const current = useAuthStore.getState().user;
+      if (current) {
+        const updated = { ...current, cancellazione_richiesta_at: null };
+        setUser(updated);
+        queryClient.setQueryData(queryKeys.auth.me, updated);
+      }
+    },
+  });
+};
+
+/**
  * Legge le preferenze di notifica email dell'utente loggato
  * (GET /me/notifiche). Il backend restituisce il blob COMPLETO con i default
  * già applicati, quindi il componente non deve gestire chiavi mancanti.

@@ -6,6 +6,7 @@ const CompitoAssegnazione = require('../models/CompitoAssegnazione');
 const CompitoConsegna = require('../models/CompitoConsegna');
 const ClasseUtente = require('../models/ClasseUtente');
 const notificheService = require('./notificheService');
+const userService = require('./userService');
 const logger = require('../utils/logger');
 
 /**
@@ -59,12 +60,17 @@ const SCADENZE_OGNI_MINUTI = intEnv('SCADENZE_INTERVALLO_MINUTI', 720);
 // Finestra di preavviso: un compito è "in scadenza" se scade entro queste ore.
 const SCADENZA_PREAVVISO_ORE = intEnv('SCADENZA_COMPITO_PREAVVISO_ORE', 48);
 
+// Cadenza del giro di retention (minuti). Default 24 ore: purga account con
+// cancellazione richiesta oltre il periodo di grazia e notifiche email vecchie.
+const RETENTION_OGNI_MINUTI = intEnv('RETENTION_INTERVALLO_MINUTI', 1440);
+
 // Ritardo prima del PRIMO giro dopo l'avvio, per non gravare sul bootstrap.
 const RITARDO_INIZIALE_MINUTI = intEnv('SCHEDULER_RITARDO_INIZIALE_MINUTI', 1);
 
 // Riferimenti dei timer, per un arresto pulito.
 let timerDigest = null;
 let timerScadenze = null;
+let timerRetention = null;
 
 // ─────────────────────────────────────────────
 // SCANSIONE SCADENZE COMPITI
@@ -200,11 +206,12 @@ const avvia = () => {
     logger.info('[SCHEDULER] Disattivato (NOTIFICHE_SCHEDULER_ATTIVO=false).');
     return;
   }
-  if (timerDigest || timerScadenze) return; // già avviato
+  if (timerDigest || timerScadenze || timerRetention) return; // già avviato
 
   logger.info(
     `[SCHEDULER] Avvio — digest ogni ${DIGEST_OGNI_MINUTI} min, ` +
-      `scadenze ogni ${SCADENZE_OGNI_MINUTI} min (preavviso ${SCADENZA_PREAVVISO_ORE}h).`
+      `scadenze ogni ${SCADENZE_OGNI_MINUTI} min (preavviso ${SCADENZA_PREAVVISO_ORE}h), ` +
+      `retention ogni ${RETENTION_OGNI_MINUTI} min.`
   );
 
   // Primo giro ritardato, poi a intervalli regolari.
@@ -212,6 +219,7 @@ const avvia = () => {
     eseguiProtetto('scansionaScadenze', scansionaScadenze).then(() =>
       eseguiProtetto('elaboraDigest', notificheService.elaboraDigest)
     );
+    eseguiProtetto('retention', userService.eseguiRetention);
 
     timerScadenze = setInterval(
       () => eseguiProtetto('scansionaScadenze', scansionaScadenze),
@@ -221,10 +229,15 @@ const avvia = () => {
       () => eseguiProtetto('elaboraDigest', notificheService.elaboraDigest),
       DIGEST_OGNI_MINUTI * MINUTO
     );
+    timerRetention = setInterval(
+      () => eseguiProtetto('retention', userService.eseguiRetention),
+      RETENTION_OGNI_MINUTI * MINUTO
+    );
 
     // I timer non devono tenere vivo il processo durante lo shutdown.
     if (timerScadenze.unref) timerScadenze.unref();
     if (timerDigest.unref) timerDigest.unref();
+    if (timerRetention.unref) timerRetention.unref();
   }, RITARDO_INIZIALE_MINUTI * MINUTO);
 };
 
@@ -232,8 +245,10 @@ const avvia = () => {
 const arresta = () => {
   if (timerDigest) clearInterval(timerDigest);
   if (timerScadenze) clearInterval(timerScadenze);
+  if (timerRetention) clearInterval(timerRetention);
   timerDigest = null;
   timerScadenze = null;
+  timerRetention = null;
 };
 
 module.exports = {

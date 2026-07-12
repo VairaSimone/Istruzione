@@ -173,6 +173,9 @@
       "teacherPrompt": "Sei un insegnante?",
       "teacherSubtitle": "Inserisci i tuoi dati per attivare il tuo account insegnante.",
       "teacherTitle": "Completa la registrazione"
+    },
+    "terms": {
+      "label": "Accetto i <termini>Termini e Condizioni</termini> e la <privacy>Privacy Policy</privacy>"
     }
   },
   "dashboard": {
@@ -221,7 +224,20 @@
     "deleteCta": "Elimina il mio account",
     "deleteSuccess": "Il tuo account è stato eliminato.",
     "badgesTitle": "Obiettivi e badge",
-    "badgesDescription": "I traguardi che hai raggiunto studiando, scrivendo e mantenendo viva la tua streak."
+    "badgesDescription": "I traguardi che hai raggiunto studiando, scrivendo e mantenendo viva la tua streak.",
+    "dati": {
+      "title": "I tuoi dati",
+      "description": "Esporta una copia dei tuoi dati personali o richiedi la cancellazione dell'account.",
+      "exportCta": "Esporta i miei dati",
+      "exportSuccess": "Esportazione avviata: controlla i download.",
+      "deleteRequestCta": "Richiedi cancellazione",
+      "deleteConfirmText": "L'account verrà eliminato definitivamente al termine di un periodo di grazia. Potrai annullare la richiesta finché è pendente. Vuoi procedere?",
+      "deleteConfirm": "Conferma richiesta",
+      "deleteRequested": "Richiesta di cancellazione registrata.",
+      "pendingText": "La cancellazione del tuo account è programmata. Puoi ancora annullarla.",
+      "cancelDeleteCta": "Annulla la cancellazione",
+      "deleteCancelled": "Richiesta di cancellazione annullata."
+    }
   },
   "users": {
     "managementTitle": "Gestione utenti",
@@ -414,7 +430,8 @@
     "scuolaInvalid": "L'identificativo della scuola non è valido",
     "motivazioneMax": "Il messaggio non può superare i {{max}} caratteri",
     "classeRequired": "La classe è obbligatoria",
-    "classeMax": "La classe non può superare i 60 caratteri"
+    "classeMax": "La classe non può superare i 60 caratteri",
+    "termsRequired": "Devi accettare i Termini e la Privacy Policy per registrarti"
   },
   "quiz": {
     "pageTitle": "Quiz Kana",
@@ -1545,7 +1562,15 @@
   "footer": {
     "linkAria": "Collegamenti del piè di pagina",
     "socialAria": "Profili social",
-    "credits": "Basato su {{piattaforma}}"
+    "credits": "Basato su {{piattaforma}}",
+    "legaleAria": "Collegamenti legali",
+    "legale": {
+      "privacy": "Privacy",
+      "cookie": "Cookie",
+      "termini": "Termini",
+      "accessibilita": "Accessibilità",
+      "gestisciCookie": "Gestisci cookie"
+    }
   },
   "vocabolario": {
     "nessuno": "Nessuno",
@@ -1894,5 +1919,35 @@
       "dataNonValida": "La data non è valida.",
       "motivoLength": "Il motivo non può superare i 255 caratteri."
     }
+  },
+  "legale": {
+    "aggiornamento": "Versione del {{versione}}"
+  },
+  "cookie": {
+    "bannerTitolo": "Rispettiamo la tua privacy",
+    "bannerTesto": "Usiamo cookie tecnici necessari e, con il tuo consenso, cookie di preferenze, statistici e di marketing.",
+    "bannerLink": "Leggi la Cookie Policy",
+    "preferenzeTitolo": "Le tue preferenze",
+    "catNecessari": "Necessari",
+    "catNecessariHint": "Indispensabili al funzionamento e alla sicurezza. Sempre attivi.",
+    "cat_preferenze": "Preferenze",
+    "cat_preferenze_hint": "Ricordano le tue scelte per migliorare l'esperienza.",
+    "cat_statistiche": "Statistiche",
+    "cat_statistiche_hint": "Ci aiutano a capire come viene usata la piattaforma, in forma aggregata.",
+    "cat_marketing": "Marketing",
+    "cat_marketing_hint": "Usati per contenuti e comunicazioni personalizzate.",
+    "salva": "Salva preferenze",
+    "personalizza": "Personalizza",
+    "rifiuta": "Rifiuta",
+    "accetta": "Accetta tutti",
+    "gestisciTitolo": "Gestione del consenso",
+    "gestisciTesto": "Puoi rivedere o modificare le tue scelte sui cookie in qualsiasi momento.",
+    "gestisci": "Gestisci le preferenze cookie"
+  },
+  "accessibilita": {
+    "segnalaTitolo": "Segnala una barriera",
+    "segnalaTesto": "Se incontri un ostacolo nell'uso della piattaforma, scrivici: interverremo il prima possibile.",
+    "segnalaOggetto": "Segnalazione di accessibilità",
+    "segnalaFallback": "Contatta la segreteria della scuola per segnalare un problema di accessibilità."
   }
 }

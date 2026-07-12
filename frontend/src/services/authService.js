@@ -127,3 +127,41 @@ export const requestEmailChange = async ({ nuovaEmail }) => {
   });
   return data;
 };
+
+// ── Diritti dell'interessato (GDPR) ────────────────────────────────
+
+/**
+ * Esporta i dati personali dell'utente loggato (GET /auth/me/esporta-dati).
+ * Il backend risponde con un JSON scaricabile (Content-Disposition attachment).
+ * Restituiamo il Blob e il nome file, così il chiamante può avviare il download.
+ */
+export const esportaDati = async () => {
+  const response = await apiClient.get('/auth/me/esporta-dati', {
+    responseType: 'blob',
+  });
+
+  // Ricava il nome file dall'header, con fallback ragionevole.
+  const disposition = response.headers?.['content-disposition'] || '';
+  const match = /filename="?([^"]+)"?/i.exec(disposition);
+  const filename = match ? match[1] : 'esportazione-dati.json';
+
+  return { blob: response.data, filename };
+};
+
+/**
+ * Programma la cancellazione dell'account con periodo di grazia
+ * (POST /auth/me/richiesta-cancellazione).
+ */
+export const richiediCancellazione = async () => {
+  const { data } = await apiClient.post('/auth/me/richiesta-cancellazione');
+  return data;
+};
+
+/**
+ * Annulla la richiesta di cancellazione pendente
+ * (DELETE /auth/me/richiesta-cancellazione).
+ */
+export const annullaCancellazione = async () => {
+  const { data } = await apiClient.delete('/auth/me/richiesta-cancellazione');
+  return data;
+};

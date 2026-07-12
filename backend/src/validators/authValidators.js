@@ -46,6 +46,16 @@ const tokenRules = (fieldName = 'token', message = 'Token non valido') =>
     .isHexadecimal().withMessage(message)
     .isLength({ min: 64, max: 64 }).withMessage(message);
 
+// Accettazione OBBLIGATORIA dei Termini e della Privacy alla registrazione.
+// Accetta booleano true o le stringhe 'true'/'on' inviate dai form; qualsiasi
+// altro valore (incluso false) fa fallire la validazione. Serve a raccogliere
+// e provare il consenso (art. 7 GDPR).
+const accettaTerminiRules = (fieldName = 'accettaTermini') =>
+  body(fieldName)
+    .customSanitizer((v) => v === true || v === 'true' || v === 'on' || v === 1 || v === '1')
+    .custom((v) => v === true)
+    .withMessage('Devi accettare i Termini e la Privacy Policy per registrarti');
+
 // ─────────────────────────────────────────────
 // POST /api/invites/student  (insegnante / admin)
 // `scuolaId` è facoltativo: ignorato per l'insegnante (usa la propria scuola),
@@ -102,6 +112,7 @@ const validateRegisterStudent = [
   nomeRules('cognome', 'Il cognome'),
   etaRules('eta'),
   passwordRules('password'),
+  accettaTerminiRules('accettaTermini'),
 ];
 
 // ─────────────────────────────────────────────
@@ -113,6 +124,7 @@ const validateRegisterTeacher = [
   nomeRules('nome', 'Il nome'),
   nomeRules('cognome', 'Il cognome'),
   passwordRules('password'),
+  accettaTerminiRules('accettaTermini'),
 ];
 
 // ─────────────────────────────────────────────

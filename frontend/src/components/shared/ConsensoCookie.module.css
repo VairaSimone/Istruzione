@@ -1,0 +1,75 @@
+.overlay {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: var(--z-toast, 1000);
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4);
+  pointer-events: none;
+}
+
+.banner {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 48rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg, 0 10px 30px rgba(0, 0, 0, 0.18));
+  padding: var(--space-5);
+}
+
+.testoBox {
+  margin-bottom: var(--space-4);
+}
+
+.titolo {
+  font-size: var(--text-lg);
+  margin: 0 0 var(--space-2);
+  color: var(--color-ink);
+}
+
+.testo {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+}
+
+.link {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.preferenze {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+
+.legend {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-ink);
+  padding: 0 var(--space-2);
+}
+
+.azioni {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+@media (max-width: 40rem) {
+  .azioni {
+    flex-direction: column-reverse;
+  }
+}

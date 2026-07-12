@@ -20,6 +20,10 @@ import {
   LoginPage,
   RegisterPage,
   ForgotPasswordPage,
+  PrivacyPolicyPage,
+  CookiePolicyPage,
+  TerminiPage,
+  DichiarazioneAccessibilitaPage,
   ResetPasswordPage,
   VerifyEmailPage,
   VerifyEmailChangePage,
@@ -76,6 +80,13 @@ export const router = createBrowserRouter([
       { path: ROUTES.VERIFY_EMAIL_CHANGE, element: <VerifyEmailChangePage /> },
       { path: ROUTES.NOT_FOUND, element: <NotFoundPage /> },
       { path: ROUTES.FORBIDDEN, element: <ForbiddenPage /> },
+
+      // Pagine legali: pubbliche e sempre raggiungibili (requisito di
+      // conformità: non devono dipendere dalla configurazione della scuola).
+      { path: ROUTES.PRIVACY, element: <PrivacyPolicyPage /> },
+      { path: ROUTES.COOKIE, element: <CookiePolicyPage /> },
+      { path: ROUTES.TERMINI, element: <TerminiPage /> },
+      { path: ROUTES.ACCESSIBILITA, element: <DichiarazioneAccessibilitaPage /> },
 
       // Verifica pubblica di un certificato: accessibile a chiunque, anche
       // esternamente (link/QR), senza autenticazione.

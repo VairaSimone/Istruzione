@@ -104,6 +104,47 @@ exports.deleteMe = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// GET /api/auth/me/esporta-dati  (alias: /api/utenti/me/esporta-dati)
+// Esportazione dei dati personali in JSON scaricabile (art. 20 GDPR).
+// ─────────────────────────────────────────────
+exports.esportaDati = catchAsync(async (req, res) => {
+  const dati = await userService.esportaDatiUtente(req.user.id);
+
+  const nomeFile = `esportazione-dati-${req.user.id}.json`;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${nomeFile}"`);
+  res.status(200).send(JSON.stringify(dati, null, 2));
+});
+
+// ─────────────────────────────────────────────
+// POST /api/auth/me/richiesta-cancellazione
+// Programma la cancellazione dell'account con periodo di grazia (art. 17 GDPR).
+// ─────────────────────────────────────────────
+exports.richiediCancellazione = catchAsync(async (req, res) => {
+  const utente = await userService.richiediCancellazioneAccount(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    message:
+      'Richiesta di cancellazione registrata. L\'account verrà eliminato definitivamente al termine del periodo di grazia. Puoi annullare finché è pendente.',
+    data: { cancellazione_richiesta_at: utente.cancellazione_richiesta_at },
+  });
+});
+
+// ─────────────────────────────────────────────
+// DELETE /api/auth/me/richiesta-cancellazione
+// Annulla la richiesta di cancellazione pendente.
+// ─────────────────────────────────────────────
+exports.annullaCancellazione = catchAsync(async (req, res) => {
+  await userService.annullaCancellazioneAccount(req.user.id);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Richiesta di cancellazione annullata. Il tuo account resta attivo.',
+  });
+});
+
+// ─────────────────────────────────────────────
 // GET /api/auth/gestione/utenti (Solo Insegnanti)
 // ─────────────────────────────────────────────
 exports.getAllUsers = catchAsync(async (req, res) => {

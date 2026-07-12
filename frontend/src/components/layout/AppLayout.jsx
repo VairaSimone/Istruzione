@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import RouteFallback from '../shared/RouteFallback';
+import ConsensoCookie from '../shared/ConsensoCookie';
 import styles from './AppLayout.module.css';
 
 /**
@@ -26,6 +27,7 @@ const AppLayout = () => {
         </Suspense>
       </main>
       <Footer />
+      <ConsensoCookie />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Badge from '../components/ui/Badge';
 import LanguageSection from '../features/auth/components/LanguageSection';
 import NotificationSection from '../features/auth/components/NotificationSection';
 import ChangeEmailSection from '../features/auth/components/ChangeEmailSection';
+import DatiPersonaliSection from '../features/auth/components/DatiPersonaliSection';
 import DeleteAccountSection from '../features/auth/components/DeleteAccountSection';
 import BadgeSection from '../features/quiz/components/BadgeSection';
 import { useFunzionalitaAttiva } from '../hooks/useConfig';
@@ -79,6 +80,7 @@ const ProfilePage = () => {
       <LanguageSection />
       <NotificationSection />
       <ChangeEmailSection />
+      <DatiPersonaliSection />
       <DeleteAccountSection />
     </div>
   );

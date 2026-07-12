@@ -54,6 +54,12 @@ const buildEtaSchema = (t) =>
     .min(ETA_MIN, t('validation.etaMin', { min: ETA_MIN }))
     .max(ETA_MAX, t('validation.etaMax', { max: ETA_MAX }));
 
+// Accettazione obbligatoria di Termini e Privacy (checkbox). Deve essere true.
+const buildAccettaTerminiSchema = (t) =>
+  z.boolean().refine((v) => v === true, {
+    message: t('validation.termsRequired'),
+  });
+
 /**
  * Completamento registrazione STUDENTE su invito.
  * Email e classe NON sono nel form: derivano dall'invito (sola lettura).
@@ -66,6 +72,7 @@ export const buildRegisterStudentSchema = (t) =>
       eta: buildEtaSchema(t),
       password: buildPasswordSchema(t),
       confermaPassword: z.string().trim().min(1, t('validation.confirmRequired')),
+      accettaTermini: buildAccettaTerminiSchema(t),
     })
     .refine((data) => data.password === data.confermaPassword, {
       message: t('validation.passwordMismatch'),
@@ -83,6 +90,7 @@ export const buildRegisterTeacherSchema = (t) =>
       cognome: buildNomeSchema(t, 'cognome'),
       password: buildPasswordSchema(t),
       confermaPassword: z.string().trim().min(1, t('validation.confirmRequired')),
+      accettaTermini: buildAccettaTerminiSchema(t),
     })
     .refine((data) => data.password === data.confermaPassword, {
       message: t('validation.passwordMismatch'),

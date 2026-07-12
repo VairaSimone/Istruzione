@@ -142,6 +142,11 @@ app.use('/api/config', configRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);
+// Alias degli endpoint di gestione utente/account anche sotto /api/utenti.
+// Serve a esporre gli endpoint dei diritti dell'interessato al percorso
+// canonico /api/utenti/me/* (es. /api/utenti/me/esporta-dati) mantenendo la
+// piena compatibilità con i percorsi /api/auth/* già usati dal frontend.
+app.use('/api/utenti', userRoutes);
 app.use('/api/invites', inviteRoutes);
 app.use('/api/scuole', scuolaRoutes);
 app.use('/api/quiz', quizRoutes);

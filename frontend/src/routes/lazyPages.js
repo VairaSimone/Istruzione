@@ -18,6 +18,12 @@ export const HomePage = lazy(() => import('../pages/HomePage'));
 export const LoginPage = lazy(() => import('../pages/LoginPage'));
 export const RegisterPage = lazy(() => import('../pages/RegisterPage'));
 export const ForgotPasswordPage = lazy(() => import('../pages/ForgotPasswordPage'));
+export const PrivacyPolicyPage = lazy(() => import('../pages/PrivacyPolicyPage'));
+export const CookiePolicyPage = lazy(() => import('../pages/CookiePolicyPage'));
+export const TerminiPage = lazy(() => import('../pages/TerminiPage'));
+export const DichiarazioneAccessibilitaPage = lazy(() =>
+  import('../pages/DichiarazioneAccessibilitaPage')
+);
 export const ResetPasswordPage = lazy(() => import('../pages/ResetPasswordPage'));
 export const VerifyEmailPage = lazy(() => import('../pages/VerifyEmailPage'));
 export const VerifyEmailChangePage = lazy(() => import('../pages/VerifyEmailChangePage'));

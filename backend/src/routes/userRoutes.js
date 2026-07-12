@@ -33,6 +33,15 @@ router.patch('/me/lingua', authenticateJWT, csrfProtection, userController.updat
 router.get('/me/notifiche', authenticateJWT, userController.getNotificationPreferences);
 router.patch('/me/notifiche', authenticateJWT, csrfProtection, userController.updateNotificationPreferences);
 
+// Diritti dell'interessato (GDPR)
+//   - export dati personali (portabilità, art. 20);
+//   - richiesta/annullo cancellazione account (diritto all'oblio, art. 17).
+// Raggiungibili sia sotto /api/auth/me/* sia sotto /api/utenti/me/* (alias
+// montato in app.js), per coerenza con il resto degli endpoint "me".
+router.get('/me/esporta-dati', authenticateJWT, userController.esportaDati);
+router.post('/me/richiesta-cancellazione', authenticateJWT, csrfProtection, userController.richiediCancellazione);
+router.delete('/me/richiesta-cancellazione', authenticateJWT, csrfProtection, userController.annullaCancellazione);
+
 router.delete('/me', authenticateJWT, csrfProtection, userController.deleteMe);
 
 // Operazioni amministrative (insegnanti e admin)

@@ -42,13 +42,13 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
 // nome, cognome, età e password.
 // ─────────────────────────────────────────────
 exports.registerStudent = catchAsync(async (req, res) => {
-  const { token, nome, cognome, eta, password } = req.body;
+  const { token, nome, cognome, eta, password, accettaTermini } = req.body;
 
   // La validazione dell'invito (token_hash, stato, scadenza, ruolo) è gestita
   // in modo transazionale e atomico dentro il service, che eredita email e
   // classe dall'invito e — se l'invito è legato a un'aula — vi iscrive lo studente.
   const utente = await authService.registraStudenteDaInvito({
-    token, nome, cognome, eta, password,
+    token, nome, cognome, eta, password, accettaTermini,
   });
 
   res.status(201).json({
@@ -64,10 +64,10 @@ exports.registerStudent = catchAsync(async (req, res) => {
 // da un admin (onboarding diretto). Nessuna classe.
 // ─────────────────────────────────────────────
 exports.registerTeacher = catchAsync(async (req, res) => {
-  const { token, nome, cognome, password } = req.body;
+  const { token, nome, cognome, password, accettaTermini } = req.body;
 
   const utente = await authService.registraInsegnanteDaInvito({
-    token, nome, cognome, password,
+    token, nome, cognome, password, accettaTermini,
   });
 
   res.status(201).json({

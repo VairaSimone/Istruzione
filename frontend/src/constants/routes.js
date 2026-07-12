@@ -10,6 +10,11 @@ export const ROUTES = Object.freeze({
   RESET_PASSWORD: '/reset-password',
   VERIFY_EMAIL: '/verify-email',
   VERIFY_EMAIL_CHANGE: '/verify-email-change',
+  // Pagine legali pubbliche (accessibili senza autenticazione).
+  PRIVACY: '/privacy',
+  COOKIE: '/cookie',
+  TERMINI: '/termini',
+  ACCESSIBILITA: '/accessibilita',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
   QUIZ: '/quiz',
