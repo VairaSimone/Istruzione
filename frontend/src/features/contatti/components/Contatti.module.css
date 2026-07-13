@@ -1,0 +1,136 @@
+/* Inbox delle richieste di contatto. Riusa i design token globali. */
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
+  margin-bottom: var(--space-5);
+}
+
+.filtro {
+  min-width: 12rem;
+}
+
+.ricerca {
+  flex: 1;
+  min-width: 14rem;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.riga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--dur-fast, 120ms) var(--ease-out, ease);
+}
+
+.riga:hover {
+  border-color: var(--color-primary, #4f46e5);
+}
+
+.rigaNonLetta {
+  border-left: 3px solid var(--color-primary, #4f46e5);
+}
+
+.rigaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.rigaNome {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.rigaMeta {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.rigaAnteprima {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 32rem;
+}
+
+.rigaBadges {
+  display: inline-flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ── Modale di dettaglio ── */
+.dettaglio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dettaglioGriglia {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+}
+
+.dettaglioLabel {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.dettaglioValore {
+  word-break: break-word;
+}
+
+.messaggio {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-alt, var(--color-paper-dim));
+  border-radius: var(--radius-md);
+  white-space: pre-wrap;
+  line-height: var(--leading-relaxed);
+}
+
+.dettaglioAzioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+.statoSelect {
+  min-width: 12rem;
+}
+
+/* Selettore scuola (admin) sopra l'inbox. */
+.toolbarScuola {
+  max-width: 22rem;
+  margin-bottom: var(--space-5);
+}

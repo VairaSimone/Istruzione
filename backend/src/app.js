@@ -9,6 +9,8 @@ const errorHandler = require('./middleware/errorHandler');
 const { globalLimiter } = require('./middleware/rateLimiter');
 const AppError = require('./utils/AppError');
 const configRoutes = require('./routes/configRoutes');
+const contattiRoutes = require('./routes/contattiRoutes');
+const impostazioniService = require('./services/impostazioniService');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const inviteRoutes = require('./routes/inviteRoutes');
@@ -61,10 +63,23 @@ const corsOptions = {
     }
 
     if (originiConsentite.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origine non consentita da CORS: ${origin}`));
+      return callback(null, true);
     }
+
+    // Consenti anche le origini il cui host è un DOMINIO SCUOLA VERIFICATO: così
+    // il frontend servito su un dominio personalizzato può chiamare l'API senza
+    // doverlo aggiungere a mano a CORS_ORIGIN. La verifica è cache-ata
+    // (impostazioniService.perDominio), quindi non pesa a ogni richiesta.
+    (async () => {
+      try {
+        const host = origin ? new URL(origin).hostname : null;
+        const scuola = host ? await impostazioniService.perDominio(host) : null;
+        if (scuola) return callback(null, true);
+      } catch (_) {
+        /* origin non parsabile → trattata come non consentita */
+      }
+      callback(new Error(`Origine non consentita da CORS: ${origin}`));
+    })();
   },
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   // `X-Scuola` consente al frontend di indicare il tenant sulle richieste non
@@ -139,6 +154,11 @@ app.get('/api/health', (req, res) => {
 // interroga al bootstrap, prima del login, per personalizzarsi. Nessun dato
 // riservato: la vista è filtrata dallo schema delle impostazioni.
 app.use('/api/config', configRoutes);
+
+// Form di contatto/iscrizione della HOMEPAGE pubblica. L'invio (POST) è
+// pubblico: la scuola destinataria è risolta dal dominio o da `?scuola=`. La
+// gestione dei lead è riservata allo staff (autenticata).
+app.use('/api/contatti', contattiRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);

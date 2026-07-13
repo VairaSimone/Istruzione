@@ -14,6 +14,7 @@ import EmptyState from '../components/shared/EmptyState';
 import ErrorState from '../components/shared/ErrorState';
 import SezioneImpostazioni from '../features/impostazioni/components/SezioneImpostazioni';
 import AnteprimaBranding from '../features/impostazioni/components/AnteprimaBranding';
+import DominiEditor from '../features/scuole/components/DominiEditor';
 import CertificatoConfigPanel from '../features/certificati/components/CertificatoConfigPanel';
 import pageStyles from './UsersManagementPage.module.css';
 import styles from '../features/impostazioni/components/Impostazioni.module.css';
@@ -160,6 +161,10 @@ const schema = schemaQuery.data?.schema ?? null;
           />
         )}
       </div>
+
+      {/* Domini personalizzati: risorsa a sé (non passa dal merge delle
+          impostazioni), con il proprio salvataggio immediato. */}
+      <DominiEditor />
 
       {/* Barra di salvataggio: compare solo quando c'è qualcosa da salvare, e
           resta ancorata in basso perché il form è lungo. */}

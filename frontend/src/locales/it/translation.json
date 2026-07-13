@@ -63,7 +63,8 @@
     "quizGestione": "Gestione quiz",
     "impostazioniScuola": "Impostazioni scuola",
     "certificati": "Certificati",
-    "certificatiStudente": "I miei certificati"
+    "certificatiStudente": "I miei certificati",
+    "contatti": "Richieste"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -1663,6 +1664,10 @@
       "funzionalita": {
         "titolo": "Sezioni attive",
         "descrizione": "Ciò che spegni qui sparisce dal menu e viene rifiutato anche via API."
+      },
+      "homepage": {
+        "titolo": "Homepage pubblica",
+        "descrizione": "La pagina mostrata ai visitatori sul dominio della scuola: presentazione e modulo di contatto."
       }
     },
     "campi": {
@@ -1772,6 +1777,53 @@
       "velatura": "Sfondo tenue",
       "assente": "Colore non impostato",
       "nomeAssente": "Nome non impostato"
+    },
+    "homepage": {
+      "attiva": {
+        "label": "Mostra la homepage personalizzata",
+        "hint": "Se disattivata, il dominio mostra la pagina di accesso standard."
+      },
+      "hero": {
+        "titolo": "Intestazione",
+        "campoTitolo": "Titolo",
+        "sottotitolo": "Sottotitolo",
+        "immagineUrl": "Immagine",
+        "testoAzione": "Testo del pulsante",
+        "tipoAzione": "Azione del pulsante"
+      },
+      "azioni": {
+        "iscriviti": "Iscriviti",
+        "contatti": "Contattaci",
+        "accedi": "Accedi",
+        "nessuna": "Nessun pulsante"
+      },
+      "sezioni": {
+        "titolo": "Sezioni",
+        "hint": "Blocchi di testo e immagini mostrati sotto l’intestazione.",
+        "vuoto": "Nessuna sezione. Aggiungine una per raccontare la scuola.",
+        "aggiungi": "Aggiungi sezione",
+        "rimuovi": "Rimuovi sezione",
+        "su": "Sposta su",
+        "giu": "Sposta giù",
+        "campoTitolo": "Titolo della sezione",
+        "campoTesto": "Testo",
+        "campoImmagine": "Immagine"
+      },
+      "form": {
+        "titolo": "Modulo di contatto",
+        "abilitato": "Mostra il modulo di contatto",
+        "abilitatoHint": "Consente ai visitatori di inviare richieste dalla homepage.",
+        "tipiRichiesta": "Tipi di richiesta ammessi",
+        "emailDestinazione": "Email di destinazione",
+        "emailDestinazioneHint": "Dove ricevere le richieste. Se vuota, si usa l’email di contatto della scuola.",
+        "messaggioConferma": "Messaggio di conferma",
+        "messaggioConfermaHint": "Mostrato al visitatore dopo l’invio."
+      },
+      "seo": {
+        "titolo": "SEO",
+        "campoTitolo": "Titolo della pagina",
+        "descrizione": "Descrizione"
+      }
     }
   },
   "notifications": {
@@ -1949,5 +2001,118 @@
     "segnalaTesto": "Se incontri un ostacolo nell'uso della piattaforma, scrivici: interverremo il prima possibile.",
     "segnalaOggetto": "Segnalazione di accessibilità",
     "segnalaFallback": "Contatta la segreteria della scuola per segnalare un problema di accessibilità."
+  },
+  "contatti": {
+    "cta": {
+      "iscriviti": "Iscriviti",
+      "contatti": "Contattaci"
+    },
+    "tipi": {
+      "informazioni": "Informazioni",
+      "iscrizione": "Iscrizione",
+      "contatto": "Contatto"
+    },
+    "stati": {
+      "nuova": "Nuova",
+      "in_gestione": "In gestione",
+      "chiusa": "Chiusa",
+      "spam": "Spam"
+    },
+    "form": {
+      "titolo": "Contattaci",
+      "intro": "Compila il modulo e la scuola ti risponderà al più presto.",
+      "tipo": "Tipo di richiesta",
+      "nome": "Nome e cognome",
+      "email": "Email",
+      "telefono": "Telefono (facoltativo)",
+      "messaggio": "Messaggio",
+      "invia": "Invia richiesta",
+      "confermaDefault": "Richiesta inviata. La scuola ti risponderà al più presto.",
+      "nuovaRichiesta": "Invia un’altra richiesta",
+      "validation": {
+        "nome": "Il nome deve avere tra 2 e 160 caratteri",
+        "email": "Inserisci un’email valida",
+        "emailObbligatoria": "L’email è obbligatoria",
+        "telefono": "Il telefono non può superare i 40 caratteri",
+        "messaggio": "Il messaggio non può superare i 4000 caratteri"
+      }
+    },
+    "gestione": {
+      "titolo": "Richieste di contatto",
+      "sottotitolo": "I messaggi ricevuti dal modulo della homepage.",
+      "scuola": "Scuola"
+    },
+    "filtri": {
+      "stato": "Stato",
+      "tipo": "Tipo",
+      "tutti": "Tutti",
+      "ricerca": "Cerca",
+      "ricercaPlaceholder": "Nome o email…"
+    },
+    "vuoto": {
+      "titolo": "Nessuna richiesta",
+      "descrizione": "Le richieste inviate dalla homepage compariranno qui."
+    },
+    "selezionaScuola": {
+      "titolo": "Seleziona una scuola",
+      "descrizione": "Scegli una scuola per vederne le richieste di contatto."
+    },
+    "dettaglio": {
+      "titolo": "Dettaglio richiesta",
+      "tipo": "Tipo",
+      "ricevuta": "Ricevuta il",
+      "stato": "Stato",
+      "prendiInCarico": "Prendi in carico",
+      "noteInterne": "Note interne",
+      "noteInterneHint": "Visibili solo allo staff della scuola."
+    },
+    "mailto": {
+      "oggetto": "Re: la tua richiesta ({{tipo}})"
+    },
+    "toast": {
+      "aggiornata": "Richiesta aggiornata.",
+      "eliminata": "Richiesta eliminata."
+    },
+    "elimina": {
+      "titolo": "Eliminare la richiesta?",
+      "descrizione": "L’operazione è irreversibile."
+    }
+  },
+  "domini": {
+    "titolo": "Domini personalizzati",
+    "descrizione": "Collega un dominio proprio (es. liceo-manzoni.it) su cui mostrare la homepage della scuola. Un dominio funziona solo dopo la verifica.",
+    "aggiungi": "Aggiungi dominio",
+    "vuoto": "Nessun dominio collegato.",
+    "attesaNota": "In attesa di verifica da parte di un amministratore.",
+    "campo": {
+      "dominio": "Dominio",
+      "dominioHint": "Solo l’host, senza http:// (es. liceo-manzoni.it).",
+      "note": "Note (facoltative)"
+    },
+    "badge": {
+      "principale": "Principale",
+      "verificato": "Verificato",
+      "inAttesa": "In attesa"
+    },
+    "azione": {
+      "principale": "Rendi principale",
+      "verifica": "Verifica",
+      "sospendi": "Sospendi"
+    },
+    "toast": {
+      "aggiunto": "Dominio aggiunto.",
+      "principale": "Dominio principale aggiornato.",
+      "verificato": "Dominio verificato.",
+      "sospeso": "Verifica sospesa.",
+      "rimosso": "Dominio rimosso."
+    },
+    "elimina": {
+      "titolo": "Rimuovere il dominio?",
+      "descrizione": "Il dominio {{dominio}} non risolverà più la scuola."
+    },
+    "validation": {
+      "dominio": "Inserisci un dominio valido (es. liceo-manzoni.it)",
+      "note": "Le note non possono superare i 255 caratteri"
+    }
   }
 }

@@ -3,6 +3,7 @@ import Card from '../../../components/ui/Card';
 import Badge from '../../../components/ui/Badge';
 import CampoImpostazione from './CampoImpostazione';
 import SocialEditor from './SocialEditor';
+import HomepageEditor from './HomepageEditor';
 import FunzionalitaPanel from './FunzionalitaPanel';
 import styles from './Impostazioni.module.css';
 
@@ -49,6 +50,13 @@ const SezioneImpostazioni = ({
           valore={valore ?? {}}
           onChange={onChange}
         />
+      );
+    }
+
+    // La homepage ha una forma annidata (hero, sezioni, form, SEO): editor dedicato.
+    if (nome === 'homepage') {
+      return (
+        <HomepageEditor valore={valore ?? {}} descrittore={descrittore} onChange={onChange} />
       );
     }
 

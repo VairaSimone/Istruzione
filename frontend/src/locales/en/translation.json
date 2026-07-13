@@ -63,7 +63,8 @@
     "quizGestione": "Quiz management",
     "impostazioniScuola": "School settings",
     "certificati": "Certificates",
-    "certificatiStudente": "My certificates"
+    "certificatiStudente": "My certificates",
+    "contatti": "Requests"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -1663,6 +1664,10 @@
       "funzionalita": {
         "titolo": "Active sections",
         "descrizione": "Whatever you switch off here disappears from the menu and is refused by the API too."
+      },
+      "homepage": {
+        "titolo": "Public homepage",
+        "descrizione": "The page shown to visitors on the school's domain: presentation and contact form."
       }
     },
     "campi": {
@@ -1772,6 +1777,53 @@
       "velatura": "Soft background",
       "assente": "Colour not set",
       "nomeAssente": "Name not set"
+    },
+    "homepage": {
+      "attiva": {
+        "label": "Show the custom homepage",
+        "hint": "If disabled, the domain shows the standard login page."
+      },
+      "hero": {
+        "titolo": "Header",
+        "campoTitolo": "Title",
+        "sottotitolo": "Subtitle",
+        "immagineUrl": "Image",
+        "testoAzione": "Button text",
+        "tipoAzione": "Button action"
+      },
+      "azioni": {
+        "iscriviti": "Enrol",
+        "contatti": "Contact us",
+        "accedi": "Sign in",
+        "nessuna": "No button"
+      },
+      "sezioni": {
+        "titolo": "Sections",
+        "hint": "Blocks of text and images shown below the header.",
+        "vuoto": "No sections yet. Add one to describe the school.",
+        "aggiungi": "Add section",
+        "rimuovi": "Remove section",
+        "su": "Move up",
+        "giu": "Move down",
+        "campoTitolo": "Section title",
+        "campoTesto": "Text",
+        "campoImmagine": "Image"
+      },
+      "form": {
+        "titolo": "Contact form",
+        "abilitato": "Show the contact form",
+        "abilitatoHint": "Lets visitors send requests from the homepage.",
+        "tipiRichiesta": "Allowed request types",
+        "emailDestinazione": "Destination email",
+        "emailDestinazioneHint": "Where to receive requests. If empty, the school's contact email is used.",
+        "messaggioConferma": "Confirmation message",
+        "messaggioConfermaHint": "Shown to the visitor after sending."
+      },
+      "seo": {
+        "titolo": "SEO",
+        "campoTitolo": "Page title",
+        "descrizione": "Description"
+      }
     }
   },
   "notifications": {
@@ -1949,5 +2001,118 @@
     "segnalaTesto": "If you encounter an obstacle using the platform, write to us: we will act as soon as possible.",
     "segnalaOggetto": "Accessibility report",
     "segnalaFallback": "Contact the school office to report an accessibility issue."
+  },
+  "contatti": {
+    "cta": {
+      "iscriviti": "Enrol",
+      "contatti": "Contact us"
+    },
+    "tipi": {
+      "informazioni": "Information",
+      "iscrizione": "Enrolment",
+      "contatto": "Contact"
+    },
+    "stati": {
+      "nuova": "New",
+      "in_gestione": "In progress",
+      "chiusa": "Closed",
+      "spam": "Spam"
+    },
+    "form": {
+      "titolo": "Contact us",
+      "intro": "Fill in the form and the school will get back to you soon.",
+      "tipo": "Request type",
+      "nome": "Full name",
+      "email": "Email",
+      "telefono": "Phone (optional)",
+      "messaggio": "Message",
+      "invia": "Send request",
+      "confermaDefault": "Request sent. The school will get back to you soon.",
+      "nuovaRichiesta": "Send another request",
+      "validation": {
+        "nome": "The name must be between 2 and 160 characters",
+        "email": "Enter a valid email",
+        "emailObbligatoria": "Email is required",
+        "telefono": "The phone cannot exceed 40 characters",
+        "messaggio": "The message cannot exceed 4000 characters"
+      }
+    },
+    "gestione": {
+      "titolo": "Contact requests",
+      "sottotitolo": "Messages received from the homepage form.",
+      "scuola": "School"
+    },
+    "filtri": {
+      "stato": "Status",
+      "tipo": "Type",
+      "tutti": "All",
+      "ricerca": "Search",
+      "ricercaPlaceholder": "Name or email…"
+    },
+    "vuoto": {
+      "titolo": "No requests",
+      "descrizione": "Requests sent from the homepage will appear here."
+    },
+    "selezionaScuola": {
+      "titolo": "Select a school",
+      "descrizione": "Choose a school to view its contact requests."
+    },
+    "dettaglio": {
+      "titolo": "Request detail",
+      "tipo": "Type",
+      "ricevuta": "Received on",
+      "stato": "Status",
+      "prendiInCarico": "Take charge",
+      "noteInterne": "Internal notes",
+      "noteInterneHint": "Visible only to the school staff."
+    },
+    "mailto": {
+      "oggetto": "Re: your request ({{tipo}})"
+    },
+    "toast": {
+      "aggiornata": "Request updated.",
+      "eliminata": "Request deleted."
+    },
+    "elimina": {
+      "titolo": "Delete the request?",
+      "descrizione": "This action cannot be undone."
+    }
+  },
+  "domini": {
+    "titolo": "Custom domains",
+    "descrizione": "Connect your own domain (e.g. liceo-manzoni.it) to show the school homepage. A domain works only after verification.",
+    "aggiungi": "Add domain",
+    "vuoto": "No connected domains.",
+    "attesaNota": "Awaiting verification by an administrator.",
+    "campo": {
+      "dominio": "Domain",
+      "dominioHint": "Host only, without http:// (e.g. liceo-manzoni.it).",
+      "note": "Notes (optional)"
+    },
+    "badge": {
+      "principale": "Primary",
+      "verificato": "Verified",
+      "inAttesa": "Pending"
+    },
+    "azione": {
+      "principale": "Make primary",
+      "verifica": "Verify",
+      "sospendi": "Suspend"
+    },
+    "toast": {
+      "aggiunto": "Domain added.",
+      "principale": "Primary domain updated.",
+      "verificato": "Domain verified.",
+      "sospeso": "Verification suspended.",
+      "rimosso": "Domain removed."
+    },
+    "elimina": {
+      "titolo": "Remove the domain?",
+      "descrizione": "The domain {{dominio}} will no longer resolve the school."
+    },
+    "validation": {
+      "dominio": "Enter a valid domain (e.g. liceo-manzoni.it)",
+      "note": "Notes cannot exceed 255 characters"
+    }
   }
 }

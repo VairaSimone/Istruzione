@@ -61,5 +61,6 @@ export const UsersManagementPage = lazy(() => import('../pages/UsersManagementPa
 export const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 export const ForbiddenPage = lazy(() => import('../pages/ForbiddenPage'));
 export const InvitesManagementPage = lazy(() => import('../pages/InvitesManagementPage'));
+export const ContattiManagementPage = lazy(() => import('../pages/ContattiManagementPage'));
 export const ScuoleManagementPage = lazy(() => import('../pages/ScuoleManagementPage'));
 export const ImpostazioniScuolaPage = lazy(() => import('../pages/ImpostazioniScuolaPage'));

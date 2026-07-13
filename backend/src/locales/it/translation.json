@@ -50,6 +50,23 @@
         "feedbackCompito": "Nuovi feedback ricevuti ({{count}})",
         "certificatoRilasciato": "Nuovi certificati ricevuti ({{count}})"
       }
+    },
+    "contatto": {
+      "subject": "Nuova richiesta ({{tipo}}) da {{nome}}",
+      "title": "Nuova richiesta dal sito",
+      "intro": "Hai ricevuto una nuova richiesta di tipo \"{{tipo}}\" dal modulo di contatto della tua homepage.",
+      "campi": {
+        "nome": "Nome",
+        "email": "Email",
+        "telefono": "Telefono",
+        "tipo": "Tipo di richiesta"
+      },
+      "tipi": {
+        "informazioni": "Richiesta di informazioni",
+        "iscrizione": "Richiesta di iscrizione",
+        "contatto": "Contatto generico"
+      },
+      "footer": "Puoi rispondere direttamente a questa email per contattare il richiedente. Gestisci tutte le richieste dall'area riservata della piattaforma."
     }
   },
   "messages": {

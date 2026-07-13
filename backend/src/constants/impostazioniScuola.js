@@ -9,6 +9,7 @@ const {
   funzionalitaPredefinite,
   risolviFunzionalita,
 } = require('./funzionalita');
+const { CODICI_TIPO: TIPI_RICHIESTA_CONTATTO } = require('./tipiRichiestaContatto');
 
 /**
  * SCHEMA DELLE IMPOSTAZIONI DI UNA SCUOLA (tenant).
@@ -34,6 +35,7 @@ const {
  *   indirizzo    → sede fisica
  *   social       → collegamenti ai profili social
  *   footer       → testo e link personalizzabili del piè di pagina
+ *   homepage     → landing page pubblica della scuola servita sul suo dominio
  *   didattica    → vocabolari della scuola (classi, livelli, materie)
  *   funzionalita → sezioni abilitate/disabilitate (cfr. constants/funzionalita)
  *
@@ -56,6 +58,13 @@ const LUNGHEZZA = {
   testoCertificato: 1500,
   // Identificativo di un file caricato (UUID) usato come logo/firma del certificato.
   idFile: 36,
+  // Homepage pubblica.
+  titoloHomepage: 200,
+  testoHomepage: 4000,
+  etichettaAzione: 60,
+  messaggioConferma: 500,
+  seoTitolo: 70,
+  seoDescrizione: 200,
 };
 
 // Numero massimo di voci nelle liste (difesa contro blob gonfiati).
@@ -63,7 +72,15 @@ const MAX_VOCI = {
   link: 12,
   social: 12,
   vocabolario: 60,
+  sezioniHomepage: 12,
 };
+
+// Azione del pulsante principale (hero) della homepage pubblica.
+//   iscriviti → apre il form con tipo "iscrizione"
+//   contatti  → apre il form con tipo "contatto"
+//   accedi    → rimanda alla pagina di login
+//   nessuna   → nessun pulsante
+const AZIONI_HERO = ['iscriviti', 'contatti', 'accedi', 'nessuna'];
 
 // Colore esadecimale: #RGB oppure #RRGGBB.
 const COLORE_REGEX = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -98,6 +115,40 @@ const RETI_SOCIAL = ['facebook', 'instagram', 'x', 'linkedin', 'youtube', 'tikto
 // ─────────────────────────────────────────────
 const erroreImpostazione = (percorso, messaggio) =>
   new AppError(`Impostazioni: ${percorso} — ${messaggio}`, 422, 'INVALID_SETTINGS');
+
+// ─────────────────────────────────────────────
+// Homepage pubblica: forma di default.
+//
+// La sezione `homepage` è un CAMPO UNICO (blob coeso, come `social`): il
+// frontend ne invia sempre l'oggetto completo e il validatore restituisce un
+// blob normalizzato con tutti i sotto-campi valorizzati. Per questo il default
+// deve essere una struttura completa e coerente, non un semplice `{}`.
+// ─────────────────────────────────────────────
+const homepagePredefinita = () => ({
+  // Se false il dominio della scuola mostra comunque la pagina di login/branding
+  // standard: la homepage personalizzata è un opt-in esplicito.
+  attiva: false,
+  hero: {
+    titolo: null,
+    sottotitolo: null,
+    immagineUrl: null,
+    testoAzione: null,
+    tipoAzione: 'contatti',
+  },
+  sezioni: [],
+  form: {
+    abilitato: true,
+    // Tutti i tipi di richiesta ammessi per default.
+    tipiRichiesta: [...TIPI_RICHIESTA_CONTATTO],
+    // Se nullo, il service ricade su `contatti.email` della scuola.
+    emailDestinazione: null,
+    messaggioConferma: null,
+  },
+  seo: {
+    titolo: null,
+    descrizione: null,
+  },
+});
 
 // ─────────────────────────────────────────────
 // Validatori elementari (tipo → funzione(valore, percorso, campo) → valore)
@@ -248,6 +299,114 @@ const validatori = {
     // Applica default + dipendenze: il blob persistito è sempre coerente.
     return risolviFunzionalita(parziali);
   },
+
+  /**
+   * Homepage pubblica (campo unico): valida e NORMALIZZA in un blob completo,
+   * fondendo l'input sui default. Un input `null`/assente lascia la homepage
+   * invariata (in fase di merge). Le chiavi sconosciute vengono ignorate.
+   */
+  homepage: (v, percorso) => {
+    if (v === undefined || v === null) return null;
+    if (typeof v !== 'object' || Array.isArray(v)) {
+      throw erroreImpostazione(percorso, 'deve essere un oggetto.');
+    }
+
+    const out = homepagePredefinita();
+    const stringa = (val, p, max) => validatori.stringa(val, p, { max });
+
+    // attiva
+    if (v.attiva !== undefined) {
+      const b = validatori.booleano(v.attiva, `${percorso}.attiva`);
+      out.attiva = b === null ? false : b;
+    }
+
+    // hero
+    if (v.hero !== undefined && v.hero !== null) {
+      if (typeof v.hero !== 'object' || Array.isArray(v.hero)) {
+        throw erroreImpostazione(`${percorso}.hero`, 'deve essere un oggetto.');
+      }
+      const h = v.hero;
+      out.hero.titolo = stringa(h.titolo, `${percorso}.hero.titolo`, LUNGHEZZA.titoloHomepage);
+      out.hero.sottotitolo = stringa(h.sottotitolo, `${percorso}.hero.sottotitolo`, LUNGHEZZA.slogan);
+      out.hero.immagineUrl = validatori.url(h.immagineUrl, `${percorso}.hero.immagineUrl`, {});
+      out.hero.testoAzione = stringa(h.testoAzione, `${percorso}.hero.testoAzione`, LUNGHEZZA.etichettaAzione);
+      const tipoAzione = validatori.enum(h.tipoAzione, `${percorso}.hero.tipoAzione`, { valori: AZIONI_HERO });
+      if (tipoAzione !== null) out.hero.tipoAzione = tipoAzione;
+    }
+
+    // sezioni: array di { titolo, testo, immagineUrl }
+    if (v.sezioni !== undefined && v.sezioni !== null) {
+      if (!Array.isArray(v.sezioni)) {
+        throw erroreImpostazione(`${percorso}.sezioni`, 'deve essere un array di sezioni.');
+      }
+      if (v.sezioni.length > MAX_VOCI.sezioniHomepage) {
+        throw erroreImpostazione(
+          `${percorso}.sezioni`,
+          `non può contenere più di ${MAX_VOCI.sezioniHomepage} sezioni.`
+        );
+      }
+      out.sezioni = v.sezioni.map((sez, i) => {
+        const p = `${percorso}.sezioni[${i}]`;
+        if (!sez || typeof sez !== 'object' || Array.isArray(sez)) {
+          throw erroreImpostazione(p, 'deve essere un oggetto { titolo, testo, immagineUrl }.');
+        }
+        const titolo = stringa(sez.titolo, `${p}.titolo`, LUNGHEZZA.titoloHomepage);
+        const testo = stringa(sez.testo, `${p}.testo`, LUNGHEZZA.testoHomepage);
+        const immagineUrl = validatori.url(sez.immagineUrl, `${p}.immagineUrl`, {});
+        if (!titolo && !testo && !immagineUrl) {
+          throw erroreImpostazione(p, 'deve contenere almeno un titolo, un testo o un\'immagine.');
+        }
+        return { titolo, testo, immagineUrl };
+      });
+    }
+
+    // form
+    if (v.form !== undefined && v.form !== null) {
+      if (typeof v.form !== 'object' || Array.isArray(v.form)) {
+        throw erroreImpostazione(`${percorso}.form`, 'deve essere un oggetto.');
+      }
+      const f = v.form;
+      if (f.abilitato !== undefined) {
+        const b = validatori.booleano(f.abilitato, `${percorso}.form.abilitato`);
+        out.form.abilitato = b === null ? true : b;
+      }
+      if (f.tipiRichiesta !== undefined && f.tipiRichiesta !== null) {
+        if (!Array.isArray(f.tipiRichiesta)) {
+          throw erroreImpostazione(`${percorso}.form.tipiRichiesta`, 'deve essere un array di tipi.');
+        }
+        const tipi = [];
+        for (const t of f.tipiRichiesta) {
+          if (!TIPI_RICHIESTA_CONTATTO.includes(t)) {
+            throw erroreImpostazione(
+              `${percorso}.form.tipiRichiesta`,
+              `tipo di richiesta sconosciuto. Valori ammessi: ${TIPI_RICHIESTA_CONTATTO.join(', ')}.`
+            );
+          }
+          if (!tipi.includes(t)) tipi.push(t);
+        }
+        // Un form abilitato senza alcun tipo sarebbe inutilizzabile: si ricade
+        // sull'insieme completo dei tipi.
+        out.form.tipiRichiesta = tipi.length ? tipi : [...TIPI_RICHIESTA_CONTATTO];
+      }
+      out.form.emailDestinazione = validatori.email(f.emailDestinazione, `${percorso}.form.emailDestinazione`);
+      out.form.messaggioConferma = stringa(
+        f.messaggioConferma,
+        `${percorso}.form.messaggioConferma`,
+        LUNGHEZZA.messaggioConferma
+      );
+    }
+
+    // seo
+    if (v.seo !== undefined && v.seo !== null) {
+      if (typeof v.seo !== 'object' || Array.isArray(v.seo)) {
+        throw erroreImpostazione(`${percorso}.seo`, 'deve essere un oggetto.');
+      }
+      out.seo.titolo = stringa(v.seo.titolo, `${percorso}.seo.titolo`, LUNGHEZZA.seoTitolo);
+      out.seo.descrizione = stringa(v.seo.descrizione, `${percorso}.seo.descrizione`, LUNGHEZZA.seoDescrizione);
+    }
+
+    return out;
+  },
 };
 
 // ─────────────────────────────────────────────
@@ -315,6 +474,48 @@ const SCHEMA = {
       testo: { tipo: 'stringa', max: LUNGHEZZA.testoFooter, default: null, pubblico: true },
       link: { tipo: 'link', default: [], pubblico: true },
       mostraCredits: { tipo: 'booleano', default: true, pubblico: true },
+    },
+  },
+
+  // HOMEPAGE PUBBLICA della scuola, servita sul suo dominio personalizzato a un
+  // visitatore NON autenticato. Contenuto interamente curato dalla scuola:
+  // titolo/sottotitolo, immagine, sezioni descrittive, form di contatto e SEO.
+  // È PUBBLICA (esposta a `GET /api/config`): il frontend la usa per costruire
+  // la landing page senza dati cablati. Campo unico: il frontend invia sempre
+  // l'oggetto completo (come `social`), il validatore lo normalizza.
+  homepage: {
+    pubblica: true,
+    campoUnico: { tipo: 'homepage', default: homepagePredefinita(), pubblico: true },
+    // Blueprint della struttura, esposto da `descrizioneSchema()` per generare
+    // l'editor lato admin senza duplicare i campi nel frontend.
+    forma: {
+      attiva: { tipo: 'booleano', default: false },
+      hero: {
+        titolo: { tipo: 'stringa', max: LUNGHEZZA.titoloHomepage },
+        sottotitolo: { tipo: 'stringa', max: LUNGHEZZA.slogan },
+        immagineUrl: { tipo: 'url' },
+        testoAzione: { tipo: 'stringa', max: LUNGHEZZA.etichettaAzione },
+        tipoAzione: { tipo: 'enum', valori: AZIONI_HERO, default: 'contatti' },
+      },
+      sezioni: {
+        tipo: 'lista',
+        max: MAX_VOCI.sezioniHomepage,
+        voce: {
+          titolo: { tipo: 'stringa', max: LUNGHEZZA.titoloHomepage },
+          testo: { tipo: 'stringa', max: LUNGHEZZA.testoHomepage },
+          immagineUrl: { tipo: 'url' },
+        },
+      },
+      form: {
+        abilitato: { tipo: 'booleano', default: true },
+        tipiRichiesta: { tipo: 'multiselezione', valori: [...TIPI_RICHIESTA_CONTATTO] },
+        emailDestinazione: { tipo: 'email' },
+        messaggioConferma: { tipo: 'stringa', max: LUNGHEZZA.messaggioConferma },
+      },
+      seo: {
+        titolo: { tipo: 'stringa', max: LUNGHEZZA.seoTitolo },
+        descrizione: { tipo: 'stringa', max: LUNGHEZZA.seoDescrizione },
+      },
     },
   },
 
@@ -593,7 +794,20 @@ const descrizioneSchema = () =>
     NOMI_SEZIONI.map((nomeSezione) => {
       const sezione = SCHEMA[nomeSezione];
       if (sezione.campoUnico) {
-        return [nomeSezione, { campoUnico: true, tipo: sezione.campoUnico.tipo, pubblica: sezione.pubblica }];
+        return [
+          nomeSezione,
+          {
+            campoUnico: true,
+            tipo: sezione.campoUnico.tipo,
+            pubblica: sezione.pubblica,
+            // Blueprint della struttura per i campi unici complessi (es. homepage),
+            // così l'editor lato admin può generarne il form.
+            ...(sezione.forma ? { forma: clona(sezione.forma) } : {}),
+            ...(sezione.campoUnico.default !== undefined && sezione.campoUnico.default !== null
+              ? { default: clona(sezione.campoUnico.default) }
+              : {}),
+          },
+        ];
       }
       return [
         nomeSezione,
@@ -648,6 +862,8 @@ module.exports = {
   NOMI_SEZIONI,
   TEMI,
   RETI_SOCIAL,
+  AZIONI_HERO,
+  homepagePredefinita,
   ORIENTAMENTI_CERTIFICATO,
   CORPO_CERTIFICATO_PREDEFINITO,
   COLORE_REGEX,

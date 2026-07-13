@@ -40,6 +40,7 @@ export const ROUTES = Object.freeze({
   VERIFICA_CERTIFICATO_CODICE: '/verifica-certificato/:codice',
   USERS_MANAGEMENT: '/gestione/utenti',
   INVITES_MANAGEMENT: '/gestione/inviti',
+  CONTATTI_MANAGEMENT: '/gestione/contatti',
   SCUOLE_MANAGEMENT: '/gestione/scuole',
   IMPOSTAZIONI_SCUOLA: '/gestione/impostazioni',
   NOT_FOUND: '/404',

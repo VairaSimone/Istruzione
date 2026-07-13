@@ -50,6 +50,23 @@
         "feedbackCompito": "New feedback received ({{count}})",
         "certificatoRilasciato": "New certificates received ({{count}})"
       }
+    },
+    "contatto": {
+      "subject": "New request ({{tipo}}) from {{nome}}",
+      "title": "New request from your website",
+      "intro": "You received a new \"{{tipo}}\" request from your homepage contact form.",
+      "campi": {
+        "nome": "Name",
+        "email": "Email",
+        "telefono": "Phone",
+        "tipo": "Request type"
+      },
+      "tipi": {
+        "informazioni": "Information request",
+        "iscrizione": "Enrolment request",
+        "contatto": "General contact"
+      },
+      "footer": "You can reply directly to this email to contact the requester. Manage all requests from the platform's staff area."
     }
   },
   "messages": {

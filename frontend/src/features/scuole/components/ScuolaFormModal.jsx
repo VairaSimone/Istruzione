@@ -15,6 +15,7 @@ import Modal from '../../../components/ui/Modal';
 import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
 import Button from '../../../components/ui/Button';
+import DominiEditor from './DominiEditor';
 import styles from './Scuole.module.css';
 
 const CAMPI = ['nome', 'slug', 'attiva', 'predefinita', 'impostazioniText'];
@@ -190,6 +191,14 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
           />
         </div>
       </form>
+
+      {/* Domini della scuola: disponibili solo in modifica (serve l'id). L'admin
+          può anche verificarli. Sono una risorsa a sé, con salvataggio proprio. */}
+      {isEdit && (
+        <div className={styles.dominiArea}>
+          <DominiEditor scuolaId={scuola.id} isAdmin />
+        </div>
+      )}
     </Modal>
   );
 };

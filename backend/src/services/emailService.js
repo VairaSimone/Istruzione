@@ -265,6 +265,66 @@ const sendDigestEmail = async (email, { nomeScuola, sezioni, totale, lingua = 'i
   logger.info(`Email di digest notifiche inviata a: ${email} (${totale} notifiche, lingua: ${lingua})`);
 };
 
+/**
+ * Recapita alla SCUOLA una richiesta ricevuta dal form della homepage pubblica.
+ * Il mittente tecnico resta quello della piattaforma, ma `Reply-To` è impostato
+ * sull'email del visitatore: lo staff può rispondere direttamente dal proprio
+ * client di posta.
+ *
+ * @param {string} destinatario  email della scuola (destinazione del lead)
+ * @param {Object} dati
+ * @param {?string} dati.nomeScuola
+ * @param {Object}  dati.richiesta  (RichiestaContatto.toPublicJSON())
+ * @param {string}  [dati.lingua]
+ */
+const sendContactRequestEmail = async (destinatario, { nomeScuola, richiesta, lingua = 'it' }) => {
+  const t = i18next.getFixedT(lingua);
+
+  const etichetteTipo = {
+    informazioni: t('email.contatto.tipi.informazioni'),
+    iscrizione: t('email.contatto.tipi.iscrizione'),
+    contatto: t('email.contatto.tipi.contatto'),
+  };
+  const tipoLeggibile = etichetteTipo[richiesta.tipo] || richiesta.tipo;
+
+  const riga = (etichetta, valore) =>
+    valore
+      ? `<tr>
+           <td style="padding:6px 12px; color:#666; font-size:13px; white-space:nowrap; vertical-align:top;">${escapeHtml(etichetta)}</td>
+           <td style="padding:6px 12px; color:#111; font-size:14px;">${escapeHtml(valore)}</td>
+         </tr>`
+      : '';
+
+  const messaggioHtml = richiesta.messaggio
+    ? `<div style="margin-top:16px; padding:12px 16px; background:#f8f8f8; border-radius:6px; color:#222; font-size:14px; white-space:pre-wrap;">${escapeHtml(richiesta.messaggio)}</div>`
+    : '';
+
+  const mailOptions = {
+    from: piattaforma.mittente(nomeScuola),
+    to: destinatario,
+    replyTo: richiesta.email,
+    subject: t('email.contatto.subject', { tipo: tipoLeggibile, nome: richiesta.nome }),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;">
+        <h2 style="color: #333;">${escapeHtml(t('email.contatto.title'))}</h2>
+        <p style="color:#555;">${escapeHtml(t('email.contatto.intro', { tipo: tipoLeggibile }))}</p>
+        <table style="width:100%; border-collapse:collapse; margin-top:12px;">
+          ${riga(t('email.contatto.campi.nome'), richiesta.nome)}
+          ${riga(t('email.contatto.campi.email'), richiesta.email)}
+          ${riga(t('email.contatto.campi.telefono'), richiesta.telefono)}
+          ${riga(t('email.contatto.campi.tipo'), tipoLeggibile)}
+        </table>
+        ${messaggioHtml}
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="font-size: 12px; color: #777;">${escapeHtml(t('email.contatto.footer'))}</p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+  logger.info(`Email di richiesta contatto inviata a: ${destinatario} (tipo: ${richiesta.tipo})`);
+};
+
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
@@ -272,4 +332,5 @@ module.exports = {
   sendStudentInviteEmail,
   sendTeacherInviteEmail,
   sendDigestEmail,
+  sendContactRequestEmail,
 };

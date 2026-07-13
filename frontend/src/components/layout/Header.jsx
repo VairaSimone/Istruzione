@@ -191,6 +191,13 @@ const Header = () => {
               </NavLink>
             )}
 
+            {/* Richieste dal form della homepage pubblica (lead). */}
+            {(isTeacher || isAdmin) && (
+              <NavLink to={ROUTES.CONTATTI_MANAGEMENT} className={navLinkClass}>
+                {t('nav.contatti')}
+              </NavLink>
+            )}
+
             {/* Configurazione della propria scuola: riservata a chi ne ha una. */}
             {isTeacher && (
               <NavLink to={ROUTES.IMPOSTAZIONI_SCUOLA} className={navLinkClass}>

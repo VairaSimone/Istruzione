@@ -53,6 +53,7 @@ import {
   NotFoundPage,
   ForbiddenPage,
   InvitesManagementPage,
+  ContattiManagementPage,
   ScuoleManagementPage,
   ImpostazioniScuolaPage,
 } from './lazyPages';
@@ -163,6 +164,7 @@ export const router = createBrowserRouter([
           // esse la scuola non potrebbe far entrare nessuno.
           { path: ROUTES.USERS_MANAGEMENT, element: <UsersManagementPage /> },
           { path: ROUTES.INVITES_MANAGEMENT, element: <InvitesManagementPage /> },
+          { path: ROUTES.CONTATTI_MANAGEMENT, element: <ContattiManagementPage /> },
           { path: ROUTES.IMPOSTAZIONI_SCUOLA, element: <ImpostazioniScuolaPage /> },
 
           {

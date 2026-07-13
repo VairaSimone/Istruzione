@@ -1,0 +1,117 @@
+/* Editor della homepage nel pannello impostazioni. Riusa i token globali. */
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.gruppo {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.gruppoTitolo {
+  font-size: var(--text-base);
+  font-weight: 600;
+  padding: 0 var(--space-2);
+  color: var(--color-text);
+}
+
+.vuoto {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Riga di una sezione descrittiva */
+.sezioneRiga {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-surface-alt, transparent);
+}
+
+.sezioneHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sezioneNum {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary-soft, rgba(79, 70, 229, 0.12));
+  color: var(--color-primary, #4f46e5);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.sezioneAzioni {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.iconBtn,
+.iconBtnDanger {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: var(--text-base);
+  line-height: 1;
+}
+
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.iconBtnDanger {
+  color: var(--color-danger, #dc2626);
+}
+
+.iconBtn:not(:disabled):hover,
+.iconBtnDanger:hover {
+  background: var(--color-surface-alt, var(--color-border));
+}
+
+/* Tipi di richiesta ammessi */
+.tipiRichiesta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tipiLista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.tipoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full, 999px);
+  cursor: pointer;
+  font-size: var(--text-sm);
+}

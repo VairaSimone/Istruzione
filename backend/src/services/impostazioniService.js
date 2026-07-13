@@ -2,9 +2,11 @@
 
 const { Op } = require('sequelize');
 const Scuola = require('../models/Scuola');
+const DominioScuola = require('../models/DominioScuola');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 const piattaforma = require('../config/piattaforma');
+const { normalizzaDominio, candidatiDominio } = require('../utils/dominio');
 const {
   applicaDefault,
   impostazioniPubbliche,
@@ -83,10 +85,13 @@ const invalida = (scuolaId = null) => {
     _cache.clear();
   } else {
     _cache.delete(`id:${String(scuolaId)}`);
-    // Lo slug e il flag `predefinita` possono essere cambiati dalla stessa
-    // scrittura: le voci derivate vanno rimosse in blocco.
+    // Lo slug, il flag `predefinita` e le corrispondenze per dominio possono
+    // essere cambiati dalla stessa scrittura: le voci derivate vanno rimosse in
+    // blocco.
     for (const chiave of _cache.keys()) {
-      if (chiave.startsWith('slug:') || chiave === 'predefinita') _cache.delete(chiave);
+      if (chiave.startsWith('slug:') || chiave.startsWith('dom:') || chiave === 'predefinita') {
+        _cache.delete(chiave);
+      }
     }
   }
 
@@ -127,6 +132,50 @@ const perSlug = async (slug) => {
 };
 
 /**
+ * Scuola a partire dal DOMINIO (host) su cui arriva la richiesta.
+ *
+ * È il cuore del riconoscimento del tenant sui DOMINI PERSONALIZZATI: un host
+ * risolve una scuola solo se esiste un `DominioScuola` corrispondente e
+ * VERIFICATO (fail-closed). Se la scuola è sospesa (`attiva = false`) l'host
+ * NON risolve (si ricade sul comportamento standard).
+ *
+ * La cache memorizza anche i MISS (valore `null`): sul dominio globale — che non
+ * corrisponde ad alcun tenant — ogni richiesta pubblica non paga una SELECT.
+ *
+ * @param {*} hostGrezzo  host della richiesta (anche con porta o schema)
+ * @returns {Promise<?Scuola>}
+ */
+const perDominio = async (hostGrezzo) => {
+  const host = normalizzaDominio(hostGrezzo);
+  if (!host) return null;
+
+  const chiave = `dom:${host}`;
+  const inCache = _leggi(chiave);
+  if (inCache !== undefined) return inCache;
+
+  const candidati = candidatiDominio(host);
+  const record = await DominioScuola.findAll({
+    where: { dominio: { [Op.in]: candidati }, verificato: true },
+    include: [{ model: Scuola, as: 'scuola' }],
+    limit: candidati.length,
+  });
+
+  // Priorità all'host esatto; poi eventuale forma senza `www.`.
+  const scelto = record.find((r) => r.dominio === host) || record[0] || null;
+  let scuola = scelto && scelto.scuola ? scelto.scuola : null;
+  // Una scuola sospesa non deve servire la propria homepage sul dominio.
+  if (scuola && !scuola.attiva) scuola = null;
+
+  return _scrivi(chiave, scuola);
+};
+
+/** Estrae l'host dalla richiesta (rispetta il reverse proxy via `req.hostname`). */
+const estraiHost = (req) => {
+  if (!req) return null;
+  return req.hostname || (req.headers && req.headers.host) || null;
+};
+
+/**
  * Scuola PREDEFINITA, con questa precedenza:
  *   1. la scuola marcata `predefinita = true`;
  *   2. la scuola il cui slug coincide con `DEFAULT_SCHOOL_SLUG`;
@@ -156,28 +205,43 @@ const predefinita = async () => {
 };
 
 /**
- * Risolve il tenant di una richiesta NON autenticata:
- *   `?scuola=<slug|uuid>` → header `X-Scuola` → scuola predefinita.
+ * Risolve il tenant di una richiesta NON autenticata, con questa precedenza:
+ *
+ *   1. DOMINIO PERSONALIZZATO — l'host della richiesta corrisponde a un dominio
+ *      verificato di una scuola. È AUTORITATIVO: su un dominio proprio la scuola
+ *      è sempre quella, e nessun `?scuola=` può scavalcarla (la homepage del
+ *      dominio deve essere coerente con l'host).
+ *   2. OVERRIDE ESPLICITO — sul DOMINIO GLOBALE condiviso da tutte le scuole il
+ *      frontend indica il tenant con `?scuola=<slug|uuid>` o l'header `X-Scuola`.
+ *   3. SCUOLA PREDEFINITA — deploy mono-scuola o fallback.
  *
  * @param {import('express').Request} req
  * @returns {Promise<?Scuola>}
  */
 const risolviTenantRichiesta = async (req) => {
+  // 1. Dominio personalizzato (autoritativo).
+  const scuolaDaDominio = await perDominio(estraiHost(req));
+  if (scuolaDaDominio) return scuolaDaDominio;
+
+  // 2. Override esplicito, valido sul dominio globale.
   const grezzo =
     (req.query && req.query.scuola) ||
     (req.headers && req.headers[piattaforma.HEADER_TENANT]) ||
     null;
 
-  if (!grezzo) return predefinita();
+  if (grezzo) {
+    const valore = String(grezzo).trim();
+    // Un UUID è accettato per comodità degli strumenti interni; lo slug è la via
+    // canonica per il frontend.
+    const sembraUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(valore);
+    const scuola = sembraUuid ? await perId(valore) : await perSlug(valore);
 
-  const valore = String(grezzo).trim();
-  // Un UUID è accettato per comodità degli strumenti interni; lo slug è la via
-  // canonica per il frontend.
-  const sembraUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(valore);
-  const scuola = sembraUuid ? await perId(valore) : await perSlug(valore);
+    if (!scuola || !scuola.attiva) return null;
+    return scuola;
+  }
 
-  if (!scuola || !scuola.attiva) return null;
-  return scuola;
+  // 3. Scuola predefinita.
+  return predefinita();
 };
 
 // ─────────────────────────────────────────────
@@ -294,6 +358,8 @@ module.exports = {
   registraInvalidazione,
   perId,
   perSlug,
+  perDominio,
+  estraiHost,
   predefinita,
   risolviTenantRichiesta,
   perScuola,

@@ -1,0 +1,191 @@
+/*
+ * Homepage pubblica personalizzata dalla scuola. Riusa i design token globali
+ * (spaziature, colori, ombre, tipografia) per restare coerente con il resto
+ * dell'app e con il tema chiaro/scuro. Nessun colore cablato.
+ */
+
+.pagina {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-10);
+  animation: surface-in var(--dur-slow) var(--ease-out);
+}
+
+/* ── Hero ── */
+.heroSezione {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding: var(--space-6) 0 var(--space-8);
+}
+
+.heroMark {
+  margin-bottom: var(--space-2);
+}
+
+.heroTitolo {
+  font-size: clamp(2rem, 5.5vw, var(--text-4xl));
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+.heroSottotitolo {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+  max-width: 40rem;
+  margin: 0;
+}
+
+.heroAzioni {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--space-2);
+}
+
+.heroAccedi {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  font-size: var(--text-base);
+}
+
+.heroImmagine {
+  width: 100%;
+  max-height: 22rem;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-6);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Sezioni descrittive ── */
+.sezioni {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: var(--space-8) 0;
+}
+
+.sezione {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+/* Con immagine presente, layout a due colonne alternate su schermi ampi. */
+@media (min-width: 720px) {
+  .sezione:has(.sezioneImmagine) {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sezione:nth-child(even):has(.sezioneImmagine) .sezioneImmagine {
+    order: 2;
+  }
+}
+
+.sezioneImmagine {
+  width: 100%;
+  max-height: 18rem;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.sezioneTitolo {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-tight);
+  margin: 0 0 var(--space-3);
+}
+
+.sezioneCorpo {
+  color: var(--color-text-muted);
+  line-height: var(--leading-relaxed);
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* ── Sezione form ── */
+.formSezione {
+  margin-top: var(--space-10);
+  padding: var(--space-8) var(--space-6);
+  background: var(--color-surface-alt, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.formTitolo {
+  font-size: var(--text-2xl);
+  text-align: center;
+  margin: 0 0 var(--space-2);
+}
+
+.formIntro {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-6);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.formErrore {
+  color: var(--color-danger, #dc2626);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+/* Honeypot: rimosso dal flusso, invisibile ma raggiungibile solo dai bot. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Conferma d'invio */
+.formConferma {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding: var(--space-6) 0;
+}
+
+.formConfermaIcona {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-success-soft, rgba(22, 163, 74, 0.12));
+  color: var(--color-success, #16a34a);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+}
+
+.formConfermaTesto {
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  margin: 0;
+  max-width: 32rem;
+}
+
+@media (max-width: 480px) {
+  .heroAzioni {
+    width: 100%;
+    flex-direction: column;
+  }
+}

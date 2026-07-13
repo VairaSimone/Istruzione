@@ -4,23 +4,29 @@ import { ROUTES } from '../constants/routes';
 import { useBranding } from '../hooks/useConfig';
 import BrandLogo from '../components/branding/BrandLogo';
 import Button from '../components/ui/Button';
+import HomepagePubblica from '../features/homepage/components/HomepagePubblica';
 import styles from './HomePage.module.css';
 
 /**
  * Pagina di ingresso pubblica.
  *
- * Tutto ciò che si vede appartiene alla SCUOLA, non alla materia: marchio,
- * nome, slogan, descrizione e — se caricata — un'immagine di copertina.
- * Il glifo 日本語 che campeggiava qui prima della generalizzazione è stato
- * rimosso: era il biglietto da visita di un corso di giapponese, non di una
- * piattaforma didattica.
+ * Se la scuola ha ATTIVATO la propria homepage (`impostazioni.homepage.attiva`),
+ * viene mostrata quella: hero, sezioni e form di contatto curati dalla scuola.
+ * È il caso tipico dei DOMINI PERSONALIZZATI, dove l'host identifica la scuola e
+ * il branding (compresa la homepage) arriva già risolto da `GET /api/config`.
  *
- * Se la scuola non ha compilato nulla, si ricade sull'identità della
- * piattaforma e sui testi generici dell'i18n: la pagina resta presentabile.
+ * Altrimenti si ricade sul layout standard: marchio, nome, slogan e accesso.
+ * Se la scuola non ha compilato nulla, subentrano l'identità della piattaforma
+ * e i testi generici dell'i18n, così la pagina resta comunque presentabile.
  */
 const HomePage = () => {
   const { t } = useTranslation();
   const branding = useBranding();
+
+  // Homepage personalizzata: prevale quando la scuola l'ha attivata.
+  if (branding.homepage?.attiva) {
+    return <HomepagePubblica branding={branding} />;
+  }
 
   const sottotitolo = branding.slogan || branding.descrizione || t('home.subtitle');
 

@@ -34,6 +34,15 @@ export const queryKeys = Object.freeze({
     detail: (id) => ['scuole', 'detail', id],
     mia: ['scuole', 'mia'],
     mieImpostazioni: ['scuole', 'mia', 'impostazioni'],
+    // Domini personalizzati della scuola (propria o, per l'admin, indicata).
+    domini: (scuolaId) => ['scuole', 'domini', scuolaId ?? 'mia'],
+  },
+  // Richieste di contatto (lead della homepage pubblica). La lista dipende dal
+  // tenant: per l'admin è la scuola selezionata, per lo staff la propria.
+  contatti: {
+    all: ['contatti'],
+    list: (filters) => ['contatti', 'list', filters ?? {}],
+    detail: (id) => ['contatti', 'detail', id],
   },
   quiz: {
     all: ['quiz'],

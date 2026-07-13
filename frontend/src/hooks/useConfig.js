@@ -64,6 +64,9 @@ export const useBranding = () => {
       indirizzo: impostazioni.indirizzo ?? {},
       social: impostazioni.social ?? {},
       footer: impostazioni.footer ?? {},
+      // Homepage pubblica personalizzabile: servita sul dominio della scuola.
+      // `attiva: false` (o assente) ⇒ la HomePage ricade sul layout standard.
+      homepage: impostazioni.homepage ?? {},
       piattaforma,
       scuola,
     };

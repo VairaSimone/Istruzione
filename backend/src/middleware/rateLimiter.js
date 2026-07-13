@@ -173,6 +173,27 @@ const quizScritturaLimiter = rateLimit({
   },
 });
 
+/**
+ * Limita l'invio del form di contatto della homepage pubblica: previene lo
+ * spam massivo verso le scuole (email bombing dei lead) e la scrittura di massa
+ * su `richieste_contatto` da un singolo IP. Volutamente severo: un visitatore
+ * legittimo invia pochissime richieste.
+ */
+const contactLimiter = rateLimit({
+  windowMs: parseInt(process.env.CONTACT_RATE_LIMIT_WINDOW_MS) || 60 * 60 * 1000, // 1 ora
+  max: parseInt(process.env.CONTACT_RATE_LIMIT_MAX) || 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'fail',
+    code: 'TOO_MANY_REQUESTS',
+    message: 'Troppe richieste inviate da questo indirizzo. Riprova più tardi.',
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  },
+});
+
 module.exports = {
   globalLimiter,
   loginLimiter,
@@ -183,4 +204,5 @@ module.exports = {
   inviteLimiter,
   quizSubmitLimiter,
   quizScritturaLimiter,
+  contactLimiter,
 };

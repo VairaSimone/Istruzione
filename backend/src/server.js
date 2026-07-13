@@ -9,6 +9,8 @@ const logger = require('./utils/logger');
 // L'ordine dei require conta: i modelli registrano le proprie associazioni al
 // momento del caricamento. `Scuola` (tenant) è la radice e va caricata per prima.
 require('./models/Scuola');
+require('./models/DominioScuola');
+require('./models/RichiestaContatto');
 require('./models/Utente');
 require('./models/Classe');
 require('./models/ClasseUtente');
