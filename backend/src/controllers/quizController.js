@@ -48,6 +48,9 @@ exports.generaQuiz = catchAsync(async (req, res) => {
     livello,
     tipoQuiz,
     lingua,
+    bancaCodice,
+    modalita,
+    sezioni,
   } = req.body;
 
   const sessione = await quizService.generateQuizPool(req.user, {
@@ -63,6 +66,10 @@ exports.generaQuiz = catchAsync(async (req, res) => {
     livello,
     tipoQuiz,
     lingua: lingua || req.language || 'it',
+    // motore banca (esercizio libero o override modalità/sezioni)
+    bancaCodice,
+    modalita,
+    sezioni,
   });
 
   res.status(200).json({

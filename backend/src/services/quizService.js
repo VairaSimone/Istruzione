@@ -5,6 +5,7 @@ const sequelize = require('../config/database');
 const Utente = require('../models/Utente');
 const ProgressoKana = require('../models/ProgressoKana');
 const ProgressoKanji = require('../models/ProgressoKanji');
+const ProgressoBanca = require('../models/ProgressoBanca');
 const ProgressoDomanda = require('../models/ProgressoDomanda');
 const AttivitaGiornaliera = require('../models/AttivitaGiornaliera');
 const AppError = require('../utils/AppError');
@@ -26,8 +27,15 @@ const quizGestioneService = require('./quizGestioneService');
 const {
   risolviFiltri,
   trovaTemplateObbligatorio,
+  motoreDelTemplate,
   TIPI_QUIZ_KANJI,
 } = require('../constants/quizTemplates');
+const {
+  trovaBanca,
+  trovaVoce,
+  trovaModalita,
+  vociCandidate,
+} = require('../constants/bancaData');
 
 /**
  * QuizService — logica di business del MOTORE DI GIOCO dei quiz.
@@ -83,8 +91,9 @@ const BONUS_PERCENTUALE_ALTO = 50;      // a >= 80%
 // Numero di "caratteri critici" restituiti dalla dashboard.
 const LIMITE_PEGGIORI_KANA = 12;
 
-// Domini giocabili senza `quizId` (percorso storico, retrocompatibile).
-const DOMINI = ['kana', 'kanji'];
+// Domini/motori giocabili senza `quizId` (esercizio libero, retrocompatibile).
+// 'banca' richiede anche `bancaCodice` tra i filtri (la banca da esercitare).
+const DOMINI = ['kana', 'kanji', 'banca'];
 // `TIPI_QUIZ_KANJI` arriva dal registro dei template ed è ri-esportato in fondo
 // per i validator, che continuano a importarlo da questo modulo.
 const OPZIONI_PER_DOMANDA = 4;       // quiz a scelta multipla (recognition/reading)
@@ -121,6 +130,25 @@ const ADATTATORI = {
       return { carattere: kanji, secondaria: { livello_jlpt: livello }, corretto: r.corretto === true };
     },
   },
+  // Banche dati di piattaforma: il "carattere" è l'id (globale) della voce; la
+  // colonna secondaria porta il codice della banca. La correttezza arriva dal
+  // client (come per kana/kanji recognition, che ricevono l'indice corretto);
+  // qui si valida difensivamente che la voce esista davvero in un dizionario.
+  banca: {
+    model: ProgressoBanca,
+    colonnaCarattere: 'voce_id',
+    normalizzaRisposta: (r) => {
+      const voceId = r && typeof r.voceId === 'string' ? r.voceId.trim() : '';
+      const trovata = trovaVoce(voceId);
+      if (!trovata) return null;
+      return {
+        carattere: voceId,
+        secondaria: { banca_codice: trovata.banca.codice },
+        corretto: r.corretto === true,
+      };
+    },
+  },
+
   // Quiz personalizzati: il "carattere" è l'id della domanda e non esiste una
   // colonna secondaria. Le risposte NON vengono normalizzate dal client: le
   // corregge il server (cfr. `quizGestioneService.correggiRisposte`), perciò
@@ -324,6 +352,95 @@ const generateKanjiQuizPool = async (userId, filtri = {}, limite = DIMENSIONE_QU
 };
 
 // ═════════════════════════════════════════════
+// GENERAZIONE POOL — BANCA (banche dati di piattaforma, motore generico)
+//
+// Speculare a kana/kanji ma senza dizionario dedicato: la sorgente è una BANCA
+// DATI statica (`constants/bancaData`) e la direzione della domanda è la
+// MODALITÀ (es. "simbolo → nome"). I distrattori si pescano dalle altre voci
+// della STESSA sezione (opzioni coerenti); se la sezione è troppo piccola si
+// integra dal resto della banca. La correzione segue il modello recognition:
+// il backend invia `indiceCorretto`, il client marca l'esito, il server lo
+// valida contro l'esistenza della voce (anti-manipolazione).
+// ═════════════════════════════════════════════
+const generateBancaQuizPool = async (userId, filtri = {}, limite = DIMENSIONE_QUIZ) => {
+  const { bancaCodice, modalita: modalitaCodice, sezioni = [] } = filtri;
+
+  const banca = trovaBanca(bancaCodice);
+  if (!banca) {
+    throw new AppError('Banca dati del quiz non valida o non disponibile.', 422, 'INVALID_BANCA');
+  }
+
+  const modalita = modalitaCodice ? trovaModalita(banca, modalitaCodice) : banca.modalita[0];
+  if (!modalita) {
+    throw new AppError('Modalità del quiz non valida per questa banca.', 422, 'INVALID_MODALITA');
+  }
+
+  // 1. Candidati (per sezioni scelte + campi non vuoti nella modalità).
+  const candidati = vociCandidate(banca, modalita, sezioni);
+  if (candidati.length === 0) {
+    throw new AppError('Nessuna voce corrisponde ai filtri selezionati.', 422, 'EMPTY_QUIZ_POOL');
+  }
+
+  // 2. Punteggi SRS attuali dell'utente per i soli candidati.
+  const listaIds = candidati.map((v) => v.id);
+  const progressi = await ProgressoBanca.findAll({
+    where: { utente_id: userId, voce_id: { [Op.in]: listaIds } },
+    attributes: ['voce_id', 'punteggio'],
+  });
+  const punteggioPerCarattere = new Map(progressi.map((p) => [p.voce_id, p.punteggio]));
+
+  // 3. Selezione SRS ibrida (campo comune `carattere` = id voce).
+  const conCarattere = candidati.map((v) => ({ ...v, carattere: v.id }));
+  const selezione = selezionaConSrs(conCarattere, punteggioPerCarattere, limite);
+
+  // 4. Pool di distrattori (lato risposta) per sezione + globale di riserva.
+  const poolPerSezione = new Map();
+  const poolGlobale = [];
+  for (const v of candidati) {
+    const risposta = String(v.campi[modalita.rispostaCampo]);
+    poolGlobale.push(risposta);
+    const sez = v.sezione || '__';
+    if (!poolPerSezione.has(sez)) poolPerSezione.set(sez, []);
+    poolPerSezione.get(sez).push(risposta);
+  }
+
+  const voci = selezione.map((v) => {
+    const corretto = String(v.campi[modalita.rispostaCampo]);
+    const prompt = String(v.campi[modalita.promptCampo]);
+
+    const poolSezione = poolPerSezione.get(v.sezione || '__') || [];
+    let distrattori = campionaDistinti(poolSezione, new Set([corretto]), OPZIONI_PER_DOMANDA - 1);
+    if (distrattori.length < OPZIONI_PER_DOMANDA - 1) {
+      const vietati = new Set([corretto, ...distrattori]);
+      const extra = campionaDistinti(poolGlobale, vietati, OPZIONI_PER_DOMANDA - 1 - distrattori.length);
+      distrattori = [...distrattori, ...extra];
+    }
+
+    const opzioni = mescola([corretto, ...distrattori]);
+    return {
+      voceId: v.id,
+      prompt,
+      etichettaPrompt: banca.campi[modalita.promptCampo] || null,
+      etichettaRisposta: banca.campi[modalita.rispostaCampo] || null,
+      opzioni,
+      indiceCorretto: opzioni.indexOf(corretto),
+      spiegazione: v.spiegazione || null,
+      punteggio: v.punteggio,
+    };
+  });
+
+  return {
+    dominio: 'banca',
+    bancaCodice: banca.codice,
+    materia: banca.materia,
+    modalita: modalita.codice,
+    istruzione: modalita.istruzione,
+    totale: voci.length,
+    voci,
+  };
+};
+
+// ═════════════════════════════════════════════
 // GENERAZIONE POOL — DOMANDE (quiz personalizzati delle scuole)
 // Le domande sono righe di database; la selezione usa lo stesso SRS ibrido dei
 // caratteri, con `domanda_id` al posto del carattere. Il payload restituito allo
@@ -358,19 +475,30 @@ const generateDomandeQuizPool = async (userId, quiz) => {
 // Con `filtri.quizId` la partita nasce da un quiz della scuola; senza, resta il
 // percorso storico kana/kanji.
 // ─────────────────────────────────────────────
+/** Genera la sessione di un quiz DA TEMPLATE instradando sul motore corretto. */
+const generaDaTemplate = (userId, quiz, filtri) => {
+  const template = trovaTemplateObbligatorio(quiz.template_codice);
+  // La configurazione della scuola vince sugli override del client.
+  const risolti = risolviFiltri(template, quiz.configurazione, filtri);
+
+  switch (template.motore) {
+    case 'kanji':
+      return generateKanjiQuizPool(userId, risolti, quiz.dimensione_round);
+    case 'banca':
+      // La banca è fissata dal template; modalità/sezioni arrivano dai filtri risolti.
+      return generateBancaQuizPool(userId, { bancaCodice: template.banca, ...risolti }, quiz.dimensione_round);
+    case 'kana':
+    default:
+      return generateKanaQuizPool(userId, risolti, quiz.dimensione_round);
+  }
+};
+
 const generateQuizPool = async (richiedente, filtri = {}) => {
   if (filtri.quizId) {
     const quiz = await quizGestioneService.caricaQuizPerGioco(filtri.quizId, richiedente);
 
     const sessione = quiz.daTemplate
-      ? await (async () => {
-          const template = trovaTemplateObbligatorio(quiz.template_codice);
-          // La configurazione della scuola vince sugli override del client.
-          const risolti = risolviFiltri(template, quiz.configurazione, filtri);
-          return template.motore === 'kanji'
-            ? generateKanjiQuizPool(richiedente.id, risolti, quiz.dimensione_round)
-            : generateKanaQuizPool(richiedente.id, risolti, quiz.dimensione_round);
-        })()
+      ? await generaDaTemplate(richiedente.id, quiz, filtri)
       : await generateDomandeQuizPool(richiedente.id, quiz);
 
     return {
@@ -386,12 +514,18 @@ const generateQuizPool = async (richiedente, filtri = {}) => {
     throw new AppError(`Dominio non valido. Usa uno di: ${DOMINI.join(', ')}.`, 422, 'INVALID_DOMAIN');
   }
 
-  // Percorso storico: la scuola può averlo disattivato per i propri studenti.
+  // Esercizio libero: la scuola può averlo disattivato per i propri studenti.
   await quizGestioneService.assicuraAccessoDominioLegacy(richiedente);
 
-  return dominio === 'kanji'
-    ? generateKanjiQuizPool(richiedente.id, filtri)
-    : generateKanaQuizPool(richiedente.id, filtri);
+  switch (dominio) {
+    case 'kanji':
+      return generateKanjiQuizPool(richiedente.id, filtri);
+    case 'banca':
+      return generateBancaQuizPool(richiedente.id, filtri);
+    case 'kana':
+    default:
+      return generateKanaQuizPool(richiedente.id, filtri);
+  }
 };
 
 // ─────────────────────────────────────────────

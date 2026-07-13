@@ -3,6 +3,11 @@
 const AppError = require('../../utils/AppError');
 const { ALFABETI, GRUPPI_VALIDI } = require('../kanaData');
 const { LIVELLI_DISPONIBILI } = require('../kanjiData');
+const {
+  CODICI_BANCA,
+  trovaBanca,
+  catalogoBanca,
+} = require('../bancaData');
 
 /**
  * CATALOGO DEI TEMPLATE DI QUIZ (registro in codice).
@@ -126,6 +131,61 @@ const validaConfigurazioneKanji = (configurazione = {}) => {
 };
 
 // ─────────────────────────────────────────────
+// TEMPLATE: banca dati (motore generico `banca`)
+//
+// La `configurazione` di un quiz-banca fissa la MODALITÀ di interrogazione
+// (direzione: es. "simbolo → nome") e, facoltativamente, un sottoinsieme di
+// SEZIONI della banca (per costruire mini-quiz su un solo tema). La banca in sé
+// è fissata dal template (`banca`), non è scelta dall'utente.
+//
+// `validaConfigBanca(bancaCodice)` restituisce un validatore legato alla banca,
+// che accetta solo modalità e sezioni realmente esistenti in quel dizionario.
+// ─────────────────────────────────────────────
+const validaConfigBanca = (bancaCodice) => (configurazione = {}) => {
+  if (configurazione === null || typeof configurazione !== 'object' || Array.isArray(configurazione)) {
+    throw erroreConfig('La configurazione deve essere un oggetto JSON.');
+  }
+  const banca = trovaBanca(bancaCodice);
+  if (!banca) {
+    // Difesa: un template registrato deve puntare a una banca esistente.
+    throw erroreConfig(`Banca dati non disponibile: ${bancaCodice}.`);
+  }
+  const codiciModalita = banca.modalita.map((m) => m.codice);
+  const codiciSezione = banca.sezioni.map((s) => s.codice);
+
+  return compatta({
+    modalita: valoreTraAmmessi(configurazione.modalita, codiciModalita, 'La modalità'),
+    sezioni: valoreArray(configurazione.sezioni, codiciSezione, 'Le sezioni'),
+  });
+};
+
+/** Costruisce il descrittore di template per una banca dati registrata. */
+const templateDaBanca = (bancaCodice) => {
+  const cat = catalogoBanca(bancaCodice);
+  return {
+    codice: `banca-${bancaCodice}`,
+    nome: cat.nome.it,
+    descrizione: cat.descrizione.it,
+    materia: cat.materia,
+    categoria: cat.categoria,
+    // Banche dati sostanziali (non i template dimostrativi kana/kanji):
+    // disponibili nel catalogo e installabili dagli insegnanti.
+    esempio: false,
+    funzionalitaRichiesta: 'quiz',
+    motore: 'banca',
+    // Riferimento alla sorgente statica delle voci.
+    banca: bancaCodice,
+    // Default: nessuna modalità/sezione fissata ⇒ lo studente sceglie (o si usa
+    // la prima modalità e tutte le sezioni).
+    configurazioneDefault: {},
+    campiSovrascrivibili: ['modalita', 'sezioni'],
+    // Metadati (modalità/sezioni localizzate) per la UI di configurazione.
+    metadati: cat,
+    valida: validaConfigBanca(bancaCodice),
+  };
+};
+
+// ─────────────────────────────────────────────
 // REGISTRO
 // ─────────────────────────────────────────────
 const TEMPLATE = [
@@ -163,6 +223,10 @@ const TEMPLATE = [
     campiSovrascrivibili: ['livello', 'tipoQuiz', 'lingua'],
     valida: validaConfigurazioneKanji,
   },
+  // Template a BANCA DATI: generati dai dizionari statici di `constants/bancaData`.
+  // Aggiungere una banca lì e importarla nell'indice è sufficiente: qui vengono
+  // registrate automaticamente. Ogni banca è un template installabile a sé.
+  ...CODICI_BANCA.map(templateDaBanca),
 ];
 
 const CODICI_TEMPLATE = TEMPLATE.map((t) => t.codice);
@@ -195,9 +259,23 @@ const catalogoPubblico = () =>
     esempio: Boolean(t.esempio),
     funzionalitaRichiesta: t.funzionalitaRichiesta || 'quiz',
     motore: t.motore,
+    // Per i template a banca dati: codice della banca sorgente + metadati
+    // (modalità e sezioni localizzate) per costruire il pannello di configurazione.
+    ...(t.banca ? { banca: t.banca } : {}),
+    ...(t.metadati ? { metadati: t.metadati } : {}),
     configurazioneDefault: t.configurazioneDefault,
     campiSovrascrivibili: t.campiSovrascrivibili,
   }));
+
+/**
+ * Motore effettivo di un template (kana/kanji/banca). Diverso dal CODICE del
+ * template: più template distinti (banca-webdev, banca-chimica…) condividono lo
+ * stesso motore `banca`. Restituisce `null` se il codice non è nel catalogo.
+ */
+const motoreDelTemplate = (codice) => {
+  const template = trovaTemplate(codice);
+  return template ? template.motore : null;
+};
 
 
 /**
@@ -238,6 +316,7 @@ module.exports = {
   LINGUE_QUIZ,
   trovaTemplate,
   trovaTemplateObbligatorio,
+  motoreDelTemplate,
   catalogoPubblico,
   risolviFiltri,
 };

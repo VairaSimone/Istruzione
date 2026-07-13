@@ -25,12 +25,15 @@ const LINGUE_QUIZ = ['it', 'en'];
 
 // Predicati condizionali riusabili.
 //
-// Le regole "storiche" (kana/kanji nel body) valgono SOLO quando la partita non
-// nasce da un quiz della scuola: con `quizId` il motore, i filtri e la forma
-// delle risposte li decide il quiz, e la validazione semantica è nel service.
+// Le regole "storiche" (kana/kanji/banca nel body) valgono SOLO quando la
+// partita non nasce da un quiz della scuola: con `quizId` il motore, i filtri e
+// la forma delle risposte li decide il quiz, e la validazione semantica è nel
+// service. Il dominio predefinito (assente) è 'kana' (retrocompatibilità).
 const senzaQuiz = (chain) => chain.if(body('quizId').not().exists());
-const seKanji = (chain) => senzaQuiz(chain).if(body('dominio').equals('kanji'));
-const seKana = (chain) => senzaQuiz(chain).if(body('dominio').not().equals('kanji'));
+const seKanji = (chain) => senzaQuiz(chain).if((v, { req }) => req.body.dominio === 'kanji');
+const seBanca = (chain) => senzaQuiz(chain).if((v, { req }) => req.body.dominio === 'banca');
+const seKana = (chain) =>
+  senzaQuiz(chain).if((v, { req }) => !req.body.dominio || req.body.dominio === 'kana');
 
 // Identificativo del quiz della scuola (facoltativo su generate/submit).
 const campoQuizId = () =>
@@ -83,6 +86,33 @@ const validateGenerateQuiz = [
   body('lingua')
     .optional()
     .isIn(LINGUE_QUIZ).withMessage(`La lingua deve essere una di: ${LINGUE_QUIZ.join(', ')}`),
+
+  // — Motore banca —
+  // `bancaCodice` è obbligatorio SOLO nell'esercizio libero (dominio='banca'
+  // senza quizId): con un quizId la banca è fissata dal template.
+  seBanca(body('bancaCodice'))
+    .trim()
+    .notEmpty().withMessage('Il codice della banca è obbligatorio')
+    .isLength({ max: 64 }).withMessage('Codice della banca non valido'),
+
+  // Modalità e sezioni valgono sia in esercizio libero sia come override di un
+  // quiz da template: la validazione semantica (contro la banca) è nel service.
+  body('modalita')
+    .optional()
+    .isString().withMessage('La modalità deve essere una stringa')
+    .bail()
+    .trim()
+    .isLength({ max: 64 }).withMessage('Modalità non valida'),
+
+  body('sezioni')
+    .optional()
+    .isArray({ max: 60 }).withMessage('Le sezioni devono essere un array'),
+  body('sezioni.*')
+    .optional()
+    .isString().withMessage('Ogni sezione deve essere una stringa')
+    .bail()
+    .trim()
+    .isLength({ max: 64 }).withMessage('Sezione non valida'),
 ];
 
 // ─────────────────────────────────────────────
@@ -147,6 +177,16 @@ const validateSubmitQuiz = [
   seKanji(body('risposte.*.livelloJLPT'))
     .isIn(LIVELLI_DISPONIBILI)
     .withMessage(`Il livello deve essere uno di: ${LIVELLI_DISPONIBILI.join(', ')}`),
+
+  // — Motore banca (esercizio libero, senza quizId) —
+  // `voceId` identifica la voce risposta; la sua esistenza nella banca è
+  // verificata dal service (anti-manipolazione). `corretto` è già coperto sopra.
+  seBanca(body('risposte.*.voceId'))
+    .isString().withMessage("L'identificatore della voce deve essere una stringa")
+    .bail()
+    .trim()
+    .notEmpty().withMessage("L'identificatore della voce non può essere vuoto")
+    .isLength({ max: 128 }).withMessage('Identificatore della voce non valido'),
 
   body('datiBonus').optional().isObject().withMessage('datiBonus deve essere un oggetto'),
   body('datiBonus.maxCombo')

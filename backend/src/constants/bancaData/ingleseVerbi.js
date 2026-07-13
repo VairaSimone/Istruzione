@@ -1,0 +1,121 @@
+'use strict';
+
+/**
+ * BANCA DATI — Inglese: verbi irregolari.
+ *
+ * Ogni voce ha quattro campi: forma base, past simple, past participle e
+ * traduzione italiana dell'infinito. Il motore costruisce domande a scelta
+ * multipla nelle direzioni definite in `modalita` (es. base → past simple),
+ * pescando i distrattori dalle altre voci (tutte forme verbali reali → opzioni
+ * plausibili). Elenco standard verificato dei principali verbi irregolari.
+ */
+
+const V = (id, base, passato, participio, italiano) => ({
+  id: `ingleseVerbi.${id}`,
+  sezione: 'verbi',
+  campi: { base, passato, participio, italiano },
+});
+
+module.exports = {
+  codice: 'inglese-verbi',
+  materia: 'Inglese',
+  categoria: 'Verbi irregolari',
+  nome: { it: 'Inglese — Verbi irregolari', en: 'English — Irregular verbs' },
+  descrizione: {
+    it: 'I principali verbi irregolari inglesi: forma base, past simple e past participle.',
+    en: 'Core English irregular verbs: base form, past simple and past participle.',
+  },
+  campi: {
+    base: { it: 'Forma base', en: 'Base form' },
+    passato: { it: 'Past simple', en: 'Past simple' },
+    participio: { it: 'Past participle', en: 'Past participle' },
+    italiano: { it: 'Traduzione', en: 'Italian meaning' },
+  },
+  modalita: [
+    {
+      codice: 'base-passato',
+      promptCampo: 'base',
+      rispostaCampo: 'passato',
+      nome: { it: 'Base → Past simple', en: 'Base → Past simple' },
+      istruzione: { it: 'Scegli il past simple corretto.', en: 'Choose the correct past simple.' },
+    },
+    {
+      codice: 'base-participio',
+      promptCampo: 'base',
+      rispostaCampo: 'participio',
+      nome: { it: 'Base → Past participle', en: 'Base → Past participle' },
+      istruzione: { it: 'Scegli il past participle corretto.', en: 'Choose the correct past participle.' },
+    },
+    {
+      codice: 'italiano-base',
+      promptCampo: 'italiano',
+      rispostaCampo: 'base',
+      nome: { it: 'Italiano → Forma base', en: 'Italian → Base form' },
+      istruzione: { it: 'Scegli il verbo inglese corretto.', en: 'Choose the correct English verb.' },
+    },
+  ],
+  sezioni: [{ codice: 'verbi', nome: { it: 'Verbi irregolari', en: 'Irregular verbs' } }],
+  voci: [
+    V('go', 'go', 'went', 'gone', 'andare'),
+    V('come', 'come', 'came', 'come', 'venire'),
+    V('become', 'become', 'became', 'become', 'diventare'),
+    V('eat', 'eat', 'ate', 'eaten', 'mangiare'),
+    V('drink', 'drink', 'drank', 'drunk', 'bere'),
+    V('see', 'see', 'saw', 'seen', 'vedere'),
+    V('take', 'take', 'took', 'taken', 'prendere'),
+    V('give', 'give', 'gave', 'given', 'dare'),
+    V('make', 'make', 'made', 'made', 'fare (creare)'),
+    V('do', 'do', 'did', 'done', 'fare'),
+    V('have', 'have', 'had', 'had', 'avere'),
+    V('know', 'know', 'knew', 'known', 'sapere / conoscere'),
+    V('write', 'write', 'wrote', 'written', 'scrivere'),
+    V('read', 'read', 'read', 'read', 'leggere'),
+    V('speak', 'speak', 'spoke', 'spoken', 'parlare'),
+    V('break', 'break', 'broke', 'broken', 'rompere'),
+    V('choose', 'choose', 'chose', 'chosen', 'scegliere'),
+    V('drive', 'drive', 'drove', 'driven', 'guidare'),
+    V('ride', 'ride', 'rode', 'ridden', 'cavalcare / andare (in bici)'),
+    V('rise', 'rise', 'rose', 'risen', 'sorgere / alzarsi'),
+    V('fall', 'fall', 'fell', 'fallen', 'cadere'),
+    V('feel', 'feel', 'felt', 'felt', 'sentire / provare'),
+    V('keep', 'keep', 'kept', 'kept', 'tenere / mantenere'),
+    V('sleep', 'sleep', 'slept', 'slept', 'dormire'),
+    V('leave', 'leave', 'left', 'left', 'lasciare / partire'),
+    V('meet', 'meet', 'met', 'met', 'incontrare'),
+    V('pay', 'pay', 'paid', 'paid', 'pagare'),
+    V('say', 'say', 'said', 'said', 'dire'),
+    V('sell', 'sell', 'sold', 'sold', 'vendere'),
+    V('tell', 'tell', 'told', 'told', 'raccontare / dire'),
+    V('buy', 'buy', 'bought', 'bought', 'comprare'),
+    V('bring', 'bring', 'brought', 'brought', 'portare'),
+    V('think', 'think', 'thought', 'thought', 'pensare'),
+    V('catch', 'catch', 'caught', 'caught', 'prendere / afferrare'),
+    V('teach', 'teach', 'taught', 'taught', 'insegnare'),
+    V('find', 'find', 'found', 'found', 'trovare'),
+    V('stand', 'stand', 'stood', 'stood', 'stare in piedi'),
+    V('understand', 'understand', 'understood', 'understood', 'capire'),
+    V('win', 'win', 'won', 'won', 'vincere'),
+    V('run', 'run', 'ran', 'run', 'correre'),
+    V('swim', 'swim', 'swam', 'swum', 'nuotare'),
+    V('sing', 'sing', 'sang', 'sung', 'cantare'),
+    V('ring', 'ring', 'rang', 'rung', 'suonare (campanello)'),
+    V('begin', 'begin', 'began', 'begun', 'iniziare'),
+    V('build', 'build', 'built', 'built', 'costruire'),
+    V('send', 'send', 'sent', 'sent', 'inviare'),
+    V('spend', 'spend', 'spent', 'spent', 'spendere / trascorrere'),
+    V('lose', 'lose', 'lost', 'lost', 'perdere'),
+    V('fly', 'fly', 'flew', 'flown', 'volare'),
+    V('grow', 'grow', 'grew', 'grown', 'crescere'),
+    V('throw', 'throw', 'threw', 'thrown', 'lanciare'),
+    V('draw', 'draw', 'drew', 'drawn', 'disegnare'),
+    V('wear', 'wear', 'wore', 'worn', 'indossare'),
+    V('hold', 'hold', 'held', 'held', 'tenere'),
+    V('hear', 'hear', 'heard', 'heard', 'sentire (udire)'),
+    V('sit', 'sit', 'sat', 'sat', 'sedersi'),
+    V('cut', 'cut', 'cut', 'cut', 'tagliare'),
+    V('put', 'put', 'put', 'put', 'mettere'),
+    V('let', 'let', 'let', 'let', 'lasciare / permettere'),
+    V('cost', 'cost', 'cost', 'cost', 'costare'),
+    V('hit', 'hit', 'hit', 'hit', 'colpire'),
+  ],
+};

@@ -53,6 +53,7 @@ export const useBranding = () => {
         import.meta.env.VITE_APP_NAME ||
         '',
       slogan: impostazioni.identita?.slogan || null,
+      nomeBreve: impostazioni.identita?.nomeBreve || null,
       descrizione: impostazioni.identita?.descrizione || piattaforma?.descrizione || null,
       logoUrl: impostazioni.identita?.logoUrl || null,
       logoScuroUrl: impostazioni.identita?.logoScuroUrl || null,
@@ -64,6 +65,8 @@ export const useBranding = () => {
       indirizzo: impostazioni.indirizzo ?? {},
       social: impostazioni.social ?? {},
       footer: impostazioni.footer ?? {},
+      // Avviso pubblico (banner) configurabile dalla scuola.
+      comunicazioni: impostazioni.comunicazioni ?? {},
       // Homepage pubblica personalizzabile: servita sul dominio della scuola.
       // `attiva: false` (o assente) ⇒ la HomePage ricade sul layout standard.
       homepage: impostazioni.homepage ?? {},

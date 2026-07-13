@@ -77,6 +77,8 @@ const Header = () => {
 
   const isStudente = user?.ruolo === 'studente';
   const mostraTemaToggle = branding.aspetto?.temaSelezionabile !== false;
+  // La scuola può nascondere il nome accanto al logo (logo già "parlante").
+  const mostraNome = branding.aspetto?.mostraNomeAccantoLogo !== false;
 
   return (
     <header className={styles.header}>
@@ -86,7 +88,9 @@ const Header = () => {
           className={styles.brand}
         >
           <BrandLogo className={styles.brandMark} />
-          <span className={styles.brandName}>{branding.nome}</span>
+          {mostraNome && (
+            <span className={styles.brandName}>{branding.nomeBreve || branding.nome}</span>
+          )}
         </Link>
 
         {isAuthenticated && (

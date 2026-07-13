@@ -8,10 +8,19 @@ import styles from './TextField.module.css';
  * il campo, con `aria-invalid` e `aria-describedby` per l'accessibilità.
  */
 const TextField = forwardRef(
-  ({ label, error, hint, type = 'text', required, ...rest }, ref) => {
+  ({ label, error, hint, type = 'text', required, multiline = false, rows = 4, ...rest }, ref) => {
     const id = useId();
     const errorId = `${id}-error`;
     const hintId = `${id}-hint`;
+
+    const controlloComune = {
+      id,
+      ref,
+      className: [styles.input, error ? styles.inputError : ''].join(' '),
+      'aria-invalid': Boolean(error),
+      'aria-describedby': error ? errorId : hint ? hintId : undefined,
+      ...rest,
+    };
 
     return (
       <div className={styles.field}>
@@ -24,15 +33,11 @@ const TextField = forwardRef(
             </span>
           )}
         </label>
-        <input
-          id={id}
-          ref={ref}
-          type={type}
-          className={[styles.input, error ? styles.inputError : ''].join(' ')}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? errorId : hint ? hintId : undefined}
-          {...rest}
-        />
+        {multiline ? (
+          <textarea {...controlloComune} rows={rows} />
+        ) : (
+          <input {...controlloComune} type={type} />
+        )}
         {hint && !error && (
           <span id={hintId} className={styles.hint}>
             {hint}

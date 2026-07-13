@@ -54,9 +54,19 @@ const CATEGORIA_MAX = 80;
  * Ogni insegnante della scuola può modificare TUTTI i quiz della propria scuola.
  */
 class Quiz extends Model {
-  /** Motore effettivo del quiz: quello del template, o 'domande'. */
+  /**
+   * Motore EFFETTIVO del quiz (kana/kanji/banca/domande), non il codice del
+   * template. Più template distinti (banca-webdev, banca-chimica…) condividono
+   * lo stesso motore `banca`: il motore va risolto dal registro, non dedotto dal
+   * codice. Per i quiz personalizzati (senza template) è 'domande'. Se il codice
+   * non è (più) nel catalogo, si ripiega sul codice stesso (comportamento
+   * storico), così un quiz orfano non genera un motore nullo.
+   */
   get motore() {
-    return this.template_codice ? this.template_codice : 'domande';
+    if (!this.template_codice) return 'domande';
+    // require locale per evitare qualunque ciclo a livello di modulo.
+    const { motoreDelTemplate } = require('../constants/quizTemplates');
+    return motoreDelTemplate(this.template_codice) || this.template_codice;
   }
 
   /** True se il quiz è un'installazione di un template di piattaforma. */

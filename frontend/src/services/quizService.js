@@ -57,6 +57,9 @@ export const generateQuiz = async ({
   livello,
   tipoQuiz,
   lingua,
+  bancaCodice,
+  modalita,
+  sezioni,
 }) => {
   const { data } = await apiClient.post('/quiz/generate', {
     // Campi assenti: Axios non li serializza, il backend applica i default.
@@ -69,6 +72,10 @@ export const generateQuiz = async ({
     livello,
     tipoQuiz,
     lingua,
+    // Motore banca: banca (solo esercizio libero), direzione e sezioni.
+    bancaCodice,
+    modalita,
+    sezioni,
   });
   return data;
 };

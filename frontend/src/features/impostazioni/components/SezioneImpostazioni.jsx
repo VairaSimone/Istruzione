@@ -67,7 +67,7 @@ const SezioneImpostazioni = ({
     return (
       <div className={styles.griglia}>
         {Object.entries(descrittore.campi ?? {}).map(([campo, d]) => (
-          <div key={campo} className={d.tipo === 'vocabolario' || d.tipo === 'link' ? styles.campoLargo : undefined}>
+          <div key={campo} className={d.tipo === 'vocabolario' || d.tipo === 'link' || d.tipo === 'testoLungo' ? styles.campoLargo : undefined}>
             <CampoImpostazione
               sezione={nome}
               nome={campo}

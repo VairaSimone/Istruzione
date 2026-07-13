@@ -31,9 +31,19 @@ import styles from './QuizGestione.module.css';
 const LIBERO = ''; // valore del <Select> per «lascia scegliere allo studente»
 
 const ConfigurazioneTemplatePanel = ({ quiz }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const updateQuiz = useUpdateQuiz();
   const codice = quiz.templateCodice;
+  const isBanca = typeof codice === 'string' && codice.startsWith('banca-');
+  const bancaMeta = quiz.bancaMeta ?? null;
+
+  // Risolutore di campo localizzato { it, en } → stringa nella lingua attiva.
+  const loc = (valore) => {
+    if (!valore) return '';
+    if (typeof valore === 'string') return valore;
+    const lingua = i18n.language?.startsWith('en') ? 'en' : 'it';
+    return valore[lingua] ?? valore.it ?? valore.en ?? '';
+  };
 
   // Bozza locale della configurazione: si riallinea al server quando il quiz
   // viene rimontato (il chiamante usa `key={quiz.updated_at}`), evitando di
@@ -63,6 +73,20 @@ const ConfigurazioneTemplatePanel = ({ quiz }) => {
     });
   };
 
+  const toggleSezione = (codiceSezione) => {
+    setConfig((precedente) => {
+      const attuali = new Set(precedente.sezioni ?? []);
+      if (attuali.has(codiceSezione)) attuali.delete(codiceSezione);
+      else attuali.add(codiceSezione);
+
+      const aggiornata = { ...precedente };
+      // Nessuna sezione ⇒ chiave assente ⇒ tutte le sezioni (comportamento libero).
+      if (attuali.size === 0) delete aggiornata.sezioni;
+      else aggiornata.sezioni = Array.from(attuali);
+      return aggiornata;
+    });
+  };
+
   const handleSalva = async () => {
     try {
       await updateQuiz.mutateAsync({ id: quiz.id, configurazione: config });
@@ -73,6 +97,7 @@ const ConfigurazioneTemplatePanel = ({ quiz }) => {
   };
 
   const gruppiFissati = new Set(config.gruppi ?? []);
+  const sezioniFissate = new Set(config.sezioni ?? []);
 
   return (
     <Card>
@@ -201,6 +226,52 @@ const ConfigurazioneTemplatePanel = ({ quiz }) => {
             <option value="it">{t('language.options.it')}</option>
             <option value="en">{t('language.options.en')}</option>
           </Select>
+        </div>
+      )}
+
+      {/* ─────────────── Template banca dati ─────────────── */}
+      {isBanca && bancaMeta && (
+        <div className={styles.form}>
+          <Select
+            label={t('quizGestione.config.bancaModalita')}
+            value={config.modalita ?? LIBERO}
+            onChange={(e) => imposta('modalita', e.target.value)}
+          >
+            <option value={LIBERO}>{t('quizGestione.config.libero')}</option>
+            {bancaMeta.modalita.map((m) => (
+              <option key={m.codice} value={m.codice}>
+                {loc(m.nome)}
+              </option>
+            ))}
+          </Select>
+
+          {bancaMeta.sezioni.length > 1 && (
+            <fieldset>
+              <legend className={styles.legend}>{t('quizGestione.config.bancaSezioni')}</legend>
+              <p className={styles.opzioniHint}>
+                {sezioniFissate.size === 0
+                  ? t('quizGestione.config.sezioniLibere')
+                  : t('quizGestione.config.sezioniFissate')}
+              </p>
+              <div className={styles.configList}>
+                {bancaMeta.sezioni.map((s) => {
+                  const attivo = sezioniFissate.has(s.codice);
+                  return (
+                    <button
+                      key={s.codice}
+                      type="button"
+                      className={styles.configChip}
+                      aria-pressed={attivo}
+                      onClick={() => toggleSezione(s.codice)}
+                      style={attivo ? undefined : { opacity: 0.55 }}
+                    >
+                      <span className={styles.configValue}>{loc(s.nome)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          )}
         </div>
       )}
     </Card>

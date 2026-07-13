@@ -12,6 +12,7 @@ import QuizStatsPanel from '../features/quiz/components/QuizStatsPanel';
 import QuizSetup from '../features/quiz/components/QuizSetup';
 import QuizPlay from '../features/quiz/components/QuizPlay';
 import KanjiQuizPlay from '../features/quiz/components/KanjiQuizPlay';
+import BancaQuizPlay from '../features/quiz/components/BancaQuizPlay';
 import DomandeQuizPlay from '../features/quiz/components/DomandeQuizPlay';
 import QuizDisponibiliPanel from '../features/quiz/components/QuizDisponibiliPanel';
 import QuizResults from '../features/quiz/components/QuizResults';
@@ -263,6 +264,8 @@ const QuizPage = () => {
           <DomandeQuizPlay sessione={sessione} onComplete={handleComplete} />
         ) : sessione.dominio === 'kanji' ? (
           <KanjiQuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
+        ) : sessione.dominio === 'banca' ? (
+          <BancaQuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
         ) : (
           <QuizPlay sessione={sessione} timerMode={timerMode} onComplete={handleComplete} />
         )

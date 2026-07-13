@@ -35,6 +35,7 @@ const { CODICI_TIPO: TIPI_RICHIESTA_CONTATTO } = require('./tipiRichiestaContatt
  *   indirizzo    → sede fisica
  *   social       → collegamenti ai profili social
  *   footer       → testo e link personalizzabili del piè di pagina
+ *   comunicazioni→ avviso pubblico (banner) mostrato in cima al sito e all'app
  *   homepage     → landing page pubblica della scuola servita sul suo dominio
  *   didattica    → vocabolari della scuola (classi, livelli, materie)
  *   funzionalita → sezioni abilitate/disabilitate (cfr. constants/funzionalita)
@@ -65,6 +66,11 @@ const LUNGHEZZA = {
   messaggioConferma: 500,
   seoTitolo: 70,
   seoDescrizione: 200,
+  // Identità compatta e comunicazioni.
+  nomeBreve: 40,
+  avviso: 500,
+  orari: 300,
+  copyright: 200,
 };
 
 // Numero massimo di voci nelle liste (difesa contro blob gonfiati).
@@ -96,6 +102,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TELEFONO_REGEX = /^[+()\-.\s\d]{4,40}$/;
 
 const TEMI = ['chiaro', 'scuro', 'sistema'];
+
+// Tono dell'avviso pubblico (banner): ne determina colore e icona nel frontend.
+const AVVISO_TIPI = ['informazione', 'attenzione', 'successo'];
 
 // Orientamento del foglio del certificato PDF.
 const ORIENTAMENTI_CERTIFICATO = ['orizzontale', 'verticale'];
@@ -166,6 +175,10 @@ const validatori = {
     }
     return s === '' ? null : s;
   },
+
+  // Testo su più righe (es. orari, avvisi): stessa validazione della stringa,
+  // ma il frontend lo rende con una textarea. I ritorni a capo sono preservati.
+  testoLungo: (v, percorso, campo) => validatori.stringa(v, percorso, campo),
 
   url: (v, percorso, campo) => {
     const s = validatori.stringa(v, percorso, { max: campo.max || LUNGHEZZA.url });
@@ -420,6 +433,9 @@ const SCHEMA = {
     pubblica: true,
     campi: {
       nomeVisualizzato: { tipo: 'stringa', max: LUNGHEZZA.nome, default: null, pubblico: true },
+      // Nome compatto per le UI strette (intestazione su mobile, menu). Se vuoto
+      // il frontend ricade sul nome visualizzato.
+      nomeBreve: { tipo: 'stringa', max: LUNGHEZZA.nomeBreve, default: null, pubblico: true },
       slogan: { tipo: 'stringa', max: LUNGHEZZA.slogan, default: null, pubblico: true },
       descrizione: { tipo: 'stringa', max: LUNGHEZZA.descrizione, default: null, pubblico: true },
       logoUrl: { tipo: 'url', default: null, pubblico: true },
@@ -439,6 +455,9 @@ const SCHEMA = {
       temaPredefinito: { tipo: 'enum', valori: TEMI, default: 'sistema', pubblico: true },
       // Se false il frontend non mostra l'interruttore chiaro/scuro.
       temaSelezionabile: { tipo: 'booleano', default: true, pubblico: true },
+      // Se false, l'intestazione mostra solo il logo senza il nome accanto
+      // (utile a chi ha un logo che contiene già il nome per esteso).
+      mostraNomeAccantoLogo: { tipo: 'booleano', default: true, pubblico: true },
     },
   },
 
@@ -446,8 +465,12 @@ const SCHEMA = {
     pubblica: true,
     campi: {
       email: { tipo: 'email', default: null, pubblico: true },
+      emailSegreteria: { tipo: 'email', default: null, pubblico: true },
       telefono: { tipo: 'telefono', default: null, pubblico: true },
+      telefonoSecondario: { tipo: 'telefono', default: null, pubblico: true },
       sitoWeb: { tipo: 'url', default: null, pubblico: true },
+      // Orari di apertura/ricevimento, testo libero su più righe.
+      orariApertura: { tipo: 'testoLungo', max: LUNGHEZZA.orari, default: null, pubblico: true },
     },
   },
 
@@ -473,7 +496,25 @@ const SCHEMA = {
     campi: {
       testo: { tipo: 'stringa', max: LUNGHEZZA.testoFooter, default: null, pubblico: true },
       link: { tipo: 'link', default: [], pubblico: true },
+      // Riga di copyright personalizzata; se vuota si usa "Nome — © anno".
+      testoCopyright: { tipo: 'stringa', max: LUNGHEZZA.copyright, default: null, pubblico: true },
       mostraCredits: { tipo: 'booleano', default: true, pubblico: true },
+    },
+  },
+
+  // AVVISO PUBBLICO (banner): una striscia informativa che la scuola può
+  // attivare per comunicare qualcosa a tutti (iscrizioni aperte, chiusura,
+  // manutenzione…). È PUBBLICA: compare sia sulla homepage della scuola sia in
+  // cima all'app per gli utenti autenticati. Mostrata solo se attiva e con testo.
+  comunicazioni: {
+    pubblica: true,
+    campi: {
+      avvisoAttivo: { tipo: 'booleano', default: false, pubblico: true },
+      avvisoTesto: { tipo: 'testoLungo', max: LUNGHEZZA.avviso, default: null, pubblico: true },
+      avvisoTipo: { tipo: 'enum', valori: AVVISO_TIPI, default: 'informazione', pubblico: true },
+      // Pulsante d'azione facoltativo dell'avviso.
+      avvisoLinkUrl: { tipo: 'url', default: null, pubblico: true },
+      avvisoLinkEtichetta: { tipo: 'stringa', max: LUNGHEZZA.etichettaAzione, default: null, pubblico: true },
     },
   },
 
@@ -863,6 +904,7 @@ module.exports = {
   TEMI,
   RETI_SOCIAL,
   AZIONI_HERO,
+  AVVISO_TIPI,
   homepagePredefinita,
   ORIENTAMENTI_CERTIFICATO,
   CORPO_CERTIFICATO_PREDEFINITO,

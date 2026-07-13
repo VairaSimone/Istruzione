@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import BannerAvviso from '../branding/BannerAvviso';
 import RouteFallback from '../shared/RouteFallback';
 import ConsensoCookie from '../shared/ConsensoCookie';
 import styles from './AppLayout.module.css';
@@ -20,6 +21,7 @@ import styles from './AppLayout.module.css';
 const AppLayout = () => {
   return (
     <div className={styles.shell}>
+      <BannerAvviso />
       <Header />
       <main className={styles.main}>
         <Suspense fallback={<RouteFallback />}>

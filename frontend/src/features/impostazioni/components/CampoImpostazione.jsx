@@ -131,6 +131,18 @@ const CampoImpostazione = ({ sezione, nome, descrittore, valore, onChange, error
         />
       );
 
+    case 'testoLungo':
+      return (
+        <TextField
+          {...comune}
+          multiline
+          rows={4}
+          value={valore ?? ''}
+          maxLength={descrittore.max}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      );
+
     case 'stringa':
     default:
       return (

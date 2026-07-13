@@ -64,8 +64,34 @@ const QuizSetup = ({
     configurazione.tipoQuiz ?? TIPO_QUIZ_KANJI_DEFAULT
   );
 
+  // Stato dei filtri banca (metadati modalità/sezioni forniti dal backend).
+  const bancaMeta = quiz?.bancaMeta ?? null;
+  const [modalitaBanca, setModalitaBanca] = useState(
+    configurazione.modalita ?? bancaMeta?.modalita?.[0]?.codice ?? ''
+  );
+  const [sezioniBanca, setSezioniBanca] = useState(
+    () => new Set(configurazione.sezioni ?? [])
+  );
+
   // Comune.
   const [timerMode, setTimerMode] = useState(false);
+
+  // Risolutore di campo localizzato { it, en } → stringa nella lingua attiva.
+  const loc = (valore) => {
+    if (!valore) return '';
+    if (typeof valore === 'string') return valore;
+    const lingua = i18n.language?.startsWith('en') ? 'en' : 'it';
+    return valore[lingua] ?? valore.it ?? valore.en ?? '';
+  };
+
+  const toggleSezione = (codice) => {
+    setSezioniBanca((precedenti) => {
+      const aggiornati = new Set(precedenti);
+      if (aggiornati.has(codice)) aggiornati.delete(codice);
+      else aggiornati.add(codice);
+      return aggiornati;
+    });
+  };
 
   const toggleGruppo = (gruppo) => {
     setGruppiSelezionati((precedenti) => {
@@ -91,6 +117,20 @@ const QuizSetup = ({
           // La lingua dei significati segue quella dell'interfaccia; il backend
           // usa l'inglese come fallback quando la glossa IT non è disponibile.
           lingua: i18n.language?.startsWith('en') ? 'en' : 'it',
+        },
+        timerMode
+      );
+      return;
+    }
+
+    if (dominio === 'banca') {
+      // I campi fissati dalla scuola non vengono inviati: li applica il backend.
+      onStart(
+        {
+          ...(quizId ? { quizId } : {}),
+          dominio: 'banca',
+          ...(fissato('modalita') ? {} : { modalita: modalitaBanca }),
+          ...(fissato('sezioni') ? {} : { sezioni: Array.from(sezioniBanca) }),
         },
         timerMode
       );
@@ -276,6 +316,62 @@ const QuizSetup = ({
               })}
             </div>
           </fieldset>
+          )}
+        </>
+      )}
+
+      {/* ─────────────── Filtri BANCA ─────────────── */}
+      {dominio === 'banca' && bancaMeta && (
+        <>
+          {/* Direzione della domanda (modalità) */}
+          {!fissato('modalita') && (
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>{t('quiz.setup.bancaModeLegend')}</legend>
+              <div className={styles.segmented}>
+                {bancaMeta.modalita.map((m) => (
+                  <button
+                    key={m.codice}
+                    type="button"
+                    className={[
+                      styles.segment,
+                      modalitaBanca === m.codice ? styles.segmentActive : '',
+                    ].join(' ')}
+                    aria-pressed={modalitaBanca === m.codice}
+                    onClick={() => setModalitaBanca(m.codice)}
+                  >
+                    {loc(m.nome)}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
+
+          {/* Sezioni (nessuna selezione ⇒ tutte) */}
+          {!fissato('sezioni') && bancaMeta.sezioni.length > 1 && (
+            <fieldset className={styles.fieldset}>
+              <legend className={styles.legend}>{t('quiz.setup.bancaSectionsLegend')}</legend>
+              <p className={styles.hint}>
+                {sezioniBanca.size === 0
+                  ? t('quiz.setup.bancaSectionsAllHint')
+                  : t('quiz.setup.bancaSectionsSomeHint')}
+              </p>
+              <div className={styles.chips}>
+                {bancaMeta.sezioni.map((s) => {
+                  const attivo = sezioniBanca.has(s.codice);
+                  return (
+                    <button
+                      key={s.codice}
+                      type="button"
+                      className={[styles.chip, attivo ? styles.chipActive : ''].join(' ')}
+                      aria-pressed={attivo}
+                      onClick={() => toggleSezione(s.codice)}
+                    >
+                      <span className={styles.chipLabel}>{loc(s.nome)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
           )}
         </>
       )}

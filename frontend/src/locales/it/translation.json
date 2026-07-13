@@ -487,6 +487,10 @@
       "kanjiTypeLegend": "Tipo di esercizio",
       "quizSubtitle": "Quiz assegnato dalla tua scuola. Alcuni parametri potrebbero essere già fissati.",
       "configFissata": "Parametri fissati dalla scuola: {{campi}}.",
+      "bancaModeLegend": "Direzione della domanda",
+      "bancaSectionsLegend": "Sezioni",
+      "bancaSectionsAllHint": "Tutte le sezioni saranno incluse.",
+      "bancaSectionsSomeHint": "Solo le sezioni selezionate saranno proposte.",
       "back": "Torna indietro"
     },
     "play": {
@@ -498,6 +502,10 @@
       "wrong": "Risposta corretta: {{answer}}",
       "inputPlaceholder": "Scrivi il romaji…",
       "check": "Verifica"
+    },
+    "bancaPlay": {
+      "note": "Nota",
+      "materia": "Materia"
     },
     "results": {
       "title": "Partita conclusa",
@@ -1477,7 +1485,13 @@
     },
     "templates": {
       "kana": "Quiz Kana",
-      "kanji": "Quiz Kanji"
+      "kanji": "Quiz Kanji",
+      "banca-webdev": "Programmazione Web",
+      "banca-inglese-verbi": "Verbi irregolari inglesi",
+      "banca-chimica": "Elementi chimici",
+      "banca-geografia": "Capitali europee",
+      "banca-matematica-simboli": "Simboli matematici",
+      "banca-cinese-hsk1": "Cinese HSK 1"
     },
     "card": {
       "personalizzato": "Personalizzato",
@@ -1515,6 +1529,10 @@
       "lingua": "Lingua dei significati",
       "righeLibere": "Nessuna riga fissata: lo studente sceglie liberamente.",
       "righeFissate": "Solo le righe selezionate saranno proposte.",
+      "bancaModalita": "Direzione della domanda",
+      "bancaSezioni": "Sezioni",
+      "sezioniLibere": "Tutte le sezioni (lo studente le esercita tutte).",
+      "sezioniFissate": "Solo le sezioni selezionate saranno proposte.",
       "saved": "Configurazione salvata."
     },
     "domande": {
@@ -1711,6 +1729,10 @@
       "homepage": {
         "titolo": "Homepage pubblica",
         "descrizione": "La pagina mostrata ai visitatori sul dominio della scuola: presentazione e modulo di contatto."
+      },
+      "comunicazioni": {
+        "titolo": "Avviso pubblico",
+        "descrizione": "Una striscia informativa mostrata a tutti, in cima al sito e all'app."
       }
     },
     "campi": {
@@ -1722,19 +1744,24 @@
         "logoScuroUrl": "Logo per il tema scuro",
         "faviconUrl": "Favicon",
         "immagineHeroUrl": "Immagine di copertina",
-        "immagineCopertinaUrl": "Immagine social"
+        "immagineCopertinaUrl": "Immagine social",
+        "nomeBreve": "Nome breve"
       },
       "aspetto": {
         "colorePrimario": "Colore primario",
         "coloreSecondario": "Colore secondario",
         "coloreAccento": "Colore accento",
         "temaPredefinito": "Tema predefinito",
-        "temaSelezionabile": "Consenti il cambio tema"
+        "temaSelezionabile": "Consenti il cambio tema",
+        "mostraNomeAccantoLogo": "Mostra il nome accanto al logo"
       },
       "contatti": {
         "email": "Email",
         "telefono": "Telefono",
-        "sitoWeb": "Sito web"
+        "sitoWeb": "Sito web",
+        "emailSegreteria": "Email segreteria",
+        "telefonoSecondario": "Telefono secondario",
+        "orariApertura": "Orari di apertura"
       },
       "indirizzo": {
         "via": "Via",
@@ -1746,26 +1773,36 @@
       "footer": {
         "testo": "Testo",
         "link": "Collegamenti",
-        "mostraCredits": "Mostra i crediti della piattaforma"
+        "mostraCredits": "Mostra i crediti della piattaforma",
+        "testoCopyright": "Testo di copyright"
       },
       "didattica": {
         "classiDisponibili": "Classi",
         "livelliDisponibili": "Livelli",
         "materieDisponibili": "Materie",
         "accessoLiberoTemplate": "Esercizio libero sui template"
+      },
+      "comunicazioni": {
+        "avvisoAttivo": "Mostra l'avviso",
+        "avvisoTesto": "Testo dell'avviso",
+        "avvisoTipo": "Tono",
+        "avvisoLinkUrl": "Link del pulsante",
+        "avvisoLinkEtichetta": "Etichetta del pulsante"
       }
     },
     "hint": {
       "identita": {
         "logoUrl": "URL assoluto o percorso relativo (es. /assets/logo.svg).",
         "logoScuroUrl": "Usato quando il tema scuro è attivo. Se assente si usa il logo normale.",
-        "immagineHeroUrl": "Mostrata nella pagina di ingresso."
+        "immagineHeroUrl": "Mostrata nella pagina di ingresso.",
+        "nomeBreve": "Usato dove lo spazio è poco (menu, schermi piccoli). Se vuoto si usa il nome completo."
       },
       "aspetto": {
         "colorePrimario": "Pulsanti e azioni principali.",
         "coloreSecondario": "Elementi di supporto.",
         "coloreAccento": "Contorni di messa a fuoco e dettagli.",
-        "temaSelezionabile": "Se disattivato, l'interruttore chiaro/scuro non compare."
+        "temaSelezionabile": "Se disattivato, l'interruttore chiaro/scuro non compare.",
+        "mostraNomeAccantoLogo": "Disattivalo se il tuo logo contiene già il nome."
       },
       "didattica": {
         "classiDisponibili": "Le classi che i tuoi studenti possono avere. Lascia vuoto per usare un campo libero.",
@@ -1774,7 +1811,15 @@
         "accessoLiberoTemplate": "Se attivo, gli studenti possono esercitarsi sui template di quiz anche senza un compito assegnato."
       },
       "footer": {
-        "testo": "Una riga di presentazione, mostrata sopra i collegamenti."
+        "testo": "Una riga di presentazione, mostrata sopra i collegamenti.",
+        "testoCopyright": "Se vuoto si usa «Nome — © anno»."
+      },
+      "contatti": {
+        "orariApertura": "Testo libero su più righe (es. Lun–Ven 8:00–14:00)."
+      },
+      "comunicazioni": {
+        "avvisoTesto": "Puoi andare a capo per scrivere più righe.",
+        "avvisoLinkEtichetta": "Compila anche il link per mostrare il pulsante."
       }
     },
     "valori": {
@@ -1782,6 +1827,11 @@
         "chiaro": "Chiaro",
         "scuro": "Scuro",
         "sistema": "Come il sistema"
+      },
+      "avvisoTipo": {
+        "informazione": "Informazione",
+        "attenzione": "Attenzione",
+        "successo": "Successo"
       }
     },
     "vocabolario": {
@@ -2157,5 +2207,8 @@
       "dominio": "Inserisci un dominio valido (es. liceo-manzoni.it)",
       "note": "Le note non possono superare i 255 caratteri"
     }
+  },
+  "avviso": {
+    "aria": "Avviso della scuola"
   }
 }

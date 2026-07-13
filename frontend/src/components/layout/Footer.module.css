@@ -80,6 +80,13 @@
   margin: 0;
 }
 
+.orari {
+  margin: 0;
+  white-space: pre-line;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
 .copyright {
   margin-top: var(--space-1);
 }

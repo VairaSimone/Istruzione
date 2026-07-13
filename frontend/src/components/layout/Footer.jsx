@@ -63,7 +63,14 @@ const Footer = () => {
     .filter(Boolean)
     .join(', ');
 
-  const haContatti = Boolean(contatti?.email || contatti?.telefono || contatti?.sitoWeb);
+  const haContatti = Boolean(
+    contatti?.email ||
+      contatti?.emailSegreteria ||
+      contatti?.telefono ||
+      contatti?.telefonoSecondario ||
+      contatti?.sitoWeb ||
+      contatti?.orariApertura
+  );
   const haSocial = retiPresenti.length > 0 || altriSocial.length > 0;
   const mostraCredits = footer?.mostraCredits !== false;
 
@@ -87,9 +94,19 @@ const Footer = () => {
                 {contatti.email}
               </a>
             )}
+            {contatti.emailSegreteria && (
+              <a href={`mailto:${contatti.emailSegreteria}`} className={styles.link}>
+                {contatti.emailSegreteria}
+              </a>
+            )}
             {contatti.telefono && (
               <a href={`tel:${contatti.telefono.replace(/\s+/g, '')}`} className={styles.link}>
                 {contatti.telefono}
+              </a>
+            )}
+            {contatti.telefonoSecondario && (
+              <a href={`tel:${contatti.telefonoSecondario.replace(/\s+/g, '')}`} className={styles.link}>
+                {contatti.telefonoSecondario}
               </a>
             )}
             {contatti.sitoWeb && (
@@ -106,6 +123,10 @@ const Footer = () => {
         )}
 
         {rigaIndirizzo && <p className={styles.indirizzo}>{rigaIndirizzo}</p>}
+
+        {contatti?.orariApertura && (
+          <p className={styles.orari}>{contatti.orariApertura}</p>
+        )}
 
         {haSocial && (
           <nav className={styles.social} aria-label={t('footer.socialAria')}>
@@ -147,7 +168,9 @@ const Footer = () => {
         </nav>
 
         <span className={styles.copyright}>
-          {nome} — © {new Date().getFullYear()}
+          {footer?.testoCopyright
+            ? footer.testoCopyright
+            : `${nome} — © ${new Date().getFullYear()}`}
           {mostraCredits && piattaforma?.nome && nome !== piattaforma.nome && (
             <span className={styles.credits}>
               {' · '}

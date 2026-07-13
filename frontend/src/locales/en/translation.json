@@ -524,6 +524,10 @@
       "kanjiTypeLegend": "Exercise type",
       "quizSubtitle": "Quiz assigned by your school. Some settings may already be fixed.",
       "configFissata": "Settings fixed by the school: {{campi}}.",
+      "bancaModeLegend": "Question direction",
+      "bancaSectionsLegend": "Sections",
+      "bancaSectionsAllHint": "All sections will be included.",
+      "bancaSectionsSomeHint": "Only the selected sections will be proposed.",
       "back": "Go back"
     },
     "play": {
@@ -535,6 +539,10 @@
       "wrong": "Correct answer: {{answer}}",
       "inputPlaceholder": "Type the romaji…",
       "check": "Check"
+    },
+    "bancaPlay": {
+      "note": "Note",
+      "materia": "Subject"
     },
     "results": {
       "title": "Session complete",
@@ -1477,7 +1485,13 @@
     },
     "templates": {
       "kana": "Kana Quiz",
-      "kanji": "Kanji Quiz"
+      "kanji": "Kanji Quiz",
+      "banca-webdev": "Web Development",
+      "banca-inglese-verbi": "English irregular verbs",
+      "banca-chimica": "Chemical elements",
+      "banca-geografia": "European capitals",
+      "banca-matematica-simboli": "Mathematical symbols",
+      "banca-cinese-hsk1": "Chinese HSK 1"
     },
     "card": {
       "personalizzato": "Custom",
@@ -1515,6 +1529,10 @@
       "lingua": "Language of meanings",
       "righeLibere": "No row fixed: the student chooses freely.",
       "righeFissate": "Only the selected rows will be proposed.",
+      "bancaModalita": "Question direction",
+      "bancaSezioni": "Sections",
+      "sezioniLibere": "All sections (the student practises them all).",
+      "sezioniFissate": "Only the selected sections will be proposed.",
       "saved": "Configuration saved."
     },
     "domande": {
@@ -1711,6 +1729,10 @@
       "homepage": {
         "titolo": "Public homepage",
         "descrizione": "The page shown to visitors on the school's domain: presentation and contact form."
+      },
+      "comunicazioni": {
+        "titolo": "Public notice",
+        "descrizione": "An info strip shown to everyone, at the top of the site and app."
       }
     },
     "campi": {
@@ -1722,19 +1744,24 @@
         "logoScuroUrl": "Dark theme logo",
         "faviconUrl": "Favicon",
         "immagineHeroUrl": "Hero image",
-        "immagineCopertinaUrl": "Social image"
+        "immagineCopertinaUrl": "Social image",
+        "nomeBreve": "Short name"
       },
       "aspetto": {
         "colorePrimario": "Primary colour",
         "coloreSecondario": "Secondary colour",
         "coloreAccento": "Accent colour",
         "temaPredefinito": "Default theme",
-        "temaSelezionabile": "Allow theme switching"
+        "temaSelezionabile": "Allow theme switching",
+        "mostraNomeAccantoLogo": "Show the name next to the logo"
       },
       "contatti": {
         "email": "Email",
         "telefono": "Phone",
-        "sitoWeb": "Website"
+        "sitoWeb": "Website",
+        "emailSegreteria": "Office email",
+        "telefonoSecondario": "Secondary phone",
+        "orariApertura": "Opening hours"
       },
       "indirizzo": {
         "via": "Street",
@@ -1746,26 +1773,36 @@
       "footer": {
         "testo": "Text",
         "link": "Links",
-        "mostraCredits": "Show platform credits"
+        "mostraCredits": "Show platform credits",
+        "testoCopyright": "Copyright text"
       },
       "didattica": {
         "classiDisponibili": "Classes",
         "livelliDisponibili": "Levels",
         "materieDisponibili": "Subjects",
         "accessoLiberoTemplate": "Free practice on templates"
+      },
+      "comunicazioni": {
+        "avvisoAttivo": "Show the notice",
+        "avvisoTesto": "Notice text",
+        "avvisoTipo": "Tone",
+        "avvisoLinkUrl": "Button link",
+        "avvisoLinkEtichetta": "Button label"
       }
     },
     "hint": {
       "identita": {
         "logoUrl": "Absolute URL or relative path (e.g. /assets/logo.svg).",
         "logoScuroUrl": "Used when the dark theme is active. Falls back to the normal logo.",
-        "immagineHeroUrl": "Shown on the landing page."
+        "immagineHeroUrl": "Shown on the landing page.",
+        "nomeBreve": "Used where space is tight (menus, small screens). Falls back to the full name."
       },
       "aspetto": {
         "colorePrimario": "Buttons and primary actions.",
         "coloreSecondario": "Supporting elements.",
         "coloreAccento": "Focus rings and details.",
-        "temaSelezionabile": "When off, the light/dark switch is hidden."
+        "temaSelezionabile": "When off, the light/dark switch is hidden.",
+        "mostraNomeAccantoLogo": "Turn it off if your logo already includes the name."
       },
       "didattica": {
         "classiDisponibili": "The classes your students can belong to. Leave empty to use a free-text field.",
@@ -1774,7 +1811,15 @@
         "accessoLiberoTemplate": "When on, students may practise quiz templates without an assignment."
       },
       "footer": {
-        "testo": "A single line shown above the links."
+        "testo": "A single line shown above the links.",
+        "testoCopyright": "If empty, \"Name — © year\" is used."
+      },
+      "contatti": {
+        "orariApertura": "Free text over multiple lines (e.g. Mon–Fri 8:00–14:00)."
+      },
+      "comunicazioni": {
+        "avvisoTesto": "Use line breaks to write multiple lines.",
+        "avvisoLinkEtichetta": "Also fill in the link to show the button."
       }
     },
     "valori": {
@@ -1782,6 +1827,11 @@
         "chiaro": "Light",
         "scuro": "Dark",
         "sistema": "Follow the system"
+      },
+      "avvisoTipo": {
+        "informazione": "Information",
+        "attenzione": "Warning",
+        "successo": "Success"
       }
     },
     "vocabolario": {
@@ -2157,5 +2207,8 @@
       "dominio": "Enter a valid domain (e.g. liceo-manzoni.it)",
       "note": "Notes cannot exceed 255 characters"
     }
+  },
+  "avviso": {
+    "aria": "School notice"
   }
 }

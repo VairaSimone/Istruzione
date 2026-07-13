@@ -16,6 +16,7 @@ const { mescola } = require('../utils/mescola');
 const impostazioniService = require('./impostazioniService');
 const {
   catalogoPubblico,
+  trovaTemplate,
   trovaTemplateObbligatorio,
   CODICI_TEMPLATE,
 } = require('../constants/quizTemplates');
@@ -537,8 +538,17 @@ const dettaglioQuiz = async ({ quizId, richiedente }) => {
       abilitatoIl: a.created_at,
     }));
 
+  // Per i template a banca dati: metadati (modalità/sezioni con etichette IT/EN)
+  // usati dal pannello di configurazione per costruire i selettori.
+  const template = quiz.daTemplate ? trovaTemplate(quiz.template_codice) : null;
+  const infoBanca =
+    template && template.motore === 'banca'
+      ? { banca: template.banca, bancaMeta: template.metadati }
+      : {};
+
   return {
     ...quiz.toPublicJSON(),
+    ...infoBanca,
     conteggioDomande: quiz.daTemplate ? null : domande.length,
     domande: domande.map((d) => ({
       ...d.toPublicJSON(),
@@ -826,19 +836,31 @@ const quizDisponibili = async ({ richiedente, filtri = {} }) => {
   const conteggi = await conteggiDomande(righe.filter((x) => !x.daTemplate).map((x) => x.id));
 
   return {
-    quiz: righe.map((x) => ({
-      id: x.id,
-      titolo: x.titolo,
-      descrizione: x.descrizione,
-      materia: x.materia,
-      categoria: x.categoria,
-      templateCodice: x.template_codice,
-      motore: x.motore,
-      configurazione: x.configurazione || {},
-      dimensioneRound: x.dimensione_round,
-      conteggioDomande: x.daTemplate ? null : conteggi.get(x.id) || 0,
-      created_at: x.created_at,
-    })),
+    quiz: righe.map((x) => {
+      // Per i quiz a BANCA DATI la schermata di configurazione ha bisogno delle
+      // modalità/sezioni disponibili (con etichette IT/EN) per costruire i
+      // selettori: sono metadati statici del template, non del record quiz.
+      const template = x.daTemplate ? trovaTemplate(x.template_codice) : null;
+      const infoBanca =
+        template && template.motore === 'banca'
+          ? { banca: template.banca, bancaMeta: template.metadati }
+          : {};
+
+      return {
+        id: x.id,
+        titolo: x.titolo,
+        descrizione: x.descrizione,
+        materia: x.materia,
+        categoria: x.categoria,
+        templateCodice: x.template_codice,
+        motore: x.motore,
+        configurazione: x.configurazione || {},
+        dimensioneRound: x.dimensione_round,
+        conteggioDomande: x.daTemplate ? null : conteggi.get(x.id) || 0,
+        ...infoBanca,
+        created_at: x.created_at,
+      };
+    }),
   };
 };
 
