@@ -1320,7 +1320,11 @@
       "auleCount": "{{count}} aule",
       "deleteBlocked": "La scuola ha utenti collegati e non può essere eliminata.",
       "predefinita": "Predefinita",
-      "sospesa": "Sospesa"
+      "sospesa": "Sospesa",
+      "utentiQuota": "{{usati}} / {{limite}} utenti",
+      "insegnantiQuota": "{{usati}} / {{limite}} insegnanti",
+      "storageQuota": "{{usato}} / {{limite}} GB",
+      "storageIllimitato": "{{usato}} GB"
     },
     "form": {
       "createTitle": "Nuova scuola",
@@ -1335,16 +1339,34 @@
       "attiva": "Scuola attiva",
       "attivaHint": "Una scuola sospesa non è raggiungibile dai suoi utenti.",
       "predefinita": "Scuola predefinita",
-      "predefinitaHint": "Viene servita quando nessuna scuola è indicata. Ce ne può essere una sola."
+      "predefinitaHint": "Viene servita quando nessuna scuola è indicata. Ce ne può essere una sola.",
+      "limitiTitolo": "Limiti (quota)",
+      "limitiHint": "Impostati dall'amministratore. Lascia un campo vuoto per non porre alcun limite (illimitato).",
+      "limiteStorageGb": "Spazio di archiviazione (GB)",
+      "limiteStorageHint": "Spazio massimo per i file caricati (video, immagini, documenti). Vuoto = illimitato.",
+      "limiteUtenti": "Numero massimo di utenti",
+      "limiteUtentiHint": "Studenti e insegnanti totali. Vuoto = illimitato.",
+      "limiteInsegnanti": "Numero massimo di insegnanti",
+      "limiteInsegnantiHint": "Sotto-limite sul numero di insegnanti. Vuoto = illimitato.",
+      "illimitatoPlaceholder": "Illimitato",
+      "dominio": "Dominio personalizzato",
+      "dominioHint": "Assegnabile solo alla creazione; nasce già verificato. Vuoto = usa il dominio di default della piattaforma. In seguito si gestisce dal riquadro «Domini»."
     },
     "toast": {
       "created": "Scuola creata con successo.",
       "updated": "Scuola aggiornata con successo.",
-      "deleted": "Scuola eliminata con successo."
+      "deleted": "Scuola eliminata con successo.",
+      "blocked": "Scuola bloccata.",
+      "unblocked": "Scuola sbloccata."
     },
     "delete": {
       "title": "Elimina scuola",
-      "description": "Vuoi eliminare la scuola \"{{nome}}\"? L'operazione non è reversibile."
+      "description": "Vuoi eliminare la scuola \"{{nome}}\"? L'operazione non è reversibile.",
+      "forcedTitle": "Elimina definitivamente la scuola",
+      "forcedConfirm": "Elimina tutto",
+      "forcedWarning": "Questa azione elimina «{{nome}}» e TUTTI i suoi dati — utenti, corsi, video, immagini, compiti, messaggi, quiz e certificati. È irreversibile.",
+      "typeNameLabel": "Per confermare, digita il nome della scuola: {{nome}}",
+      "doneForced": "Scuola e tutti i dati eliminati definitivamente."
     },
     "select": {
       "label": "Scuola",
@@ -1357,11 +1379,32 @@
       "impostazioniObject": "Le impostazioni devono essere un oggetto JSON (coppie chiave/valore)",
       "impostazioniMax": "Le impostazioni superano la dimensione massima consentita",
       "slugLength": "Lo slug deve avere tra 2 e 80 caratteri",
-      "slugFormato": "Lo slug può contenere solo lettere minuscole, cifre e trattini"
+      "slugFormato": "Lo slug può contenere solo lettere minuscole, cifre e trattini",
+      "limiteIntero": "Inserisci un numero intero maggiore o uguale a 0, oppure lascia vuoto",
+      "limiteNumero": "Inserisci un numero maggiore o uguale a 0, oppure lascia vuoto",
+      "dominioFormato": "Dominio non valido (es. liceo-manzoni.it)"
     },
     "switcher": {
       "label": "Scuola",
       "placeholder": "Scegli la scuola"
+    },
+    "quota": {
+      "title": "Occupazione della scuola",
+      "hint": "Spazio e posti utilizzati rispetto ai limiti assegnati dall'amministratore.",
+      "storage": "Spazio di archiviazione",
+      "utenti": "Utenti",
+      "insegnanti": "Insegnanti",
+      "illimitato": "Illimitato",
+      "valoreGb": "{{usato}} / {{limite}} GB",
+      "valoreConteggio": "{{usato}} / {{limite}}"
+    },
+    "actions": {
+      "blocca": "Blocca",
+      "sblocca": "Sblocca"
+    },
+    "blocca": {
+      "title": "Bloccare la scuola?",
+      "description": "Bloccando «{{nome}}» nessun utente — nemmeno gli studenti — potrà più accedere. I dati restano intatti e potrai sbloccarla in qualsiasi momento."
     }
   },
   "invites": {

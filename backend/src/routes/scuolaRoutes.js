@@ -32,6 +32,7 @@ const {
  *   ── La propria scuola (qualsiasi utente autenticato) ──
  *   GET    /api/scuole/mia                 → scuola + impostazioni complete
  *   GET    /api/scuole/mia/impostazioni    → solo il blob delle impostazioni
+ *   GET    /api/scuole/mia/quota           → occupazione quota della propria scuola
  *   PATCH  /api/scuole/mia/impostazioni    → insegnante|admin: merge per sezione
  *   GET    /api/scuole/mia/domini          → domini della propria scuola
  *   POST   /api/scuole/mia/domini          → aggiunge un dominio (NON verificato)
@@ -42,6 +43,7 @@ const {
  *   POST   /api/scuole                     → crea scuola
  *   GET    /api/scuole                     → elenco scuole
  *   GET    /api/scuole/:id                 → dettaglio scuola
+ *   GET    /api/scuole/:id/quota           → occupazione quota della scuola
  *   PATCH  /api/scuole/:id                 → anagrafica / impostazioni (sostituzione)
  *   PATCH  /api/scuole/:id/impostazioni    → merge impostazioni
  *   DELETE /api/scuole/:id                 → elimina scuola
@@ -81,6 +83,14 @@ const richiediScuolaPropria = (req, res, next) => {
   }
   next();
 };
+
+// Occupazione quota (storage/utenti/insegnanti) della propria scuola.
+router.get(
+  '/mia/quota',
+  authorizeRoles('insegnante', 'admin'),
+  richiediScuolaPropria,
+  scuolaController.mieQuota
+);
 
 router.patch(
   '/mia/impostazioni',
@@ -152,6 +162,14 @@ router.get(
   scuolaController.dettaglioScuola
 );
 
+router.get(
+  '/:id/quota',
+  authorizeRoles('admin'),
+  validateScuolaIdParam,
+  validate,
+  scuolaController.quotaScuola
+);
+
 router.patch(
   '/:id',
   authorizeRoles('admin'),
@@ -177,6 +195,25 @@ router.delete(
   validateScuolaIdParam,
   validate,
   scuolaController.eliminaScuola
+);
+
+// Blocco/sblocco: sospende o riattiva l'accesso a tutti gli utenti della scuola.
+router.post(
+  '/:id/blocca',
+  authorizeRoles('admin'),
+  csrfProtection,
+  validateScuolaIdParam,
+  validate,
+  scuolaController.bloccaScuola
+);
+
+router.post(
+  '/:id/sblocca',
+  authorizeRoles('admin'),
+  csrfProtection,
+  validateScuolaIdParam,
+  validate,
+  scuolaController.sbloccaScuola
 );
 
 // ── Domini di una scuola qualsiasi (admin): può anche VERIFICARE ──

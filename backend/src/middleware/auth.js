@@ -4,6 +4,7 @@ const { verifyAccessToken } = require('../utils/jwtHelpers');
 const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
 const Utente = require('../models/Utente');
+const impostazioniService = require('../services/impostazioniService');
 
 const authenticateJWT = catchAsync(async (req, res, next) => {
   let token;
@@ -71,6 +72,12 @@ const authenticateJWT = catchAsync(async (req, res, next) => {
   if (utente.stato !== 'attivo') {
     return next(new AppError('Account non abilitato ad accedere.', 403, 'ACCOUNT_NOT_ACTIVE'));
   }
+
+  // Blocco della SCUOLA (tenant): se la scuola è stata sospesa, nessun utente —
+  // nemmeno con una sessione già attiva — può proseguire. L'admin (scuola_id
+  // null) è trasversale e non è soggetto al blocco. La verifica usa la cache
+  // delle impostazioni, quindi non pesa a ogni richiesta.
+  await impostazioniService.assicuraScuolaAccessibile(utente.scuola_id);
 
   req.user = {
     id: utente.id,

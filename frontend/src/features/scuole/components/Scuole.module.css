@@ -144,3 +144,11 @@
   padding-top: var(--space-5);
   border-top: 1px solid var(--color-border);
 }
+
+/* Avviso per l'eliminazione definitiva (perdita totale dei dati). */
+.dangerText {
+  font-size: var(--text-sm);
+  color: var(--color-danger, #b3402f);
+  line-height: 1.5;
+  margin: 0;
+}

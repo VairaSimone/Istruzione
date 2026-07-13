@@ -13,6 +13,7 @@ const { risolviScuolaCreazione } = require('../utils/tenant');
 const logger = require('../utils/logger');
 const impostazioniService = require('./impostazioniService');
 const emailService = require('./emailService');
+const quotaService = require('./quotaService');
 
 /**
  * InviteService — gestione del ciclo di vita degli inviti.
@@ -70,6 +71,11 @@ const creaInvito = async ({ email, ruolo, classe, classeId = null, scuolaId = nu
       'EMAIL_ALREADY_REGISTERED'
     );
   }
+
+  // Quote della scuola: un nuovo invito occupa un posto. Il controllo considera
+  // sia gli utenti registrati sia gli inviti già pendenti (per non sovra-prenotare).
+  // `insegnante` verifica anche il sotto-limite insegnanti.
+  await quotaService.assicuraPostoUtente(scuola, ruolo);
 
   const { tokenInChiaro, tokenHash, scadenza } = generaTokenInvito();
 

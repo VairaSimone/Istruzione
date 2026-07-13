@@ -1,0 +1,91 @@
+/*
+ * Barre di occupazione quota (storage / utenti / insegnanti). Usate sia nella
+ * pagina «Impostazioni scuola» (staff, sola lettura) sia nel modale admin.
+ */
+.panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper);
+  padding: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.panelTitle {
+  font-size: 1.0625rem;
+  margin: 0 0 4px;
+}
+
+.panelHint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-4);
+  line-height: var(--leading-snug);
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.value {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--color-border);
+  overflow: hidden;
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--color-accent, #2f7d5b);
+  transition: width 0.3s ease;
+}
+
+/* Soglie di riempimento: informano a colpo d'occhio quanto manca. */
+.warn {
+  background-color: var(--color-warning, #c98a1a);
+}
+
+.danger {
+  background-color: var(--color-danger, #b3402f);
+}
+
+/* Quota illimitata: nessuna barra, solo un tratteggio tenue decorativo. */
+.unlimited {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-border),
+    var(--color-border) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}

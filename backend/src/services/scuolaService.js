@@ -1,14 +1,22 @@
 'use strict';
 
 const { Op } = require('sequelize');
+const path = require('path');
+const fsp = require('fs/promises');
 const sequelize = require('../config/database');
 const Scuola = require('../models/Scuola');
 const Utente = require('../models/Utente');
 const Classe = require('../models/Classe');
+const FileCaricato = require('../models/FileCaricato');
+const DominioScuola = require('../models/DominioScuola');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const { normalizzaDominio } = require('../utils/dominio');
 const logger = require('../utils/logger');
 const impostazioniService = require('./impostazioniService');
+const quotaService = require('./quotaService');
+const fileService = require('./fileService');
+const { UPLOAD_DIR, UPLOAD_SUBDIR_CORSI } = require('../config/upload');
 const {
   normalizzaImpostazioni,
   mergeImpostazioni,
@@ -91,6 +99,16 @@ const assicuraGestioneImpostazioni = (richiedente, scuolaId) => {
   }
 };
 
+/**
+ * Normalizza un limite intero proveniente dall'API: `null`/vuoto/non valido ⇒
+ * `null` (illimitato); altrimenti un intero non negativo.
+ */
+const intONull = (v) => {
+  if (v === null || v === undefined || v === '') return null;
+  const n = parseInt(v, 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+};
+
 /** Toglie il flag `predefinita` a tutte le scuole tranne quella indicata. */
 const smarcaAltrePredefinite = async (scuolaId, transaction) => {
   await Scuola.update(
@@ -102,7 +120,17 @@ const smarcaAltrePredefinite = async (scuolaId, transaction) => {
 // ─────────────────────────────────────────────
 // CREA SCUOLA (admin)
 // ─────────────────────────────────────────────
-const creaScuola = async ({ nome, slug, impostazioni, attiva, predefinita }) => {
+const creaScuola = async ({
+  nome,
+  slug,
+  impostazioni,
+  attiva,
+  predefinita,
+  limiteStorageGb,
+  limiteUtenti,
+  limiteInsegnanti,
+  dominio,
+}) => {
   const nomeNorm = String(nome).trim();
 
   const esistente = await Scuola.findOne({ where: { nome: nomeNorm } });
@@ -115,6 +143,20 @@ const creaScuola = async ({ nome, slug, impostazioni, attiva, predefinita }) => 
   // vengono scartate, i valori non conformi generano 422.
   const impostazioniNorm = normalizzaImpostazioni(impostazioni);
 
+  // Dominio personalizzato opzionale: se assente la scuola resta sul dominio di
+  // default della piattaforma (risolta via slug/predefinita). Se presente, viene
+  // creato GIÀ VERIFICATO (l'admin è fidato) e come dominio PRINCIPALE.
+  const host = dominio ? normalizzaDominio(dominio) : null;
+  if (dominio && !host) {
+    throw new AppError('Il dominio non è valido (es. liceo-manzoni.it).', 422, 'DOMINIO_INVALID');
+  }
+  if (host) {
+    const dominioEsistente = await DominioScuola.findOne({ where: { dominio: host } });
+    if (dominioEsistente) {
+      throw new AppError('Questo dominio è già associato a un\'altra scuola.', 409, 'DOMINIO_TAKEN');
+    }
+  }
+
   const scuola = await sequelize.transaction(async (t) => {
     const nuova = await Scuola.create(
       {
@@ -123,16 +165,36 @@ const creaScuola = async ({ nome, slug, impostazioni, attiva, predefinita }) => 
         attiva: attiva === undefined ? true : Boolean(attiva),
         predefinita: Boolean(predefinita),
         impostazioni: impostazioniNorm,
+        limite_storage_byte: Scuola.gbABytes(limiteStorageGb),
+        limite_utenti: intONull(limiteUtenti),
+        limite_insegnanti: intONull(limiteInsegnanti),
       },
       { transaction: t }
     );
 
     if (nuova.predefinita) await smarcaAltrePredefinite(nuova.id, t);
+
+    if (host) {
+      await DominioScuola.create(
+        {
+          scuola_id: nuova.id,
+          dominio: host,
+          verificato: true,
+          verificato_il: new Date(),
+          principale: true,
+        },
+        { transaction: t }
+      );
+    }
+
     return nuova;
   });
 
   impostazioniService.invalida();
-  logger.info(`[SCUOLA] Creata scuola ${scuola.id} "${scuola.nome}" (slug: ${scuola.slug})`);
+  logger.info(
+    `[SCUOLA] Creata scuola ${scuola.id} "${scuola.nome}" (slug: ${scuola.slug}` +
+      `${host ? `, dominio: ${host}` : ''})`
+  );
   return scuola.toPublicJSON();
 };
 
@@ -165,12 +227,19 @@ const elencoScuole = async ({ q, page, limit, attiva } = {}) => {
     righe = await Scuola.findAll(queryOptions);
   }
 
-  // Conteggi utenti/aule per scuola in due sole query aggregate (niente N+1).
+  // Conteggi e occupazione quota per scuola, tutti in query aggregate (niente
+  // N+1): utenti totali, aule, insegnanti, storage occupato e inviti pendenti.
   const ids = righe.map((s) => s.id);
   const mappaUtenti = new Map();
   const mappaAule = new Map();
+  const mappaInsegnanti = new Map();
+  const mappaStorage = new Map();
+  const mappaPendTot = new Map();
+  const mappaPendIns = new Map();
   if (ids.length) {
-    const [utentiCount, auleCount] = await Promise.all([
+    const ora = new Date();
+    const Invito = require('../models/Invito');
+    const [utentiCount, auleCount, insegnantiCount, storageSum, pendTot, pendIns] = await Promise.all([
       Utente.findAll({
         where: { scuola_id: { [Op.in]: ids } },
         attributes: ['scuola_id', [Utente.sequelize.fn('COUNT', Utente.sequelize.col('id')), 'totale']],
@@ -183,18 +252,91 @@ const elencoScuole = async ({ q, page, limit, attiva } = {}) => {
         group: ['scuola_id'],
         raw: true,
       }),
+      Utente.findAll({
+        where: { scuola_id: { [Op.in]: ids }, ruolo: 'insegnante' },
+        attributes: ['scuola_id', [Utente.sequelize.fn('COUNT', Utente.sequelize.col('id')), 'totale']],
+        group: ['scuola_id'],
+        raw: true,
+      }),
+      FileCaricato.findAll({
+        where: { scuola_id: { [Op.in]: ids } },
+        attributes: [
+          'scuola_id',
+          [FileCaricato.sequelize.fn('SUM', FileCaricato.sequelize.col('dimensione_byte')), 'totale'],
+        ],
+        group: ['scuola_id'],
+        raw: true,
+      }),
+      Invito.findAll({
+        where: { scuola_id: { [Op.in]: ids }, stato: 'pendente', scadenza: { [Op.gt]: ora } },
+        attributes: ['scuola_id', [Invito.sequelize.fn('COUNT', Invito.sequelize.col('id')), 'totale']],
+        group: ['scuola_id'],
+        raw: true,
+      }),
+      Invito.findAll({
+        where: {
+          scuola_id: { [Op.in]: ids },
+          ruolo: 'insegnante',
+          stato: 'pendente',
+          scadenza: { [Op.gt]: ora },
+        },
+        attributes: ['scuola_id', [Invito.sequelize.fn('COUNT', Invito.sequelize.col('id')), 'totale']],
+        group: ['scuola_id'],
+        raw: true,
+      }),
     ]);
     for (const r of utentiCount) mappaUtenti.set(String(r.scuola_id), parseInt(r.totale, 10));
     for (const r of auleCount) mappaAule.set(String(r.scuola_id), parseInt(r.totale, 10));
+    for (const r of insegnantiCount) mappaInsegnanti.set(String(r.scuola_id), parseInt(r.totale, 10));
+    for (const r of storageSum) mappaStorage.set(String(r.scuola_id), Number(r.totale || 0));
+    for (const r of pendTot) mappaPendTot.set(String(r.scuola_id), parseInt(r.totale, 10));
+    for (const r of pendIns) mappaPendIns.set(String(r.scuola_id), parseInt(r.totale, 10));
   }
 
-  const scuole = righe.map((s) => ({
-    ...s.toPublicJSON(),
-    conteggio: {
-      utenti: mappaUtenti.get(String(s.id)) || 0,
-      aule: mappaAule.get(String(s.id)) || 0,
-    },
-  }));
+  const percentuale = (usato, limite) =>
+    limite === null || limite <= 0 ? null : Math.min(100, Math.round((usato / limite) * 100));
+
+  const scuole = righe.map((s) => {
+    const pub = s.toPublicJSON();
+    const key = String(s.id);
+    const utenti = mappaUtenti.get(key) || 0;
+    const insegnanti = mappaInsegnanti.get(key) || 0;
+    const storageByte = mappaStorage.get(key) || 0;
+    const pendTotN = mappaPendTot.get(key) || 0;
+    const pendInsN = mappaPendIns.get(key) || 0;
+    const lim = pub.limiti;
+
+    return {
+      ...pub,
+      conteggio: { utenti, aule: mappaAule.get(key) || 0 },
+      quota: {
+        storage: {
+          usatoByte: storageByte,
+          usatoGb: storageByte / Scuola.BYTE_PER_GB,
+          limiteByte: lim.storageByte,
+          limiteGb: lim.storageGb,
+          illimitato: lim.storageByte === null,
+          percentuale: percentuale(storageByte, lim.storageByte),
+        },
+        utenti: {
+          usati: utenti,
+          pendenti: pendTotN,
+          occupati: utenti + pendTotN,
+          limite: lim.utenti,
+          illimitato: lim.utenti === null,
+          percentuale: percentuale(utenti + pendTotN, lim.utenti),
+        },
+        insegnanti: {
+          usati: insegnanti,
+          pendenti: pendInsN,
+          occupati: insegnanti + pendInsN,
+          limite: lim.insegnanti,
+          illimitato: lim.insegnanti === null,
+          percentuale: percentuale(insegnanti + pendInsN, lim.insegnanti),
+        },
+      },
+    };
+  });
 
   const paginazione = usaPaginazione
     ? {
@@ -214,18 +356,34 @@ const elencoScuole = async ({ q, page, limit, attiva } = {}) => {
 const dettaglioScuola = async (scuolaId) => {
   const scuola = await caricaScuola(scuolaId);
 
-  const [utenti, aule] = await Promise.all([
+  const [utenti, aule, quota] = await Promise.all([
     Utente.count({ where: { scuola_id: scuolaId } }),
     Classe.count({ where: { scuola_id: scuolaId } }),
+    quotaService.riepilogo(scuola),
   ]);
 
-  return { ...scuola.toPublicJSON(), conteggio: { utenti, aule } };
+  return { ...scuola.toPublicJSON(), conteggio: { utenti, aule }, quota };
+};
+
+// ─────────────────────────────────────────────
+// QUOTA CORRENTE — occupazione vs limiti per una scuola.
+//   - admin      → qualsiasi scuola (passando scuolaId);
+//   - insegnante → esclusivamente la propria.
+// Serve al pannello per mostrare barre di occupazione (storage/utenti/insegnanti).
+// ─────────────────────────────────────────────
+const quotaScuola = async (richiedente, scuolaId) => {
+  assicuraGestioneImpostazioni(richiedente, scuolaId);
+  const scuola = await caricaScuola(scuolaId);
+  return quotaService.riepilogo(scuola);
 };
 
 // ─────────────────────────────────────────────
 // AGGIORNA SCUOLA (admin) — anagrafica + impostazioni (sostituzione integrale)
 // ─────────────────────────────────────────────
-const aggiornaScuola = async (scuolaId, { nome, slug, impostazioni, attiva, predefinita }) => {
+const aggiornaScuola = async (
+  scuolaId,
+  { nome, slug, impostazioni, attiva, predefinita, limiteStorageGb, limiteUtenti, limiteInsegnanti }
+) => {
   const scuola = await caricaScuola(scuolaId);
 
   if (nome !== undefined) {
@@ -248,6 +406,11 @@ const aggiornaScuola = async (scuolaId, { nome, slug, impostazioni, attiva, pred
 
   if (attiva !== undefined) scuola.attiva = Boolean(attiva);
   if (predefinita !== undefined) scuola.predefinita = Boolean(predefinita);
+
+  // Quote (solo se il campo è presente nel payload). `null`/vuoto ⇒ illimitato.
+  if (limiteStorageGb !== undefined) scuola.limite_storage_byte = Scuola.gbABytes(limiteStorageGb);
+  if (limiteUtenti !== undefined) scuola.limite_utenti = intONull(limiteUtenti);
+  if (limiteInsegnanti !== undefined) scuola.limite_insegnanti = intONull(limiteInsegnanti);
 
   await sequelize.transaction(async (t) => {
     await scuola.save({ transaction: t });
@@ -285,28 +448,101 @@ const aggiornaImpostazioni = async (scuolaId, impostazioniParziali, richiedente)
 };
 
 // ─────────────────────────────────────────────
-// ELIMINA SCUOLA (admin)
-// Bloccata finché esistono utenti collegati (FK RESTRICT su utenti.scuola_id):
-// si evita di orfanare account. Aule/compiti/messaggi/inviti/quiz/corsi seguono
-// in CASCADE.
+// BLOCCA / SBLOCCA SCUOLA (admin)
+//
+// Imposta il flag `attiva`. Una scuola sospesa (attiva = false):
+//   - non risolve il proprio dominio pubblico (impostazioniService.perDominio);
+//   - nega il LOGIN e le sessioni attive a TUTTI i suoi utenti, studenti
+//     compresi (impostazioniService.assicuraScuolaAccessibile, usato in
+//     authService e nel middleware auth);
+//   - conserva INTATTI tutti i dati: è reversibile in qualsiasi momento.
+//
+// È lo strumento pensato per i contratti scaduti/non rinnovati: si blocca
+// l'accesso senza perdere nulla, e si sblocca alla ripresa del rapporto.
 // ─────────────────────────────────────────────
-const eliminaScuola = async (scuolaId) => {
+const impostaStatoScuola = async (scuolaId, attiva) => {
+  const scuola = await caricaScuola(scuolaId);
+  scuola.attiva = Boolean(attiva);
+  await scuola.save();
+
+  impostazioniService.invalida(scuolaId);
+  logger.info(
+    `[SCUOLA] Scuola ${scuolaId} ${scuola.attiva ? 'sbloccata (attiva)' : 'BLOCCATA (sospesa)'}`
+  );
+  return scuola.toPublicJSON();
+};
+
+/** Rimuove ricorsivamente la cartella upload della scuola (best-effort). */
+const rimuoviCartellaScuola = async (scuolaId) => {
+  const dir = path.join(UPLOAD_DIR, UPLOAD_SUBDIR_CORSI, String(scuolaId));
+  try {
+    await fsp.rm(dir, { recursive: true, force: true });
+  } catch (err) {
+    logger.warn(`[SCUOLA] Impossibile rimuovere la cartella ${dir}: ${err.message}`);
+  }
+};
+
+// ─────────────────────────────────────────────
+// ELIMINA SCUOLA (admin)
+//
+// Due modalità:
+//   - STANDARD (forza = false): bloccata se esistono utenti collegati
+//     (FK RESTRICT su utenti.scuola_id), per non orfanare account per sbaglio.
+//   - FORZATA  (forza = true): elimina la scuola e TUTTI i suoi dati —
+//     utenti, aule, corsi (video/immagini/documenti), compiti, messaggi,
+//     quiz, certificati, notifiche, eventi, inviti, domini. I binari su disco
+//     vengono rimossi; i metadati e le righe collegate cadono in CASCADE.
+//     Operazione IRREVERSIBILE.
+//
+// Ordine dell'eliminazione forzata:
+//   1. rimozione dei binari su disco (i metadati file_caricati cadono poi in
+//      CASCADE con la scuola);
+//   2. in transazione: prima gli UTENTI (unico vincolo RESTRICT verso la
+//      scuola), poi la SCUOLA — che porta con sé, in CASCADE, tutto il resto.
+// ─────────────────────────────────────────────
+const eliminaScuola = async (scuolaId, { forza = false } = {}) => {
   const scuola = await caricaScuola(scuolaId);
 
-  const utentiCollegati = await Utente.count({ where: { scuola_id: scuolaId } });
-  if (utentiCollegati > 0) {
-    throw new AppError(
-      `Impossibile eliminare la scuola: ha ancora ${utentiCollegati} utenti collegati. ` +
-        'Sposta o elimina prima gli utenti.',
-      409,
-      'SCUOLA_HAS_USERS'
-    );
+  if (!forza) {
+    const utentiCollegati = await Utente.count({ where: { scuola_id: scuolaId } });
+    if (utentiCollegati > 0) {
+      throw new AppError(
+        `Impossibile eliminare la scuola: ha ancora ${utentiCollegati} utenti collegati. ` +
+          'Sposta o elimina prima gli utenti, oppure usa l\'eliminazione definitiva.',
+        409,
+        'SCUOLA_HAS_USERS'
+      );
+    }
+
+    await scuola.destroy();
+    impostazioniService.invalida();
+    logger.info(`[SCUOLA] Eliminata scuola ${scuolaId}`);
+    return;
   }
 
-  await scuola.destroy();
+  // ── Eliminazione FORZATA (definitiva) ──
+  // 1. Binari su disco: iteriamo i metadati file_caricati della scuola e ne
+  //    rimuoviamo il binario (best-effort, qualunque sottocartella).
+  const file = await FileCaricato.findAll({
+    where: { scuola_id: scuolaId },
+    attributes: ['id', 'percorso', 'tipo', 'nome_originale'],
+  });
+  for (const f of file) {
+    await fileService.rimuoviBinario(f);
+  }
+  await rimuoviCartellaScuola(scuolaId);
+
+  // 2. Database: utenti (FK RESTRICT verso la scuola) poi la scuola (CASCADE).
+  await sequelize.transaction(async (t) => {
+    await Utente.destroy({ where: { scuola_id: scuolaId }, transaction: t });
+    await scuola.destroy({ transaction: t });
+  });
 
   impostazioniService.invalida();
-  logger.info(`[SCUOLA] Eliminata scuola ${scuolaId}`);
+  logger.warn(
+    `[SCUOLA] Eliminazione DEFINITIVA della scuola ${scuolaId} "${scuola.nome}": ` +
+      `${file.length} file rimossi dal disco e tutti i dati cancellati.`
+  );
 };
 
 // ─────────────────────────────────────────────
@@ -338,8 +574,10 @@ module.exports = {
   creaScuola,
   elencoScuole,
   dettaglioScuola,
+  quotaScuola,
   aggiornaScuola,
   aggiornaImpostazioni,
+  impostaStatoScuola,
   eliminaScuola,
   scuolaCorrente,
   impostazioniCorrenti,

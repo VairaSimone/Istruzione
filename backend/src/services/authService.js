@@ -13,6 +13,7 @@ const { hashToken } = require('../utils/tokenHash');
 const { VERSIONE_TERMINI } = require('../constants/legale');
 const logger = require('../utils/logger');
 const emailService = require('./emailService');
+const impostazioniService = require('./impostazioniService');
 
 /**
  * AuthService — responsabilità ESCLUSIVA: autenticazione e ciclo di vita
@@ -273,6 +274,11 @@ const loginUtente = async (email, password) => {
       'ACCOUNT_NOT_ACTIVE'
     );
   }
+
+  // Blocco della SCUOLA: se la scuola dell'utente è sospesa, il login è negato
+  // (nemmeno gli studenti possono entrare). Riservato ai non-admin: l'admin non
+  // appartiene ad alcuna scuola. Eseguito DOPO la verifica della password.
+  await impostazioniService.assicuraScuolaAccessibile(utente.scuola_id);
 
   const accessToken = generateAccessToken(utente);
   const refreshToken = generateRefreshToken(utente);

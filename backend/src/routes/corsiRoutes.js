@@ -9,6 +9,7 @@ const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
 const { richiediFunzionalita } = require('../middleware/funzionalita');
 const { csrfProtection } = require('../middleware/csrf');
 const { uploadVideo, uploadImmagine, uploadDocumento } = require('../middleware/upload');
+const { verificaQuotaStorage } = require('../middleware/quotaStorage');
 const validate = require('../middleware/validate');
 
 const {
@@ -156,6 +157,7 @@ router.post(
   authorizeRoles('insegnante', 'admin'),
   csrfProtection,
   uploadImmagine,
+  verificaQuotaStorage,
   validateUploadCopertina,
   validate,
   corsiController.impostaCopertina
@@ -204,6 +206,7 @@ router.post(
   authorizeRoles('insegnante', 'admin'),
   csrfProtection,
   uploadVideo,
+  verificaQuotaStorage,
   validateUploadVideo,
   validate,
   corsiController.impostaVideoCapitolo
@@ -234,6 +237,7 @@ router.post(
   authorizeRoles('insegnante', 'admin'),
   csrfProtection,
   uploadDocumento,
+  verificaQuotaStorage,
   validateUploadDocumento,
   validate,
   corsiController.aggiungiDocumentoFile

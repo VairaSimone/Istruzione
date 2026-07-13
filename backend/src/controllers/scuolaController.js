@@ -18,9 +18,29 @@ const scuolaService = require('../services/scuolaService');
 // POST /api/scuole  (admin)
 // ─────────────────────────────────────────────
 exports.creaScuola = catchAsync(async (req, res) => {
-  const { nome, slug, impostazioni, attiva, predefinita } = req.body;
+  const {
+    nome,
+    slug,
+    impostazioni,
+    attiva,
+    predefinita,
+    limiteStorageGb,
+    limiteUtenti,
+    limiteInsegnanti,
+    dominio,
+  } = req.body;
 
-  const scuola = await scuolaService.creaScuola({ nome, slug, impostazioni, attiva, predefinita });
+  const scuola = await scuolaService.creaScuola({
+    nome,
+    slug,
+    impostazioni,
+    attiva,
+    predefinita,
+    limiteStorageGb,
+    limiteUtenti,
+    limiteInsegnanti,
+    dominio,
+  });
 
   res.status(201).json({
     status: 'success',
@@ -72,6 +92,19 @@ exports.mieImpostazioni = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// GET /api/scuole/mia/quota  (insegnante | admin della propria scuola)
+// Occupazione vs limiti (storage/utenti/insegnanti) della PROPRIA scuola.
+// ─────────────────────────────────────────────
+exports.mieQuota = catchAsync(async (req, res) => {
+  const quota = await scuolaService.quotaScuola(req.user, req.user.scuola_id);
+
+  res.status(200).json({
+    status: 'success',
+    data: { quota },
+  });
+});
+
+// ─────────────────────────────────────────────
 // PATCH /api/scuole/mia/impostazioni  (insegnante | admin)
 // Merge per sezione sulle impostazioni della PROPRIA scuola.
 // ─────────────────────────────────────────────
@@ -100,10 +133,32 @@ exports.dettaglioScuola = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
+// GET /api/scuole/:id/quota  (admin)
+// Occupazione vs limiti di una scuola qualsiasi.
+// ─────────────────────────────────────────────
+exports.quotaScuola = catchAsync(async (req, res) => {
+  const quota = await scuolaService.quotaScuola(req.user, req.params.id);
+
+  res.status(200).json({
+    status: 'success',
+    data: { quota },
+  });
+});
+
+// ─────────────────────────────────────────────
 // PATCH /api/scuole/:id  (admin) — anagrafica e/o impostazioni (sostituzione)
 // ─────────────────────────────────────────────
 exports.aggiornaScuola = catchAsync(async (req, res) => {
-  const { nome, slug, impostazioni, attiva, predefinita } = req.body;
+  const {
+    nome,
+    slug,
+    impostazioni,
+    attiva,
+    predefinita,
+    limiteStorageGb,
+    limiteUtenti,
+    limiteInsegnanti,
+  } = req.body;
 
   const scuola = await scuolaService.aggiornaScuola(req.params.id, {
     nome,
@@ -111,6 +166,9 @@ exports.aggiornaScuola = catchAsync(async (req, res) => {
     impostazioni,
     attiva,
     predefinita,
+    limiteStorageGb,
+    limiteUtenti,
+    limiteInsegnanti,
   });
 
   res.status(200).json({
@@ -136,13 +194,47 @@ exports.aggiornaImpostazioni = catchAsync(async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// DELETE /api/scuole/:id  (admin)
+// POST /api/scuole/:id/blocca  (admin)
+// Sospende la scuola: nessun utente (nemmeno gli studenti) può più accedere.
+// I dati restano intatti. Reversibile con /sblocca.
 // ─────────────────────────────────────────────
-exports.eliminaScuola = catchAsync(async (req, res) => {
-  await scuolaService.eliminaScuola(req.params.id);
+exports.bloccaScuola = catchAsync(async (req, res) => {
+  const scuola = await scuolaService.impostaStatoScuola(req.params.id, false);
 
   res.status(200).json({
     status: 'success',
-    message: 'Scuola eliminata con successo.',
+    message: 'Scuola bloccata: gli accessi sono sospesi.',
+    data: { scuola },
+  });
+});
+
+// ─────────────────────────────────────────────
+// POST /api/scuole/:id/sblocca  (admin)
+// Riattiva una scuola precedentemente bloccata.
+// ─────────────────────────────────────────────
+exports.sbloccaScuola = catchAsync(async (req, res) => {
+  const scuola = await scuolaService.impostaStatoScuola(req.params.id, true);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Scuola sbloccata: gli accessi sono di nuovo consentiti.',
+    data: { scuola },
+  });
+});
+
+// ─────────────────────────────────────────────
+// DELETE /api/scuole/:id  (admin)
+// `?forza=true` elimina la scuola e TUTTI i suoi dati (irreversibile).
+// ─────────────────────────────────────────────
+exports.eliminaScuola = catchAsync(async (req, res) => {
+  const forza = req.query.forza === 'true' || req.query.forza === '1';
+
+  await scuolaService.eliminaScuola(req.params.id, { forza });
+
+  res.status(200).json({
+    status: 'success',
+    message: forza
+      ? 'Scuola e tutti i suoi dati eliminati definitivamente.'
+      : 'Scuola eliminata con successo.',
   });
 });

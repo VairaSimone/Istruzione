@@ -15,6 +15,7 @@ import ErrorState from '../components/shared/ErrorState';
 import SezioneImpostazioni from '../features/impostazioni/components/SezioneImpostazioni';
 import AnteprimaBranding from '../features/impostazioni/components/AnteprimaBranding';
 import DominiEditor from '../features/scuole/components/DominiEditor';
+import QuotaScuolaPanel from '../features/scuole/components/QuotaScuolaPanel';
 import CertificatoConfigPanel from '../features/certificati/components/CertificatoConfigPanel';
 import pageStyles from './UsersManagementPage.module.css';
 import styles from '../features/impostazioni/components/Impostazioni.module.css';
@@ -161,6 +162,9 @@ const schema = schemaQuery.data?.schema ?? null;
           />
         )}
       </div>
+
+      {/* Occupazione quota (sola lettura): spazio e posti usati vs limiti. */}
+      <QuotaScuolaPanel />
 
       {/* Domini personalizzati: risorsa a sé (non passa dal merge delle
           impostazioni), con il proprio salvataggio immediato. */}

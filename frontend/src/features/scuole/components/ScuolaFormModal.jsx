@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import {
   buildScuolaSchema,
   parseImpostazioni,
+  parseLimiteIntero,
+  parseLimiteStorage,
   slugificaAnteprima,
 } from '../../../validators/scuoleSchemas';
 import { useCreateScuola, useUpdateScuola } from '../../../hooks/useScuole';
@@ -16,9 +18,20 @@ import TextField from '../../../components/ui/TextField';
 import TextArea from '../../../components/ui/TextArea';
 import Button from '../../../components/ui/Button';
 import DominiEditor from './DominiEditor';
+import QuotaBars from './QuotaBars';
 import styles from './Scuole.module.css';
 
-const CAMPI = ['nome', 'slug', 'attiva', 'predefinita', 'impostazioniText'];
+const CAMPI = [
+  'nome',
+  'slug',
+  'attiva',
+  'predefinita',
+  'limiteStorageGb',
+  'limiteUtenti',
+  'limiteInsegnanti',
+  'dominio',
+  'impostazioniText',
+];
 
 /**
  * Modal per creare (scuola = null) o modificare una scuola. Riservato all'admin.
@@ -58,11 +71,17 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
 
   useEffect(() => {
     if (!isOpen) return;
+    const limiti = scuola?.limiti ?? {};
+    const numToStr = (v) => (v === null || v === undefined ? '' : String(v));
     reset({
       nome: scuola?.nome ?? '',
       slug: scuola?.slug ?? '',
       attiva: scuola?.attiva ?? true,
       predefinita: scuola?.predefinita ?? false,
+      limiteStorageGb: numToStr(limiti.storageGb),
+      limiteUtenti: numToStr(limiti.utenti),
+      limiteInsegnanti: numToStr(limiti.insegnanti),
+      dominio: '',
       impostazioniText:
         scuola?.impostazioni && Object.keys(scuola.impostazioni).length > 0
           ? JSON.stringify(scuola.impostazioni, null, 2)
@@ -87,6 +106,10 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
       attiva: Boolean(values.attiva),
       predefinita: Boolean(values.predefinita),
       ...(values.slug ? { slug: values.slug } : {}),
+      // Limiti quota: null = illimitato. Inviati sempre così l'azzeramento è esplicito.
+      limiteStorageGb: parseLimiteStorage(values.limiteStorageGb),
+      limiteUtenti: parseLimiteIntero(values.limiteUtenti),
+      limiteInsegnanti: parseLimiteIntero(values.limiteInsegnanti),
     };
 
     try {
@@ -101,6 +124,8 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
       } else {
         await createScuola.mutateAsync({
           ...comune,
+          // Il dominio si assegna solo in creazione (in modifica si usa l'editor domini).
+          ...(values.dominio ? { dominio: values.dominio } : {}),
           ...(impostazioni !== undefined ? { impostazioni } : {}),
         });
         toast.success(t('scuole.toast.created'));
@@ -179,6 +204,60 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
             <span className={styles.checkboxHint}>{t('scuole.form.predefinitaHint')}</span>
           </span>
         </label>
+
+        {/* ── Limiti (quota) — impostati dall'admin. Vuoto = illimitato. ── */}
+        <h3 className={styles.sectionTitle}>{t('scuole.form.limitiTitolo')}</h3>
+        <p className={styles.panelText}>{t('scuole.form.limitiHint')}</p>
+
+        <TextField
+          label={t('scuole.form.limiteStorageGb')}
+          type="text"
+          inputMode="decimal"
+          placeholder={t('scuole.form.illimitatoPlaceholder')}
+          hint={t('scuole.form.limiteStorageHint')}
+          error={errors.limiteStorageGb?.message}
+          {...register('limiteStorageGb')}
+        />
+
+        <TextField
+          label={t('scuole.form.limiteUtenti')}
+          type="text"
+          inputMode="numeric"
+          placeholder={t('scuole.form.illimitatoPlaceholder')}
+          hint={t('scuole.form.limiteUtentiHint')}
+          error={errors.limiteUtenti?.message}
+          {...register('limiteUtenti')}
+        />
+
+        <TextField
+          label={t('scuole.form.limiteInsegnanti')}
+          type="text"
+          inputMode="numeric"
+          placeholder={t('scuole.form.illimitatoPlaceholder')}
+          hint={t('scuole.form.limiteInsegnantiHint')}
+          error={errors.limiteInsegnanti?.message}
+          {...register('limiteInsegnanti')}
+        />
+
+        {/* Occupazione attuale (solo in modifica: serve una scuola già esistente). */}
+        {isEdit && scuola?.quota && (
+          <div className={styles.dominiArea}>
+            <QuotaBars quota={scuola.quota} />
+          </div>
+        )}
+
+        {/* Dominio personalizzato: assegnabile solo in CREAZIONE. In modifica si
+            usa l'editor dei domini più in basso (che consente anche la verifica). */}
+        {!isEdit && (
+          <TextField
+            label={t('scuole.form.dominio')}
+            type="text"
+            placeholder="liceo-manzoni.it"
+            hint={t('scuole.form.dominioHint')}
+            error={errors.dominio?.message}
+            {...register('dominio')}
+          />
+        )}
 
         <div className={styles.jsonArea}>
           <TextArea

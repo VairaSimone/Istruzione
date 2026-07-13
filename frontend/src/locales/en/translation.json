@@ -1357,7 +1357,11 @@
       "auleCount": "{{count}} classrooms",
       "deleteBlocked": "The school has linked users and cannot be deleted.",
       "predefinita": "Default",
-      "sospesa": "Suspended"
+      "sospesa": "Suspended",
+      "utentiQuota": "{{usati}} / {{limite}} users",
+      "insegnantiQuota": "{{usati}} / {{limite}} teachers",
+      "storageQuota": "{{usato}} / {{limite}} GB",
+      "storageIllimitato": "{{usato}} GB"
     },
     "form": {
       "createTitle": "New school",
@@ -1372,16 +1376,34 @@
       "attiva": "Active school",
       "attivaHint": "A suspended school is unreachable for its users.",
       "predefinita": "Default school",
-      "predefinitaHint": "Served when no school is specified. Only one may hold this flag."
+      "predefinitaHint": "Served when no school is specified. Only one may hold this flag.",
+      "limitiTitolo": "Limits (quota)",
+      "limitiHint": "Set by the administrator. Leave a field empty for no limit (unlimited).",
+      "limiteStorageGb": "Storage space (GB)",
+      "limiteStorageHint": "Maximum space for uploaded files (videos, images, documents). Empty = unlimited.",
+      "limiteUtenti": "Maximum number of users",
+      "limiteUtentiHint": "Total students and teachers. Empty = unlimited.",
+      "limiteInsegnanti": "Maximum number of teachers",
+      "limiteInsegnantiHint": "Sub-limit on the number of teachers. Empty = unlimited.",
+      "illimitatoPlaceholder": "Unlimited",
+      "dominio": "Custom domain",
+      "dominioHint": "Can be assigned only at creation; it is created already verified. Empty = use the platform default domain. Later it is managed from the \"Domains\" box."
     },
     "toast": {
       "created": "School created successfully.",
       "updated": "School updated successfully.",
-      "deleted": "School deleted successfully."
+      "deleted": "School deleted successfully.",
+      "blocked": "School blocked.",
+      "unblocked": "School unblocked."
     },
     "delete": {
       "title": "Delete school",
-      "description": "Do you want to delete the school \"{{nome}}\"? This action cannot be undone."
+      "description": "Do you want to delete the school \"{{nome}}\"? This action cannot be undone.",
+      "forcedTitle": "Permanently delete the school",
+      "forcedConfirm": "Delete everything",
+      "forcedWarning": "This deletes \"{{nome}}\" and ALL its data — users, courses, videos, images, assignments, messages, quizzes and certificates. It is irreversible.",
+      "typeNameLabel": "To confirm, type the school name: {{nome}}",
+      "doneForced": "School and all data permanently deleted."
     },
     "select": {
       "label": "School",
@@ -1394,11 +1416,32 @@
       "impostazioniObject": "Settings must be a JSON object (key/value pairs)",
       "impostazioniMax": "Settings exceed the maximum allowed size",
       "slugLength": "The slug must be between 2 and 80 characters",
-      "slugFormato": "The slug may only contain lowercase letters, digits and hyphens"
+      "slugFormato": "The slug may only contain lowercase letters, digits and hyphens",
+      "limiteIntero": "Enter a whole number greater than or equal to 0, or leave empty",
+      "limiteNumero": "Enter a number greater than or equal to 0, or leave empty",
+      "dominioFormato": "Invalid domain (e.g. liceo-manzoni.it)"
     },
     "switcher": {
       "label": "School",
       "placeholder": "Choose your school"
+    },
+    "quota": {
+      "title": "School usage",
+      "hint": "Space and seats used against the limits assigned by the administrator.",
+      "storage": "Storage space",
+      "utenti": "Users",
+      "insegnanti": "Teachers",
+      "illimitato": "Unlimited",
+      "valoreGb": "{{usato}} / {{limite}} GB",
+      "valoreConteggio": "{{usato}} / {{limite}}"
+    },
+    "actions": {
+      "blocca": "Block",
+      "sblocca": "Unblock"
+    },
+    "blocca": {
+      "title": "Block the school?",
+      "description": "Blocking \"{{nome}}\" prevents every user — students included — from accessing it. Data stays intact and you can unblock it at any time."
     }
   },
   "upload": {

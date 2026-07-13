@@ -301,6 +301,30 @@ const funzionalitaAttiva = async (scuolaId, chiave) => {
 };
 
 /**
+ * Verifica che la scuola dell'utente sia ACCESSIBILE (esiste ed è attiva).
+ * Usata al login e a ogni richiesta autenticata: se la scuola è stata SOSPESA
+ * (contratto scaduto, blocco amministrativo), nessun utente — nemmeno gli
+ * studenti — può accedere, finché un admin non la riattiva. L'admin
+ * (`scuolaId` null) è trasversale e passa sempre.
+ *
+ * @throws {AppError} 403 SCUOLA_SOSPESA | SCUOLA_NOT_FOUND
+ */
+const assicuraScuolaAccessibile = async (scuolaId) => {
+  if (!scuolaId) return; // admin: nessun tenant
+  const scuola = await perId(scuolaId);
+  if (!scuola) {
+    throw new AppError('La scuola associata al tuo account non esiste più.', 403, 'SCUOLA_NOT_FOUND');
+  }
+  if (!scuola.attiva) {
+    throw new AppError(
+      'La tua scuola è stata sospesa. Contatta l\'amministratore della piattaforma.',
+      403,
+      'SCUOLA_SOSPESA'
+    );
+  }
+};
+
+/**
  * Vocabolario didattico della scuola (`classiDisponibili`, `livelliDisponibili`,
  * `materieDisponibili`). Un array VUOTO significa «nessun vincolo»: il campo
  * corrispondente è a testo libero.
@@ -366,6 +390,7 @@ module.exports = {
   brandingPubblico,
   funzionalita,
   funzionalitaAttiva,
+  assicuraScuolaAccessibile,
   vocabolarioScuola,
   impostazioneDidattica,
   assicuraNelVocabolario,

@@ -34,6 +34,8 @@ export const queryKeys = Object.freeze({
     detail: (id) => ['scuole', 'detail', id],
     mia: ['scuole', 'mia'],
     mieImpostazioni: ['scuole', 'mia', 'impostazioni'],
+    miaQuota: ['scuole', 'mia', 'quota'],
+    quota: (id) => ['scuole', 'quota', id ?? 'mia'],
     // Domini personalizzati della scuola (propria o, per l'admin, indicata).
     domini: (scuolaId) => ['scuole', 'domini', scuolaId ?? 'mia'],
   },

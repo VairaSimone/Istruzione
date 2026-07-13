@@ -13,6 +13,27 @@ const {
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SLUG_MAX = 80;
 
+// 1 GiB in byte. Le quote di storage si esprimono in GB verso l'esterno (più
+// leggibili per l'admin) ma si PERSISTONO in byte, così il confronto con la
+// somma di `file_caricati.dimensione_byte` è esatto e senza arrotondamenti.
+const BYTE_PER_GB = 1024 * 1024 * 1024;
+
+/** GB → byte. `null`/vuoto/non numerico ⇒ null (nessun limite). */
+const gbABytes = (gb) => {
+  if (gb === null || gb === undefined || gb === '') return null;
+  const n = Number(gb);
+  if (!Number.isFinite(n) || n < 0) return null;
+  return Math.round(n * BYTE_PER_GB);
+};
+
+/** byte → GB (numero, per la vista). `null` resta `null`. */
+const bytesAGb = (byte) => {
+  if (byte === null || byte === undefined) return null;
+  const n = Number(byte);
+  if (!Number.isFinite(n)) return null;
+  return n / BYTE_PER_GB;
+};
+
 /**
  * Genera uno slug a partire da un nome libero. Diacritici rimossi, spazi e
  * punteggiatura convertiti in trattini. Se il risultato è vuoto restituisce
@@ -83,6 +104,23 @@ class Scuola extends Model {
       attiva: this.attiva,
       predefinita: this.predefinita,
       impostazioni: applicaDefault(this.impostazioni, this.nome),
+      // Quote impostate dall'admin. `null` = illimitato. Lo storage è esposto sia
+      // in byte (per i calcoli) sia in GB (per la UI).
+      limiti: {
+        storageByte:
+          this.limite_storage_byte === null || this.limite_storage_byte === undefined
+            ? null
+            : Number(this.limite_storage_byte),
+        storageGb: bytesAGb(this.limite_storage_byte),
+        utenti:
+          this.limite_utenti === null || this.limite_utenti === undefined
+            ? null
+            : Number(this.limite_utenti),
+        insegnanti:
+          this.limite_insegnanti === null || this.limite_insegnanti === undefined
+            ? null
+            : Number(this.limite_insegnanti),
+      },
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
@@ -166,6 +204,38 @@ Scuola.init(
       allowNull: false,
       defaultValue: {},
     },
+
+    // ── QUOTE (impostate dall'admin; NULL = illimitato) ──
+    // Spazio massimo occupabile dai file caricati (video/immagini/documenti),
+    // in byte. Confrontato con SUM(file_caricati.dimensione_byte) per la scuola.
+    limite_storage_byte: {
+      type: DataTypes.BIGINT.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: { args: [0], msg: 'Il limite di storage non può essere negativo' },
+      },
+    },
+
+    // Numero massimo di utenti (studenti + insegnanti) della scuola.
+    limite_utenti: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: { args: [0], msg: 'Il limite utenti non può essere negativo' },
+      },
+    },
+
+    // Sotto-limite: numero massimo di insegnanti della scuola.
+    limite_insegnanti: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: { args: [0], msg: 'Il limite insegnanti non può essere negativo' },
+      },
+    },
   },
   {
     sequelize,
@@ -188,5 +258,8 @@ Scuola.init(
 Scuola.SLUG_REGEX = SLUG_REGEX;
 Scuola.SLUG_MAX = SLUG_MAX;
 Scuola.slugifica = slugifica;
+Scuola.BYTE_PER_GB = BYTE_PER_GB;
+Scuola.gbABytes = gbABytes;
+Scuola.bytesAGb = bytesAGb;
 
 module.exports = Scuola;

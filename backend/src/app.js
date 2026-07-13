@@ -10,6 +10,7 @@ const { globalLimiter } = require('./middleware/rateLimiter');
 const AppError = require('./utils/AppError');
 const configRoutes = require('./routes/configRoutes');
 const contattiRoutes = require('./routes/contattiRoutes');
+const internoRoutes = require('./routes/internoRoutes');
 const impostazioniService = require('./services/impostazioniService');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -154,11 +155,14 @@ app.get('/api/health', (req, res) => {
 // interroga al bootstrap, prima del login, per personalizzarsi. Nessun dato
 // riservato: la vista è filtrata dallo schema delle impostazioni.
 app.use('/api/config', configRoutes);
-
 // Form di contatto/iscrizione della HOMEPAGE pubblica. L'invio (POST) è
 // pubblico: la scuola destinataria è risolta dal dominio o da `?scuola=`. La
 // gestione dei lead è riservata allo staff (autenticata).
 app.use('/api/contatti', contattiRoutes);
+
+// Endpoint di servizio (Caddy on-demand TLS): autorizza l'emissione del
+// certificato solo per i domini scuola verificati e attivi. Pubblico.
+app.use('/api/interno', internoRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', userRoutes);

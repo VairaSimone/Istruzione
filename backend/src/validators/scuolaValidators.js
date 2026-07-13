@@ -2,6 +2,7 @@
 
 const { body, param, query } = require('express-validator');
 const Scuola = require('../models/Scuola');
+const { normalizzaDominio } = require('../utils/dominio');
 const { normalizzaImpostazioni } = require('../constants/impostazioniScuola');
 
 /**
@@ -65,6 +66,52 @@ const validateScuolaIdParam = [
   param('id').isUUID(4).withMessage("L'identificativo della scuola non è valido"),
 ];
 
+// ── Regole per le QUOTE (tutte facoltative; null/'' ⇒ illimitato) ──
+
+// Limite di storage in GB: numero >= 0, con un tetto ragionevole (1 PB).
+const limiteStorageRule = () =>
+  body('limiteStorageGb')
+    .optional({ nullable: true })
+    .custom((v) => {
+      if (v === null || v === '') return true;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n < 0) {
+        throw new Error('Il limite di storage (GB) deve essere un numero maggiore o uguale a 0');
+      }
+      if (n > 1024 * 1024) {
+        throw new Error('Il limite di storage (GB) è troppo elevato');
+      }
+      return true;
+    });
+
+// Limite intero non negativo (utenti / insegnanti).
+const limiteInteroRule = (campo, etichetta) => () =>
+  body(campo)
+    .optional({ nullable: true })
+    .custom((v) => {
+      if (v === null || v === '') return true;
+      const n = Number(v);
+      if (!Number.isInteger(n) || n < 0) {
+        throw new Error(`${etichetta} deve essere un numero intero maggiore o uguale a 0`);
+      }
+      return true;
+    });
+
+const limiteUtentiRule = limiteInteroRule('limiteUtenti', 'Il limite utenti');
+const limiteInsegnantiRule = limiteInteroRule('limiteInsegnanti', 'Il limite insegnanti');
+
+// Dominio personalizzato in fase di creazione (facoltativo).
+const dominioRule = () =>
+  body('dominio')
+    .optional({ nullable: true })
+    .custom((v) => {
+      if (v === null || v === '') return true;
+      if (!normalizzaDominio(v)) {
+        throw new Error('Il dominio non è valido (es. liceo-manzoni.it)');
+      }
+      return true;
+    });
+
 const validateCreaScuola = [
   nomeScuolaRule(true),
   slugRule(),
@@ -74,6 +121,10 @@ const validateCreaScuola = [
     .isBoolean()
     .withMessage('Il campo predefinita deve essere booleano')
     .toBoolean(),
+  limiteStorageRule(),
+  limiteUtentiRule(),
+  limiteInsegnantiRule(),
+  dominioRule(),
   impostazioniRule('impostazioni', false),
 ];
 
@@ -87,9 +138,21 @@ const validateAggiornaScuola = [
     .isBoolean()
     .withMessage('Il campo predefinita deve essere booleano')
     .toBoolean(),
+  limiteStorageRule(),
+  limiteUtentiRule(),
+  limiteInsegnantiRule(),
   impostazioniRule('impostazioni', false),
   body().custom((value) => {
-    const campi = ['nome', 'slug', 'impostazioni', 'attiva', 'predefinita'];
+    const campi = [
+      'nome',
+      'slug',
+      'impostazioni',
+      'attiva',
+      'predefinita',
+      'limiteStorageGb',
+      'limiteUtenti',
+      'limiteInsegnanti',
+    ];
     if (!value || campi.every((c) => value[c] === undefined)) {
       throw new Error(`Specificare almeno un campo tra: ${campi.join(', ')}`);
     }

@@ -36,12 +36,40 @@ export const useMiaScuola = () => {
   });
 };
 
+/**
+ * Occupazione quota della PROPRIA scuola (insegnante/admin di scuola).
+ * Storage/utenti/insegnanti: usato vs limite. Refresh più frequente perché
+ * cambia con gli upload e i nuovi inviti.
+ */
+export const useMiaQuota = () => {
+  const canManage = useAuthStore(selectCanManage);
+  return useQuery({
+    queryKey: queryKeys.scuole.miaQuota,
+    queryFn: scuoleService.getMiaQuota,
+    enabled: canManage,
+    staleTime: 30 * 1000,
+  });
+};
+
+/** Occupazione quota di una scuola indicata (solo admin). */
+export const useQuotaScuola = (id) => {
+  const isAdmin = useAuthStore(selectIsAdmin);
+  return useQuery({
+    queryKey: queryKeys.scuole.quota(id),
+    queryFn: () => scuoleService.getQuotaScuola(id),
+    enabled: isAdmin && Boolean(id),
+    staleTime: 30 * 1000,
+  });
+};
+
 const useInvalidateScuole = () => {
   const queryClient = useQueryClient();
   return (id) => {
     queryClient.invalidateQueries({ queryKey: queryKeys.scuole.all });
     if (id) queryClient.invalidateQueries({ queryKey: queryKeys.scuole.detail(id) });
     queryClient.invalidateQueries({ queryKey: queryKeys.scuole.mia });
+    queryClient.invalidateQueries({ queryKey: queryKeys.scuole.miaQuota });
+    if (id) queryClient.invalidateQueries({ queryKey: queryKeys.scuole.quota(id) });
   };
 };
 
@@ -72,7 +100,24 @@ export const useUpdateImpostazioni = () => {
 export const useDeleteScuola = () => {
   const invalidate = useInvalidateScuole();
   return useMutation({
-    mutationFn: scuoleService.deleteScuola,
+    // Accetta `{ id, forza }`: con `forza` elimina anche tutti i dati della scuola.
+    mutationFn: ({ id, forza = false }) => scuoleService.deleteScuola(id, { forza }),
     onSuccess: () => invalidate(),
+  });
+};
+
+export const useBloccaScuola = () => {
+  const invalidate = useInvalidateScuole();
+  return useMutation({
+    mutationFn: scuoleService.bloccaScuola,
+    onSuccess: (_data, id) => invalidate(id),
+  });
+};
+
+export const useSbloccaScuola = () => {
+  const invalidate = useInvalidateScuole();
+  return useMutation({
+    mutationFn: scuoleService.sbloccaScuola,
+    onSuccess: (_data, id) => invalidate(id),
   });
 };

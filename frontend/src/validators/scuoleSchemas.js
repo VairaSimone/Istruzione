@@ -17,6 +17,42 @@ const DIMENSIONE_MAX_IMPOSTAZIONI = 40000; // coerente col backend (~40KB)
 // Slug: minuscole, cifre e trattini singoli, senza trattini ai bordi.
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+// Dominio: almeno due etichette (deve esserci un punto), minuscole/cifre/trattini.
+const DOMINIO_REGEX = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/**
+ * Campo testuale per un limite INTERO non negativo (utenti/insegnanti). Vuoto ⇒
+ * nessun limite. Resta stringa; la conversione a numero/null avviene nel form.
+ */
+const limiteInteroSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v ?? '')
+    .refine((v) => v === '' || /^\d+$/.test(v), t('scuole.validation.limiteIntero'));
+
+/** Campo testuale per un limite DECIMALE non negativo (GB). Vuoto ⇒ nessun limite. */
+const limiteDecimaleSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v ?? '')
+    .refine(
+      (v) => v === '' || (/^\d+([.,]\d+)?$/.test(v) && parseFloat(v.replace(',', '.')) >= 0),
+      t('scuole.validation.limiteNumero')
+    );
+
+/** Dominio personalizzato facoltativo (solo in creazione). Vuoto ⇒ dominio di default. */
+const dominioSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v ?? '')
+    .refine((v) => v === '' || DOMINIO_REGEX.test(v.toLowerCase()), t('scuole.validation.dominioFormato'));
+
 /**
  * Campo testuale che deve contenere un oggetto JSON valido (o essere vuoto).
  * Dopo il parse espone l'oggetto in `impostazioni` (o undefined se vuoto).
@@ -81,8 +117,26 @@ export const buildScuolaSchema = (t) =>
     slug: slugSchema(t),
     attiva: z.boolean().optional(),
     predefinita: z.boolean().optional(),
+    limiteStorageGb: limiteDecimaleSchema(t),
+    limiteUtenti: limiteInteroSchema(t),
+    limiteInsegnanti: limiteInteroSchema(t),
+    dominio: dominioSchema(t),
     impostazioniText: impostazioniTextSchema(t),
   });
+
+/** Converte un campo-limite testuale nel valore da inviare: '' ⇒ null (illimitato). */
+export const parseLimiteIntero = (v) => {
+  if (v === undefined || v === null || String(v).trim() === '') return null;
+  const n = parseInt(String(v), 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+};
+
+/** Converte il limite di storage testuale (GB, con virgola o punto) in numero|null. */
+export const parseLimiteStorage = (v) => {
+  if (v === undefined || v === null || String(v).trim() === '') return null;
+  const n = parseFloat(String(v).replace(',', '.'));
+  return Number.isFinite(n) && n >= 0 ? n : null;
+};
 
 /**
  * Converte il testo del campo impostazioni nell'oggetto da inviare al backend.
