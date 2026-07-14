@@ -48,7 +48,9 @@
         "nuovoCompito": "Nuovi compiti assegnati ({{count}})",
         "scadenzaCompito": "Compiti in scadenza ({{count}})",
         "feedbackCompito": "Nuovi feedback ricevuti ({{count}})",
-        "certificatoRilasciato": "Nuovi certificati ricevuti ({{count}})"
+        "certificatoRilasciato": "Nuovi certificati ricevuti ({{count}})",
+        "iscrizionePagamento": "Iscrizioni completate ({{count}})",
+        "nuovoPagamento": "Nuove iscrizioni a pagamento ({{count}})"
       }
     },
     "contatto": {

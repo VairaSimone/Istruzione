@@ -37,6 +37,7 @@ require('../models/AttivitaGiornaliera');
 require('../models/NotificaEmail');
 require('../models/EventoCalendario');
 require('../models/EventoDestinatario');
+require('../models/Pagamento');
 
 /**
  * Runner delle migrazioni versionate basato su Umzug.

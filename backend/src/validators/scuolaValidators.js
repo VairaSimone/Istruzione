@@ -100,6 +100,20 @@ const limiteInteroRule = (campo, etichetta) => () =>
 const limiteUtentiRule = limiteInteroRule('limiteUtenti', 'Il limite utenti');
 const limiteInsegnantiRule = limiteInteroRule('limiteInsegnanti', 'Il limite insegnanti');
 
+// Commissione della piattaforma (percentuale, decisa dall'admin): numero in
+// [0, 100] con al più 2 decimali, oppure null/'' (nessuna commissione).
+const commissionePiattaformaRule = () =>
+  body('commissionePiattaformaPercentuale')
+    .optional({ nullable: true })
+    .custom((v) => {
+      if (v === null || v === '') return true;
+      const n = Number(v);
+      if (!Number.isFinite(n) || n < 0 || n > 100) {
+        throw new Error('La commissione deve essere una percentuale tra 0 e 100');
+      }
+      return true;
+    });
+
 // Dominio personalizzato in fase di creazione (facoltativo).
 const dominioRule = () =>
   body('dominio')
@@ -141,6 +155,7 @@ const validateAggiornaScuola = [
   limiteStorageRule(),
   limiteUtentiRule(),
   limiteInsegnantiRule(),
+  commissionePiattaformaRule(),
   impostazioniRule('impostazioni', false),
   body().custom((value) => {
     const campi = [
@@ -152,6 +167,7 @@ const validateAggiornaScuola = [
       'limiteStorageGb',
       'limiteUtenti',
       'limiteInsegnanti',
+      'commissionePiattaformaPercentuale',
     ];
     if (!value || campi.every((c) => value[c] === undefined)) {
       throw new Error(`Specificare almeno un campo tra: ${campi.join(', ')}`);

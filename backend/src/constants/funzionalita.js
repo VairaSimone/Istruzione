@@ -116,6 +116,14 @@ const FUNZIONALITA = [
       'Canvas per l’esercizio dei tratti. Rilevante solo per le materie con scrittura guidata (es. sistemi di scrittura non latini).',
     defaultAbilitata: false,
   },
+  {
+    chiave: 'pagamenti',
+    nome: 'Pagamenti e iscrizioni a pagamento',
+    descrizione:
+      'Consente alla scuola di riscuotere le iscrizioni ai corsi tramite Stripe: catalogo con prezzi personalizzati, checkout online e iscrizione automatica all’aula a pagamento avvenuto. Se disattivata, le iscrizioni si gestiscono fuori piattaforma.',
+    defaultAbilitata: false,
+    dipendeDa: ['corsi', 'aule'],
+  },
 ];
 
 /** Mappa chiave → descrittore, per lookup O(1). */

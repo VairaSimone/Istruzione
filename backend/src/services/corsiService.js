@@ -14,6 +14,7 @@ const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
 const impostazioniService = require('./impostazioniService');
 const { assicuraStessaScuola, risolviScuolaCreazione } = require('../utils/tenant');
+const denaro = require('../utils/denaro');
 const logger = require('../utils/logger');
 
 /**
@@ -68,6 +69,58 @@ const assicuraGestioneCorso = (corso, richiedente) => {
     corso.scuola_id,
     'Questo corso non appartiene alla tua scuola.'
   );
+};
+
+// ─────────────────────────────────────────────
+// VENDITA / ISCRIZIONE A PAGAMENTO — helper condivisi crea/aggiorna
+// ─────────────────────────────────────────────
+
+/**
+ * Risolve e valida l'aula di destinazione dell'iscrizione a pagamento:
+ *   - `undefined` → non modificare (l'aggiornamento non tocca il campo);
+ *   - `null`/'' → nessuna aula (SET NULL);
+ *   - UUID → l'aula deve esistere e appartenere alla STESSA scuola del corso.
+ *
+ * @returns {undefined|null|string} valore da assegnare (o undefined = invariato)
+ */
+const risolviAulaDestinazione = async (aulaDestinazioneId, scuolaId, transaction) => {
+  if (aulaDestinazioneId === undefined) return undefined;
+  if (aulaDestinazioneId === null || aulaDestinazioneId === '') return null;
+  const aula = await Classe.findByPk(aulaDestinazioneId, { transaction });
+  if (!aula) {
+    throw new AppError("L'aula di destinazione non esiste.", 404, 'AULA_NOT_FOUND');
+  }
+  if (String(aula.scuola_id) !== String(scuolaId)) {
+    throw new AppError(
+      "L'aula di destinazione deve appartenere alla stessa scuola del corso.",
+      422,
+      'AULA_CROSS_SCUOLA'
+    );
+  }
+  return aula.id;
+};
+
+/**
+ * Coerenza del listino: un corso `acquistabile` deve avere un prezzo E un'aula
+ * di destinazione, altrimenti non è vendibile. Lanciata dopo aver applicato i
+ * campi, sui valori risultanti.
+ */
+const assicuraVenditaCoerente = ({ acquistabile, prezzoCentesimi, aulaDestinazioneId }) => {
+  if (!acquistabile) return;
+  if (prezzoCentesimi == null) {
+    throw new AppError(
+      'Per rendere un corso acquistabile devi impostarne il prezzo.',
+      422,
+      'PREZZO_MANCANTE'
+    );
+  }
+  if (!aulaDestinazioneId) {
+    throw new AppError(
+      "Per rendere un corso acquistabile devi indicare l'aula di destinazione dell'iscrizione.",
+      422,
+      'AULA_DESTINAZIONE_MANCANTE'
+    );
+  }
 };
 
 /**
@@ -350,7 +403,22 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
     'La materia del corso'
   );
 
+  // Campi di vendita (facoltativi). Il prezzo è in centesimi; la valuta è
+  // normalizzata a maiuscolo con default EUR. L'aula di destinazione, se
+  // indicata, deve appartenere alla stessa scuola del corso.
+  const acquistabile = dati.acquistabile === undefined ? false : Boolean(dati.acquistabile);
+  const prezzoCentesimi = denaro.aCentesimi(dati.prezzoCentesimi);
+  const valuta = (dati.valuta ? String(dati.valuta) : 'EUR').toUpperCase().slice(0, 3);
+  const descrizioneVendita = dati.descrizioneVendita ?? null;
+
   const corso = await sequelize.transaction(async (t) => {
+    const aulaDestinazioneId = await risolviAulaDestinazione(dati.aulaDestinazioneId, scuolaId, t);
+    assicuraVenditaCoerente({
+      acquistabile,
+      prezzoCentesimi,
+      aulaDestinazioneId: aulaDestinazioneId ?? null,
+    });
+
     const nuovo = await Corso.create(
       {
         titolo: dati.titolo.trim(),
@@ -360,6 +428,11 @@ const creaCorso = async ({ dati, capitoli, richiedente }) => {
         livello: livelloNorm,
         stato: dati.stato ?? 'bozza',
         video_scaricabile: dati.videoScaricabile ?? false,
+        acquistabile,
+        prezzo_centesimi: prezzoCentesimi,
+        valuta,
+        descrizione_vendita: descrizioneVendita,
+        aula_destinazione_id: aulaDestinazioneId ?? null,
         scuola_id: scuolaId,
         creato_da: richiedente.id,
       },
@@ -551,6 +624,25 @@ const aggiornaCorso = async ({ corsoId, dati, richiedente }) => {
   }
   if (dati.stato !== undefined) corso.stato = dati.stato;
   if (dati.videoScaricabile !== undefined) corso.video_scaricabile = dati.videoScaricabile;
+
+  // ── Campi di vendita ──
+  if (dati.acquistabile !== undefined) corso.acquistabile = Boolean(dati.acquistabile);
+  if (dati.prezzoCentesimi !== undefined) corso.prezzo_centesimi = denaro.aCentesimi(dati.prezzoCentesimi);
+  if (dati.valuta !== undefined && dati.valuta !== null) {
+    corso.valuta = String(dati.valuta).toUpperCase().slice(0, 3);
+  }
+  if (dati.descrizioneVendita !== undefined) corso.descrizione_vendita = dati.descrizioneVendita;
+  if (dati.aulaDestinazioneId !== undefined) {
+    const aulaId = await risolviAulaDestinazione(dati.aulaDestinazioneId, corso.scuola_id);
+    corso.aula_destinazione_id = aulaId ?? null;
+  }
+
+  // Coerenza finale del listino sui valori risultanti.
+  assicuraVenditaCoerente({
+    acquistabile: corso.acquistabile,
+    prezzoCentesimi: corso.prezzo_centesimi == null ? null : Number(corso.prezzo_centesimi),
+    aulaDestinazioneId: corso.aula_destinazione_id,
+  });
 
   await corso.save();
   logger.info(`[CORSO] Aggiornato corso ${corsoId} da utente ${richiedente.id}`);

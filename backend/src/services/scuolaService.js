@@ -11,6 +11,7 @@ const FileCaricato = require('../models/FileCaricato');
 const DominioScuola = require('../models/DominioScuola');
 const AppError = require('../utils/AppError');
 const { escapeLike } = require('../utils/escapeLike');
+const denaro = require('../utils/denaro');
 const { normalizzaDominio } = require('../utils/dominio');
 const logger = require('../utils/logger');
 const impostazioniService = require('./impostazioniService');
@@ -382,7 +383,7 @@ const quotaScuola = async (richiedente, scuolaId) => {
 // ─────────────────────────────────────────────
 const aggiornaScuola = async (
   scuolaId,
-  { nome, slug, impostazioni, attiva, predefinita, limiteStorageGb, limiteUtenti, limiteInsegnanti }
+  { nome, slug, impostazioni, attiva, predefinita, limiteStorageGb, limiteUtenti, limiteInsegnanti, commissionePiattaformaPercentuale }
 ) => {
   const scuola = await caricaScuola(scuolaId);
 
@@ -411,6 +412,15 @@ const aggiornaScuola = async (
   if (limiteStorageGb !== undefined) scuola.limite_storage_byte = Scuola.gbABytes(limiteStorageGb);
   if (limiteUtenti !== undefined) scuola.limite_utenti = intONull(limiteUtenti);
   if (limiteInsegnanti !== undefined) scuola.limite_insegnanti = intONull(limiteInsegnanti);
+
+  // Commissione della piattaforma (application fee), decisa dall'ADMIN. `null`/
+  // vuoto ⇒ nessuna commissione (0%). Colonna dedicata, fuori dalla portata
+  // dello staff.
+  if (commissionePiattaformaPercentuale !== undefined) {
+    scuola.commissione_piattaforma_percentuale = denaro.aPercentuale(
+      commissionePiattaformaPercentuale
+    );
+  }
 
   await sequelize.transaction(async (t) => {
     await scuola.save({ transaction: t });

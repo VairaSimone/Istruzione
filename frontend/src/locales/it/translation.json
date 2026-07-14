@@ -64,7 +64,9 @@
     "impostazioniScuola": "Impostazioni scuola",
     "certificati": "Certificati",
     "certificatiStudente": "I miei certificati",
-    "contatti": "Richieste"
+    "contatti": "Richieste",
+    "catalogo": "Catalogo",
+    "pagamenti": "Pagamenti"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."
@@ -1678,6 +1680,10 @@
     "praticaScrittura": {
       "nome": "Pratica di scrittura",
       "descrizione": "Ordine dei tratti e canvas di scrittura guidata. Utile solo per le materie con scrittura a mano."
+    },
+    "pagamenti": {
+      "nome": "Pagamenti",
+      "descrizione": "Iscrizioni ai corsi a pagamento tramite Stripe: catalogo con prezzi, checkout online e iscrizione automatica all'aula. Richiede i corsi e le aule."
     }
   },
   "impostazioni": {
@@ -2210,5 +2216,82 @@
   },
   "avviso": {
     "aria": "Avviso della scuola"
+  },
+  "pagamenti": {
+    "stati": {
+      "in_attesa": "In attesa",
+      "completato": "Completato",
+      "fallito": "Fallito",
+      "annullato": "Annullato",
+      "rimborsato": "Rimborsato"
+    },
+    "catalogo": {
+      "title": "Catalogo corsi",
+      "subtitle": "Scegli un corso, paga online e verrai iscritto automaticamente.",
+      "empty": "Al momento non ci sono corsi acquistabili.",
+      "nonOperativo": "La tua scuola non ha ancora attivato i pagamenti online.",
+      "loadError": "Impossibile caricare il catalogo. Riprova.",
+      "acquista": "Acquista",
+      "giaIscritto": "Già iscritto",
+      "giaAcquistato": "Già acquistato",
+      "aulaDestinazione": "Iscrizione all'aula: {{aula}}"
+    },
+    "esito": {
+      "successoTitolo": "Pagamento ricevuto",
+      "annullatoTitolo": "Pagamento annullato",
+      "successoTesto": "Stiamo confermando l'iscrizione: tra pochi istanti troverai il corso tra i tuoi. Riceverai una notifica di conferma.",
+      "annullatoTesto": "Il pagamento non è stato completato. Non è stato addebitato nulla: puoi riprovare quando vuoi.",
+      "tornaCatalogo": "Torna al catalogo",
+      "vaiAiCorsi": "Vai ai miei corsi"
+    },
+    "config": {
+      "title": "Pagamenti",
+      "subtitle": "Configura gli incassi delle iscrizioni ai corsi.",
+      "loadError": "Impossibile caricare la configurazione. Riprova.",
+      "piattaformaNonConfigurata": "I pagamenti non sono configurati su questa piattaforma. Contatta l'amministratore.",
+      "onboardingTitolo": "Account Stripe",
+      "onboardingTesto": "Collega un account Stripe per ricevere i pagamenti. La verifica avviene sul sito di Stripe.",
+      "statoAccount": "Stato account",
+      "accountAttivo": "Pronto a incassare",
+      "accountNonAttivo": "Da completare",
+      "collegaStripe": "Collega Stripe",
+      "riprendiOnboarding": "Riprendi configurazione",
+      "sincronizza": "Aggiorna stato",
+      "statoAggiornato": "Stato aggiornato.",
+      "salvato": "Configurazione salvata.",
+      "usoTitolo": "Incasso online",
+      "usaStripe": "Usa Stripe per le iscrizioni",
+      "usaStripeHint": "Se disattivato, gestisci le iscrizioni fuori piattaforma.",
+      "statoOperativo": "Stato",
+      "operativo": "Operativo",
+      "nonOperativo": "Non operativo",
+      "commissione": "Commissione della piattaforma: {{perc}}%",
+      "incassiTitolo": "Incassi",
+      "incassiVuoti": "Nessun incasso ancora.",
+      "colCorso": "Corso",
+      "colImporto": "Importo",
+      "colStato": "Stato",
+      "colData": "Data"
+    },
+    "form": {
+      "sezioneTitolo": "Vendita / iscrizione a pagamento",
+      "acquistabile": "Metti in vendita questo corso",
+      "acquistabileHint": "Comparirà nel catalogo con prezzo e descrizione.",
+      "prezzo": "Prezzo",
+      "valuta": "Valuta",
+      "aulaDestinazione": "Aula di destinazione",
+      "aulaDestinazioneHint": "L'acquirente verrà iscritto qui a pagamento avvenuto.",
+      "aulaPlaceholder": "Seleziona un'aula…",
+      "descrizioneVendita": "Descrizione di vendita",
+      "descrizioneVenditaHint": "Testo commerciale mostrato nel catalogo (facoltativo).",
+      "descrizioneVenditaMax": "La descrizione di vendita è troppo lunga (max 5000 caratteri).",
+      "prezzoInvalido": "Inserisci un prezzo valido (es. 49,90).",
+      "prezzoRichiesto": "Imposta il prezzo per mettere in vendita il corso.",
+      "aulaInvalida": "L'aula selezionata non è valida.",
+      "aulaRichiesta": "Scegli l'aula di destinazione.",
+      "commissione": "Commissione piattaforma (%)",
+      "commissioneHint": "Percentuale trattenuta dalla piattaforma su ogni incasso. Vuoto = 0%.",
+      "commissioneInvalida": "Inserisci una percentuale tra 0 e 100."
+    }
   }
 }

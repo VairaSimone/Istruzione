@@ -48,7 +48,9 @@
         "nuovoCompito": "New assignments ({{count}})",
         "scadenzaCompito": "Assignments due soon ({{count}})",
         "feedbackCompito": "New feedback received ({{count}})",
-        "certificatoRilasciato": "New certificates received ({{count}})"
+        "certificatoRilasciato": "New certificates received ({{count}})",
+        "iscrizionePagamento": "Completed enrolments ({{count}})",
+        "nuovoPagamento": "New paid enrolments ({{count}})"
       }
     },
     "contatto": {

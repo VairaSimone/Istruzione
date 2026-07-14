@@ -46,6 +46,9 @@ export const CorsiStudentePage = lazy(() => import('../pages/CorsiStudentePage')
 export const CorsoStudenteDetailPage = lazy(() =>
   import('../pages/CorsoStudenteDetailPage')
 );
+export const CatalogoPage = lazy(() => import('../pages/CatalogoPage'));
+export const PagamentoEsitoPage = lazy(() => import('../pages/PagamentoEsitoPage'));
+export const ScuolaPagamentiPage = lazy(() => import('../pages/ScuolaPagamentiPage'));
 export const TeacherDashboardPage = lazy(() => import('../pages/TeacherDashboardPage'));
 export const MessaggiPage = lazy(() => import('../pages/MessaggiPage'));
 export const MessaggioDetailPage = lazy(() => import('../pages/MessaggioDetailPage'));

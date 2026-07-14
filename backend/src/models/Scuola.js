@@ -93,6 +93,21 @@ class Scuola extends Model {
   }
 
   /**
+   * True se la scuola è OPERATIVA per l'incasso via Stripe: ha attivato i
+   * pagamenti (`pagamenti_stripe_attivi`), ha collegato un account Connect e ne
+   * ha completato l'onboarding. È la condizione fail-closed usata dai service
+   * prima di creare un checkout: mancando anche uno solo di questi requisiti, la
+   * scuola resta nella modalità "iscrizioni gestite fuori piattaforma".
+   */
+  pagamentiOperativi() {
+    return Boolean(
+      this.pagamenti_stripe_attivi &&
+        this.stripe_onboarding_completato &&
+        this.stripe_account_id
+    );
+  }
+
+  /**
    * Dati per lo STAFF e per il frontend autenticato: impostazioni COMPLETE,
    * con i default applicati a ogni chiave mancante.
    */
@@ -120,6 +135,21 @@ class Scuola extends Model {
           this.limite_insegnanti === null || this.limite_insegnanti === undefined
             ? null
             : Number(this.limite_insegnanti),
+      },
+      // Configurazione pagamenti (Stripe). `commissionePiattaformaPercentuale` è
+      // impostata dall'ADMIN (colonna dedicata, fuori dalla portata dello staff);
+      // gli altri campi descrivono lo stato dell'incasso del tenant. La chiave
+      // segreta e i dati bancari NON transitano mai da qui: vivono su Stripe.
+      pagamenti: {
+        stripeAttivi: Boolean(this.pagamenti_stripe_attivi),
+        stripeAccountId: this.stripe_account_id || null,
+        onboardingCompletato: Boolean(this.stripe_onboarding_completato),
+        operativi: this.pagamentiOperativi(),
+        commissionePiattaformaPercentuale:
+          this.commissione_piattaforma_percentuale === null ||
+          this.commissione_piattaforma_percentuale === undefined
+            ? null
+            : Number(this.commissione_piattaforma_percentuale),
       },
       created_at: this.created_at,
       updated_at: this.updated_at,
@@ -234,6 +264,51 @@ Scuola.init(
       defaultValue: null,
       validate: {
         min: { args: [0], msg: 'Il limite insegnanti non può essere negativo' },
+      },
+    },
+
+    // ── PAGAMENTI (Stripe Connect) ──
+    // Interruttore, scelto dalla SCUOLA, per riscuotere le iscrizioni ai corsi
+    // tramite Stripe. Default false = "iscrizioni gestite fuori piattaforma"
+    // (fail-closed). Colonna dedicata (non blob JSON) perché è un flag operativo
+    // che deve restare autorevole e indicizzabile.
+    pagamenti_stripe_attivi: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'pagamenti_stripe_attivi',
+    },
+
+    // Account Stripe Connect della scuola (acct_...), collegato con l'onboarding.
+    // È dove confluiscono gli incassi. Valorizzato dal service, mai a mano.
+    stripe_account_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      defaultValue: null,
+      field: 'stripe_account_id',
+    },
+
+    // True quando l'onboarding Connect è concluso e l'account può incassare
+    // (charges_enabled). Finché è false, i checkout sono rifiutati (fail-closed).
+    stripe_onboarding_completato: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'stripe_onboarding_completato',
+    },
+
+    // Percentuale che la PIATTAFORMA trattiene su ogni incasso della scuola,
+    // DECISA DALL'ADMIN per ogni scuola (application_fee). Colonna dedicata come
+    // le quote: mettere questo valore nel blob `impostazioni` significherebbe
+    // lasciare che una scuola si abbassi da sé la commissione. NULL = 0%.
+    commissione_piattaforma_percentuale: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      defaultValue: null,
+      field: 'commissione_piattaforma_percentuale',
+      validate: {
+        min: { args: [0], msg: 'La commissione non può essere negativa' },
+        max: { args: [100], msg: 'La commissione non può superare il 100%' },
       },
     },
   },

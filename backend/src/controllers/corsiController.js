@@ -24,6 +24,7 @@ exports.creaCorso = catchAsync(async (req, res) => {
   const {
     titolo, descrizione, copertinaUrl, materia, livello, livelloJLPT,
     stato, videoScaricabile, scuolaId, capitoli,
+    acquistabile, prezzoCentesimi, valuta, descrizioneVendita, aulaDestinazioneId,
   } = req.body;
 
   const corso = await corsiService.creaCorso({
@@ -36,6 +37,11 @@ exports.creaCorso = catchAsync(async (req, res) => {
       stato,
       videoScaricabile,
       scuolaId,
+      acquistabile,
+      prezzoCentesimi,
+      valuta,
+      descrizioneVendita,
+      aulaDestinazioneId,
     },
     capitoli,
     richiedente: req.user,
@@ -82,6 +88,7 @@ exports.dettaglioCorso = catchAsync(async (req, res) => {
 exports.aggiornaCorso = catchAsync(async (req, res) => {
   const {
     titolo, descrizione, copertinaUrl, materia, livello, livelloJLPT, stato, videoScaricabile,
+    acquistabile, prezzoCentesimi, valuta, descrizioneVendita, aulaDestinazioneId,
   } = req.body;
 
   const corso = await corsiService.aggiornaCorso({
@@ -94,6 +101,11 @@ exports.aggiornaCorso = catchAsync(async (req, res) => {
       livello: livello !== undefined ? livello : livelloJLPT,
       stato,
       videoScaricabile,
+      acquistabile,
+      prezzoCentesimi,
+      valuta,
+      descrizioneVendita,
+      aulaDestinazioneId,
     },
     richiedente: req.user,
   });

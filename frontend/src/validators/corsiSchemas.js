@@ -63,40 +63,84 @@ const scaricabileOverride = () => z.enum(['eredita', 'si', 'no']).optional();
  */
 export const PADRE_NESSUNO = 'nessuno';
 
+// Valute supportate per il prezzo (allineate a backend/src/config/stripe.js).
+export const VALUTE_SUPPORTATE = ['EUR', 'USD', 'GBP', 'CHF'];
+
+// Prezzo in euro (decimale, con virgola o punto) opzionale: '' → undefined.
+const prezzoEuroSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v === '' || v === undefined ? undefined : v))
+    .refine(
+      (v) => v === undefined || /^\d+([.,]\d{1,2})?$/.test(v),
+      t('pagamenti.form.prezzoInvalido')
+    );
+
 export const buildCorsoSchema = (t, { requireScuola = false } = {}) =>
-  z.object({
-    titolo: z
-      .string()
-      .trim()
-      .min(2, t('corsi.validation.titoloLength'))
-      .max(160, t('corsi.validation.titoloLength')),
-    descrizione: optionalTrimmed().pipe(
-      z.string().max(10000, t('corsi.validation.descrizioneMax')).optional()
-    ),
-    copertinaUrl: optionalHttpUrl(t),
-    materia: optionalTrimmed().pipe(
-      z.string().max(MATERIA_MAX, t('corsi.validation.materiaMax')).optional()
-    ),
-    livello: optionalTrimmed().pipe(
-      z.string().max(LIVELLO_MAX, t('corsi.validation.livelloMax')).optional()
-    ),
-    stato: z.enum(STATI_CORSO, { message: t('corsi.validation.stato') }),
-    videoScaricabile: z.boolean().optional(),
-    // Scuola del corso: obbligatoria solo quando compila un admin (in creazione).
-    // Per l'insegnante è la propria scuola, gestita dal backend.
-    scuolaId: requireScuola
-      ? z
-          .string()
-          .trim()
-          .min(1, t('validation.scuolaRequired'))
-          .uuid(t('validation.scuolaInvalid'))
-      : z
-          .string()
-          .trim()
-          .uuid(t('validation.scuolaInvalid'))
-          .optional()
-          .or(z.literal('')),
-  });
+  z
+    .object({
+      titolo: z
+        .string()
+        .trim()
+        .min(2, t('corsi.validation.titoloLength'))
+        .max(160, t('corsi.validation.titoloLength')),
+      descrizione: optionalTrimmed().pipe(
+        z.string().max(10000, t('corsi.validation.descrizioneMax')).optional()
+      ),
+      copertinaUrl: optionalHttpUrl(t),
+      materia: optionalTrimmed().pipe(
+        z.string().max(MATERIA_MAX, t('corsi.validation.materiaMax')).optional()
+      ),
+      livello: optionalTrimmed().pipe(
+        z.string().max(LIVELLO_MAX, t('corsi.validation.livelloMax')).optional()
+      ),
+      stato: z.enum(STATI_CORSO, { message: t('corsi.validation.stato') }),
+      videoScaricabile: z.boolean().optional(),
+      // ── Vendita / iscrizione a pagamento (facoltativa) ──
+      acquistabile: z.boolean().optional(),
+      prezzoEuro: prezzoEuroSchema(t),
+      valuta: z.enum(VALUTE_SUPPORTATE).optional(),
+      descrizioneVendita: optionalTrimmed().pipe(
+        z.string().max(5000, t('pagamenti.form.descrizioneVenditaMax')).optional()
+      ),
+      aulaDestinazioneId: optionalTrimmed().pipe(
+        z.string().uuid(t('pagamenti.form.aulaInvalida')).optional()
+      ),
+      // Scuola del corso: obbligatoria solo quando compila un admin (in creazione).
+      // Per l'insegnante è la propria scuola, gestita dal backend.
+      scuolaId: requireScuola
+        ? z
+            .string()
+            .trim()
+            .min(1, t('validation.scuolaRequired'))
+            .uuid(t('validation.scuolaInvalid'))
+        : z
+            .string()
+            .trim()
+            .uuid(t('validation.scuolaInvalid'))
+            .optional()
+            .or(z.literal('')),
+    })
+    .superRefine((val, ctx) => {
+      // Coerenza del listino: un corso acquistabile deve avere prezzo e aula.
+      if (!val.acquistabile) return;
+      if (!val.prezzoEuro) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['prezzoEuro'],
+          message: t('pagamenti.form.prezzoRichiesto'),
+        });
+      }
+      if (!val.aulaDestinazioneId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['aulaDestinazioneId'],
+          message: t('pagamenti.form.aulaRichiesta'),
+        });
+      }
+    });
 
 export const buildCapitoloSchema = (t) =>
   z.object({

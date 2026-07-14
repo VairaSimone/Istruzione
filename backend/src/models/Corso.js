@@ -3,6 +3,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 const Utente = require('./Utente');
+const { aDecimale } = require('../utils/denaro');
 
 // Livello e materia del corso sono STRINGHE LIBERE, non ENUM: la piattaforma è
 // generica e ogni scuola usa la propria scala ("A1", "Base", "Terzo anno") e le
@@ -67,6 +68,20 @@ class Corso extends Model {
       livello: this.livello,
       stato: this.stato,
       videoScaricabile: this.video_scaricabile,
+      // ── Vendita / iscrizione a pagamento ──
+      // `acquistabile` + prezzo espongono il corso nel catalogo pagamenti della
+      // scuola. `descrizioneVendita` è il testo commerciale (distinto dalla
+      // descrizione didattica). `aulaDestinazioneId` è l'aula in cui l'acquirente
+      // viene iscritto automaticamente a pagamento avvenuto.
+      acquistabile: this.acquistabile,
+      prezzoCentesimi:
+        this.prezzo_centesimi === null || this.prezzo_centesimi === undefined
+          ? null
+          : Number(this.prezzo_centesimi),
+      prezzo: aDecimale(this.prezzo_centesimi),
+      valuta: this.valuta,
+      descrizioneVendita: this.descrizione_vendita,
+      aulaDestinazioneId: this.aula_destinazione_id,
       scuolaId: this.scuola_id,
       creatoDa: this.creato_da,
       created_at: this.created_at,
@@ -163,6 +178,57 @@ Corso.init(
       field: 'video_scaricabile',
     },
 
+    // ── VENDITA / ISCRIZIONE A PAGAMENTO ──
+    // True se il corso è messo in vendita nel catalogo pagamenti della scuola.
+    // Default false: nessun corso è acquistabile finché la scuola non lo decide.
+    // I prezzi e le descrizioni sono già PER-SCUOLA perché il corso appartiene a
+    // una sola scuola (`scuola_id`), quindi ogni tenant ha il proprio listino.
+    acquistabile: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+
+    // Prezzo del corso in CENTESIMI (intero). NULL = prezzo non impostato: un
+    // corso senza prezzo non è acquistabile anche se `acquistabile` è true (la
+    // validazione lo garantisce nel service).
+    prezzo_centesimi: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      defaultValue: null,
+      field: 'prezzo_centesimi',
+      validate: {
+        min: { args: [0], msg: 'Il prezzo non può essere negativo' },
+      },
+    },
+
+    // Valuta ISO-4217 del prezzo (es. "EUR"). Maiuscola.
+    valuta: {
+      type: DataTypes.STRING(3),
+      allowNull: false,
+      defaultValue: 'EUR',
+    },
+
+    // Descrizione COMMERCIALE mostrata nel catalogo (distinta da `descrizione`,
+    // che è quella didattica). Personalizzabile per scuola. Facoltativa.
+    descrizione_vendita: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+      field: 'descrizione_vendita',
+    },
+
+    // Aula (Classe) in cui l'acquirente viene iscritto automaticamente come
+    // studente a pagamento avvenuto. Deve appartenere alla stessa scuola del
+    // corso (vincolo applicato nel service). SET NULL se l'aula viene eliminata:
+    // in tal caso il corso non è più acquistabile finché non se ne indica un'altra.
+    aula_destinazione_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      defaultValue: null,
+      field: 'aula_destinazione_id',
+    },
+
     // Scuola (tenant) del corso: timbrata alla creazione dalla scuola dell'autore.
     // Null solo per i corsi creati da un admin (trasversale). Nullable a livello
     // DB solo per compatibilità con eventuali record legacy: l'applicazione la
@@ -199,6 +265,9 @@ Corso.init(
       { fields: ['livello'], name: 'corsi_livello' },
       { fields: ['materia'], name: 'corsi_materia' },
       { fields: ['copertina_file_id'], name: 'corsi_copertina_file_id' },
+      // Corsi in vendita di una scuola (catalogo pagamenti).
+      { fields: ['acquistabile'], name: 'corsi_acquistabile' },
+      { fields: ['aula_destinazione_id'], name: 'corsi_aula_destinazione_id' },
     ],
   }
 );
@@ -216,6 +285,16 @@ const FileCaricato = require('./FileCaricato');
 Corso.belongsTo(FileCaricato, {
   as: 'copertinaFile',
   foreignKey: 'copertina_file_id',
+  onDelete: 'SET NULL',
+});
+
+// Aula di destinazione dell'iscrizione a pagamento. SET NULL: eliminare l'aula
+// non elimina il corso (che però non sarà più acquistabile finché non se ne
+// indica un'altra). Richiesto qui in fondo per non introdurre cicli di require.
+const Classe = require('./Classe');
+Corso.belongsTo(Classe, {
+  as: 'aulaDestinazione',
+  foreignKey: 'aula_destinazione_id',
   onDelete: 'SET NULL',
 });
 

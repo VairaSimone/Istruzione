@@ -8,6 +8,7 @@ import {
   parseImpostazioni,
   parseLimiteIntero,
   parseLimiteStorage,
+  parsePercentuale,
   slugificaAnteprima,
 } from '../../../validators/scuoleSchemas';
 import { useCreateScuola, useUpdateScuola } from '../../../hooks/useScuole';
@@ -29,6 +30,7 @@ const CAMPI = [
   'limiteStorageGb',
   'limiteUtenti',
   'limiteInsegnanti',
+  'commissionePiattaformaPercentuale',
   'dominio',
   'impostazioniText',
 ];
@@ -81,6 +83,10 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
       limiteStorageGb: numToStr(limiti.storageGb),
       limiteUtenti: numToStr(limiti.utenti),
       limiteInsegnanti: numToStr(limiti.insegnanti),
+      commissionePiattaformaPercentuale:
+        scuola?.pagamenti?.commissionePiattaformaPercentuale != null
+          ? String(scuola.pagamenti.commissionePiattaformaPercentuale)
+          : '',
       dominio: '',
       impostazioniText:
         scuola?.impostazioni && Object.keys(scuola.impostazioni).length > 0
@@ -110,6 +116,9 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
       limiteStorageGb: parseLimiteStorage(values.limiteStorageGb),
       limiteUtenti: parseLimiteIntero(values.limiteUtenti),
       limiteInsegnanti: parseLimiteIntero(values.limiteInsegnanti),
+      commissionePiattaformaPercentuale: parsePercentuale(
+        values.commissionePiattaformaPercentuale
+      ),
     };
 
     try {
@@ -237,6 +246,16 @@ const ScuolaFormModal = ({ isOpen, onClose, scuola = null }) => {
           hint={t('scuole.form.limiteInsegnantiHint')}
           error={errors.limiteInsegnanti?.message}
           {...register('limiteInsegnanti')}
+        />
+
+        <TextField
+          label={t('pagamenti.form.commissione')}
+          type="text"
+          inputMode="decimal"
+          placeholder="0"
+          hint={t('pagamenti.form.commissioneHint')}
+          error={errors.commissionePiattaformaPercentuale?.message}
+          {...register('commissionePiattaformaPercentuale')}
         />
 
         {/* Occupazione attuale (solo in modifica: serve una scuola già esistente). */}

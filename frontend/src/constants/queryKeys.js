@@ -118,4 +118,14 @@ export const queryKeys = Object.freeze({
     detail: (id) => ['certificati', 'detail', id],
     verifica: (codice) => ['certificati', 'verifica', codice],
   },
+  // Iscrizioni a pagamento (Stripe). Catalogo/acquisti dello studente e
+  // configurazione/incassi dello staff. La config dipende dalla scuola (per
+  // l'admin è quella indicata, per lo staff la propria).
+  pagamenti: {
+    all: ['pagamenti'],
+    catalogo: ['pagamenti', 'catalogo'],
+    miei: ['pagamenti', 'miei'],
+    config: (scuolaId) => ['pagamenti', 'config', scuolaId ?? 'mia'],
+    scuola: (filters) => ['pagamenti', 'scuola', filters ?? {}],
+  },
 });

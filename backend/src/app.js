@@ -25,10 +25,25 @@ const messaggiRoutes = require('./routes/messaggiRoutes');
 const corsiRoutes = require('./routes/corsiRoutes');
 const calendarioRoutes = require('./routes/calendarioRoutes');
 const certificatoRoutes = require('./routes/certificatoRoutes');
+const pagamentiRoutes = require('./routes/pagamentiRoutes');
+const pagamentiController = require('./controllers/pagamentiController');
 const { passport } = require('./config/passport');
 const cookieParser = require('cookie-parser');
 const piattaforma = require('./config/piattaforma');
 const app = express();
+
+// ─────────────────────────────────────────────
+// WEBHOOK STRIPE (corpo GREZZO) — PRIMA di tutto
+// ─────────────────────────────────────────────
+// La verifica della firma dei webhook Stripe richiede il corpo RAW, non parsato:
+// va quindi registrato PRIMA di express.json (che lo trasformerebbe in oggetto),
+// di CORS (è una chiamata server-to-server senza Origin) e del CSRF (non è una
+// richiesta del browser). `express.raw` popola `req.body` come Buffer.
+app.post(
+  '/api/pagamenti/webhook',
+  express.raw({ type: 'application/json' }),
+  pagamentiController.webhook
+);
 
 // ─────────────────────────────────────────────
 // SICUREZZA: Helmet
@@ -182,6 +197,7 @@ app.use('/api/messaggi', messaggiRoutes);
 app.use('/api/corsi', corsiRoutes);
 app.use('/api/calendario', calendarioRoutes);
 app.use('/api/certificati', certificatoRoutes);
+app.use('/api/pagamenti', pagamentiRoutes);
 
 // ─────────────────────────────────────────────
 // GESTIONE ROUTE NON TROVATE (404)

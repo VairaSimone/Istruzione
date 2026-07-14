@@ -79,6 +79,22 @@ const TIPI_NOTIFICA = [
     ordine: 50,
     defaultAttiva: true,
   },
+  {
+    // Recapitata all'ACQUIRENTE: conferma dell'iscrizione dopo il pagamento.
+    chiave: 'iscrizione_pagamento',
+    categoria: 'pagamenti',
+    i18nSezione: 'iscrizionePagamento',
+    ordine: 60,
+    defaultAttiva: true,
+  },
+  {
+    // Recapitata allo STAFF della scuola: nuova iscrizione pagata a un corso.
+    chiave: 'nuovo_pagamento',
+    categoria: 'pagamenti',
+    i18nSezione: 'nuovoPagamento',
+    ordine: 70,
+    defaultAttiva: true,
+  },
 ];
 
 // Indice per lookup O(1) sul `tipo`.

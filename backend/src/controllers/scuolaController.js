@@ -158,6 +158,7 @@ exports.aggiornaScuola = catchAsync(async (req, res) => {
     limiteStorageGb,
     limiteUtenti,
     limiteInsegnanti,
+    commissionePiattaformaPercentuale,
   } = req.body;
 
   const scuola = await scuolaService.aggiornaScuola(req.params.id, {
@@ -169,6 +170,7 @@ exports.aggiornaScuola = catchAsync(async (req, res) => {
     limiteStorageGb,
     limiteUtenti,
     limiteInsegnanti,
+    commissionePiattaformaPercentuale,
   });
 
   res.status(200).json({

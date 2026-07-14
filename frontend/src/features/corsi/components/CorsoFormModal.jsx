@@ -1,10 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { buildCorsoSchema } from '../../../validators/corsiSchemas';
+import { buildCorsoSchema, VALUTE_SUPPORTATE } from '../../../validators/corsiSchemas';
 import { useCreateCorso, useUpdateCorso } from '../../../hooks/useCorsi';
+import { useAuleList } from '../../../hooks/useAule';
+import { useFunzionalitaAttiva } from '../../../hooks/useConfig';
+import { FUNZIONALITA } from '../../../constants/funzionalita';
 import { useAuthStore, selectIsAdmin } from '../../../store/authStore';
 import { getApiErrorMessage } from '../../../utils/getApiErrorMessage';
 import { parseApiError } from '../../../utils/parseApiError';
@@ -17,6 +20,7 @@ import VocabolarioField from '../../../components/ui/VocabolarioField';
 import Button from '../../../components/ui/Button';
 import ScuolaSelect from '../../scuole/components/ScuolaSelect';
 import styles from './Corsi.module.css';
+import pagamentiStyles from '../../pagamenti/components/Pagamenti.module.css';
 
 const CAMPI = [
   'titolo',
@@ -26,6 +30,11 @@ const CAMPI = [
   'livello',
   'stato',
   'scuolaId',
+  'acquistabile',
+  'prezzoEuro',
+  'valuta',
+  'descrizioneVendita',
+  'aulaDestinazioneId',
 ];
 
 /**
@@ -53,9 +62,16 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
     register,
     handleSubmit,
     reset,
+    control,
     setError,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
+
+  // Sezione vendita: disponibile solo se la scuola ha attivo il modulo pagamenti.
+  const pagamentiAttivo = useFunzionalitaAttiva(FUNZIONALITA.PAGAMENTI);
+  const { data: auleData } = useAuleList();
+  const aule = auleData?.aule ?? [];
+  const acquistabile = useWatch({ control, name: 'acquistabile' });
 
   useEffect(() => {
     if (!isOpen) return;
@@ -69,6 +85,15 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
       stato: corso?.stato ?? 'bozza',
       videoScaricabile: corso?.videoScaricabile ?? false,
       scuolaId: corso?.scuolaId ?? '',
+      acquistabile: corso?.acquistabile ?? false,
+      // Prezzo mostrato in euro (il backend lavora in centesimi).
+      prezzoEuro:
+        corso?.prezzoCentesimi != null
+          ? (corso.prezzoCentesimi / 100).toFixed(2)
+          : '',
+      valuta: corso?.valuta ?? 'EUR',
+      descrizioneVendita: corso?.descrizioneVendita ?? '',
+      aulaDestinazioneId: corso?.aulaDestinazioneId ?? '',
     });
   }, [isOpen, corso, reset]);
 
@@ -82,6 +107,18 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
       stato: values.stato,
       videoScaricabile: Boolean(values.videoScaricabile),
     };
+
+    // Campi di vendita: inviati solo se il modulo pagamenti è attivo. Il prezzo
+    // in euro è convertito in centesimi (intero) per il backend.
+    if (pagamentiAttivo) {
+      payload.acquistabile = Boolean(values.acquistabile);
+      payload.prezzoCentesimi = values.prezzoEuro
+        ? Math.round(parseFloat(String(values.prezzoEuro).replace(',', '.')) * 100)
+        : null;
+      payload.valuta = values.valuta || 'EUR';
+      payload.descrizioneVendita = values.descrizioneVendita ?? null;
+      payload.aulaDestinazioneId = values.aulaDestinazioneId || null;
+    }
 
     try {
       if (isEdit) {
@@ -97,7 +134,9 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
       const parsed = parseApiError(err);
       if (parsed.fieldErrors) {
         Object.entries(parsed.fieldErrors).forEach(([field, message]) => {
-          if (CAMPI.includes(field)) setError(field, { type: 'server', message });
+          // Il backend valida `prezzoCentesimi`; nel form il campo è `prezzoEuro`.
+          const campo = field === 'prezzoCentesimi' ? 'prezzoEuro' : field;
+          if (CAMPI.includes(campo)) setError(campo, { type: 'server', message });
         });
       }
       toast.error(getApiErrorMessage(t, err));
@@ -200,6 +239,74 @@ const CorsoFormModal = ({ isOpen, onClose, corso = null }) => {
             </span>
           </span>
         </label>
+
+        {pagamentiAttivo && (
+          <div className={pagamentiStyles.venditaSection}>
+            <h3 className={pagamentiStyles.venditaTitle}>
+              {t('pagamenti.form.sezioneTitolo')}
+            </h3>
+
+            <label className={styles.checkboxField}>
+              <input type="checkbox" {...register('acquistabile')} />
+              <span className={styles.checkboxLabel}>
+                <span className={styles.checkboxTitle}>
+                  {t('pagamenti.form.acquistabile')}
+                </span>
+                <span className={styles.checkboxHint}>
+                  {t('pagamenti.form.acquistabileHint')}
+                </span>
+              </span>
+            </label>
+
+            <div className={styles.formRow}>
+              <TextField
+                label={t('pagamenti.form.prezzo')}
+                type="text"
+                inputMode="decimal"
+                placeholder="0,00"
+                disabled={!acquistabile}
+                error={errors.prezzoEuro?.message}
+                {...register('prezzoEuro')}
+              />
+              <Select
+                label={t('pagamenti.form.valuta')}
+                disabled={!acquistabile}
+                error={errors.valuta?.message}
+                {...register('valuta')}
+              >
+                {VALUTE_SUPPORTATE.map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <Select
+              label={t('pagamenti.form.aulaDestinazione')}
+              hint={t('pagamenti.form.aulaDestinazioneHint')}
+              disabled={!acquistabile}
+              error={errors.aulaDestinazioneId?.message}
+              {...register('aulaDestinazioneId')}
+            >
+              <option value="">{t('pagamenti.form.aulaPlaceholder')}</option>
+              {aule.map((aula) => (
+                <option key={aula.id} value={aula.id}>
+                  {aula.nome}
+                </option>
+              ))}
+            </Select>
+
+            <TextArea
+              label={t('pagamenti.form.descrizioneVendita')}
+              hint={t('pagamenti.form.descrizioneVenditaHint')}
+              rows={3}
+              disabled={!acquistabile}
+              error={errors.descrizioneVendita?.message}
+              {...register('descrizioneVendita')}
+            />
+          </div>
+        )}
       </form>
     </Modal>
   );

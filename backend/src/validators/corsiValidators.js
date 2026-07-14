@@ -34,6 +34,9 @@ const materiaRule = (chain) =>
 const STATI_CORSO = Corso.STATI_CORSO;
 const URL_MAX = Corso.URL_MAX;
 
+// Valute ammesse per il prezzo di un corso (allineate a config/stripe.js).
+const { VALUTE_SUPPORTATE } = require('../config/stripe');
+
 // Opzioni comuni per la validazione degli URL: solo http/https, protocollo
 // obbligatorio (nessun file binario: solo riferimenti a risorse esterne).
 const OPZIONI_URL = { protocols: ['http', 'https'], require_protocol: true };
@@ -109,6 +112,38 @@ const campiOpzionaliCorso = [
     .isBoolean()
     .withMessage('Il campo videoScaricabile deve essere un booleano')
     .toBoolean(),
+
+  // ── Vendita / iscrizione a pagamento ──
+  body('acquistabile')
+    .optional()
+    .isBoolean()
+    .withMessage('Il campo acquistabile deve essere un booleano')
+    .toBoolean(),
+
+  body('prezzoCentesimi')
+    .optional({ nullable: true })
+    .isInt({ min: 0, max: 100000000 })
+    .withMessage('Il prezzo (in centesimi) deve essere un intero non negativo')
+    .toInt(),
+
+  body('valuta')
+    .optional({ nullable: true })
+    .trim()
+    .customSanitizer((v) => (typeof v === 'string' ? v.toUpperCase() : v))
+    .isIn(VALUTE_SUPPORTATE)
+    .withMessage(`La valuta deve essere una tra: ${VALUTE_SUPPORTATE.join(', ')}`),
+
+  body('descrizioneVendita')
+    .optional({ nullable: true })
+    .isString()
+    .withMessage('La descrizione di vendita deve essere una stringa')
+    .isLength({ max: 5000 })
+    .withMessage('La descrizione di vendita non può superare i 5000 caratteri'),
+
+  body('aulaDestinazioneId')
+    .optional({ nullable: true })
+    .isUUID(4)
+    .withMessage("L'identificativo dell'aula di destinazione non è valido"),
 ];
 
 // Validazione di una singola voce capitolo inline (creazione corso).

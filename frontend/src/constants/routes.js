@@ -30,6 +30,10 @@ export const ROUTES = Object.freeze({
   CORSO_DETAIL: '/corsi/:id',
   CORSI_STUDENTE: '/i-miei-corsi',
   CORSO_STUDENTE_DETAIL: '/i-miei-corsi/:id',
+  // Iscrizioni a pagamento (Stripe)
+  CATALOGO: '/catalogo',
+  PAGAMENTO_ESITO: '/pagamenti/esito',
+  SCUOLA_PAGAMENTI: '/gestione/pagamenti',
   TEACHER_DASHBOARD: '/statistiche',
   MESSAGGI: '/messaggi',
   MESSAGGIO_DETAIL: '/messaggi/:id',

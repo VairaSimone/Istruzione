@@ -64,7 +64,9 @@
     "impostazioniScuola": "School settings",
     "certificati": "Certificates",
     "certificatiStudente": "My certificates",
-    "contatti": "Requests"
+    "contatti": "Requests",
+    "catalogo": "Catalog",
+    "pagamenti": "Payments"
   },
   "header": {
     "logoutSuccess": "Logged out successfully."
@@ -1678,6 +1680,10 @@
     "praticaScrittura": {
       "nome": "Writing practice",
       "descrizione": "Stroke order and guided writing canvas. Only useful for subjects with handwriting."
+    },
+    "pagamenti": {
+      "nome": "Payments",
+      "descrizione": "Paid course enrolments via Stripe: catalog with prices, online checkout and automatic enrolment into the classroom. Requires courses and classrooms."
     }
   },
   "impostazioni": {
@@ -2210,5 +2216,82 @@
   },
   "avviso": {
     "aria": "School notice"
+  },
+  "pagamenti": {
+    "stati": {
+      "in_attesa": "Pending",
+      "completato": "Completed",
+      "fallito": "Failed",
+      "annullato": "Cancelled",
+      "rimborsato": "Refunded"
+    },
+    "catalogo": {
+      "title": "Course catalog",
+      "subtitle": "Pick a course, pay online and get enrolled automatically.",
+      "empty": "There are no purchasable courses right now.",
+      "nonOperativo": "Your school has not enabled online payments yet.",
+      "loadError": "Could not load the catalog. Please try again.",
+      "acquista": "Buy",
+      "giaIscritto": "Already enrolled",
+      "giaAcquistato": "Already purchased",
+      "aulaDestinazione": "Enrolment into: {{aula}}"
+    },
+    "esito": {
+      "successoTitolo": "Payment received",
+      "annullatoTitolo": "Payment cancelled",
+      "successoTesto": "We are confirming your enrolment: the course will appear among yours shortly. You will get a confirmation notification.",
+      "annullatoTesto": "The payment was not completed. Nothing was charged: you can try again anytime.",
+      "tornaCatalogo": "Back to catalog",
+      "vaiAiCorsi": "Go to my courses"
+    },
+    "config": {
+      "title": "Payments",
+      "subtitle": "Configure how course enrolments are collected.",
+      "loadError": "Could not load the configuration. Please try again.",
+      "piattaformaNonConfigurata": "Payments are not configured on this platform. Contact the administrator.",
+      "onboardingTitolo": "Stripe account",
+      "onboardingTesto": "Connect a Stripe account to receive payments. Verification happens on Stripe.",
+      "statoAccount": "Account status",
+      "accountAttivo": "Ready to receive",
+      "accountNonAttivo": "To be completed",
+      "collegaStripe": "Connect Stripe",
+      "riprendiOnboarding": "Resume setup",
+      "sincronizza": "Refresh status",
+      "statoAggiornato": "Status updated.",
+      "salvato": "Configuration saved.",
+      "usoTitolo": "Online collection",
+      "usaStripe": "Use Stripe for enrolments",
+      "usaStripeHint": "If disabled, you handle enrolments outside the platform.",
+      "statoOperativo": "Status",
+      "operativo": "Operational",
+      "nonOperativo": "Not operational",
+      "commissione": "Platform fee: {{perc}}%",
+      "incassiTitolo": "Received payments",
+      "incassiVuoti": "No payments yet.",
+      "colCorso": "Course",
+      "colImporto": "Amount",
+      "colStato": "Status",
+      "colData": "Date"
+    },
+    "form": {
+      "sezioneTitolo": "Sale / paid enrolment",
+      "acquistabile": "Put this course on sale",
+      "acquistabileHint": "It will appear in the catalog with price and description.",
+      "prezzo": "Price",
+      "valuta": "Currency",
+      "aulaDestinazione": "Destination classroom",
+      "aulaDestinazioneHint": "The buyer will be enrolled here once payment succeeds.",
+      "aulaPlaceholder": "Select a classroom…",
+      "descrizioneVendita": "Sales description",
+      "descrizioneVenditaHint": "Marketing text shown in the catalog (optional).",
+      "descrizioneVenditaMax": "The sales description is too long (max 5000 characters).",
+      "prezzoInvalido": "Enter a valid price (e.g. 49.90).",
+      "prezzoRichiesto": "Set a price to put the course on sale.",
+      "aulaInvalida": "The selected classroom is not valid.",
+      "aulaRichiesta": "Choose the destination classroom.",
+      "commissione": "Platform fee (%)",
+      "commissioneHint": "Percentage the platform keeps on each payment. Empty = 0%.",
+      "commissioneInvalida": "Enter a percentage between 0 and 100."
+    }
   }
 }

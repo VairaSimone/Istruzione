@@ -133,6 +133,12 @@ const Header = () => {
               </NavLink>
             )}
 
+            {isStudente && sezioneAttiva(FUNZIONALITA.PAGAMENTI) && (
+              <NavLink to={ROUTES.CATALOGO} className={navLinkClass}>
+                {t('nav.catalogo')}
+              </NavLink>
+            )}
+
             {isStudente && sezioneAttiva(FUNZIONALITA.CERTIFICAZIONI) && (
               <NavLink to={ROUTES.CERTIFICATI_STUDENTE} className={navLinkClass}>
                 {t('nav.certificatiStudente')}
@@ -168,6 +174,12 @@ const Header = () => {
             {isTeacher && sezioneAttiva(FUNZIONALITA.CORSI) && (
               <NavLink to={ROUTES.CORSI} className={navLinkClass}>
                 {t('nav.corsi')}
+              </NavLink>
+            )}
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.PAGAMENTI) && (
+              <NavLink to={ROUTES.SCUOLA_PAGAMENTI} className={navLinkClass}>
+                {t('nav.pagamenti')}
               </NavLink>
             )}
 

@@ -42,6 +42,9 @@ import {
   CorsoDetailPage,
   CorsiStudentePage,
   CorsoStudenteDetailPage,
+  CatalogoPage,
+  PagamentoEsitoPage,
+  ScuolaPagamentiPage,
   TeacherDashboardPage,
   MessaggiPage,
   MessaggioDetailPage,
@@ -135,6 +138,16 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            // Iscrizioni a pagamento (Stripe): catalogo dello studente ed esito
+            // del checkout. L'esito resta accessibile anche a sezione attiva per
+            // gestire il rientro dal redirect Stripe.
+            element: <FeatureRoute funzionalita={FUNZIONALITA.PAGAMENTI} />,
+            children: [
+              { path: ROUTES.CATALOGO, element: <CatalogoPage /> },
+              { path: ROUTES.PAGAMENTO_ESITO, element: <PagamentoEsitoPage /> },
+            ],
+          },
+          {
             element: <FeatureRoute funzionalita={FUNZIONALITA.MESSAGGI} />,
             children: [
               { path: ROUTES.MESSAGGI, element: <MessaggiPage /> },
@@ -186,6 +199,13 @@ export const router = createBrowserRouter([
             children: [
               { path: ROUTES.CORSI, element: <CorsiListPage /> },
               { path: ROUTES.CORSO_DETAIL, element: <CorsoDetailPage /> },
+            ],
+          },
+          {
+            // Configurazione pagamenti della scuola (onboarding, incassi).
+            element: <FeatureRoute funzionalita={FUNZIONALITA.PAGAMENTI} />,
+            children: [
+              { path: ROUTES.SCUOLA_PAGAMENTI, element: <ScuolaPagamentiPage /> },
             ],
           },
           {

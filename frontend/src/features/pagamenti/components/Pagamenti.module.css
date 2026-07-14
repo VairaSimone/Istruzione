@@ -1,0 +1,268 @@
+/* ── Header di pagina ──────────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-ink);
+  margin: 0 0 var(--space-1);
+}
+
+.pageSubtitle {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.emptyText {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-6) 0;
+}
+
+/* ── Griglia catalogo ──────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ── Card corso acquistabile ───────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+}
+
+.copertina {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-sunken);
+}
+
+.copertinaPlaceholder {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-surface-sunken), var(--color-paper-dim));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.cardMeta {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardDesc {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+  flex: 1;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.aula {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+/* ── Pannelli staff (config / onboarding) ──────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.panelText {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.statoRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.checkboxField {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-paper-dim);
+}
+
+.checkboxField input[type='checkbox'] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-seal);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkboxLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.checkboxTitle {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.checkboxHint {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.avviso {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-paper-dim);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.avvisoWarn {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+/* ── Tabella incassi ───────────────────────────────────────────────────── */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.table td {
+  color: var(--color-ink);
+}
+
+/* ── Esito pagamento ───────────────────────────────────────────────────── */
+.esito {
+  max-width: 520px;
+  margin: var(--space-6) auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.esitoIcona {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-3xl);
+}
+
+.esitoOk {
+  background-color: var(--color-paper-dim);
+  color: var(--color-seal);
+}
+
+.esitoKo {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ── Sezione vendita nel form corso ────────────────────────────────────── */
+.venditaSection {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.venditaTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  color: var(--color-ink);
+  margin: 0;
+}

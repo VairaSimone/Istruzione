@@ -111,6 +111,20 @@ const slugSchema = (t) =>
     );
 
 /** Creazione/modifica scuola. */
+/** Campo testuale per una percentuale [0,100] con max 2 decimali. Vuoto ⇒ 0. */
+const percentualeSchema = (t) =>
+  z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => (v ?? ''))
+    .refine(
+      (v) =>
+        v === '' ||
+        (/^\d+([.,]\d{1,2})?$/.test(v) && Number(v.replace(',', '.')) <= 100),
+      t('pagamenti.form.commissioneInvalida')
+    );
+
 export const buildScuolaSchema = (t) =>
   z.object({
     nome: nomeSchema(t),
@@ -120,9 +134,17 @@ export const buildScuolaSchema = (t) =>
     limiteStorageGb: limiteDecimaleSchema(t),
     limiteUtenti: limiteInteroSchema(t),
     limiteInsegnanti: limiteInteroSchema(t),
+    commissionePiattaformaPercentuale: percentualeSchema(t),
     dominio: dominioSchema(t),
     impostazioniText: impostazioniTextSchema(t),
   });
+
+/** Converte la percentuale testuale nel valore da inviare: '' ⇒ null (0%). */
+export const parsePercentuale = (v) => {
+  if (v === undefined || v === null || String(v).trim() === '') return null;
+  const n = Number(String(v).replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
 
 /** Converte un campo-limite testuale nel valore da inviare: '' ⇒ null (illimitato). */
 export const parseLimiteIntero = (v) => {
