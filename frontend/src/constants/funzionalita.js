@@ -28,7 +28,13 @@ export const FUNZIONALITA = Object.freeze({
   PAGAMENTI: 'pagamenti',
 });
 
-/** Chiavi in ordine di presentazione (pannello impostazioni). */
+/**
+ * Chiavi in ordine di presentazione (pannello impostazioni).
+ *
+ * Deve contenere TUTTE le 12 chiavi del registro backend: qui mancava
+ * `certificazioni`, che quindi non sarebbe comparsa tra gli interruttori
+ * nemmeno una volta riparato il payload di `/api/config`.
+ */
 export const CHIAVI_FUNZIONALITA = Object.freeze([
   FUNZIONALITA.PROFILO,
   FUNZIONALITA.AULE,
@@ -37,6 +43,7 @@ export const CHIAVI_FUNZIONALITA = Object.freeze([
   FUNZIONALITA.COMPITI,
   FUNZIONALITA.MESSAGGI,
   FUNZIONALITA.CALENDARIO,
+  FUNZIONALITA.CERTIFICAZIONI,
   FUNZIONALITA.STATISTICHE,
   FUNZIONALITA.GAMIFICATION,
   FUNZIONALITA.PRATICA_SCRITTURA,
@@ -50,13 +57,20 @@ export const CHIAVI_FUNZIONALITA = Object.freeze([
 export const CHIAVI_NUCLEO = Object.freeze([FUNZIONALITA.PROFILO]);
 
 /**
- * Dipendenze tra sezioni: disattivare la sezione a destra spegne quella a
- * sinistra. Serve solo per l'anteprima nella UI — la propagazione autorevole
+ * Dipendenze tra sezioni: disattivare una delle sezioni a destra spegne quella
+ * a sinistra. Serve solo per l'anteprima nella UI — la propagazione autorevole
  * avviene nel backend (`risolviFunzionalita`).
+ *
+ * Il valore è un ARRAY, non una singola chiave: `pagamenti` dipende da `corsi`
+ * E da `aule` (si vende un corso, si iscrive a un'aula). Dichiararne una sola
+ * faceva divergere l'anteprima dal backend, che spegneva i pagamenti anche
+ * disattivando le aule mentre la UI li mostrava ancora accesi.
+ *
+ * @type {Readonly<Object<string, string[]>>}
  */
 export const DIPENDENZE = Object.freeze({
-  [FUNZIONALITA.COMPITI]: FUNZIONALITA.AULE,
-  [FUNZIONALITA.PAGAMENTI]: FUNZIONALITA.CORSI,
+  [FUNZIONALITA.COMPITI]: [FUNZIONALITA.AULE],
+  [FUNZIONALITA.PAGAMENTI]: [FUNZIONALITA.CORSI, FUNZIONALITA.AULE],
 });
 
 /**

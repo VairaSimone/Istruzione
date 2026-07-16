@@ -13,7 +13,8 @@ import styles from './Impostazioni.module.css';
  *      bloccato e accanto compare un'etichetta che lo spiega;
  *   2. spegnere una sezione spegne quelle che DIPENDONO da essa (i compiti
  *      vivono nelle aule): l'anteprima si aggiorna subito;
- *   3. una sezione dipendente non si accende finché la sua dipendenza è spenta.
+ *   3. una sezione dipendente non si accende finché TUTTE le sue dipendenze
+ *      sono accese (i pagamenti richiedono corsi E aule).
  *
  * Il catalogo (nome, descrizione, nucleo, dipendenze) arriva da
  * `GET /api/config`: aggiungere una sezione al backend la fa comparire qui
@@ -24,7 +25,12 @@ const FunzionalitaPanel = ({ catalogo = [], valore = {}, onChange }) => {
 
   const attiva = (chiave) => valore[chiave] !== false;
 
-  const dipendenzaDi = (chiave) => DIPENDENZE[chiave] ?? null;
+  /** Chiavi da cui `chiave` dipende (array, eventualmente vuoto). */
+  const dipendenzeDi = (chiave) => DIPENDENZE[chiave] ?? [];
+
+  /** Prima dipendenza SPENTA che blocca `chiave`, o `null` se è libera. */
+  const dipendenzaSpenta = (chiave, stato) =>
+    dipendenzeDi(chiave).find((richiesta) => stato[richiesta] === false) ?? null;
 
   const toggle = (voce) => {
     if (voce.nucleo) return;
@@ -33,10 +39,22 @@ const FunzionalitaPanel = ({ catalogo = [], valore = {}, onChange }) => {
     // Propagazione: spegnere una dipendenza spegne chi la usa. La stessa cosa
     // la farebbe il backend; anticiparla evita all'utente la sorpresa di
     // salvare "compiti: on" e ritrovarli spenti.
+    //
+    // Il ciclo `while` (come in `risolviFunzionalita` lato backend) regge anche
+    // le catene profonde più di un livello: oggi non ce ne sono, domani basta
+    // aggiungere una riga a DIPENDENZE senza toccare questa logica.
     if (prossimo[voce.chiave] === false) {
-      Object.entries(DIPENDENZE).forEach(([dipendente, richiesta]) => {
-        if (richiesta === voce.chiave) prossimo[dipendente] = false;
-      });
+      let modificato = true;
+      while (modificato) {
+        modificato = false;
+        Object.keys(DIPENDENZE).forEach((dipendente) => {
+          if (prossimo[dipendente] === false) return;
+          if (dipendenzaSpenta(dipendente, prossimo)) {
+            prossimo[dipendente] = false;
+            modificato = true;
+          }
+        });
+      }
     }
     onChange(prossimo);
   };
@@ -45,8 +63,12 @@ const FunzionalitaPanel = ({ catalogo = [], valore = {}, onChange }) => {
     <div className={styles.sezioneCorpo}>
       <ul className={styles.toggleList}>
         {catalogo.map((voce) => {
-          const richiesta = dipendenzaDi(voce.chiave);
-          const bloccataDaDipendenza = richiesta ? !attiva(richiesta) : false;
+          // Il catalogo del backend porta con sé le proprie `dipendeDa`: sono
+          // la fonte di verità. La mappa locale è solo il fallback per il primo
+          // render, prima che `/api/config` risponda.
+          const richieste = voce.dipendeDa?.length ? voce.dipendeDa : dipendenzeDi(voce.chiave);
+          const richiesta = richieste.find((r) => !attiva(r)) ?? null;
+          const bloccataDaDipendenza = richiesta !== null;
           const disabilitata = voce.nucleo || bloccataDaDipendenza;
           const checked = voce.nucleo ? true : attiva(voce.chiave);
 

@@ -8,7 +8,6 @@
     "dev": "nodemon src/server.js",
     "db:migrate": "node src/database/umzug.js up",
     "db:migrate:down": "node src/database/umzug.js down",
-    "db:sync": "node src/database/migrate.js",
     "seed:admin": "node src/database/seedAdmin.js",
     "seed:scuola": "node src/database/seedScuola.js"
   },
@@ -34,6 +33,7 @@
     "passport-google-oauth20": "^2.0.0",
     "pdfkit": "^0.15.2",
     "sequelize": "^6.37.3",
+    "stripe": "^22.3.2",
     "umzug": "^3.8.3",
     "uuid": "^10.0.0",
     "winston": "^3.13.0"

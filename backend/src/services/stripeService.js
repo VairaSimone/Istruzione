@@ -199,17 +199,34 @@ const recuperaSessione = async (sessionId, accountId) =>
 const verificaWebhook = (corpoGrezzo, firma) => {
   if (!stripeCfg.webhookConfigurato()) {
     throw new AppError(
-      'La verifica dei webhook non è configurata (STRIPE_WEBHOOK_SECRET assente).',
+      'La verifica dei webhook non è configurata (impostare STRIPE_WEBHOOK_SECRET_CONNECT).',
       503,
       'WEBHOOK_NON_CONFIGURATO'
     );
   }
-  try {
-    return client().webhooks.constructEvent(corpoGrezzo, firma, stripeCfg.WEBHOOK_SECRET);
-  } catch (err) {
-    logger.warn(`[STRIPE] Firma webhook non valida: ${err.message}`);
-    throw new AppError('Firma del webhook non valida.', 400, 'WEBHOOK_FIRMA_NON_VALIDA');
+
+  // Con gli addebiti diretti gli eventi di checkout arrivano dall'endpoint
+  // CONNECT, il cui segreto è diverso da quello dell'endpoint "account". Chi ha
+  // configurato entrambi non deve sapere quale usare per quale evento: li
+  // proviamo in ordine e teniamo il primo che verifica. È un confronto HMAC
+  // locale, non una chiamata di rete: provarne due non costa nulla.
+  const segreti = stripeCfg.WEBHOOK_SECRETS;
+  let ultimoErrore = null;
+
+  for (const segreto of segreti) {
+    try {
+      return client().webhooks.constructEvent(corpoGrezzo, firma, segreto);
+    } catch (err) {
+      ultimoErrore = err;
+    }
   }
+
+  logger.warn(
+    `[STRIPE] Firma webhook non valida con nessuno dei ${segreti.length} segreti configurati: ${
+      ultimoErrore ? ultimoErrore.message : 'errore sconosciuto'
+    }. Verificare che STRIPE_WEBHOOK_SECRET_CONNECT sia il segreto dell'endpoint "Connect" della dashboard Stripe.`
+  );
+  throw new AppError('Firma del webhook non valida.', 400, 'WEBHOOK_FIRMA_NON_VALIDA');
 };
 
 module.exports = {

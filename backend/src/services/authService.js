@@ -536,11 +536,21 @@ const loginOrLinkGoogle = async ({ googleId, email, emailVerificata }) => {
     );
   }
 
-  // Gate sullo stato: un insegnante in attesa/rifiutato non entra via Google.
+  // Gate sullo stato: un account sospeso/revocato non entra via Google.
   if (utente.stato !== 'attivo') {
     const code = utente.stato === 'in_attesa' ? 'ACCOUNT_PENDING' : 'ACCOUNT_NOT_ACTIVE';
     throw new AppError('Account non abilitato ad accedere.', 403, code);
   }
+
+  // Gate sul TENANT: se la scuola è sospesa nessuno dei suoi utenti accede.
+  //
+  // Questa riga c'era in `loginUtente` e mancava qui: i due percorsi di login
+  // applicavano regole diverse. La sessione veniva comunque respinta da
+  // `authenticateJWT` alla prima richiesta, ma nel frattempo erano già stati
+  // EMESSI access e refresh token validi e il refresh token era stato riscritto
+  // in DB — con l'effetto collaterale di invalidare la sessione precedente
+  // dell'utente. Un login «riuscito» che non serve a nulla e fa danni.
+  await impostazioniService.assicuraScuolaAccessibile(utente.scuola_id);
 
   const accessToken = generateAccessToken(utente);
   const refreshToken = generateRefreshToken(utente);

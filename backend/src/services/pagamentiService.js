@@ -319,37 +319,30 @@ const creaCheckout = async ({ richiedente, corsoId }) => {
   const perc = scuola.commissione_piattaforma_percentuale;
   const commissione = denaro.commissionePiattaforma(importo, perc);
 
-  // Id dell'ordine generato prima, così è riferibile nella sessione Stripe.
+  // ═════════════════════════════════════════════
+  // ORDINE DELLE SCRITTURE — non è un dettaglio
+  // ═════════════════════════════════════════════
+  // Qui si creava PRIMA la sessione Stripe e POI l'ordine. In mezzo c'è una
+  // finestra in cui esiste un link di pagamento valido e nessun ordine: se la
+  // scrittura su MySQL falliva (deadlock, connessione, unique), lo studente
+  // poteva pagare lo stesso. La scuola incassava, il webhook non trovava nulla
+  // («nessun ordine per sessione cs_…»), lo studente non veniva iscritto e non
+  // restava alcuna traccia contabile.
+  //
+  // Invertiamo: l'ordine `in_attesa` nasce PRIMA. Nel caso peggiore resta un
+  // ordine senza sessione — inerte, non pagabile, e comunque marcato `fallito`
+  // qui sotto. Un record di troppo costa nulla; un incasso orfano costa un
+  // rimborso manuale e la fiducia dello studente.
   const pagamentoId = uuidv4();
-  const metadata = {
-    pagamentoId,
-    corsoId: String(corso.id),
-    scuolaId: String(scuola.id),
-    utenteId: String(richiedente.id),
-    aulaDestinazioneId: String(corso.aula_destinazione_id),
-  };
 
-  const sessione = await stripeService.creaSessioneCheckout({
-    accountId: scuola.stripe_account_id,
-    importoCentesimi: importo,
-    valuta,
-    applicationFeeCentesimi: commissione,
-    nomeProdotto: corso.titolo,
-    descrizione: corso.descrizione_vendita || corso.descrizione,
-    successUrl: urlSuccesso(),
-    cancelUrl: urlAnnullato(),
-    clientReferenceId: pagamentoId,
-    emailCliente: richiedente.email,
-    metadata,
-  });
-
+  // 1. ORDINE (ancora senza sessione: la colonna è nullable proprio per questo).
   await Pagamento.create({
     id: pagamentoId,
     scuola_id: scuola.id,
     corso_id: corso.id,
     utente_id: richiedente.id,
     aula_destinazione_id: corso.aula_destinazione_id,
-    stripe_checkout_session_id: sessione.id,
+    stripe_checkout_session_id: null,
     stato: 'in_attesa',
     importo_centesimi: importo,
     valuta,
@@ -359,8 +352,53 @@ const creaCheckout = async ({ richiedente, corsoId }) => {
     iscrizione_effettuata: false,
   });
 
+  const metadata = {
+    pagamentoId,
+    corsoId: String(corso.id),
+    scuolaId: String(scuola.id),
+    utenteId: String(richiedente.id),
+    aulaDestinazioneId: String(corso.aula_destinazione_id),
+  };
+
+  // 2. SESSIONE STRIPE. `clientReferenceId` e `metadata.pagamentoId` portano
+  //    l'id dell'ordine dentro l'evento: il webhook sa risalire all'ordine anche
+  //    se il collegamento del passo 3 non fosse mai andato a buon fine.
+  let sessione;
+  try {
+    sessione = await stripeService.creaSessioneCheckout({
+      accountId: scuola.stripe_account_id,
+      importoCentesimi: importo,
+      valuta,
+      applicationFeeCentesimi: commissione,
+      nomeProdotto: corso.titolo,
+      descrizione: corso.descrizione_vendita || corso.descrizione,
+      successUrl: urlSuccesso(),
+      cancelUrl: urlAnnullato(),
+      clientReferenceId: pagamentoId,
+      emailCliente: richiedente.email,
+      metadata,
+    });
+  } catch (err) {
+    // Nessuna sessione ⇒ nessun pagamento possibile: l'ordine non deve restare
+    // `in_attesa` in eterno. Best-effort: l'errore vero è quello di Stripe.
+    try {
+      await Pagamento.update({ stato: 'fallito' }, { where: { id: pagamentoId } });
+    } catch (errDb) {
+      logger.error(
+        `[PAGAMENTI] Ordine ${pagamentoId}: sessione Stripe fallita e stato non aggiornabile: ${errDb.message}`
+      );
+    }
+    throw err;
+  }
+
+  // 3. COLLEGAMENTO ordine ↔ sessione.
+  await Pagamento.update(
+    { stripe_checkout_session_id: sessione.id },
+    { where: { id: pagamentoId } }
+  );
+
   logger.info(
-    `[PAGAMENTI] Checkout avviato: pagamento ${pagamentoId} (corso ${corso.id}, utente ${richiedente.id}, importo ${importo}${valuta}, fee ${commissione})`
+    `[PAGAMENTI] Checkout avviato: pagamento ${pagamentoId} (corso ${corso.id}, utente ${richiedente.id}, importo ${importo}${valuta}, fee ${commissione}, sessione ${sessione.id})`
   );
 
   return { url: sessione.url, pagamentoId };
@@ -473,29 +511,91 @@ const notificaCompletamento = async (pagamento) => {
 };
 
 /**
- * Gestisce un evento webhook Stripe già verificato. Trova l'ordine dalla
- * sessione di checkout e ne aggiorna lo stato/effetti. Non lancia per gli eventi
- * ignorati: risponde sempre 200 così Stripe non ritenta all'infinito.
+ * Verifica che l'evento provenga DAVVERO dall'account connesso della scuola a
+ * cui l'ordine appartiene.
+ *
+ * Con gli addebiti diretti, l'endpoint Connect della piattaforma riceve gli
+ * eventi di TUTTI gli account collegati: `evento.account` dice da quale. La
+ * firma garantisce che l'evento venga da Stripe, non che riguardi la scuola
+ * giusta. Senza questo confronto un ordine potrebbe essere completato da un
+ * evento nato su un account che non è il suo — difesa in profondità, non
+ * paranoia: è l'unico punto in cui uno stato contabile cambia senza che nessuno
+ * dei nostri utenti abbia fatto nulla.
+ *
+ * Un evento SENZA `account` è un evento dell'account PIATTAFORMA: non può
+ * riguardare un ordine, che per costruzione vive su un account connesso.
+ *
+ * @returns {Promise<boolean>} true se l'evento è pertinente all'ordine
+ */
+const eventoPertinente = async (evento, pagamento) => {
+  const account = evento && evento.account ? String(evento.account) : null;
+  const scuola = await Scuola.findByPk(pagamento.scuola_id);
+  const atteso = scuola && scuola.stripe_account_id ? String(scuola.stripe_account_id) : null;
+
+  if (account && atteso && account === atteso) return true;
+
+  logger.warn(
+    `[PAGAMENTI] Webhook ${evento.type} scartato per l'ordine ${pagamento.id}: account "${account}" ≠ account della scuola "${atteso}".`
+  );
+  return false;
+};
+
+/**
+ * Gestisce un evento webhook Stripe già verificato. Trova l'ordine, ne accerta
+ * la pertinenza e aggiorna stato/effetti. Non lancia per gli eventi ignorati:
+ * risponde sempre 200 così Stripe non ritenta all'infinito.
  */
 const gestisciEvento = async (evento) => {
   const tipo = evento.type;
 
-  // Estrae la sessione di checkout dall'oggetto evento (quando pertinente).
+  // Oggetto dell'evento: una Checkout Session o un Charge, a seconda del tipo.
   const oggetto = evento.data && evento.data.object ? evento.data.object : {};
 
-  const trovaPagamento = async (sessionId) => {
-    if (!sessionId) return null;
-    return Pagamento.findOne({ where: { stripe_checkout_session_id: sessionId } });
+  /**
+   * Ordine a partire da una Checkout Session.
+   *
+   * La via maestra è `stripe_checkout_session_id`. Il fallback su
+   * `client_reference_id` / `metadata.pagamentoId` chiude l'ultimo spiraglio
+   * dell'inversione delle scritture: se l'UPDATE che collega la sessione
+   * all'ordine non fosse andato a buon fine, l'ordine sarebbe comunque
+   * raggiungibile — l'id ce l'ha Stripe, ce l'ha messo il checkout. Quando lo
+   * troviamo per questa via, ricuciamo subito il collegamento.
+   */
+  const trovaDaSessione = async (sessione) => {
+    if (!sessione) return null;
+
+    if (sessione.id) {
+      const perSessione = await Pagamento.findOne({
+        where: { stripe_checkout_session_id: sessione.id },
+      });
+      if (perSessione) return perSessione;
+    }
+
+    const idOrdine =
+      sessione.client_reference_id || (sessione.metadata && sessione.metadata.pagamentoId) || null;
+    if (!idOrdine) return null;
+
+    const perRiferimento = await Pagamento.findByPk(idOrdine);
+    if (perRiferimento && !perRiferimento.stripe_checkout_session_id && sessione.id) {
+      perRiferimento.stripe_checkout_session_id = sessione.id;
+      await perRiferimento.save();
+      logger.warn(
+        `[PAGAMENTI] Ordine ${perRiferimento.id} ritrovato via client_reference_id: sessione ${sessione.id} ricollegata.`
+      );
+    }
+    return perRiferimento;
   };
 
   switch (tipo) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded': {
-      const pagamento = await trovaPagamento(oggetto.id);
+      const pagamento = await trovaDaSessione(oggetto);
       if (!pagamento) {
         logger.warn(`[PAGAMENTI] Webhook ${tipo}: nessun ordine per sessione ${oggetto.id}`);
         return;
       }
+      if (!(await eventoPertinente(evento, pagamento))) return;
+
       // Solo se il pagamento risulta effettivamente incassato.
       if (oggetto.payment_status && oggetto.payment_status !== 'paid') {
         logger.info(`[PAGAMENTI] Sessione ${oggetto.id} non ancora pagata (${oggetto.payment_status}).`);
@@ -510,8 +610,10 @@ const gestisciEvento = async (evento) => {
     }
 
     case 'checkout.session.expired': {
-      const pagamento = await trovaPagamento(oggetto.id);
-      if (pagamento && pagamento.stato === 'in_attesa') {
+      const pagamento = await trovaDaSessione(oggetto);
+      if (!pagamento) return;
+      if (!(await eventoPertinente(evento, pagamento))) return;
+      if (pagamento.stato === 'in_attesa') {
         pagamento.stato = 'annullato';
         await pagamento.save();
         logger.info(`[PAGAMENTI] Ordine ${pagamento.id} annullato (sessione scaduta).`);
@@ -520,11 +622,62 @@ const gestisciEvento = async (evento) => {
     }
 
     case 'checkout.session.async_payment_failed': {
-      const pagamento = await trovaPagamento(oggetto.id);
-      if (pagamento && pagamento.stato === 'in_attesa') {
+      const pagamento = await trovaDaSessione(oggetto);
+      if (!pagamento) return;
+      if (!(await eventoPertinente(evento, pagamento))) return;
+      if (pagamento.stato === 'in_attesa') {
         pagamento.stato = 'fallito';
         await pagamento.save();
         logger.info(`[PAGAMENTI] Ordine ${pagamento.id} fallito.`);
+      }
+      return;
+    }
+
+    // ─────────────────────────────────────────────
+    // RIMBORSI
+    //
+    // `STATI_PAGAMENTO` contemplava 'rimborsato' ma nessun evento lo produceva
+    // e nessun endpoint lo scriveva: uno stato dichiarato e irraggiungibile,
+    // cioè una bugia nel modello. Il rimborso si emette dalla dashboard Stripe
+    // della scuola (è lei l'esercente: non è la piattaforma a doverlo fare) e
+    // Stripe ce lo comunica con `charge.refunded`. L'oggetto è un Charge, non
+    // una Session: l'aggancio è il PaymentIntent, che salviamo al completamento.
+    //
+    // L'ISCRIZIONE NON VIENE REVOCATA. È una decisione di dominio, non tecnica:
+    // uno studente può essere rimborsato parzialmente, per errore, o d'accordo
+    // con la scuola pur restando nel corso. Disiscrivere d'ufficio farebbe più
+    // danni di quanti ne eviti. Segnaliamo allo staff, che decide.
+    // ─────────────────────────────────────────────
+    case 'charge.refunded': {
+      const paymentIntentId = oggetto.payment_intent ? String(oggetto.payment_intent) : null;
+      if (!paymentIntentId) return;
+
+      const pagamento = await Pagamento.findOne({
+        where: { stripe_payment_intent_id: paymentIntentId },
+      });
+      if (!pagamento) {
+        logger.warn(`[PAGAMENTI] Webhook ${tipo}: nessun ordine per PaymentIntent ${paymentIntentId}`);
+        return;
+      }
+      if (!(await eventoPertinente(evento, pagamento))) return;
+
+      // Rimborso PARZIALE: l'ordine resta `completato`, cambia solo il netto —
+      // che è su Stripe, non qui. Marcarlo 'rimborsato' sarebbe falso.
+      const totale = Number(oggetto.amount || 0);
+      const rimborsato = Number(oggetto.amount_refunded || 0);
+      if (rimborsato < totale) {
+        logger.info(
+          `[PAGAMENTI] Ordine ${pagamento.id}: rimborso PARZIALE (${rimborsato}/${totale}). Stato invariato.`
+        );
+        return;
+      }
+
+      if (pagamento.stato !== 'rimborsato') {
+        pagamento.stato = 'rimborsato';
+        await pagamento.save();
+        logger.info(
+          `[PAGAMENTI] Ordine ${pagamento.id} rimborsato integralmente. L'iscrizione all'aula ${pagamento.aula_destinazione_id} NON è stata revocata: valutare a mano.`
+        );
       }
       return;
     }

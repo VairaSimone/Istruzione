@@ -16,6 +16,19 @@ const { descrizioneSchema } = require('../constants/impostazioniScuola');
  *
  * È l'endpoint che elimina ogni valore cablato nel frontend.
  *
+ * FORMA DEL PAYLOAD (contratto con `frontend/src/services/configService.js`):
+ *
+ *   {
+ *     piattaforma: { nome, descrizione, versione },
+ *     scuola: { id, slug, nome, impostazioni } | branding di piattaforma,
+ *     funzionalita: Record<string, boolean>,          // il GATE
+ *     catalogoFunzionalita: Array<Descrittore>,       // gli INTERRUTTORI
+ *   }
+ *
+ * Le due chiavi non sono ridondanti: la prima risponde «è attiva?», la seconda
+ * descrive «che cos'è e da cosa dipende». Confonderle è costato due bug
+ * silenziosi (gate sempre aperto, pannello sempre vuoto).
+ *
  * RISOLUZIONE DEL TENANT (in ordine):
  *   1. `?scuola=<slug|uuid>`
  *   2. header `X-Scuola: <slug|uuid>`
@@ -79,6 +92,9 @@ exports.configurazione = catchAsync(async (req, res) => {
   let payload = _leggiConfig(chiave);
   if (!payload) {
     const branding = impostazioniService.brandingPubblico(scuola);
+    // Mappa risolta { chiave: boolean } della scuola: nucleo forzato a true e
+    // dipendenze già propagate (cfr. `risolviFunzionalita`).
+    const funzionalita = branding.impostazioni.funzionalita;
     payload = {
       piattaforma: {
         nome: piattaforma.NOME,
@@ -86,9 +102,27 @@ exports.configurazione = catchAsync(async (req, res) => {
         versione: piattaforma.VERSIONE,
       },
       scuola: branding,
-      // Catalogo completo: descrittori + stato di abilitazione per questa
-      // scuola. Il frontend costruisce il menu da qui, senza elenchi cablati.
-      funzionalita: catalogoFunzionalita(branding.impostazioni.funzionalita),
+      // DUE forme, due usi distinti — e finora ne mancava una.
+      //
+      //   `funzionalita`          MAPPA { chiave: boolean }. È il gate: serve a
+      //                           rispondere «questa sezione è attiva?» in O(1).
+      //   `catalogoFunzionalita`  ARRAY di descrittori (chiave, nome,
+      //                           descrizione, nucleo, dipendeDa, abilitata).
+      //                           Serve al pannello per generare gli interruttori.
+      //
+      // Qui veniva spedito il solo ARRAY sotto la chiave `funzionalita`. Il
+      // frontend lo indicizzava per chiave (`funzionalita['quiz']`) ottenendo
+      // sempre `undefined`, e siccome `undefined !== false` il gate passava
+      // SEMPRE: nessuna sezione veniva mai nascosta. Specularmente
+      // `catalogoFunzionalita` non arrivava affatto e il pannello «Impostazioni
+      // scuola» restava senza interruttori — cioè la funzionalità centrale del
+      // multi-tenant era irraggiungibile dalla UI.
+      //
+      // Questa è la forma che il JSDoc di `frontend/src/services/configService.js`
+      // documenta da sempre: il contratto scritto era giusto, era il payload a
+      // non rispettarlo.
+      funzionalita,
+      catalogoFunzionalita: catalogoFunzionalita(funzionalita),
     };
     _scriviConfig(chiave, payload);
   }
@@ -102,16 +136,37 @@ exports.configurazione = catchAsync(async (req, res) => {
 
 // ─────────────────────────────────────────────
 // GET /api/config/scuole  (pubblico)
-// Elenco minimale delle scuole attive: serve al selettore di tenant nella
-// pagina di login dei deploy multi-scuola. Espone solo slug, nome e logo.
+//
+// Elenco minimale delle scuole attive: serve UNICAMENTE al selettore di tenant
+// (`ScuolaSwitcher`) nella pagina di login dei deploy multi-scuola su dominio
+// condiviso. Espone slug, nome e logo.
+//
+// ── PERCHÉ È CONDIZIONATO ──
+// Su un deploy a domini personalizzati, questo endpoint dava a chiunque
+// visitasse il sito della scuola A l'elenco completo dei clienti della
+// piattaforma: nomi e loghi di tutte le scuole concorrenti, con una GET senza
+// autenticazione. Non è un dato segreto, ma non è nemmeno un dato che la scuola
+// A abbia acconsentito a pubblicare sul proprio sito.
+//
+// Se l'host risolve già un tenant, la scelta della scuola È GIÀ FATTA: il
+// selettore non ha senso e l'elenco nemmeno. Rispondiamo con la sola scuola del
+// dominio. L'elenco completo resta disponibile dove serve davvero — il dominio
+// globale, dove il visitatore deve poter scegliere.
 // ─────────────────────────────────────────────
 exports.elencoScuolePubblico = catchAsync(async (req, res) => {
   const Scuola = require('../models/Scuola');
-  const scuole = await Scuola.findAll({
-    where: { attiva: true },
-    order: [['nome', 'ASC']],
-    limit: 200,
-  });
+
+  const scuolaDelDominio = await impostazioniService.perDominio(
+    req.hostname || (req.headers && req.headers.host) || null
+  );
+
+  const scuole = scuolaDelDominio
+    ? [scuolaDelDominio]
+    : await Scuola.findAll({
+        where: { attiva: true },
+        order: [['nome', 'ASC']],
+        limit: 200,
+      });
 
   const elenco = scuole.map((s) => {
     const branding = s.toBrandingJSON();

@@ -41,6 +41,11 @@ const STATI_PAGAMENTO = ['in_attesa', 'completato', 'fallito', 'annullato', 'rim
  * IDEMPOTENZA: `stripe_checkout_session_id` è UNIVOCO. Il webhook può essere
  * recapitato più volte da Stripe: l'iscrizione all'aula viene eseguita una sola
  * volta grazie al flag `iscrizione_effettuata` e alla transazione.
+ *
+ * ORDINE DELLE SCRITTURE: la riga nasce `in_attesa` e SENZA sessione; la
+ * sessione Stripe viene creata subito dopo e collegata con un UPDATE. Mai il
+ * contrario: una sessione pagabile senza ordine significherebbe incassare soldi
+ * senza avere nulla su cui agganciare l'iscrizione.
  */
 class Pagamento extends Model {
   /** Dati esponibili al client (acquirente/staff). */
@@ -112,9 +117,16 @@ Pagamento.init(
 
     // Identificativo della sessione di Checkout Stripe. UNIVOCO: rende idempotente
     // il webhook e permette di ritrovare l'ordine dall'evento Stripe.
+    // NULLABLE per un motivo preciso: l'ordine viene creato PRIMA della sessione
+    // Stripe (cfr. `pagamentiService.creaCheckout`), così non può mai esistere
+    // un link di pagamento valido senza un ordine che lo attenda. Nell'istante
+    // tra le due scritture la colonna è nulla. L'indice UNIVOCO resta e continua
+    // a garantire l'idempotenza del webhook: in SQL più righe NULL non
+    // confliggono tra loro.
     stripe_checkout_session_id: {
       type: DataTypes.STRING(255),
-      allowNull: false,
+      allowNull: true,
+      defaultValue: null,
       field: 'stripe_checkout_session_id',
     },
 

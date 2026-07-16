@@ -37,11 +37,29 @@ const sequelize = new Sequelize(
       timestamps: true,
     },
 
-    dialectOptions: {
-      // Gestione corretta dei timezone
-      dateStrings: true,
-      typeCast: true,
-    },
+    // ─────────────────────────────────────────────
+    // NESSUN `dateStrings`, e non è una svista.
+    //
+    // Con `dateStrings: true` il driver restituiva i DATETIME come STRINGHE nel
+    // formato di MySQL — '2026-07-14 20:33:36' — senza `Z` né offset. I vari
+    // `toPublicJSON()` le rispedivano tali e quali al client, e nel browser
+    //
+    //     new Date('2026-07-14 20:33:36')
+    //
+    // interpreta quel valore come ORA LOCALE. Un istante persistito in UTC
+    // tornava indietro sfasato di due ore in Italia d'estate: scadenze dei
+    // compiti, eventi del calendario e scadenze degli inviti mostravano
+    // un orario che non era quello salvato. Il codice applicativo lo aggirava
+    // dove capitava (confrontando stringa-locale con locale, coerente per caso),
+    // ma il contratto verso il client restava ambiguo.
+    //
+    // Senza l'opzione, Sequelize restituisce oggetti `Date` e `JSON.stringify`
+    // li serializza in ISO-8601 con la `Z`: '2026-07-14T20:33:36.000Z'. Non
+    // ambiguo, non interpretabile, uguale per tutti i fusi.
+    //
+    // Le colonne DATEONLY restano stringhe 'YYYY-MM-DD' — è il loro tipo, non
+    // un istante — e `utils/dateUtils.js` le gestisce già così.
+    // ─────────────────────────────────────────────
 
   }
 );

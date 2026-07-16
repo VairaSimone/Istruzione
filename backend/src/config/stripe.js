@@ -30,11 +30,30 @@
  * ─────────────────────────────────────────────
  * VARIABILI D'AMBIENTE
  * ─────────────────────────────────────────────
- *   STRIPE_SECRET_KEY        chiave segreta dell'account piattaforma (sk_...)
- *   STRIPE_WEBHOOK_SECRET    segreto per verificare la firma dei webhook (whsec_...)
- *   STRIPE_PUBLISHABLE_KEY   chiave pubblicabile (pk_...), esposta al frontend
- *   STRIPE_API_VERSION       versione API bloccata (opzionale)
- *   PAGAMENTI_VALUTA_DEFAULT valuta ISO-4217 predefinita per i nuovi corsi (default EUR)
+ *   STRIPE_SECRET_KEY             chiave segreta dell'account piattaforma (sk_...)
+ *   STRIPE_WEBHOOK_SECRET_CONNECT segreto dell'endpoint webhook CONNECT (whsec_...)
+ *   STRIPE_WEBHOOK_SECRET         segreto dell'endpoint webhook "account" (whsec_...)
+ *   STRIPE_PUBLISHABLE_KEY        chiave pubblicabile (pk_...)
+ *   STRIPE_API_VERSION            versione API bloccata (opzionale)
+ *   PAGAMENTI_VALUTA_DEFAULT      valuta ISO-4217 predefinita per i nuovi corsi (default EUR)
+ *
+ * ─────────────────────────────────────────────
+ * ⚠️  I DUE SEGRETI DEI WEBHOOK — leggere prima di configurare
+ * ─────────────────────────────────────────────
+ * Stripe distingue DUE tipi di endpoint webhook, con segreti di firma DIVERSI:
+ *
+ *   - endpoint "account"  → eventi dell'account PIATTAFORMA;
+ *   - endpoint "Connect"  → eventi degli ACCOUNT CONNESSI (le scuole).
+ *
+ * Con gli addebiti diretti l'incasso avviene sull'account della SCUOLA, quindi
+ * `checkout.session.completed` arriva sull'endpoint CONNECT. Il codice conosceva
+ * un solo `STRIPE_WEBHOOK_SECRET`: se ci si metteva quello dell'endpoint
+ * sbagliato, `constructEvent` falliva con 400 su OGNI evento e NESSUNO studente
+ * veniva mai iscritto dopo il pagamento. Un errore di configurazione silenzioso,
+ * che si manifesta solo come «ho pagato e non mi ha iscritto».
+ *
+ * Ora se ne accettano due e la verifica li prova entrambi: chi ha un solo
+ * endpoint ne valorizza uno solo e non deve sapere nulla di tutto questo.
  *
  * Se `STRIPE_SECRET_KEY` non è impostata, i pagamenti sono DISATTIVATI a livello
  * di piattaforma: gli endpoint rispondono in modo esplicito (fail-closed) e le
@@ -48,8 +67,21 @@ const stringaEnv = (chiave, predefinito = null) => {
 
 // Chiavi/segreti dell'account PIATTAFORMA.
 const SECRET_KEY = stringaEnv('STRIPE_SECRET_KEY', null);
-const WEBHOOK_SECRET = stringaEnv('STRIPE_WEBHOOK_SECRET', null);
 const PUBLISHABLE_KEY = stringaEnv('STRIPE_PUBLISHABLE_KEY', null);
+
+// Segreto dell'endpoint CONNECT: è quello che serve al flusso di incasso.
+const WEBHOOK_SECRET_CONNECT = stringaEnv('STRIPE_WEBHOOK_SECRET_CONNECT', null);
+
+// Segreto dell'endpoint "account". Mantenuto anche per retrocompatibilità: le
+// installazioni esistenti hanno solo questa variabile impostata.
+const WEBHOOK_SECRET = stringaEnv('STRIPE_WEBHOOK_SECRET', null);
+
+/**
+ * Segreti da provare in verifica, nell'ordine. Il Connect per primo perché è
+ * quello che riceve gli eventi di checkout. Duplicati e valori vuoti esclusi.
+ * @type {string[]}
+ */
+const WEBHOOK_SECRETS = [...new Set([WEBHOOK_SECRET_CONNECT, WEBHOOK_SECRET].filter(Boolean))];
 
 // Versione API bloccata: evita che un aggiornamento lato Stripe cambi il
 // comportamento senza un rilascio consapevole. Se non impostata, si usa quella
@@ -74,8 +106,8 @@ const VALUTE_SUPPORTATE = ['EUR', 'USD', 'GBP', 'CHF'];
  */
 const configurato = () => Boolean(SECRET_KEY);
 
-/** True se anche la verifica dei webhook è configurabile. */
-const webhookConfigurato = () => Boolean(WEBHOOK_SECRET);
+/** True se almeno un segreto di webhook è impostato. */
+const webhookConfigurato = () => WEBHOOK_SECRETS.length > 0;
 
 // Istanza SDK memoizzata: si costruisce alla prima richiesta e solo se la
 // piattaforma è configurata. Il `require` è lazy per non forzare la dipendenza
@@ -101,6 +133,8 @@ const client = () => {
 module.exports = {
   SECRET_KEY,
   WEBHOOK_SECRET,
+  WEBHOOK_SECRET_CONNECT,
+  WEBHOOK_SECRETS,
   PUBLISHABLE_KEY,
   API_VERSION,
   VALUTA_DEFAULT,

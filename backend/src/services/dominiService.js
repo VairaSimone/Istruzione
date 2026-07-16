@@ -80,14 +80,39 @@ const aggiungiDominio = async (richiedente, scuolaId, { dominio, principale, not
     throw new AppError('Il dominio non è valido (es. liceo-manzoni.it).', 422, 'DOMINIO_INVALID');
   }
 
-  // Univocità globale: un dominio appartiene a una sola scuola.
-  const esistente = await DominioScuola.findOne({ where: { dominio: host } });
-  if (esistente) {
-    const propria = String(esistente.scuola_id) === String(scuolaId);
+  // ── Chi blocca chi ──
+  //
+  // L'univocità NON è più globale (cfr. migrazione 20260716120002): due scuole
+  // possono chiedere lo stesso host, perché una richiesta non verificata è
+  // inerte — non risolve il tenant, non ottiene certificati, non toglie nulla a
+  // nessuno. Prima bastava invece a bruciare l'host per tutti: un insegnante
+  // poteva registrare `liceo-concorrente.it` sulla propria scuola e impedire
+  // alla scuola legittima di aggiungerlo, con sblocco possibile solo da un admin.
+  //
+  // Restano due conflitti veri:
+  //   1. l'host è già VERIFICATO da qualcuno → è assegnato, punto;
+  //   2. la STESSA scuola lo ha già chiesto → è un doppione inutile.
+
+  const verificatoAltrove = await DominioScuola.findOne({
+    where: { dominio: host, verificato: true },
+  });
+  if (verificatoAltrove) {
+    const propria = String(verificatoAltrove.scuola_id) === String(scuolaId);
     throw new AppError(
       propria
         ? 'Questo dominio è già associato a questa scuola.'
-        : 'Questo dominio è già associato a un\'altra scuola.',
+        : 'Questo dominio è già assegnato a un\'altra scuola.',
+      409,
+      'DOMINIO_TAKEN'
+    );
+  }
+
+  const giaRichiesto = await DominioScuola.findOne({
+    where: { dominio: host, scuola_id: scuolaId },
+  });
+  if (giaRichiesto) {
+    throw new AppError(
+      'Questo dominio è già associato a questa scuola.',
       409,
       'DOMINIO_TAKEN'
     );
@@ -142,6 +167,33 @@ const aggiornaDominio = async (richiedente, scuolaId, dominioId, { verificato, p
       );
     }
     const nuovoStato = Boolean(verificato);
+
+    // La VERIFICA è il momento in cui l'host smette di essere una richiesta e
+    // diventa un'assegnazione: da qui in poi risolve il tenant ed è ammesso al
+    // TLS on-demand. Due scuole possono averlo chiesto entrambe — è lecito, e
+    // sta all'admin sapere di chi è davvero — ma una sola può ottenerlo.
+    //
+    // L'indice univoco sulla colonna generata `dominio_verificato` respingerebbe
+    // comunque il secondo (ed è quello a reggere le verifiche simultanee, dove
+    // un controllo applicativo non basterebbe). Qui lo anticipiamo solo per dire
+    // all'admin QUALE scuola ce l'ha già, invece di un errore di vincolo grezzo.
+    if (nuovoStato && !dominio.verificato) {
+      const altro = await DominioScuola.findOne({
+        where: {
+          dominio: dominio.dominio,
+          verificato: true,
+          id: { [Op.ne]: dominio.id },
+        },
+      });
+      if (altro) {
+        throw new AppError(
+          `Il dominio "${dominio.dominio}" è già verificato per un'altra scuola: rimuovi o annulla quella verifica prima di assegnarlo.`,
+          409,
+          'DOMINIO_GIA_VERIFICATO'
+        );
+      }
+    }
+
     dominio.verificato = nuovoStato;
     dominio.verificato_il = nuovoStato ? new Date() : null;
   }

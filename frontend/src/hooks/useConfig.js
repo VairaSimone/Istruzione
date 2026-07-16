@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as configService from '../services/configService';
+import * as scuoleService from '../services/scuoleService';
 import { queryKeys } from '../constants/queryKeys';
-import { getScuolaSlug } from '../api/tenant';
+import { getScuolaSlug, setScuolaSlug } from '../api/tenant';
 import { FUNZIONALITA_PREDEFINITE } from '../constants/funzionalita';
+import { useAuthStore, selectIsAuthenticated, selectIsAdmin } from '../store/authStore';
 
 /**
  * Hook della CONFIGURAZIONE DI PIATTAFORMA.
@@ -77,23 +79,115 @@ export const useBranding = () => {
 };
 
 /**
- * Mappa `{ chiave: boolean }` delle sezioni attive per la scuola corrente.
+ * Scuola dell'UTENTE AUTENTICATO (`GET /api/scuole/mia`).
  *
- * Durante il caricamento (e in caso di errore) si ricade sui DEFAULT del
- * registro: meglio mostrare una voce di menu in più per una frazione di secondo
- * che far sparire mezza applicazione a ogni refresh. Il gate autorevole resta
- * comunque il backend, che risponde 403 `FEATURE_DISABLED`.
+ * Il backend la ricava da `req.user.scuola_id`: è l'unica fonte che non dipende
+ * da dominio, `?scuola=` o localStorage. Per l'admin risponde `null` — è
+ * trasversale e non ha un tenant proprio — quindi la query non parte nemmeno.
  */
-export const useFunzionalita = () => {
-  const { data } = useConfig();
-  return data?.funzionalita ?? FUNZIONALITA_PREDEFINITE;
+export const useMiaScuola = () => {
+  const isAuthenticated = useAuthStore(selectIsAuthenticated);
+  const isAdmin = useAuthStore(selectIsAdmin);
+  return useQuery({
+    queryKey: queryKeys.scuole.mia,
+    queryFn: scuoleService.getMiaScuola,
+    enabled: isAuthenticated && !isAdmin,
+    staleTime: CINQUE_MINUTI,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
 };
 
-/** `true` se la sezione indicata è attiva per la scuola corrente. */
+/**
+ * Sezioni attive nel CONTESTO CORRENTE, con lo stato di caricamento.
+ *
+ * ─────────────────────────────────────────────
+ * PERCHÉ NON BASTA `useConfig()`
+ * ─────────────────────────────────────────────
+ * `GET /api/config` è PUBBLICO e risolve il tenant da dominio / `X-Scuola` /
+ * scuola predefinita — mai da `req.user`. Su un deploy multi-scuola a dominio
+ * condiviso, chi arriva su `/login` senza `?scuola=` e senza una scelta
+ * precedente in localStorage riceve le funzionalità della scuola PREDEFINITA.
+ * Dopo il login continuava a vederle: menu e route della scuola sbagliata.
+ * Finché il gate era rotto (l'array trattato come mappa) non si notava, perché
+ * non nascondeva comunque nulla.
+ *
+ * Ora la fonte cambia con il contesto:
+ *
+ *   - NON autenticato → `/api/config` (è tutto ciò che esiste, ed è giusto:
+ *     serve solo a vestire la pagina di login);
+ *   - ADMIN           → i default del registro. È trasversale alle scuole e nel
+ *     backend bypassa sempre `richiediFunzionalita`: nascondergli una sezione
+ *     perché una scuola qualsiasi l'ha spenta sarebbe un errore;
+ *   - STUDENTE/INSEGNANTE → `/api/scuole/mia`, cioè la PROPRIA scuola.
+ *
+ * Durante il caricamento si ricade sui DEFAULT: meglio una voce di menu in più
+ * per una frazione di secondo che far sparire mezza applicazione a ogni
+ * refresh. Il gate autorevole resta il backend (403 `FEATURE_DISABLED`).
+ *
+ * @returns {{ funzionalita: Object<string, boolean>, isLoading: boolean }}
+ */
+export const useFunzionalitaContesto = () => {
+  const isAuthenticated = useAuthStore(selectIsAuthenticated);
+  const isAdmin = useAuthStore(selectIsAdmin);
+  const config = useConfig();
+  const mia = useMiaScuola();
+
+  return useMemo(() => {
+    if (isAdmin) return { funzionalita: FUNZIONALITA_PREDEFINITE, isLoading: false };
+
+    if (isAuthenticated) {
+      return {
+        funzionalita: mia.data?.impostazioni?.funzionalita ?? FUNZIONALITA_PREDEFINITE,
+        isLoading: mia.isLoading,
+      };
+    }
+
+    return {
+      funzionalita: config.data?.funzionalita ?? FUNZIONALITA_PREDEFINITE,
+      isLoading: config.isLoading,
+    };
+  }, [isAdmin, isAuthenticated, mia.data, mia.isLoading, config.data, config.isLoading]);
+};
+
+/** Mappa `{ chiave: boolean }` delle sezioni attive nel contesto corrente. */
+export const useFunzionalita = () => useFunzionalitaContesto().funzionalita;
+
+/** `true` se la sezione indicata è attiva nel contesto corrente. */
 export const useFunzionalitaAttiva = (chiave) => {
   const funzionalita = useFunzionalita();
   if (!chiave) return true;
   return funzionalita[chiave] !== false;
+};
+
+/**
+ * Allinea il TENANT ATTIVO alla scuola dell'utente appena autenticato.
+ *
+ * Le funzionalità le prende già `useFunzionalitaContesto` dalla fonte giusta,
+ * ma restava il BRANDING: nome, logo e colori continuavano ad arrivare da
+ * `/api/config`, cioè dalla scuola predefinita. `setScuolaSlug` era chiamata in
+ * un unico punto (`ScuolaSwitcher`, pre-login) e mai dopo il login.
+ *
+ * Qui, appena `/api/scuole/mia` risponde, se lo slug attivo è diverso da quello
+ * della propria scuola lo si corregge e si invalida `/api/config`: la chiave di
+ * cache dipende dallo slug, quindi il branding viene rifatto da solo.
+ *
+ * No-op quando la build è dedicata a una scuola (`VITE_SCUOLA_SLUG`):
+ * `setScuolaSlug` rifiuta e ritorna `false`.
+ *
+ * Da montare una sola volta, al boot dell'app.
+ */
+export const useAllineaTenantUtente = () => {
+  const queryClient = useQueryClient();
+  const { data: scuola } = useMiaScuola();
+  const slugUtente = scuola?.slug ?? null;
+
+  useEffect(() => {
+    if (!slugUtente || slugUtente === getScuolaSlug()) return;
+    if (setScuolaSlug(slugUtente)) {
+      queryClient.invalidateQueries({ queryKey: queryKeys.config.all });
+    }
+  }, [slugUtente, queryClient]);
 };
 
 /**

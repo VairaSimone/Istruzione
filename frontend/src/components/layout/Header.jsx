@@ -106,7 +106,7 @@ const Header = () => {
               type="button"
               className={styles.navClose}
               onClick={() => setMenuOpen(false)}
-              aria-label={t('nav.closeMenu', 'Chiudi menu')}
+              aria-label={t('nav.closeMenu')}
             >
               ×
             </button>

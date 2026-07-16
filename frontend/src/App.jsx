@@ -7,14 +7,20 @@ import { queryClient } from './api/queryClient';
 import { router } from './routes/router';
 import { setupAuthInterceptor } from './api/authInterceptor';
 import { useCurrentUser } from './hooks/useCurrentUser';
+import { useAllineaTenantUtente } from './hooks/useConfig';
 import BrandingProvider from './components/branding/BrandingProvider';
 
 /**
  * Ricostruisce la sessione (GET /me) al boot. Vive fuori dal router perché non
  * deve dipendere dalla rotta corrente.
+ *
+ * Subito dopo allinea il TENANT ATTIVO alla scuola dell'utente: senza questo,
+ * chi arriva su /login senza `?scuola=` resta agganciato al branding della
+ * scuola predefinita anche dopo essersi autenticato.
  */
 const SessionBootstrap = () => {
   useCurrentUser();
+  useAllineaTenantUtente();
   return null;
 };
 

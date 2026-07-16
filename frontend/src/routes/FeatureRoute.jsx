@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useConfig, useFunzionalitaAttiva } from '../hooks/useConfig';
+import { useFunzionalitaContesto } from '../hooks/useConfig';
 import { useAuthStore, selectIsAdmin } from '../store/authStore';
 import { ROUTES } from '../constants/routes';
 import Spinner from '../components/ui/Spinner';
@@ -19,12 +19,17 @@ import Spinner from '../components/ui/Spinner';
  * L'ADMIN è trasversale alle scuole e non ha una propria configurazione: passa
  * sempre, coerentemente col backend.
  *
+ * La fonte delle funzionalità è `useFunzionalitaContesto`, non `useConfig`: per
+ * un utente autenticato vale la SUA scuola, non il tenant pubblico risolto da
+ * dominio/slug. Anche `isLoading` viene da lì, altrimenti si deciderebbe con i
+ * dati della scuola sbagliata mentre `/api/scuole/mia` è ancora in volo.
+ *
  * @param {string} funzionalita chiave del registro (`constants/funzionalita.js`)
  */
 const FeatureRoute = ({ funzionalita }) => {
-  const { isLoading } = useConfig();
   const isAdmin = useAuthStore(selectIsAdmin);
-  const attiva = useFunzionalitaAttiva(funzionalita);
+  const { funzionalita: mappa, isLoading } = useFunzionalitaContesto();
+  const attiva = !funzionalita || mappa[funzionalita] !== false;
 
   // Finché la configurazione non è arrivata non sappiamo nulla: attendere è
   // meglio che rimbalzare l'utente su /403 e poi riportarlo indietro.

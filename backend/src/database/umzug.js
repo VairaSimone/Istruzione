@@ -8,6 +8,10 @@ const sequelize = require('../config/database');
 const logger = require('../utils/logger');
 
 // Registra i modelli (e quindi le associazioni) prima di applicare le migrazioni.
+// L'elenco deve essere COMPLETO: il file dichiara di caricare "i modelli e quindi
+// le associazioni", e una lista parziale rende falsa la premessa. Oggi le
+// migrazioni usano `queryInterface` (SQL diretto) e non se ne accorgerebbero, ma
+// la prima migrazione che passasse dai modelli troverebbe associazioni mancanti.
 require('../models/Scuola');
 require('../models/DominioScuola');
 require('../models/RichiestaContatto');
@@ -37,6 +41,8 @@ require('../models/AttivitaGiornaliera');
 require('../models/NotificaEmail');
 require('../models/EventoCalendario');
 require('../models/EventoDestinatario');
+require('../models/Certificato');
+require('../models/ProgressoBanca');
 require('../models/Pagamento');
 
 /**

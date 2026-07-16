@@ -67,10 +67,11 @@ DominioScuola.init(
     dominio: {
       type: DataTypes.STRING(DOMINIO_MAX),
       allowNull: false,
-      unique: {
-        name: 'unique_dominio',
-        msg: 'Questo dominio è già associato a una scuola.',
-      },
+      // NESSUNA univocità globale: più scuole possono CHIEDERE lo stesso host
+      // (richieste non verificate, inerti). Al più una può averlo VERIFICATO, e
+      // quel vincolo vive sull'indice univoco della colonna generata
+      // `dominio_verificato` (cfr. migrazione 20260716120002). Dichiararlo qui
+      // rimetterebbe l'univocità globale e riaprirebbe lo squatting.
       set(value) {
         // Normalizzazione difensiva: qualunque via di scrittura passa da qui.
         const norm = normalizzaDominio(value);
@@ -120,7 +121,8 @@ DominioScuola.init(
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     indexes: [
-      { unique: true, fields: ['dominio'], name: 'domini_scuola_dominio' },
+      // Lookup dell'host: indicizzato ma NON univoco (cfr. sopra).
+      { fields: ['dominio'], name: 'domini_scuola_dominio' },
       { fields: ['scuola_id'], name: 'domini_scuola_scuola_id' },
       // Risoluzione pubblica: host verificato → scuola, in una lettura indicizzata.
       { fields: ['dominio', 'verificato'], name: 'domini_scuola_dominio_verificato' },

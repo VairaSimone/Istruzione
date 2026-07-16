@@ -15,13 +15,20 @@ import { getScuolaSlug, HEADER_SCUOLA } from './tenant';
  * e rispedito nell'header `X-CSRF-Token`, che il backend confronta con il
  * cookie.
  *
- * Internazionalizzazione: ad OGNI richiesta viene aggiunto il query param
+ * Internazionalizzazione: a quasi ogni richiesta viene aggiunto il query param
  * `lang` con la lingua attiva. Il backend (i18next-http-middleware) è
  * configurato con detection order ['querystring','header'] e
  * lookupQuerystring 'lang', quindi userà questa lingua per `req.t`
  * (notifiche/contenuti localizzati lato server). Si usa il query param e
  * NON l'header `Accept-Language` perché quest'ultimo è un "forbidden
  * header" che il browser non consente di impostare via JS.
+ *
+ * ECCEZIONE — gli endpoint di `PERCORSI_SENZA_LANG`: `/config` risponde
+ * `Cache-Control: public, max-age=90` e il suo payload NON dipende dalla lingua
+ * (il controller lo dichiara: nomi e descrizioni sono chiavi statiche del
+ * catalogo, che traduce il client). Aggiungerci `lang` creava due voci di cache
+ * distinte — `?lang=it` e `?lang=en` — per due risposte identiche: il doppio
+ * delle richieste al server per lo stesso identico byte.
  *
  * Multi-scuola: quando il tenant attivo è noto (vedi `api/tenant.js`) lo slug
  * viaggia nell'header `X-Scuola`. Serve agli endpoint PUBBLICI di
@@ -36,6 +43,17 @@ const apiClient = axios.create({
 
 const CSRF_SAFE_METHODS = ['get', 'head', 'options'];
 
+/**
+ * Endpoint la cui risposta NON dipende dalla lingua e che sono cacheabili: per
+ * loro il param `lang` frammenterebbe la cache di browser e CDN senza cambiare
+ * di una virgola ciò che torna indietro.
+ */
+const PERCORSI_SENZA_LANG = ['/config'];
+
+/** True se l'URL della richiesta è (o sta sotto) un percorso senza `lang`. */
+const senzaLang = (url = '') =>
+  PERCORSI_SENZA_LANG.some((p) => url === p || url.startsWith(`${p}/`) || url.startsWith(`${p}?`));
+
 const getCookie = (name) => {
   const escaped = name.replace(/[.$?*|{}()[\]\\/+^]/g, '\\$&');
   const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + escaped + '=([^;]*)'));
@@ -43,7 +61,9 @@ const getCookie = (name) => {
 };
 
 apiClient.interceptors.request.use((config) => {
-  config.params = { ...(config.params || {}), lang: getActiveLanguage() };
+  if (!senzaLang(config.url)) {
+    config.params = { ...(config.params || {}), lang: getActiveLanguage() };
+  }
 
   const scuolaSlug = getScuolaSlug();
   if (scuolaSlug) {

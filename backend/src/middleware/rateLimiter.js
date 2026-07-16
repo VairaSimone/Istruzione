@@ -25,6 +25,35 @@ const globalLimiter = rateLimit({
   },
 });
 
+/**
+ * Limitatore DEDICATO agli endpoint di servizio `/api/interno/*`.
+ *
+ * Serve al TLS on-demand di Caddy: prima di emettere un certificato per un host
+ * mai visto, Caddy chiede il permesso a `/api/interno/dominio-consentito`. Se
+ * quella domanda riceve un 429, Caddy non emette il certificato e il dominio
+ * resta senza HTTPS — un guasto intermittente e difficilissimo da diagnosticare.
+ *
+ * Per questo l'endpoint sta FUORI dal limiter globale (che condivide il budget
+ * con tutto il traffico applicativo proveniente dallo stesso IP di proxy) e ha
+ * questo limitatore proprio, largo: protegge dall'abuso senza mai poter essere
+ * saturato dal traffico normale. La risposta è comunque solo «sì/no» su un
+ * dominio, quindi non c'è nulla da estrarre a forza di richieste.
+ */
+const internoLimiter = rateLimit({
+  windowMs: parseInt(process.env.INTERNO_RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000, // 1 min
+  max: parseInt(process.env.INTERNO_RATE_LIMIT_MAX, 10) || 600,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'fail',
+    code: 'TOO_MANY_REQUESTS',
+    message: 'Troppe richieste. Riprova tra qualche minuto.',
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json(options.message);
+  },
+});
+
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuti
   max: parseInt(process.env.LOGIN_RATE_LIMIT_MAX) || 5,
@@ -196,6 +225,7 @@ const contactLimiter = rateLimit({
 
 module.exports = {
   globalLimiter,
+  internoLimiter,
   loginLimiter,
   forgotPasswordLimiter,
   registerLimiter,

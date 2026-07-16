@@ -38,6 +38,8 @@ require('./models/NotificaEmail');
 require('./models/EventoCalendario');
 require('./models/EventoDestinatario');
 require('./models/Certificato');
+require('./models/ProgressoBanca');
+require('./models/Pagamento');
 
 const schedulerService = require('./services/schedulerService');
 
@@ -52,12 +54,17 @@ const avviaServer = async () => {
     await sequelize.authenticate();
     logger.info('✅ Connessione al database MySQL stabilita.');
 
-    // 2. Sincronizza i modelli con il DB (solo in sviluppo)
-    // In produzione usa migrate.js invece
-    if (process.env.NODE_ENV === 'development') {
-      await sequelize.sync({ alter: true });
-      logger.info('✅ Modelli sincronizzati con il database (alter: true).');
-    }
+    // 2. NESSUNA sincronizzazione automatica dello schema.
+    //
+    //    Qui girava `sequelize.sync({ alter: true })` in sviluppo. Significava
+    //    avere DUE sistemi di schema: in dev lo schema lo costruivano i MODELLI,
+    //    in produzione le MIGRAZIONI. Un campo aggiunto a un modello senza la
+    //    relativa migrazione funzionava in locale e rompeva in produzione, e
+    //    nulla lo intercettava. In più `alter: true` su MySQL riscrive indici e
+    //    chiavi esterne in modo imprevedibile.
+    //
+    //    Ora la fonte di verità dello schema è UNA SOLA, in ogni ambiente:
+    //    le migrazioni versionate. Anche in sviluppo: `npm run db:migrate`.
 
     // 3. Avvia il server HTTP
     const server = app.listen(PORT, () => {

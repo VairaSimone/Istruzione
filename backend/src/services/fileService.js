@@ -97,12 +97,17 @@ const eliminaFileCaricato = async (fileOId, transaction) => {
 
 /**
  * Distribuisce il file al client con supporto alle RANGE request (streaming
- * video con seek) e Content-Disposition scelto dal chiamante.
+ * video con seek).
+ *
+ * Content-Disposition: `attachment` per default, `inline` solo per video e
+ * immagini — e solo se il chiamante non chiede esplicitamente lo scaricamento.
+ * Un documento non viene MAI servito inline, qualunque cosa passi il chiamante:
+ * un PDF aperto nel viewer del browser è codice eseguito, non un allegato.
  *
  * @param {object} req
  * @param {object} res
  * @param {FileCaricato} fileCaricato
- * @param {{disposition?: 'inline'|'attachment'}} [opzioni]
+ * @param {{disposition?: 'inline'|'attachment'}} [opzioni] richiesta, non ordine
  */
 const inviaFile = async (req, res, fileCaricato, opzioni = {}) => {
   const assoluto = percorsoAssoluto(fileCaricato);
@@ -114,7 +119,23 @@ const inviaFile = async (req, res, fileCaricato, opzioni = {}) => {
     throw new AppError('File non disponibile sul server.', 404, 'FILE_NOT_FOUND');
   }
 
-  const disposition = opzioni.disposition === 'attachment' ? 'attachment' : 'inline';
+  // ── Content-Disposition: default SICURO per tipo ──
+  //
+  // Il default era `inline` per qualunque cosa. Su un documento significa
+  // aprirlo dentro il browser: un PDF `inline` viene eseguito dal viewer, e un
+  // PDF può contenere JavaScript. I chiamanti oggi passano `attachment` per i
+  // documenti (cfr. `corsiService.risolviAccessoFile`), ma quella è cortesia del
+  // chiamante, non una garanzia: chi aggiunge un nuovo endpoint e omette
+  // l'opzione riapre il buco senza accorgersene.
+  //
+  // Ora `inline` va CHIESTO, e vale solo dove serve davvero (video e immagini,
+  // che devono stare dentro <video>/<img>). Per tutto il resto si scarica.
+  // `inline` è ammesso solo per ciò che il browser deve incorporare; un
+  // chiamante può comunque forzare `attachment` (es. video scaricabile).
+  const inlineAmmesso = fileCaricato.tipo === 'video' || fileCaricato.tipo === 'immagine';
+  const disposition =
+    inlineAmmesso && opzioni.disposition !== 'attachment' ? 'inline' : 'attachment';
+
   // Nome file "sicuro" per l'header (RFC 5987): fallback ASCII + versione UTF-8.
   const nome = fileCaricato.nome_originale || 'file';
   const nomeAscii = nome.replace(/[^\x20-\x7e]/g, '_').replace(/"/g, "'");

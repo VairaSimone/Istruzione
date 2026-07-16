@@ -28,7 +28,9 @@ const { funzionalitaPredefinite } = require('../constants/funzionalita');
  * deploy multi-istanza il TTL garantisce comunque la convergenza entro pochi
  * secondi. Se in futuro servisse invalidazione immediata cross-istanza, basterà
  * sostituire l'implementazione di `_cache` con Redis: l'interfaccia pubblica
- * (`perScuola`, `funzionalita`, `invalida`) resta identica.
+ * (`perScuola`, `funzionalita`, `invalida`) resta identica — e siccome ciò che
+ * si memorizza è già uno snapshot serializzabile e non un'istanza Sequelize, il
+ * passaggio a Redis è una sostituzione di `_leggi`/`_scrivi` e nulla più.
  *
  * SEPARAZIONE DELLE RESPONSABILITÀ
  *   - `constants/impostazioniScuola.js` → forma e validazione del blob;
@@ -41,8 +43,38 @@ const { funzionalitaPredefinite } = require('../constants/funzionalita');
 // piccole, ricaricarle costa una SELECT su chiave primaria.
 const TTL_MS = Math.max(1000, parseInt(process.env.SETTINGS_CACHE_TTL_MS, 10) || 30000);
 
+/**
+ * ─────────────────────────────────────────────
+ * COSA VIENE MESSO IN CACHE (e cosa no)
+ * ─────────────────────────────────────────────
+ * NON l'istanza Sequelize: i DATI GREZZI.
+ *
+ * Memorizzare l'istanza significa condividere lo STESSO oggetto mutabile fra
+ * tutte le richieste concorrenti per l'intera durata del TTL. Bastava che un
+ * qualunque chiamante scrivesse `scuola.attiva = false` su un oggetto ottenuto
+ * dalla cache — senza salvarlo, magari solo per una prova — perché tutte le
+ * altre richieste vedessero la scuola sospesa, senza che il database fosse mai
+ * stato toccato. Un bug così non si riproduce e non si trova.
+ *
+ * Perciò in cache va uno snapshot inerte (`get({ plain: true })`) e a ogni
+ * lettura si ricostruisce un'istanza NUOVA con `Scuola.build(..., { isNewRecord:
+ * false })`. Ogni chiamante riceve un oggetto proprio: mutarlo non tocca nessun
+ * altro. L'interfaccia pubblica non cambia — i consumatori continuano a usare
+ * `scuola.impostazioni`, `scuola.attiva`, `scuola.toBrandingJSON()` — e il
+ * risparmio resta quello che conta: nessuna SELECT.
+ *
+ * `build` costa una manciata di microsecondi contro il millisecondo abbondante
+ * di un round-trip su MySQL: il rapporto regge.
+ */
+
 /** @type {Map<string, {scadenza:number, valore:any}>} */
 const _cache = new Map();
+
+/** Istanza Sequelize → snapshot inerte. `null` resta `null` (i MISS si cachano). */
+const _congela = (scuola) => (scuola ? scuola.get({ plain: true }) : null);
+
+/** Snapshot → istanza NUOVA e non condivisa, marcata come già persistita. */
+const _scongela = (dati) => (dati ? Scuola.build(dati, { isNewRecord: false }) : null);
 
 const _leggi = (chiave) => {
   const voce = _cache.get(chiave);
@@ -51,12 +83,14 @@ const _leggi = (chiave) => {
     _cache.delete(chiave);
     return undefined;
   }
-  return voce.valore;
+  return _scongela(voce.valore);
 };
 
-const _scrivi = (chiave, valore) => {
-  _cache.set(chiave, { scadenza: Date.now() + TTL_MS, valore });
-  return valore;
+const _scrivi = (chiave, scuola) => {
+  _cache.set(chiave, { scadenza: Date.now() + TTL_MS, valore: _congela(scuola) });
+  // Si restituisce l'istanza originale (già "fresca" per il chiamante), non una
+  // ricostruita: sarebbe lavoro inutile.
+  return scuola || null;
 };
 
 // Listener notificati a ogni invalidazione. Consente ad altre cache derivate
