@@ -58,6 +58,7 @@
     "corsiStudente": "I miei corsi",
     "statistiche": "Statistiche",
     "messaggi": "Messaggi",
+    "chat": "Chat",
     "calendario": "Calendario",
     "presenze": "Presenze",
     "presenzeStudente": "Le mie presenze",
@@ -411,7 +412,9 @@
       "SCUOLA_SOSPESA": "La tua scuola è temporaneamente sospesa. Contatta un insegnante.",
       "SLUG_REQUIRED": "Indica un identificativo pubblico (slug) per la scuola.",
       "SLUG_CONFLICT": "Esiste già una scuola con questo identificativo pubblico.",
-      "INVALID_ACTIVITY_TYPE": "Il tipo di attività indicato non è valido."
+      "INVALID_ACTIVITY_TYPE": "Il tipo di attività indicato non è valido.",
+      "INVALID_ATTACHMENT_TYPE": "Tipo di allegato non valido.",
+      "FILE_CONTENT_MISMATCH": "Il contenuto del file non corrisponde al tipo dichiarato."
     }
   },
   "validation": {
@@ -1226,6 +1229,47 @@
       "loadError": "Impossibile caricare il messaggio."
     }
   },
+  "chat": {
+    "title": "Chat d'aula",
+    "subtitle": "Conversazioni di gruppo con la tua aula: scrivi, leggi e condividi allegati.",
+    "unreadAria": "{{n}} messaggi non letti",
+    "selezionaAula": "Seleziona un'aula per aprire la chat.",
+    "tornaAlleAule": "Torna all'elenco delle aule",
+    "erroreAule": "Impossibile caricare le tue aule.",
+    "errore": "Impossibile caricare i messaggi.",
+    "caricaAltri": "Carica messaggi precedenti",
+    "oggi": "Oggi",
+    "ieri": "Ieri",
+    "messaggioEliminato": "Messaggio eliminato",
+    "utenteRimosso": "Utente rimosso",
+    "ruoloInsegnante": "Insegnante",
+    "allegato": "Allegato",
+    "eliminaMessaggio": "Elimina messaggio",
+    "eliminato": "Messaggio eliminato.",
+    "aule": {
+      "title": "Le tue aule",
+      "nessunMessaggio": "Nessun messaggio"
+    },
+    "nessunAula": {
+      "title": "Nessuna aula",
+      "descrizione": "Non fai ancora parte di nessuna aula con chat attiva."
+    },
+    "vuota": {
+      "title": "Ancora nessun messaggio",
+      "descrizione": "Scrivi il primo messaggio per iniziare la conversazione."
+    },
+    "confermaElimina": {
+      "title": "Eliminare il messaggio?",
+      "descrizione": "Il messaggio verrà rimosso dalla chat per tutti. L'operazione non è reversibile.",
+      "conferma": "Elimina"
+    },
+    "composer": {
+      "placeholder": "Scrivi un messaggio…",
+      "invia": "Invia",
+      "allega": "Allega un file",
+      "rimuoviAllegato": "Rimuovi allegato"
+    }
+  },
   "calendario": {
     "page": {
       "title": "Calendario",
@@ -1668,6 +1712,10 @@
     "messaggi": {
       "nome": "Messaggi",
       "descrizione": "Messaggistica interna tra insegnanti e studenti."
+    },
+    "chatAula": {
+      "nome": "Chat d'aula",
+      "descrizione": "Chat di gruppo per aula: studenti e insegnanti scrivono nello stesso flusso e condividono allegati."
     },
     "calendario": {
       "nome": "Calendario",

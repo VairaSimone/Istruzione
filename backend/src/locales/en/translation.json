@@ -45,6 +45,7 @@
       "eAltri": "and {{count}} more…",
       "tipi": {
         "nuovoMessaggio": "New messages ({{count}})",
+      "chatAula": "New classroom chat messages ({{count}})",
         "nuovoCompito": "New assignments ({{count}})",
         "scadenzaCompito": "Assignments due soon ({{count}})",
         "feedbackCompito": "New feedback received ({{count}})",

@@ -52,6 +52,17 @@ const TIPI_NOTIFICA = [
     defaultAttiva: true,
   },
   {
+    // Recapitata ai membri di un'aula: nuovi messaggi nella chat di gruppo.
+    // Accodata con `unicaPerRiferimento` (riferimento = aula) per NON generare
+    // una notifica per ogni messaggio: il digest riepiloga «hai nuovi messaggi
+    // nella chat di <aula>» una sola volta finché non viene recapitato.
+    chiave: 'chat_aula',
+    categoria: 'chat',
+    i18nSezione: 'chatAula',
+    ordine: 15,
+    defaultAttiva: true,
+  },
+  {
     chiave: 'nuovo_compito',
     categoria: 'compiti',
     i18nSezione: 'nuovoCompito',

@@ -19,6 +19,8 @@ require('./models/CompitoAssegnazione');
 require('./models/CompitoConsegna');
 require('./models/Messaggio');
 require('./models/MessaggioDestinatario');
+require('./models/MessaggioChat');
+require('./models/ChatLettura');
 require('./models/Invito');
 require('./models/Quiz');
 require('./models/QuizAula');

@@ -45,6 +45,7 @@
       "eAltri": "e altri {{count}}…",
       "tipi": {
         "nuovoMessaggio": "Nuovi messaggi ({{count}})",
+      "chatAula": "Nuovi messaggi nelle chat d'aula ({{count}})",
         "nuovoCompito": "Nuovi compiti assegnati ({{count}})",
         "scadenzaCompito": "Compiti in scadenza ({{count}})",
         "feedbackCompito": "Nuovi feedback ricevuti ({{count}})",

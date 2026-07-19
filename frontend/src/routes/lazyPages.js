@@ -52,6 +52,7 @@ export const ScuolaPagamentiPage = lazy(() => import('../pages/ScuolaPagamentiPa
 export const TeacherDashboardPage = lazy(() => import('../pages/TeacherDashboardPage'));
 export const MessaggiPage = lazy(() => import('../pages/MessaggiPage'));
 export const MessaggioDetailPage = lazy(() => import('../pages/MessaggioDetailPage'));
+export const ChatPage = lazy(() => import('../pages/ChatPage'));
 export const CalendarioPage = lazy(() => import('../pages/CalendarioPage'));
 export const PresenzeDocentePage = lazy(() => import('../pages/PresenzeDocentePage'));
 export const PresenzeStudentePage = lazy(() => import('../pages/PresenzeStudentePage'));

@@ -26,6 +26,19 @@ export const fileUrl = (fileId) =>
   fileId ? `${API_BASE}/corsi/files/${encodeURIComponent(fileId)}` : null;
 
 /**
+ * URL assoluto dell'allegato di un messaggio della CHAT d'aula. Come i file dei
+ * corsi, il binario è servito solo dall'endpoint protetto
+ * `GET /api/chat/:classeId/file/:fileId`, che verifica l'appartenenza all'aula.
+ *
+ * @param {string|null|undefined} classeId
+ * @param {string|null|undefined} fileId
+ */
+export const chatFileUrl = (classeId, fileId) =>
+  classeId && fileId
+    ? `${API_BASE}/chat/${encodeURIComponent(classeId)}/file/${encodeURIComponent(fileId)}`
+    : null;
+
+/**
  * URL della risorsa di un capitolo/corso/documento: preferisce SEMPRE il file
  * caricato e, in sua assenza, ricade sull'eventuale URL esterno (YouTube,
  * Vimeo, CDN…). Rispecchia la precedenza applicata dal backend.

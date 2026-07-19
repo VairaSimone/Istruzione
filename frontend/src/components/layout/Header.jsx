@@ -12,6 +12,7 @@ import { useBranding, useFunzionalita } from '../../hooks/useConfig';
 import { ROUTES } from '../../constants/routes';
 import { FUNZIONALITA } from '../../constants/funzionalita';
 import MessaggiNavLink from '../../features/messaggi/components/MessaggiNavLink';
+import ChatNavLink from '../../features/chat/components/ChatNavLink';
 import Button from '../ui/Button';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import ThemeToggle from '../ui/ThemeToggle';
@@ -157,6 +158,10 @@ const Header = () => {
 
             {sezioneAttiva(FUNZIONALITA.MESSAGGI) && (
               <MessaggiNavLink className={styles.navLink} />
+            )}
+
+            {sezioneAttiva(FUNZIONALITA.CHAT_AULA) && (
+              <ChatNavLink className={styles.navLink} />
             )}
 
             {sezioneAttiva(FUNZIONALITA.CALENDARIO) && (

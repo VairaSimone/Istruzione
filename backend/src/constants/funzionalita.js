@@ -92,6 +92,14 @@ const FUNZIONALITA = [
     defaultAbilitata: true,
   },
   {
+    chiave: 'chatAula',
+    nome: "Chat d'aula",
+    descrizione:
+      "Chat di gruppo per aula: tutti i membri dell'aula (studenti e insegnanti) scrivono e leggono lo stesso flusso di messaggi e possono inviare allegati (immagini, documenti, video).",
+    defaultAbilitata: false,
+    dipendeDa: ['aule'],
+  },
+  {
     chiave: 'calendario',
     nome: 'Calendario',
     descrizione:

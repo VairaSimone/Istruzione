@@ -59,6 +59,7 @@
     "corsiStudente": "My courses",
     "statistiche": "Statistics",
     "messaggi": "Messages",
+    "chat": "Chat",
     "calendario": "Calendar",
     "presenze": "Attendance",
     "presenzeStudente": "My attendance",
@@ -411,7 +412,9 @@
       "SCUOLA_SOSPESA": "Your school is temporarily suspended. Contact a teacher.",
       "SLUG_REQUIRED": "Provide a public identifier (slug) for the school.",
       "SLUG_CONFLICT": "A school with this public identifier already exists.",
-      "INVALID_ACTIVITY_TYPE": "The activity type is not valid."
+      "INVALID_ACTIVITY_TYPE": "The activity type is not valid.",
+      "INVALID_ATTACHMENT_TYPE": "Invalid attachment type.",
+      "FILE_CONTENT_MISMATCH": "The file content doesn't match its declared type."
     }
   },
   "validation": {
@@ -1263,6 +1266,47 @@
       "loadError": "Unable to load the message."
     }
   },
+  "chat": {
+    "title": "Class chat",
+    "subtitle": "Group conversations with your class: write, read, and share attachments.",
+    "unreadAria": "{{n}} unread messages",
+    "selezionaAula": "Select a class to open the chat.",
+    "tornaAlleAule": "Back to your classes",
+    "erroreAule": "We couldn't load your classes.",
+    "errore": "We couldn't load the messages.",
+    "caricaAltri": "Load earlier messages",
+    "oggi": "Today",
+    "ieri": "Yesterday",
+    "messaggioEliminato": "Message deleted",
+    "utenteRimosso": "Removed user",
+    "ruoloInsegnante": "Teacher",
+    "allegato": "Attachment",
+    "eliminaMessaggio": "Delete message",
+    "eliminato": "Message deleted.",
+    "aule": {
+      "title": "Your classes",
+      "nessunMessaggio": "No messages"
+    },
+    "nessunAula": {
+      "title": "No classes",
+      "descrizione": "You're not part of any class with chat enabled yet."
+    },
+    "vuota": {
+      "title": "No messages yet",
+      "descrizione": "Send the first message to start the conversation."
+    },
+    "confermaElimina": {
+      "title": "Delete this message?",
+      "descrizione": "The message will be removed from the chat for everyone. This can't be undone.",
+      "conferma": "Delete"
+    },
+    "composer": {
+      "placeholder": "Write a message…",
+      "invia": "Send",
+      "allega": "Attach a file",
+      "rimuoviAllegato": "Remove attachment"
+    }
+  },
   "calendario": {
     "page": {
       "title": "Calendar",
@@ -1668,6 +1712,10 @@
     "messaggi": {
       "nome": "Messages",
       "descrizione": "Internal messaging between teachers and students."
+    },
+    "chatAula": {
+      "nome": "Class chat",
+      "descrizione": "Group chat per class: students and teachers post in the same feed and share attachments."
     },
     "calendario": {
       "nome": "Calendar",

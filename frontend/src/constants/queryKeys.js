@@ -106,6 +106,14 @@ export const queryKeys = Object.freeze({
     notifiche: ['messaggi', 'notifiche'],
     detail: (id) => ['messaggi', 'detail', id],
   },
+  // Chat di gruppo d'aula: elenco aule con anteprima/non letti, feed per aula
+  // e conteggio globale dei non letti (polling).
+  chat: {
+    all: ['chat'],
+    aule: ['chat', 'aule'],
+    notifiche: ['chat', 'notifiche'],
+    messaggi: (classeId, filters) => ['chat', 'messaggi', classeId, filters ?? {}],
+  },
   calendario: {
     all: ['calendario'],
     feed: (filters) => ['calendario', 'feed', filters ?? {}],

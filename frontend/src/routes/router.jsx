@@ -48,6 +48,7 @@ import {
   TeacherDashboardPage,
   MessaggiPage,
   MessaggioDetailPage,
+  ChatPage,
   CalendarioPage,
   PresenzeDocentePage,
   PresenzeStudentePage,
@@ -155,6 +156,15 @@ export const router = createBrowserRouter([
             children: [
               { path: ROUTES.MESSAGGI, element: <MessaggiPage /> },
               { path: ROUTES.MESSAGGIO_DETAIL, element: <MessaggioDetailPage /> },
+            ],
+          },
+          {
+            // Chat di gruppo d'aula: accessibile a studenti e insegnanti membri.
+            // L'appartenenza all'aula è verificata dal backend su ogni chiamata.
+            element: <FeatureRoute funzionalita={FUNZIONALITA.CHAT_AULA} />,
+            children: [
+              { path: ROUTES.CHAT, element: <ChatPage /> },
+              { path: ROUTES.CHAT_AULA, element: <ChatPage /> },
             ],
           },
           {

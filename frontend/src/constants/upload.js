@@ -69,6 +69,24 @@ export const mimeAmmesso = (tipo, mime) =>
   Boolean(MIME_AMMESSI[tipo]) && MIME_AMMESSI[tipo].includes(mime);
 
 /**
+ * Risolve il TIPO logico (video/immagine/documento) a partire dal MIME di un
+ * file, o `null` se non è ammesso da nessun tipo. Utile quando l'utente sceglie
+ * un file qualsiasi (es. allegato di chat) e serve indirizzarlo all'uploader
+ * corretto senza chiedere il tipo a mano.
+ */
+export const tipoPerMime = (mime) => {
+  for (const tipo of TIPI_FILE) {
+    if (mimeAmmesso(tipo, mime)) return tipo;
+  }
+  return null;
+};
+
+/** `accept` di `<input type="file">` che accetta TUTTI i tipi ammessi. */
+export const ACCEPT_TUTTI = Object.freeze(
+  [...MIME_AMMESSI.immagine, ...MIME_AMMESSI.documento, ...MIME_AMMESSI.video].join(',')
+);
+
+/**
  * Valida un File lato client. Restituisce `null` se va bene, altrimenti una
  * chiave i18n con i parametri per il messaggio d'errore:
  *   { key: 'upload.errors.tipo' | 'upload.errors.dimensione', params: {...} }

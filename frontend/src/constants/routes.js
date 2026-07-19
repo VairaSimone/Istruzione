@@ -37,6 +37,10 @@ export const ROUTES = Object.freeze({
   TEACHER_DASHBOARD: '/statistiche',
   MESSAGGI: '/messaggi',
   MESSAGGIO_DETAIL: '/messaggi/:id',
+  // Chat di gruppo d'aula: la stessa pagina mostra l'elenco delle aule e, con
+  // un'aula selezionata (`/chat/:classeId`), il relativo feed.
+  CHAT: '/chat',
+  CHAT_AULA: '/chat/:classeId',
   CALENDARIO: '/calendario',
   // Registro presenze: hub docente (per aula) e vista studente.
   PRESENZE: '/presenze',
@@ -63,6 +67,7 @@ export const compitoStudenteDetailPath = (id) => `/i-miei-compiti/${id}`;
 export const corsoDetailPath = (id) => `/corsi/${id}`;
 export const corsoStudenteDetailPath = (id) => `/i-miei-corsi/${id}`;
 export const messaggioDetailPath = (id) => `/messaggi/${id}`;
+export const chatAulaPath = (classeId) => `/chat/${classeId}`;
 export const quizGestioneDetailPath = (id) => `/gestione/quiz/${id}`;
 
 /** Path della pagina di verifica pubblica precompilata con un codice. */
