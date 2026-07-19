@@ -59,6 +59,8 @@
     "statistiche": "Statistiche",
     "messaggi": "Messaggi",
     "calendario": "Calendario",
+    "presenze": "Presenze",
+    "presenzeStudente": "Le mie presenze",
     "scuole": "Scuole",
     "invitesManagement": "Inviti",
     "quizGestione": "Gestione quiz",
@@ -1685,6 +1687,10 @@
     "pagamenti": {
       "nome": "Pagamenti",
       "descrizione": "Iscrizioni ai corsi a pagamento tramite Stripe: catalogo con prezzi, checkout online e iscrizione automatica all'aula. Richiede i corsi e le aule."
+    },
+    "presenze": {
+      "nome": "Registro presenze",
+      "descrizione": "Appello per aula con presenze, assenze, ritardi e uscite; la scuola può fissare un limite di assenze. Richiede le aule."
     }
   },
   "impostazioni": {
@@ -1728,6 +1734,10 @@
       "didattica": {
         "titolo": "Didattica",
         "descrizione": "I vocabolari della tua scuola: classi, livelli e materie. Se un elenco è vuoto, il campo corrispondente resta a testo libero."
+      },
+      "presenze": {
+        "titolo": "Registro presenze",
+        "descrizione": "Configurazione del registro presenze: il limite di assenze oltre il quale gli studenti vengono segnalati e se le assenze giustificate concorrono al conteggio."
       },
       "funzionalita": {
         "titolo": "Sezioni attive",
@@ -1789,6 +1799,10 @@
         "materieDisponibili": "Materie",
         "accessoLiberoTemplate": "Esercizio libero sui template"
       },
+      "presenze": {
+        "limiteAssenze": "Limite di assenze",
+        "conteggioGiustificate": "Conta anche le assenze giustificate"
+      },
       "comunicazioni": {
         "avvisoAttivo": "Mostra l'avviso",
         "avvisoTesto": "Testo dell'avviso",
@@ -1816,6 +1830,10 @@
         "livelliDisponibili": "I livelli di aule e corsi (es. A1, Base, Terzo anno). Lascia vuoto per usare un campo libero.",
         "materieDisponibili": "Le materie insegnate. Lascia vuoto per usare un campo libero.",
         "accessoLiberoTemplate": "Se attivo, gli studenti possono esercitarsi sui template di quiz anche senza un compito assegnato."
+      },
+      "presenze": {
+        "limiteAssenze": "Numero massimo di assenze tollerate prima della segnalazione. Lascia vuoto per non fissare alcun limite.",
+        "conteggioGiustificate": "Se attivo, anche le assenze giustificate contano ai fini del limite."
       },
       "footer": {
         "testo": "Una riga di presentazione, mostrata sopra i collegamenti.",
@@ -2293,6 +2311,53 @@
       "commissione": "Commissione piattaforma (%)",
       "commissioneHint": "Percentuale trattenuta dalla piattaforma su ogni incasso. Vuoto = 0%.",
       "commissioneInvalida": "Inserisci una percentuale tra 0 e 100."
+    }
+  },
+  "presenze": {
+    "docente": {
+      "title": "Registro presenze",
+      "subtitle": "Apri l'appello di un'aula, segna le presenze e controlla le assenze.",
+      "aula": "Aula",
+      "selezionaAula": "Seleziona un’aula",
+      "tabAppello": "Appello",
+      "tabRiepilogo": "Riepilogo",
+      "data": "Data",
+      "nuovoAppello": "Apri appello",
+      "apriEsistente": "Apri appello del giorno",
+      "nessunoStudente": "Nessuno studente iscritto a quest’aula.",
+      "cambiaStato": "Tocca per cambiare stato",
+      "salva": "Salva presenze",
+      "elimina": "Elimina appello"
+    },
+    "studente": {
+      "title": "Le mie presenze",
+      "subtitle": "Il conteggio delle tue assenze e lo storico delle rilevazioni.",
+      "data": "Data",
+      "aula": "Aula",
+      "stato": "Stato",
+      "nota": "Nota",
+      "empty": "Non ci sono ancora rilevazioni di presenza.",
+      "loadError": "Impossibile caricare le presenze."
+    },
+    "stati": {
+      "presente": "Presente",
+      "assente": "Assente",
+      "assente_giustificato": "Giustificato",
+      "ritardo": "Ritardo",
+      "uscita_anticipata": "Uscita anticipata"
+    },
+    "riepilogo": {
+      "sessioni": "Sessioni",
+      "assenze": "Assenze",
+      "conteggiate": "Assenze conteggiate",
+      "ritardi": "Ritardi",
+      "limite": "Limite assenze",
+      "nessunLimite": "Nessuno",
+      "oltreLimite": "Oltre il limite",
+      "studente": "Studente",
+      "stato": "Stato",
+      "superato": "Limite superato",
+      "regolare": "Regolare"
     }
   }
 }

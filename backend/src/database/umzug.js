@@ -41,6 +41,8 @@ require('../models/AttivitaGiornaliera');
 require('../models/NotificaEmail');
 require('../models/EventoCalendario');
 require('../models/EventoDestinatario');
+require('../models/RegistroPresenza');
+require('../models/VocePresenza');
 require('../models/Certificato');
 require('../models/ProgressoBanca');
 require('../models/Pagamento');

@@ -143,6 +143,26 @@ const CampoImpostazione = ({ sezione, nome, descrittore, valore, onChange, error
         />
       );
 
+    case 'intero':
+      // Campo numerico opzionale (es. limite assenze). Il valore vuoto è
+      // legittimo e significa «nessun valore» (nessun limite): lo trasformiamo
+      // in null, non in 0, così il backend lo interpreta correttamente.
+      return (
+        <TextField
+          {...comune}
+          type="number"
+          inputMode="numeric"
+          min={descrittore.min}
+          max={descrittore.max}
+          step={1}
+          value={valore ?? ''}
+          onChange={(e) => {
+            const v = e.target.value;
+            onChange(v === '' ? null : Number(v));
+          }}
+        />
+      );
+
     case 'stringa':
     default:
       return (

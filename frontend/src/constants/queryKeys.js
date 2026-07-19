@@ -112,6 +112,15 @@ export const queryKeys = Object.freeze({
     eventi: (filters) => ['calendario', 'eventi', filters ?? {}],
     eventoDetail: (id) => ['calendario', 'eventi', 'detail', id],
   },
+  presenze: {
+    all: ['presenze'],
+    // Elenco appelli (docente), riepilogo aula e dettaglio di un registro.
+    registri: (filters) => ['presenze', 'registri', filters ?? {}],
+    registroDetail: (id) => ['presenze', 'registri', 'detail', id],
+    riepilogo: (classeId) => ['presenze', 'riepilogo', classeId],
+    // Vista studente: le proprie presenze.
+    mie: (filters) => ['presenze', 'mie', filters ?? {}],
+  },
   certificati: {
     all: ['certificati'],
     list: (filters) => ['certificati', 'list', filters ?? {}],

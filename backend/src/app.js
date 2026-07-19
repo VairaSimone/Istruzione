@@ -24,6 +24,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const messaggiRoutes = require('./routes/messaggiRoutes');
 const corsiRoutes = require('./routes/corsiRoutes');
 const calendarioRoutes = require('./routes/calendarioRoutes');
+const presenzeRoutes = require('./routes/presenzeRoutes');
 const certificatoRoutes = require('./routes/certificatoRoutes');
 const pagamentiRoutes = require('./routes/pagamentiRoutes');
 const pagamentiController = require('./controllers/pagamentiController');
@@ -226,6 +227,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/messaggi', messaggiRoutes);
 app.use('/api/corsi', corsiRoutes);
 app.use('/api/calendario', calendarioRoutes);
+app.use('/api/presenze', presenzeRoutes);
 app.use('/api/certificati', certificatoRoutes);
 app.use('/api/pagamenti', pagamentiRoutes);
 

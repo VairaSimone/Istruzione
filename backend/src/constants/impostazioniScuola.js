@@ -229,6 +229,25 @@ const validatori = {
     return v;
   },
 
+  /**
+   * Intero opzionale entro [min, max]. Il valore vuoto (`null`/''/assente)
+   * significa «nessun valore» (es. nessun limite): è legittimo e restituisce
+   * null. Accetta anche una stringa numerica ("3") per comodità del form.
+   */
+  intero: (v, percorso, campo) => {
+    if (vuoto(v)) return null;
+    const n = typeof v === 'string' ? Number(v.trim()) : v;
+    if (typeof n !== 'number' || !Number.isFinite(n) || !Number.isInteger(n)) {
+      throw erroreImpostazione(percorso, 'deve essere un numero intero.');
+    }
+    const min = campo.min ?? 0;
+    const max = campo.max ?? Number.MAX_SAFE_INTEGER;
+    if (n < min || n > max) {
+      throw erroreImpostazione(percorso, `deve essere un intero tra ${min} e ${max}.`);
+    }
+    return n;
+  },
+
   /** Array di stringhe brevi, de-duplicato e ordinato come fornito. */
   vocabolario: (v, percorso, campo) => {
     if (v === undefined || v === null) return null;
@@ -593,6 +612,23 @@ const SCHEMA = {
     },
   },
 
+  // REGISTRO PRESENZE.
+  // Config della sezione presenze, riservata allo staff (pubblica: false). Il
+  // conteggio delle assenze e il confronto col limite avvengono nel service
+  // (`presenzeService`), che legge questi valori dal blob risolto.
+  presenze: {
+    pubblica: false,
+    campi: {
+      // Numero massimo di assenze tollerate nel periodo prima che uno studente
+      // venga SEGNALATO nel riepilogo dell'aula. `null` (campo vuoto) = nessun
+      // limite: la funzione di conteggio resta attiva ma non segnala nessuno.
+      limiteAssenze: { tipo: 'intero', min: 0, max: 999, default: null, pubblico: false },
+      // Se true, anche le assenze GIUSTIFICATE concorrono al limite. Di default
+      // no: solo le assenze non giustificate contano (comportamento più comune).
+      conteggioGiustificate: { tipo: 'booleano', default: false, pubblico: false },
+    },
+  },
+
   // MODELLO DEL CERTIFICATO DI FINE CORSO.
   // Interamente personalizzabile dalla scuola: intestazione, testo con
   // segnaposto, colori, orientamento del foglio, logo e firma (immagini
@@ -861,7 +897,8 @@ const descrizioneSchema = () =>
               {
                 tipo: d.tipo,
                 ...(d.valori ? { valori: d.valori } : {}),
-                ...(d.max ? { max: d.max } : {}),
+                ...(d.max !== undefined ? { max: d.max } : {}),
+                ...(d.min !== undefined ? { min: d.min } : {}),
                 default: clona(d.default),
                 pubblico: Boolean(d.pubblico),
               },
@@ -898,6 +935,16 @@ const modelloCertificato = (persistite, nomeScuola = null) => {
   return { ...complete.certificato };
 };
 
+/**
+ * Estrae la CONFIGURAZIONE PRESENZE risolta (default applicati) da un blob
+ * persistito: `{ limiteAssenze, conteggioGiustificate }`. `limiteAssenze` è
+ * `null` quando la scuola non fissa alcun limite.
+ */
+const configPresenze = (persistite) => {
+  const complete = applicaDefault(persistite);
+  return { ...complete.presenze };
+};
+
 module.exports = {
   SCHEMA,
   NOMI_SEZIONI,
@@ -919,4 +966,5 @@ module.exports = {
   funzionalitaDi,
   vocabolario,
   modelloCertificato,
+  configPresenze,
 };

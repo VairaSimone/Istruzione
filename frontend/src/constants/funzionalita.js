@@ -21,6 +21,7 @@ export const FUNZIONALITA = Object.freeze({
   COMPITI: 'compiti',
   MESSAGGI: 'messaggi',
   CALENDARIO: 'calendario',
+  PRESENZE: 'presenze',
   CERTIFICAZIONI: 'certificazioni',
   STATISTICHE: 'statistiche',
   GAMIFICATION: 'gamification',
@@ -31,7 +32,7 @@ export const FUNZIONALITA = Object.freeze({
 /**
  * Chiavi in ordine di presentazione (pannello impostazioni).
  *
- * Deve contenere TUTTE le 12 chiavi del registro backend: qui mancava
+ * Deve contenere TUTTE le chiavi del registro backend: qui mancava
  * `certificazioni`, che quindi non sarebbe comparsa tra gli interruttori
  * nemmeno una volta riparato il payload di `/api/config`.
  */
@@ -43,6 +44,7 @@ export const CHIAVI_FUNZIONALITA = Object.freeze([
   FUNZIONALITA.COMPITI,
   FUNZIONALITA.MESSAGGI,
   FUNZIONALITA.CALENDARIO,
+  FUNZIONALITA.PRESENZE,
   FUNZIONALITA.CERTIFICAZIONI,
   FUNZIONALITA.STATISTICHE,
   FUNZIONALITA.GAMIFICATION,
@@ -70,6 +72,7 @@ export const CHIAVI_NUCLEO = Object.freeze([FUNZIONALITA.PROFILO]);
  */
 export const DIPENDENZE = Object.freeze({
   [FUNZIONALITA.COMPITI]: [FUNZIONALITA.AULE],
+  [FUNZIONALITA.PRESENZE]: [FUNZIONALITA.AULE],
   [FUNZIONALITA.PAGAMENTI]: [FUNZIONALITA.CORSI, FUNZIONALITA.AULE],
 });
 
@@ -94,6 +97,7 @@ export const ROUTE_PER_FUNZIONALITA = Object.freeze({
   ],
   [FUNZIONALITA.MESSAGGI]: [ROUTES.MESSAGGI, ROUTES.MESSAGGIO_DETAIL],
   [FUNZIONALITA.CALENDARIO]: [ROUTES.CALENDARIO],
+  [FUNZIONALITA.PRESENZE]: [ROUTES.PRESENZE, ROUTES.PRESENZE_STUDENTE],
   [FUNZIONALITA.CERTIFICAZIONI]: [ROUTES.CERTIFICATI, ROUTES.CERTIFICATI_STUDENTE],
   [FUNZIONALITA.STATISTICHE]: [ROUTES.TEACHER_DASHBOARD],
   [FUNZIONALITA.PAGAMENTI]: [
@@ -117,6 +121,7 @@ export const FUNZIONALITA_PREDEFINITE = Object.freeze({
   [FUNZIONALITA.COMPITI]: true,
   [FUNZIONALITA.MESSAGGI]: true,
   [FUNZIONALITA.CALENDARIO]: true,
+  [FUNZIONALITA.PRESENZE]: false,
   [FUNZIONALITA.CERTIFICAZIONI]: true,
   [FUNZIONALITA.STATISTICHE]: true,
   [FUNZIONALITA.GAMIFICATION]: true,

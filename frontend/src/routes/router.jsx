@@ -49,6 +49,8 @@ import {
   MessaggiPage,
   MessaggioDetailPage,
   CalendarioPage,
+  PresenzeDocentePage,
+  PresenzeStudentePage,
   CertificatiListPage,
   CertificatiStudentePage,
   VerificaCertificatoPage,
@@ -166,6 +168,13 @@ export const router = createBrowserRouter([
               { path: ROUTES.CERTIFICATI_STUDENTE, element: <CertificatiStudentePage /> },
             ],
           },
+          {
+            // Le proprie presenze (studente): conteggio assenze e storico.
+            element: <FeatureRoute funzionalita={FUNZIONALITA.PRESENZE} />,
+            children: [
+              { path: ROUTES.PRESENZE_STUDENTE, element: <PresenzeStudentePage /> },
+            ],
+          },
         ],
       },
 
@@ -218,6 +227,11 @@ export const router = createBrowserRouter([
           {
             element: <FeatureRoute funzionalita={FUNZIONALITA.CERTIFICAZIONI} />,
             children: [{ path: ROUTES.CERTIFICATI, element: <CertificatiListPage /> }],
+          },
+          {
+            // Registro presenze (docente): appello per aula e riepilogo assenze.
+            element: <FeatureRoute funzionalita={FUNZIONALITA.PRESENZE} />,
+            children: [{ path: ROUTES.PRESENZE, element: <PresenzeDocentePage /> }],
           },
           {
             element: <FeatureRoute funzionalita={FUNZIONALITA.STATISTICHE} />,

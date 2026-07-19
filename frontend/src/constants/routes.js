@@ -38,6 +38,9 @@ export const ROUTES = Object.freeze({
   MESSAGGI: '/messaggi',
   MESSAGGIO_DETAIL: '/messaggi/:id',
   CALENDARIO: '/calendario',
+  // Registro presenze: hub docente (per aula) e vista studente.
+  PRESENZE: '/presenze',
+  PRESENZE_STUDENTE: '/le-mie-presenze',
   CERTIFICATI: '/certificati',
   CERTIFICATI_STUDENTE: '/i-miei-certificati',
   VERIFICA_CERTIFICATO: '/verifica-certificato',

@@ -78,6 +78,14 @@ const FUNZIONALITA = [
     dipendeDa: ['aule'],
   },
   {
+    chiave: 'presenze',
+    nome: 'Registro presenze',
+    descrizione:
+      "Registro delle presenze per aula: l'insegnante segna presenze, assenze, ritardi e uscite; la scuola può fissare un limite di assenze oltre il quale gli studenti vengono segnalati.",
+    defaultAbilitata: false,
+    dipendeDa: ['aule'],
+  },
+  {
     chiave: 'messaggi',
     nome: 'Messaggistica',
     descrizione: 'Comunicazioni interne, feedback e note private.',

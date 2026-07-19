@@ -145,6 +145,12 @@ const Header = () => {
               </NavLink>
             )}
 
+            {isStudente && sezioneAttiva(FUNZIONALITA.PRESENZE) && (
+              <NavLink to={ROUTES.PRESENZE_STUDENTE} className={navLinkClass}>
+                {t('nav.presenzeStudente')}
+              </NavLink>
+            )}
+
             <NavLink to={ROUTES.PROFILE} className={navLinkClass}>
               {t('nav.profile')}
             </NavLink>
@@ -192,6 +198,12 @@ const Header = () => {
             {isTeacher && sezioneAttiva(FUNZIONALITA.CERTIFICAZIONI) && (
               <NavLink to={ROUTES.CERTIFICATI} className={navLinkClass}>
                 {t('nav.certificati')}
+              </NavLink>
+            )}
+
+            {isTeacher && sezioneAttiva(FUNZIONALITA.PRESENZE) && (
+              <NavLink to={ROUTES.PRESENZE} className={navLinkClass}>
+                {t('nav.presenze')}
               </NavLink>
             )}
 

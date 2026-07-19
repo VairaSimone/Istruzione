@@ -60,6 +60,8 @@
     "statistiche": "Statistics",
     "messaggi": "Messages",
     "calendario": "Calendar",
+    "presenze": "Attendance",
+    "presenzeStudente": "My attendance",
     "scuole": "Schools",
     "quizGestione": "Quiz management",
     "impostazioniScuola": "School settings",
@@ -1685,6 +1687,10 @@
     "pagamenti": {
       "nome": "Payments",
       "descrizione": "Paid course enrolments via Stripe: catalog with prices, online checkout and automatic enrolment into the classroom. Requires courses and classrooms."
+    },
+    "presenze": {
+      "nome": "Attendance register",
+      "descrizione": "Per-class roll call with presences, absences, late arrivals and early exits; the school can set an absence limit. Requires classrooms."
     }
   },
   "impostazioni": {
@@ -1728,6 +1734,10 @@
       "didattica": {
         "titolo": "Teaching",
         "descrizione": "Your school’s vocabularies: classes, levels and subjects. An empty list leaves the matching field as free text."
+      },
+      "presenze": {
+        "titolo": "Attendance register",
+        "descrizione": "Attendance settings: the absence limit above which students are flagged, and whether justified absences count toward it."
       },
       "funzionalita": {
         "titolo": "Active sections",
@@ -1789,6 +1799,10 @@
         "materieDisponibili": "Subjects",
         "accessoLiberoTemplate": "Free practice on templates"
       },
+      "presenze": {
+        "limiteAssenze": "Absence limit",
+        "conteggioGiustificate": "Count justified absences too"
+      },
       "comunicazioni": {
         "avvisoAttivo": "Show the notice",
         "avvisoTesto": "Notice text",
@@ -1816,6 +1830,10 @@
         "livelliDisponibili": "Levels for classrooms and courses (e.g. A1, Beginner, Year 3). Leave empty to use a free-text field.",
         "materieDisponibili": "The subjects you teach. Leave empty to use a free-text field.",
         "accessoLiberoTemplate": "When on, students may practise quiz templates without an assignment."
+      },
+      "presenze": {
+        "limiteAssenze": "Maximum absences allowed before a student is flagged. Leave empty for no limit.",
+        "conteggioGiustificate": "If enabled, justified absences also count toward the limit."
       },
       "footer": {
         "testo": "A single line shown above the links.",
@@ -2293,6 +2311,53 @@
       "commissione": "Platform fee (%)",
       "commissioneHint": "Percentage the platform keeps on each payment. Empty = 0%.",
       "commissioneInvalida": "Enter a percentage between 0 and 100."
+    }
+  },
+  "presenze": {
+    "docente": {
+      "title": "Attendance register",
+      "subtitle": "Open a class roll call, mark attendance and review absences.",
+      "aula": "Classroom",
+      "selezionaAula": "Select a classroom",
+      "tabAppello": "Roll call",
+      "tabRiepilogo": "Summary",
+      "data": "Date",
+      "nuovoAppello": "Open roll call",
+      "apriEsistente": "Open the day's roll call",
+      "nessunoStudente": "No students enrolled in this classroom.",
+      "cambiaStato": "Tap to change status",
+      "salva": "Save attendance",
+      "elimina": "Delete roll call"
+    },
+    "studente": {
+      "title": "My attendance",
+      "subtitle": "Your absence count and the history of records.",
+      "data": "Date",
+      "aula": "Classroom",
+      "stato": "Status",
+      "nota": "Note",
+      "empty": "No attendance records yet.",
+      "loadError": "Unable to load attendance."
+    },
+    "stati": {
+      "presente": "Present",
+      "assente": "Absent",
+      "assente_giustificato": "Justified",
+      "ritardo": "Late",
+      "uscita_anticipata": "Early exit"
+    },
+    "riepilogo": {
+      "sessioni": "Sessions",
+      "assenze": "Absences",
+      "conteggiate": "Counted absences",
+      "ritardi": "Late arrivals",
+      "limite": "Absence limit",
+      "nessunLimite": "None",
+      "oltreLimite": "Over the limit",
+      "studente": "Student",
+      "stato": "Status",
+      "superato": "Limit exceeded",
+      "regolare": "OK"
     }
   }
 }
