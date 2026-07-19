@@ -61,6 +61,7 @@ import {
   ContattiManagementPage,
   ScuoleManagementPage,
   ImpostazioniScuolaPage,
+  GuidaScuolePage,
 } from './lazyPages';
 
 /**
@@ -188,6 +189,9 @@ export const router = createBrowserRouter([
           { path: ROUTES.INVITES_MANAGEMENT, element: <InvitesManagementPage /> },
           { path: ROUTES.CONTATTI_MANAGEMENT, element: <ContattiManagementPage /> },
           { path: ROUTES.IMPOSTAZIONI_SCUOLA, element: <ImpostazioniScuolaPage /> },
+          // Guida d'uso della piattaforma: sempre disponibile allo staff, non è
+          // una sezione disattivabile (come Impostazioni e Gestione utenti).
+          { path: ROUTES.GUIDA_SCUOLE, element: <GuidaScuolePage /> },
 
           {
             element: <FeatureRoute funzionalita={FUNZIONALITA.AULE} />,

@@ -69,7 +69,8 @@
     "certificatiStudente": "I miei certificati",
     "contatti": "Richieste",
     "catalogo": "Catalogo",
-    "pagamenti": "Pagamenti"
+    "pagamenti": "Pagamenti",
+    "guida": "Guida"
   },
   "header": {
     "logoutSuccess": "Logout effettuato con successo."

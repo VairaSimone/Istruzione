@@ -69,3 +69,4 @@ export const InvitesManagementPage = lazy(() => import('../pages/InvitesManageme
 export const ContattiManagementPage = lazy(() => import('../pages/ContattiManagementPage'));
 export const ScuoleManagementPage = lazy(() => import('../pages/ScuoleManagementPage'));
 export const ImpostazioniScuolaPage = lazy(() => import('../pages/ImpostazioniScuolaPage'));
+export const GuidaScuolePage = lazy(() => import('../pages/GuidaScuolePage'));

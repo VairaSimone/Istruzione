@@ -50,6 +50,8 @@ export const ROUTES = Object.freeze({
   CONTATTI_MANAGEMENT: '/gestione/contatti',
   SCUOLE_MANAGEMENT: '/gestione/scuole',
   IMPOSTAZIONI_SCUOLA: '/gestione/impostazioni',
+  // Guida per le scuole: consultabile in-app dallo staff (insegnante/admin).
+  GUIDA_SCUOLE: '/guida',
   NOT_FOUND: '/404',
   FORBIDDEN: '/403',
 });

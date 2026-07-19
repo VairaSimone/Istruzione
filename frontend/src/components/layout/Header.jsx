@@ -238,6 +238,13 @@ const Header = () => {
                 {t('nav.scuole')}
               </NavLink>
             )}
+
+            {/* Guida d'uso della piattaforma, per lo staff (insegnante/admin). */}
+            {(isTeacher || isAdmin) && (
+              <NavLink to={ROUTES.GUIDA_SCUOLE} className={navLinkClass}>
+                {t('nav.guida')}
+              </NavLink>
+            )}
           </nav>
         )}
 
